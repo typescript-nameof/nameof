@@ -1,0 +1,75 @@
+pipeline:
+  prepare release:
+    image: node
+    commands:
+      - npm install @stdlib/utils-escape-regexp-string --no-save
+      - node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${DRONE_TAG}'))" > .tagName.txt
+      - export TagName=$$(cat .tagName.txt)
+      - echo "/^## \(.* \($${TagName}\|\[$${TagName}\]\)\)\$/" > .tagHeading.txt
+  check release prerequisites:
+    image: node
+    secrets:
+      - npm_token
+      - github_packages_token
+      - github_publish_token
+    commands:
+      - npm i --no-save @octokit/rest
+      - >
+          testNPM() {
+            echo "//registry.npmjs.org/:_authToken=$1" > ~/.npmrc
+            npm whoami > /dev/null 2>&1
+          }
+      - >
+          testGitHub() {
+            node -e 'new (require("@octokit/rest").Octokit)({ auth: "'"$1"'" }).request("GET /user").catch(() => process.exit(1))' > /dev/null 2>&1
+          }
+      - export TagHeading=$$(cat .tagHeading.txt)
+      - '[ ! -z "$$(sed "$${TagHeading}p;d" CHANGELOG.md)" ] || { echo "No Changelog Entries Found!" && false; }'
+      - testNPM $NPM_TOKEN || { echo "The NPM Access Token is invalid!" && false; }
+      - testGitHub $GITHUB_PACKAGES_TOKEN || { echo "The GitHub Package Token is invalid!" && false; }
+      - testGitHub $GITHUB_PUBLISH_TOKEN || { echo "The GitHub Publish Token is invalid!" && false; }
+  create package:
+    image: node
+    commands:
+      - npm pack --workspaces
+  prepare release notes:
+    image: alpine
+    commands:
+      - export TagName=$$(cat .tagName.txt)
+      - export TagHeading=$$(cat .tagHeading.txt)
+      - export HeadingPattern='/## \(.* \(v[0-9.]*\|\[.*\]\)\)/'
+      - cp -f CHANGELOG.md .releaseNotes.md
+      - sed -i "1,$${TagHeading}{ $${TagHeading}P ; d } ; $${HeadingPattern},\$d" .releaseNotes.md
+      - cp -f .releaseNotes.md .releaseTitle.md
+      - sed -i "2,\$d ; s$${HeadingPattern}\\\\1/" .releaseTitle.md
+  publish package to npm:
+    image: node
+    secrets:
+      - npm_token
+    commands:
+      - echo "//registry.npmjs.org/:_authToken=$${NPM_TOKEN}" > ~/.npmrc
+      - npm publish --workspaces
+  publish package to github:
+    image: node
+    secrets:
+      - github_packages_token
+    commands:
+      - echo "//npm.pkg.github.com/:_authToken=$${GITHUB_PACKAGES_TOKEN}" > ~/.npmrc
+      - echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
+      - npm publish --workspaces
+  publish release:
+    image: plugins/github-release
+    settings:
+      api_key:
+        from_secret: github_publish_token
+      files:
+        - "*.tgz"
+      title: .releaseTitle.md
+      note: releaseNotes.md
+
+when:
+  event: tag
+  tag: refs/tags/v[0-9]*.[0-9]*.[0-9]*
+
+depends_on:
+  - check

@@ -1,0 +1,23 @@
+pipeline:
+  install:
+    image: node
+    commands:
+      - yarn install
+  build:
+    image: node
+    commands:
+      - yarn build
+  lint:
+    image: node
+    commands:
+      - yarn verify
+  test:
+    image: node
+    commands:
+      - yarn test
+
+when:
+  event:
+    - push
+    - pull_request
+    - tag
