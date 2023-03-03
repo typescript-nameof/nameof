@@ -5,36 +5,41 @@
       "type": "node",
       "request": "launch",
       "name": "Run transforms-babel tests",
+      "cwd": "${workspaceFolder}/packages/transforms-babel",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "--prefix", "packages/transforms-babel", "test:debug"]
+      "runtimeArgs": ["run", "test:debug"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Run transforms-common tests",
+      "cwd": "${workspaceFolder}/packages/transforms-common",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "--prefix", "packages/transforms-common", "test:debug"]
+      "runtimeArgs": ["run", "test:debug"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Run transforms-ts tests",
+      "cwd": "${workspaceFolder}/packages/transforms-ts",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "--prefix", "packages/transforms-ts", "test:debug"]
+      "runtimeArgs": ["run", "test:debug"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Run ts-nameof.macro tests",
+      "cwd": "${workspaceFolder}/packages/ts-nameof.macro",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "--prefix", "packages/ts-nameof.macro", "test:debug"]
+      "runtimeArgs": ["run", "test:debug"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Run ts-nameof tests",
+      "cwd": "${workspaceFolder}/packages/ts-nameof",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "--prefix", "packages/ts-nameof", "test:debug"]
+      "runtimeArgs": ["run", "test:debug"]
     }
   ]
 }
