@@ -38,6 +38,9 @@ pipeline:
     image: node
     commands:
       - npm pack --workspaces
+    when:
+      event: tag
+      tag: refs/tags/v[0-9]*.[0-9]*.[0-9]*
   prepare release notes:
     image: alpine
     commands:
