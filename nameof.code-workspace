@@ -1,0 +1,96 @@
+{
+    "folders": [
+        {
+            "path": "./packages/ts-nameof"
+        },
+        {
+            "path": "./packages/ts-nameof.macro"
+        },
+        {
+            "path": "./packages/babel-plugin-ts-nameof"
+        },
+        {
+            "path": "./packages/transforms-common"
+        },
+        {
+            "path": "./packages/transforms-ts"
+        },
+        {
+            "path": "./packages/transforms-babel"
+        },
+        {
+            "path": "./packages/common"
+        },
+        {
+            "path": "./packages/scripts-common"
+        },
+        {
+            "path": "./packages/tests-common"
+        },
+        {
+            "name": "Solution Items",
+            "path": "."
+        }
+    ],
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Run transforms-babel tests",
+                "cwd": "${workspaceFolder:transforms-babel}",
+                "runtimeExecutable": "npm",
+                "runtimeArgs": [
+                    "run",
+                    "test:debug"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Run transforms-common tests",
+                "cwd": "${workspaceFolder:transforms-common}",
+                "runtimeExecutable": "npm",
+                "runtimeArgs": [
+                    "run",
+                    "test:debug"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Run transforms-ts tests",
+                "cwd": "${workspaceFolder:transforms-ts}",
+                "runtimeExecutable": "npm",
+                "runtimeArgs": [
+                    "run",
+                    "test:debug"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Run ts-nameof.macro tests",
+                "cwd": "${workspaceFolder:ts-nameof.macro}",
+                "runtimeExecutable": "npm",
+                "runtimeArgs": [
+                    "run",
+                    "test:debug"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Run ts-nameof tests",
+                "cwd": "${workspaceFolder:ts-nameof}",
+                "runtimeExecutable": "npm",
+                "runtimeArgs": [
+                    "run",
+                    "test:debug"
+                ]
+            }
+        ],
+        "compounds": []
+    }
+}
