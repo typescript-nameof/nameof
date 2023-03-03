@@ -1,4 +1,4 @@
-require: ts-node/register
+require: ts-node/register/transpile-only
 recursive: true
 reporter: progress
 watch-extensions: ts
