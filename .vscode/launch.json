@@ -6,40 +6,35 @@
       "request": "launch",
       "name": "Run transforms-babel tests",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "--prefix", "packages/transforms-babel", "test:debug"],
-      "stopOnEntry": false
+      "runtimeArgs": ["run", "--prefix", "packages/transforms-babel", "test:debug"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Run transforms-common tests",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "--prefix", "packages/transforms-common", "test:debug"],
-      "stopOnEntry": false
+      "runtimeArgs": ["run", "--prefix", "packages/transforms-common", "test:debug"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Run transforms-ts tests",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "--prefix", "packages/transforms-ts", "test:debug"],
-      "stopOnEntry": false
+      "runtimeArgs": ["run", "--prefix", "packages/transforms-ts", "test:debug"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Run ts-nameof.macro tests",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "--prefix", "packages/ts-nameof.macro", "test:debug"],
-      "stopOnEntry": false
+      "runtimeArgs": ["run", "--prefix", "packages/ts-nameof.macro", "test:debug"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Run ts-nameof tests",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "--prefix", "packages/ts-nameof", "test:debug"],
-      "stopOnEntry": false
+      "runtimeArgs": ["run", "--prefix", "packages/ts-nameof", "test:debug"]
     }
   ]
 }
