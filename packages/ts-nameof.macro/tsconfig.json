@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowJs": true,
+    "rootDir": "./src",
     "outDir": "./dist"
   },
   "extends": "../../tsconfig.common.json",
