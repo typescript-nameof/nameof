@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "ES2015",
+        "module": "CommonJS",
+        "declaration": false,
+        "sourceMap": true,
+        "strict": true,
+        "removeComments": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "lib": [
+            "ES2015",
+            "DOM"
+        ],
+        "esModuleInterop": true
+    }
+}

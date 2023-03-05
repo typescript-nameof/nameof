@@ -3,7 +3,7 @@
     "rootDir": "./src",
     "outDir": "./dist"
   },
-  "extends": "../../tsconfig.common.json",
+  "extends": "../../tsconfig.base.json",
   "include": ["./src"],
   "references": [
     { "path": "../transforms-ts" },
