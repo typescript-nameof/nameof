@@ -86,11 +86,12 @@ export function replaceInText(fileName: string, fileText: string): { fileText?: 
                     transformations.pop();
                 }
 
-                transformations.push({
-                    start: nodeStart,
-                    end: node.end,
-                    text: printer.printNode(ts.EmitHint.Unspecified, resultNode, sourceFile),
-                });
+                transformations.push(
+                    {
+                        start: nodeStart,
+                        end: node.end,
+                        text: printer.printNode(ts.EmitHint.Unspecified, resultNode, sourceFile)
+                    });
             }
         }
     }

@@ -16,10 +16,13 @@ function nameofMacro({ references, state, babel })
     {
         const t = babel.types;
 
-        transformNode(t, getPath(), {
-            // tell the transformation to expect this identifier's name
-            nameofIdentifierName: path.node.name,
-        });
+        transformNode(
+            t,
+            getPath(),
+            {
+                // tell the transformation to expect this identifier's name
+                nameofIdentifierName: path.node.name,
+            });
 
         function getPath()
         {

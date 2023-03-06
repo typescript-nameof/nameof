@@ -1,24 +1,23 @@
 import { NodePath } from "@babel/traverse";
 import * as babelTypes from "@babel/types";
-import
-    {
-        ArrayExpression,
-        ArrowFunctionExpression,
-        BlockStatement,
-        CallExpression,
-        Expression,
-        FunctionExpression,
-        MemberExpression,
-        Node,
-        NumericLiteral,
-        StringLiteral,
-        TemplateLiteral,
-        TSImportType,
-        TSQualifiedName,
-        TSTypeParameterInstantiation,
-        UnaryExpression,
-        V8IntrinsicIdentifier,
-    } from "@babel/types";
+import {
+    ArrayExpression,
+    ArrowFunctionExpression,
+    BlockStatement,
+    CallExpression,
+    Expression,
+    FunctionExpression,
+    MemberExpression,
+    Node,
+    NumericLiteral,
+    StringLiteral,
+    TemplateLiteral,
+    TSImportType,
+    TSQualifiedName,
+    TSTypeParameterInstantiation,
+    UnaryExpression,
+    V8IntrinsicIdentifier,
+} from "@babel/types";
 import { throwError } from "@ts-nameof/common";
 import * as common from "@ts-nameof/transforms-common";
 import { getNegativeNumericLiteralValue, getReturnStatementArgumentFromBlock, isNegativeNumericLiteral } from "./helpers";
@@ -205,14 +204,18 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
     function parseArrayExpression(node: ArrayExpression)
     {
         const result: common.Node[] = [];
-        node.elements.forEach(element =>
-        {
-            if (element == null)
+
+        node.elements.forEach(
+            element =>
             {
-                return throwError(`Unsupported scenario with empty element encountered in array: ${getNodeText(node)}`);
-            }
-            result.push(parseCommonNode(element));
-        });
+                if (element == null)
+                {
+                    return throwError(`Unsupported scenario with empty element encountered in array: ${getNodeText(node)}`);
+                }
+
+                result.push(parseCommonNode(element));
+            });
+
         return common.createArrayLiteralNode(result);
     }
 
@@ -243,6 +246,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
             {
                 return node.value;
             }
+
             return getNegativeNumericLiteralValue(t, node);
         }
     }
@@ -260,14 +264,15 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
 
     function parseFunctionReturnExpression(functionNode: FunctionExpression | ArrowFunctionExpression, node: Expression)
     {
-        const parameterNames = functionNode.params.map(p =>
-        {
-            if (t.isIdentifier(p))
+        const parameterNames = functionNode.params.map(
+            p =>
             {
-                return p.name;
-            }
-            return getNodeText(p);
-        });
+                if (t.isIdentifier(p))
+                {
+                    return p.name;
+                }
+                return getNodeText(p);
+            });
 
         return common.createFunctionNode(parseCommonNode(node), parameterNames);
     }
@@ -293,6 +298,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
             {
                 parts.push(node.quasis[i].value.raw);
                 const expression = node.expressions[i];
+
                 if (expression != null)
                 {
                     parts.push(common.createInterpolateNode(expression, getNodeText(expression)));
@@ -309,6 +315,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
         {
             return throwError(`Expected a single argument for the nameof.interpolate function call ${getNodeText(node.arguments[0])}.`);
         }
+
         return common.createInterpolateNode(node.arguments[0], getNodeText(node.arguments[0]));
     }
 
@@ -327,6 +334,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
         {
             return getReturnStatementArgumentFromBlockOrThrow(func.body);
         }
+
         return func.body;
     }
 
@@ -336,6 +344,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
         {
             return throwError(`Expected node to be an identifier: ${getNodeText(node)}`);
         }
+
         return node.name;
     }
 
@@ -370,10 +379,12 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
             {
                 return expression;
             }
+
             if (t.isMemberExpression(expression) && t.isIdentifier(expression.object))
             {
                 return expression.object;
             }
+
             return undefined;
         }
     }

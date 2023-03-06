@@ -976,6 +976,7 @@ nameof(window);
                 {
                     return [possibleExpectedMessages];
                 }
+
                 return possibleExpectedMessages;
             }
         }

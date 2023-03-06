@@ -33,13 +33,14 @@ export function createDeclarationFile(project: Project)
             "NodeJS.ErrnoException",
         ];
 
-        declarationFile.forEachDescendant(descendant =>
-        {
-            if (typesToComment.indexOf(descendant.getText()) >= 0)
+        declarationFile.forEachDescendant(
+            descendant =>
             {
-                descendant.replaceWithText(`any /* ${descendant.getText()} */`);
-            }
-        });
+                if (typesToComment.indexOf(descendant.getText()) >= 0)
+                {
+                    descendant.replaceWithText(`any /* ${descendant.getText()} */`);
+                }
+            });
     }
 
     function removeTypeScriptImport()
@@ -52,25 +53,29 @@ export function createDeclarationFile(project: Project)
         const fileText = declarationFile.getText();
         declarationFile.removeText();
 
-        const apiModule = declarationFile.addModule({
-            hasDeclareKeyword: true,
-            declarationKind: ModuleDeclarationKind.Module,
-            name: `"ts-nameof"`,
-        });
+        const apiModule = declarationFile.addModule(
+            {
+                hasDeclareKeyword: true,
+                declarationKind: ModuleDeclarationKind.Module,
+                name: `"ts-nameof"`,
+            });
 
         apiModule.setBodyText(fileText);
-        apiModule.getVariableStatementOrThrow(s => s.getDeclarations().some(d => d.getName() === "api"))
-            .setHasDeclareKeyword(false);
+
+        apiModule.getVariableStatementOrThrow(
+            s => s.getDeclarations().some(
+                d => d.getName() === "api")).setHasDeclareKeyword(false);
     }
 
     function addGlobalDeclarations()
     {
         const globalFile = project.addSourceFileAtPath("../../lib/global.d.ts");
 
-        declarationFile.addStatements(writer =>
-        {
-            writer.newLine();
-            writer.write(globalFile.getText().replace(/\r?\n$/, ""));
-        });
+        declarationFile.addStatements(
+            writer =>
+            {
+                writer.newLine();
+                writer.write(globalFile.getText().replace(/\r?\n$/, ""));
+            });
     }
 }
