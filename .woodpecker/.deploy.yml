@@ -18,14 +18,14 @@ pipeline:
     commands:
       - npm i --no-save @octokit/rest
       - >
-          testNPM() {
-            echo "//registry.npmjs.org/:_authToken=$1" > ~/.npmrc
-            npm whoami > /dev/null 2>&1
-          }
+        testNPM() {
+          echo "//registry.npmjs.org/:_authToken=$1" > ~/.npmrc
+          npm whoami > /dev/null 2>&1
+        }
       - >
-          testGitHub() {
-            node -e 'new (require("@octokit/rest").Octokit)({ auth: "'"$1"'" }).request("GET /user").catch(() => process.exit(1))' > /dev/null 2>&1
-          }
+        testGitHub() {
+          node -e 'new (require("@octokit/rest").Octokit)({ auth: "'"$1"'" }).request("GET /user").catch(() => process.exit(1))' > /dev/null 2>&1
+        }
       - export TagHeading=$$(cat .tagHeading.txt)
       - '[ ! -z "$$(sed "$${TagHeading}p;d" CHANGELOG.md)" ] || { echo "No Changelog Entries Found!" && false; }'
       - testNPM $NPM_TOKEN || { echo "The NPM Access Token is invalid!" && false; }

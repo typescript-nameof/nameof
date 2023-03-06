@@ -5,10 +5,18 @@
         "outDir": "./dist"
     },
     "extends": "../../tsconfig.base.json",
-    "include": ["./src"],
+    "include": [
+        "./src"
+    ],
     "references": [
-        { "path": "../transforms-babel" },
-        { "path": "../tests-common" },
-        { "path": "../scripts-common" }
+        {
+            "path": "../transforms-babel"
+        },
+        {
+            "path": "../tests-common"
+        },
+        {
+            "path": "../scripts-common"
+        }
     ]
 }

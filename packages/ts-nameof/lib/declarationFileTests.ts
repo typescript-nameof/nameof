@@ -5,9 +5,10 @@ import { assert, IsExact } from "conditional-type-checks";
 import * as tsNameOfEs6 from "ts-nameof";
 
 /* istanbul ignore next */
-function testFunc() {
+function testFunc()
+{
     tsNameOf.replaceInFiles(["test"]);
-    tsNameOf.replaceInFiles(["test"]).then(() => {});
+    tsNameOf.replaceInFiles(["test"]).then(() => { });
 
     // replaceInText
     const replaceInTextResult = tsNameOf.replaceInText("fileName.ts", "const t = 5;");

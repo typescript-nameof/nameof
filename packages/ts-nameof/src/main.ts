@@ -2,7 +2,8 @@ import { transformerFactory } from "@ts-nameof/transforms-ts";
 import * as ts from "typescript";
 import { replaceInFiles, replaceInText } from "./text";
 
-interface Api {
+interface Api
+{
     (): ts.TransformerFactory<ts.SourceFile>;
     replaceInFiles(fileNames: ReadonlyArray<string>): Promise<void[]>;
     replaceInText(fileName: string, fileText: string): { fileText?: string; replaced: boolean };

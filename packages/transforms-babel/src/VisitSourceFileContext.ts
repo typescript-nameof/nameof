@@ -1,5 +1,6 @@
 import { Node } from "@babel/types";
 
-export interface VisitSourceFileContext {
+export interface VisitSourceFileContext
+{
     interpolateExpressions: Set<Node>;
 }

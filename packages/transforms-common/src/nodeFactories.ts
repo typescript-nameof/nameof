@@ -1,17 +1,19 @@
-import {
-    ArrayLiteralNode,
-    ComputedNode,
-    FunctionNode,
-    IdentifierNode,
-    ImportTypeNode,
-    InterpolateNode,
-    Node,
-    NumericLiteralNode,
-    StringLiteralNode,
-    TemplateExpressionNode,
-} from "./nodes";
+import
+    {
+        ArrayLiteralNode,
+        ComputedNode,
+        FunctionNode,
+        IdentifierNode,
+        ImportTypeNode,
+        InterpolateNode,
+        Node,
+        NumericLiteralNode,
+        StringLiteralNode,
+        TemplateExpressionNode,
+    } from "./nodes";
 
-export function createIdentifierNode(value: string, next?: Node | undefined): IdentifierNode {
+export function createIdentifierNode(value: string, next?: Node | undefined): IdentifierNode
+{
     return {
         kind: "Identifier",
         value,
@@ -19,7 +21,8 @@ export function createIdentifierNode(value: string, next?: Node | undefined): Id
     };
 }
 
-export function createStringLiteralNode(value: string, next?: Node | undefined): StringLiteralNode {
+export function createStringLiteralNode(value: string, next?: Node | undefined): StringLiteralNode
+{
     return {
         kind: "StringLiteral",
         value,
@@ -27,7 +30,8 @@ export function createStringLiteralNode(value: string, next?: Node | undefined):
     };
 }
 
-export function createNumericLiteralNode(value: number, next?: Node | undefined): NumericLiteralNode {
+export function createNumericLiteralNode(value: number, next?: Node | undefined): NumericLiteralNode
+{
     return {
         kind: "NumericLiteral",
         value,
@@ -35,7 +39,8 @@ export function createNumericLiteralNode(value: number, next?: Node | undefined)
     };
 }
 
-export function createArrayLiteralNode(elements: ArrayLiteralNode["elements"], next?: Node | undefined): ArrayLiteralNode {
+export function createArrayLiteralNode(elements: ArrayLiteralNode["elements"], next?: Node | undefined): ArrayLiteralNode
+{
     return {
         kind: "ArrayLiteral",
         elements,
@@ -43,7 +48,8 @@ export function createArrayLiteralNode(elements: ArrayLiteralNode["elements"], n
     };
 }
 
-export function createComputedNode(value: Node, next?: Node | undefined): ComputedNode {
+export function createComputedNode(value: Node, next?: Node | undefined): ComputedNode
+{
     return {
         kind: "Computed",
         value,
@@ -51,7 +57,8 @@ export function createComputedNode(value: Node, next?: Node | undefined): Comput
     };
 }
 
-export function createFunctionNode(value: Node, parameterNames: string[], next?: Node | undefined): FunctionNode {
+export function createFunctionNode(value: Node, parameterNames: string[], next?: Node | undefined): FunctionNode
+{
     return {
         kind: "Function",
         parameterNames,
@@ -60,7 +67,8 @@ export function createFunctionNode(value: Node, parameterNames: string[], next?:
     };
 }
 
-export function createImportTypeNode(isTypeOf: boolean, argument: Node | undefined, next?: Node | undefined): ImportTypeNode {
+export function createImportTypeNode(isTypeOf: boolean, argument: Node | undefined, next?: Node | undefined): ImportTypeNode
+{
     return {
         kind: "ImportType",
         isTypeOf,
@@ -69,7 +77,8 @@ export function createImportTypeNode(isTypeOf: boolean, argument: Node | undefin
     };
 }
 
-export function createTemplateExpressionNode(parts: (string | InterpolateNode)[], next?: Node | undefined): TemplateExpressionNode {
+export function createTemplateExpressionNode(parts: (string | InterpolateNode)[], next?: Node | undefined): TemplateExpressionNode
+{
     return {
         kind: "TemplateExpression",
         parts,
@@ -77,7 +86,8 @@ export function createTemplateExpressionNode(parts: (string | InterpolateNode)[]
     };
 }
 
-export function createInterpolateNode(expression: unknown, expressionText: string, next?: Node | undefined): InterpolateNode {
+export function createInterpolateNode(expression: unknown, expressionText: string, next?: Node | undefined): InterpolateNode
+{
     return {
         kind: "Interpolate",
         expression,

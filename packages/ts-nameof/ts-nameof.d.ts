@@ -1,11 +1,13 @@
 declare module "ts-nameof" {
-    interface Api {
+    interface Api
+    {
         (): any /* ts.TransformerFactory<ts.SourceFile> */;
         replaceInFiles(fileNames: ReadonlyArray<string>): Promise<void[]>;
-        replaceInText(fileName: string, fileText: string): {
-            fileText?: string;
-            replaced: boolean;
-        };
+        replaceInText(fileName: string, fileText: string):
+            {
+                fileText?: string;
+                replaced: boolean;
+            };
     }
     const api: Api;
     export = api;
@@ -24,7 +26,8 @@ declare function nameof<T>(func?: (obj: T) => any): string;
  */
 declare function nameof(obj: any): string;
 
-declare namespace nameof {
+declare namespace nameof
+{
     /**
      * Gets the string representation of the entire type parameter expression.
      *

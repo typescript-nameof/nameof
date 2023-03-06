@@ -6,18 +6,21 @@ import { plugin } from "../index";
 
 runCommonTests(run);
 
-function run(text: string) {
-    return babel.transformSync(text, {
-        presets: [
-            "@babel/preset-typescript",
-        ],
-        plugins: [
-            plugin,
-        ],
-        filename: path.resolve(__dirname, "test.ts"),
-        ast: false,
-        generatorOpts: {
-            retainLines: true,
-        },
-    })!.code!;
+function run(text: string)
+{
+    return babel.transformSync(
+        text,
+        {
+            presets: [
+                "@babel/preset-typescript",
+            ],
+            plugins: [
+                plugin,
+            ],
+            filename: path.resolve(__dirname, "test.ts"),
+            ast: false,
+            generatorOpts: {
+                retainLines: true,
+            },
+        })!.code!;
 }

@@ -22,7 +22,8 @@ declare module "ts-nameof.macro" {
      */
     function nameof(obj: any): string;
 
-    namespace nameof {
+    namespace nameof
+    {
         /**
          * Gets the string representation of the entire type parameter expression.
          *

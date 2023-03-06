@@ -3,9 +3,11 @@ import * as ts from "typescript";
 
 const printer = ts.createPrinter();
 
-export function replaceInText(fileName: string, fileText: string): { fileText?: string; replaced: boolean } {
+export function replaceInText(fileName: string, fileText: string): { fileText?: string; replaced: boolean }
+{
     // unofficial pre-2.0 backwards compatibility for this method
-    if (arguments.length === 1) {
+    if (arguments.length === 1)
+    {
         fileText = fileName;
         fileName = "/file.tsx"; // assume tsx
     }
@@ -13,27 +15,34 @@ export function replaceInText(fileName: string, fileText: string): { fileText?: 
     const visitSourceFileContext: VisitSourceFileContext = {
         interpolateExpressions: new Set<ts.Node>(),
     };
+
     const sourceFile = ts.createSourceFile(fileName, fileText, ts.ScriptTarget.Latest, false);
     const transformations: { start: number; end: number; text: string }[] = [];
-    const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context => {
+
+    const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context =>
+    {
         // this will always use the source file above
         return _ => visitSourceFile(context);
     };
+
     ts.transform(sourceFile, [transformerFactory]);
 
     throwIfContextHasInterpolateExpressions(visitSourceFileContext, sourceFile);
 
-    if (transformations.length === 0) {
+    if (transformations.length === 0)
+    {
         return { replaced: false };
     }
 
     return { fileText: getTransformedText(), replaced: true };
 
-    function getTransformedText() {
+    function getTransformedText()
+    {
         let finalText = "";
         let lastPos = 0;
 
-        for (const transform of transformations) {
+        for (const transform of transformations)
+        {
             finalText += fileText.substring(lastPos, transform.start);
             finalText += transform.text;
             lastPos = transform.end;
@@ -43,11 +52,14 @@ export function replaceInText(fileName: string, fileText: string): { fileText?: 
         return finalText;
     }
 
-    function visitSourceFile(context: ts.TransformationContext) {
+    function visitSourceFile(context: ts.TransformationContext)
+    {
         return visitNodeAndChildren(sourceFile) as ts.SourceFile;
 
-        function visitNodeAndChildren(node: ts.Node): ts.Node {
-            if (node == null) {
+        function visitNodeAndChildren(node: ts.Node): ts.Node
+        {
+            if (node == null)
+            {
                 return node;
             }
 
@@ -56,18 +68,21 @@ export function replaceInText(fileName: string, fileText: string): { fileText?: 
             const resultNode = visitNode(node, sourceFile, visitSourceFileContext);
             const wasTransformed = resultNode !== node;
 
-            if (wasTransformed) {
+            if (wasTransformed)
+            {
                 storeTransformation();
             }
 
             return resultNode;
 
-            function storeTransformation() {
+            function storeTransformation()
+            {
                 const nodeStart = node.getStart(sourceFile);
                 const lastTransformation = transformations[transformations.length - 1];
 
                 // remove the last transformation if it's nested within this transformation
-                if (lastTransformation != null && lastTransformation.start > nodeStart) {
+                if (lastTransformation != null && lastTransformation.start > nodeStart)
+                {
                     transformations.pop();
                 }
 
