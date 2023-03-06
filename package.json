@@ -4,6 +4,7 @@
   "workspaces": [
     "packages/common",
     "packages/scripts-common",
+    "packages/test",
     "packages/tests-common",
     "packages/transforms-common",
     "packages/transforms-babel",

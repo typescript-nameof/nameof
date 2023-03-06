@@ -1,0 +1,7 @@
+{
+  "name": "test",
+  "private": true,
+  "devDependencies": {
+    "ts-nameof": "^5.0.0"
+  }
+}
