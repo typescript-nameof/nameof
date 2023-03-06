@@ -1,6 +1,7 @@
 {
   "name": "@ts-nameof/scripts-common",
   "version": "4.0.2",
+  "private": true,
   "description": "ts-nameof - Common scripts for ts-nameof packages.",
   "main": "./dist/index.js",
   "author": "David Sherret",
