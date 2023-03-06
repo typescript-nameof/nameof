@@ -14,9 +14,9 @@
     "packages/babel-plugin-ts-nameof"
   ],
   "scripts": {
-    "clean": "npm run --workspaces clean",
-    "build": "npm run --workspaces build",
-    "test": "npm run --workspaces test",
+    "clean": "npm run --workspaces --if-present clean",
+    "build": "npm run --workspaces --if-present build",
+    "test": "npm run --workspaces --if-present test",
     "lint": "eslint --max-warnings 0 .",
     "verify": "npm run test test && npm run verify-declaration-file",
     "create-declaration-file": "npm run --workspace ts-nameof build:declarations && npm run --workspace ts-nameof.macro build:declarations",
