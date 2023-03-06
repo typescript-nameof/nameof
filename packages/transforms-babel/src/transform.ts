@@ -1,10 +1,18 @@
-import * as babelTypes from "@babel/types";
+import type * as babelTypes from "@babel/types";
 import { throwError } from "@ts-nameof/common";
 import * as common from "@ts-nameof/transforms-common";
 
 /**
- * Transforms a common node to a Babel node.
- * @param node Common node to be transformed.
+ * Converts the specified {@link node `node`} to a babel node.
+ *
+ * @param t
+ * A component for handling babel types.
+ *
+ * @param node
+ * The node to convert.
+ *
+ * @returns
+ * The converted node.
  */
 export function transform(t: typeof babelTypes, node: common.Node): babelTypes.StringLiteral | babelTypes.ArrayExpression | babelTypes.TemplateLiteral
 {
@@ -21,23 +29,35 @@ export function transform(t: typeof babelTypes, node: common.Node): babelTypes.S
     }
 }
 
-function createTemplateLiteral(t: typeof babelTypes, node: common.TemplateExpressionNode)
+/**
+ * Converts the specified {@link node `node`} to a babel node.
+ *
+ * @param t
+ * A component for handling babel types.
+ *
+ * @param node
+ * The node to convert.
+ *
+ * @returns
+ * The converted node.
+ */
+function createTemplateLiteral(t: typeof babelTypes, node: common.TemplateExpressionNode): babelTypes.TemplateLiteral
 {
-    const quasis: babelTypes.TemplateElement[] = [];
+    const parts: babelTypes.TemplateElement[] = [];
     const expressions: babelTypes.Expression[] = [];
 
     for (const part of node.parts)
     {
         if (typeof part === "string")
         {
-            quasis.push(
+            parts.push(
                 t.templateElement(
                     {
                         // I believe for the use case of this library, both the raw and cooked can be the same, but adding this
                         // just in case for the future...
                         raw: getRawValue(part),
                         // Need to add this for @babel/preset-env.
-                        cooked: part,
+                        cooked: part
                     }));
         }
         else
@@ -48,11 +68,20 @@ function createTemplateLiteral(t: typeof babelTypes, node: common.TemplateExpres
     }
 
     // set the last quasi as the tail
-    quasis[quasis.length - 1].tail = true;
+    parts[parts.length - 1].tail = true;
 
-    return t.templateLiteral(quasis, expressions);
+    return t.templateLiteral(parts, expressions);
 
-    function getRawValue(text: string)
+    /**
+     * Gets the source code representing the specified {@link text `text`}.
+     *
+     * @param text
+     * The text to get the source code from.
+     *
+     * @returns
+     * The source code representing the specified {@link text `text`}.
+     */
+    function getRawValue(text: string): string
     {
         // From
         // Adds a backslash before every `, \ and ${

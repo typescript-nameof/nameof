@@ -1,10 +1,10 @@
 /// <reference path="../references.d.ts" />
+import * as assert from "assert";
+import * as path from "path";
 import * as babel from "@babel/core";
 import "@babel/preset-typescript";
 import { runCommonTests } from "@ts-nameof/tests-common";
-import * as assert from "assert";
 import babelPluginMacros from "babel-plugin-macros";
-import * as path from "path";
 
 runCommonTests(run, { commonPrefix: "import nameof from './ts-nameof.macro';\n" });
 
@@ -17,25 +17,34 @@ describe(
             () =>
             {
                 const text = "import other from './ts-nameof.macro';other(console.log);other.full(console.log);";
-                assert.equal(run(text), `"log";"console.log";`);
+                assert.equal(run(text), '"log";"console.log";');
             });
     });
 
-function run(text: string)
+/**
+ * Transforms the specified {@link text `text`}.
+ *
+ * @param text
+ * The text to transform.
+ *
+ * @returns
+ * The transformed text.
+ */
+function run(text: string): string
 {
     return babel.transformSync(
         text,
         {
             presets: [
-                "@babel/preset-typescript",
+                "@babel/preset-typescript"
             ],
             plugins: [
-                babelPluginMacros,
+                babelPluginMacros
             ],
             filename: path.join(__dirname, "test.ts"),
             ast: false,
             generatorOpts: {
-                retainLines: true,
-            },
-        })!.code!;
+                retainLines: true
+            }
+        })?.code ?? "";
 }

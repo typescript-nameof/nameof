@@ -7,7 +7,16 @@ describe(
     "printCallExpression",
     () =>
     {
-        function doTest(callExpr: NameofCallExpression, expectedText: string)
+        /**
+         * Checks whether the specified {@link callExpr `callExpr`} is printed properly.
+         *
+         * @param callExpr
+         * The expression to transform.
+         *
+         * @param expectedText
+         * The expected result.
+         */
+        function doTest(callExpr: NameofCallExpression, expectedText: string): void
         {
             const result = printers.printCallExpression(callExpr);
             assert.equal(result, expectedText);
@@ -21,7 +30,7 @@ describe(
                     {
                         property: undefined,
                         typeArguments: [],
-                        arguments: [],
+                        arguments: []
                     },
                     "nameof()");
             });
@@ -34,7 +43,7 @@ describe(
                     {
                         property: "full",
                         typeArguments: [],
-                        arguments: [],
+                        arguments: []
                     },
                     "nameof.full()");
             });
@@ -47,7 +56,7 @@ describe(
                     {
                         property: undefined,
                         typeArguments: [],
-                        arguments: [factories.createIdentifierNode("test")],
+                        arguments: [factories.createIdentifierNode("test")]
                     },
                     "nameof(test)");
             });
@@ -62,8 +71,8 @@ describe(
                         typeArguments: [],
                         arguments: [
                             factories.createIdentifierNode("test1"),
-                            factories.createIdentifierNode("test2"),
-                        ],
+                            factories.createIdentifierNode("test2")
+                        ]
                     },
                     "nameof(test1, test2)");
             });
@@ -75,7 +84,7 @@ describe(
                 {
                     property: undefined,
                     typeArguments: [factories.createIdentifierNode("T")],
-                    arguments: [],
+                    arguments: []
                 },
                 "nameof<T>()");
         });
@@ -89,9 +98,9 @@ describe(
                         property: undefined,
                         typeArguments: [
                             factories.createIdentifierNode("T"),
-                            factories.createIdentifierNode("U"),
+                            factories.createIdentifierNode("U")
                         ],
-                        arguments: [],
+                        arguments: []
                     },
                     "nameof<T, U>()");
             });
@@ -105,12 +114,12 @@ describe(
                         property: "full",
                         typeArguments: [
                             factories.createIdentifierNode("T"),
-                            factories.createIdentifierNode("U"),
+                            factories.createIdentifierNode("U")
                         ],
                         arguments: [
                             factories.createIdentifierNode("test1"),
-                            factories.createIdentifierNode("test2"),
-                        ],
+                            factories.createIdentifierNode("test2")
+                        ]
                     },
                     "nameof.full<T, U>(test1, test2)");
             });
@@ -120,7 +129,16 @@ describe(
     "printNode",
     () =>
     {
-        function doTest(node: Node, expectedText: string)
+        /**
+         * Checks whether the specified {@link node `node`} is printed properly.
+         *
+         * @param node
+         * The node to transform.
+         *
+         * @param expectedText
+         * The expected result.
+         */
+        function doTest(node: Node, expectedText: string): void
         {
             const result = printers.printNode(node);
             assert.equal(result, expectedText);
@@ -149,7 +167,7 @@ describe(
                     () =>
                     {
                         const node = factories.createIdentifierNode("Test", factories.createComputedNode(factories.createStringLiteralNode("prop")));
-                        doTest(node, `Test["prop"]`);
+                        doTest(node, 'Test["prop"]');
                     });
             });
 
@@ -161,7 +179,7 @@ describe(
                     "should print in quotes",
                     () =>
                     {
-                        doTest(factories.createStringLiteralNode("test"), `"test"`);
+                        doTest(factories.createStringLiteralNode("test"), '"test"');
                     });
 
                 it(
@@ -169,7 +187,7 @@ describe(
                     () =>
                     {
                         const node = factories.createStringLiteralNode("test", factories.createIdentifierNode("length"));
-                        doTest(node, `"test".length`);
+                        doTest(node, '"test".length');
                     });
             });
 
@@ -181,7 +199,7 @@ describe(
                     "should print",
                     () =>
                     {
-                        doTest(factories.createNumericLiteralNode(5), `5`);
+                        doTest(factories.createNumericLiteralNode(5), "5");
                     });
 
                 it(
@@ -189,7 +207,7 @@ describe(
                     () =>
                     {
                         const node = factories.createNumericLiteralNode(5, factories.createIdentifierNode("length"));
-                        doTest(node, `5.length`);
+                        doTest(node, "5.length");
                     });
             });
 
@@ -202,7 +220,7 @@ describe(
                     () =>
                     {
                         const node = factories.createComputedNode(factories.createStringLiteralNode("test"));
-                        doTest(node, `["test"]`);
+                        doTest(node, '["test"]');
                     });
 
                 it(
@@ -210,7 +228,7 @@ describe(
                     () =>
                     {
                         const node = factories.createComputedNode(factories.createNumericLiteralNode(5), factories.createIdentifierNode("length"));
-                        doTest(node, `[5].length`);
+                        doTest(node, "[5].length");
                     });
             });
 
@@ -223,7 +241,7 @@ describe(
                     () =>
                     {
                         const node = factories.createFunctionNode(factories.createNumericLiteralNode(5), []);
-                        doTest(node, `() => 5`);
+                        doTest(node, "() => 5");
                     });
 
                 it(
@@ -231,7 +249,7 @@ describe(
                     () =>
                     {
                         const node = factories.createFunctionNode(factories.createNumericLiteralNode(5), ["p"]);
-                        doTest(node, `(p) => 5`); // keep it simple (don't bother removing parens)
+                        doTest(node, "(p) => 5"); // keep it simple (don't bother removing parens)
                     });
 
                 it(
@@ -239,7 +257,7 @@ describe(
                     () =>
                     {
                         const node = factories.createFunctionNode(factories.createNumericLiteralNode(5), ["a", "b"]);
-                        doTest(node, `(a, b) => 5`);
+                        doTest(node, "(a, b) => 5");
                     });
 
                 it(
@@ -247,7 +265,7 @@ describe(
                     () =>
                     {
                         const node = factories.createFunctionNode(factories.createNumericLiteralNode(5), ["a", "b"], factories.createIdentifierNode("length"));
-                        doTest(node, `((a, b) => 5).length`);
+                        doTest(node, "((a, b) => 5).length");
                     });
             });
 
@@ -268,7 +286,7 @@ describe(
                     () =>
                     {
                         const node = factories.createArrayLiteralNode([factories.createStringLiteralNode("test")]);
-                        doTest(node, `["test"]`);
+                        doTest(node, '["test"]');
                     });
 
                 it(
@@ -276,7 +294,7 @@ describe(
                     () =>
                     {
                         const node = factories.createArrayLiteralNode([factories.createStringLiteralNode("test"), factories.createStringLiteralNode("test2")]);
-                        doTest(node, `["test", "test2"]`);
+                        doTest(node, '["test", "test2"]');
                     });
 
                 it(
@@ -284,7 +302,7 @@ describe(
                     () =>
                     {
                         const node = factories.createArrayLiteralNode([], factories.createIdentifierNode("length"));
-                        doTest(node, `[].length`);
+                        doTest(node, "[].length");
                     });
             });
 
@@ -297,7 +315,7 @@ describe(
                     () =>
                     {
                         const node = factories.createImportTypeNode(false, undefined, factories.createIdentifierNode("length"));
-                        doTest(node, `import().length`);
+                        doTest(node, "import().length");
                     });
 
                 it(
@@ -305,7 +323,7 @@ describe(
                     () =>
                     {
                         const node = factories.createImportTypeNode(false, factories.createIdentifierNode("test"), undefined);
-                        doTest(node, `import(test)`);
+                        doTest(node, "import(test)");
                     });
 
                 it(
@@ -313,7 +331,7 @@ describe(
                     () =>
                     {
                         const node = factories.createImportTypeNode(false, factories.createStringLiteralNode("test"), undefined);
-                        doTest(node, `import("test")`);
+                        doTest(node, 'import("test")');
                     });
 
                 it(
@@ -321,7 +339,7 @@ describe(
                     () =>
                     {
                         const node = factories.createImportTypeNode(true, factories.createIdentifierNode("test"));
-                        doTest(node, `typeof import(test)`);
+                        doTest(node, "typeof import(test)");
                     });
             });
 

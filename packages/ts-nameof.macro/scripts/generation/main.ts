@@ -1,6 +1,6 @@
 import { ArgsChecker } from "@ts-nameof/scripts-common";
-import { getProject } from "../common";
 import { createDeclarationFile } from "./createDeclarationFile";
+import { getProject } from "../common";
 
 const argsChecker = new ArgsChecker();
 const project = getProject();

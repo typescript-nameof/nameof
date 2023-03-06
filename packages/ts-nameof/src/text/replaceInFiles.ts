@@ -2,14 +2,26 @@ import * as fs from "fs";
 import { getFileNamesFromGlobs } from "./getFileNamesFromGlobs";
 import { replaceInText } from "./replaceInText";
 
-export function replaceInFiles(fileNames: ReadonlyArray<string>): Promise<void[]>
+/**
+ * Transforms the files with the specified {@link fileNames `fileNames`}.
+ *
+ * @param fileNames
+ * The names of the files to transform.
+ */
+export async function replaceInFiles(fileNames: readonly string[]): Promise<void[]>
 {
     return getFileNamesFromGlobs(fileNames).then(globbedFileNames => doReplaceInFiles(globbedFileNames));
 }
 
-function doReplaceInFiles(fileNames: ReadonlyArray<string>)
+/**
+ * Transforms the files with the specified {@link fileNames `fileNames`}.
+ *
+ * @param fileNames
+ * The names of the files to transform.
+ */
+async function doReplaceInFiles(fileNames: readonly string[]): Promise<void[]>
 {
-    const promises: Promise<void>[] = [];
+    const promises: Array<Promise<void>> = [];
 
     fileNames.forEach(
         fileName =>
@@ -36,7 +48,7 @@ function doReplaceInFiles(fileNames: ReadonlyArray<string>)
                                 {
                                     fs.writeFile(
                                         fileName,
-                                        result.fileText!,
+                                        result.fileText ?? "",
                                         writeErr =>
                                         {
                                             /* istanbul ignore if */
@@ -54,7 +66,7 @@ function doReplaceInFiles(fileNames: ReadonlyArray<string>)
                                     resolve();
                                 }
                             });
-                    }),
+                    })
             );
         });
 

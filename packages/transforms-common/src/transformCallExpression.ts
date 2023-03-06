@@ -1,13 +1,38 @@
 import { assertNever, throwError } from "@ts-nameof/common";
 import { createArrayLiteralNode, createStringLiteralNode, createTemplateExpressionNode } from "./nodeFactories";
 import { flattenNodeToArray, getLastNextNode } from "./nodeHelpers";
-import { FunctionNode, NameofCallExpression, Node, StringLiteralNode, TemplateExpressionNode } from "./nodes";
+import { ArrayLiteralNode, FunctionNode, NameofCallExpression, Node, StringLiteralNode, TemplateExpressionNode } from "./nodes";
 import { printCallExpression, printNode } from "./printers";
 import { StringOrTemplateExpressionNodeBuilder } from "./StringOrTemplateExpressionBuilder";
 
-export function transformCallExpression(callExpr: NameofCallExpression)
+/**
+ * Represents the source to get a name from.
+ */
+interface INameSource
 {
-    if (callExpr.property == null)
+    /**
+     * The expression to get the name from.
+     */
+    expression: Node;
+
+    /**
+     * The number of elements to include.
+     */
+    count: number;
+}
+
+/**
+ * Transforms the specified {@link callExpr `callExpr`}.
+ *
+ * @param callExpr
+ * The expression to transform.
+ *
+ * @returns
+ * The transformed expression.
+ */
+export function transformCallExpression(callExpr: NameofCallExpression): Node
+{
+    if (callExpr.property === undefined)
     {
         return handleNameof(callExpr);
     }
@@ -30,11 +55,26 @@ export function transformCallExpression(callExpr: NameofCallExpression)
     return throwError(`Unsupported nameof call expression with property '${callExpr.property}': ${printCallExpression(callExpr)}`);
 }
 
-function handleNameof(callExpr: NameofCallExpression)
+/**
+ * Transforms the specified `nameof()` call.
+ *
+ * @param callExpr
+ * The expression to transform.
+ *
+ * @returns
+ * The transformed expression.
+ */
+function handleNameof(callExpr: NameofCallExpression): Node
 {
     return parseNameofExpression(getExpression());
 
-    function getExpression()
+    /**
+     * Gets the target expression of the call.
+     *
+     * @returns
+     * The target expression of the call.
+     */
+    function getExpression(): Node
     {
         if (callExpr.arguments.length === 1)
         {
@@ -49,23 +89,56 @@ function handleNameof(callExpr: NameofCallExpression)
     }
 }
 
-function handleNameofFull(callExpr: NameofCallExpression)
+/**
+ * Transforms the specified `nameof.full()` call.
+ *
+ * @param callExpr
+ * The expression to transform.
+ *
+ * @returns
+ * The transformed expression.
+ */
+function handleNameofFull(callExpr: NameofCallExpression): Node
 {
     return parseNameofFullExpression(getNodesFromCallExpression(callExpr));
 }
 
-function handleNameofSplit(callExpr: NameofCallExpression)
+/**
+ * Transforms the specified `nameof.split()` call.
+ *
+ * @param callExpr
+ * The expression to transform.
+ *
+ * @returns
+ * The transformed expression.
+ */
+function handleNameofSplit(callExpr: NameofCallExpression): ArrayLiteralNode
 {
     const literalNodes = getNodesFromCallExpression(callExpr).map(node => parseNode(node));
     return createArrayLiteralNode(literalNodes);
 }
 
-function handleNameofToArray(callExpr: NameofCallExpression)
+/**
+ * Transforms the specified `nameof.toArray()` call.
+ *
+ * @param callExpr
+ * The expression to transform.
+ *
+ * @returns
+ * The transformed expression.
+ */
+function handleNameofToArray(callExpr: NameofCallExpression): ArrayLiteralNode
 {
     const arrayArguments = getNodeArray();
     return createArrayLiteralNode(arrayArguments.map(element => parseNameofExpression(element)));
 
-    function getNodeArray()
+    /**
+     * Gets the target nodes of the call.
+     *
+     * @returns
+     * The target nodes of the call.
+     */
+    function getNodeArray(): Node[]
     {
         if (callExpr.arguments.length === 0)
         {
@@ -83,11 +156,20 @@ function handleNameofToArray(callExpr: NameofCallExpression)
             return callExpr.arguments;
         }
 
-        function handleFunction(func: FunctionNode)
+        /**
+         * Gets the target nodes from the specified {@link func `func`}.
+         *
+         * @param func
+         * The function to get the nodes from.
+         *
+         * @returns
+         * The nodes to determine the names of.
+         */
+        function handleFunction(func: FunctionNode): Node[]
         {
             const functionReturnValue = func.value;
 
-            if (functionReturnValue == null || functionReturnValue.kind !== "ArrayLiteral")
+            if (functionReturnValue === undefined || functionReturnValue.kind !== "ArrayLiteral")
             {
                 return throwError(`Unsupported toArray call expression. An array must be returned by the provided function: ${printCallExpression(callExpr)}`);
             }
@@ -97,18 +179,33 @@ function handleNameofToArray(callExpr: NameofCallExpression)
     }
 }
 
-function getNodesFromCallExpression(callExpr: NameofCallExpression)
+/**
+ * Gets the target nodes from the specified {@link callExpr `callExpr`}.
+ *
+ * @param callExpr
+ * The expression to get the target nodes from.
+ *
+ * @returns
+ * The target nodes in the specified {@link callExpr `callExpr`}.
+ */
+function getNodesFromCallExpression(callExpr: NameofCallExpression): Node[]
 {
     const { expression, count } = getExpressionAndCount();
     return getNodesFromCount(flattenNodeToArray(expression), count);
 
-    function getExpressionAndCount()
+    /**
+     * Gets the source to get the name from.
+     *
+     * @returns
+     * The source to get the name from.
+     */
+    function getExpressionAndCount(): INameSource
     {
         if (shouldUseArguments())
         {
             return {
                 expression: getArgumentExpression(),
-                count: getCountFromNode(callExpr.arguments.length > 1 ? callExpr.arguments[1] : undefined),
+                count: getCountFromNode(callExpr.arguments.length > 1 ? callExpr.arguments[1] : undefined)
             };
         }
 
@@ -116,13 +213,19 @@ function getNodesFromCallExpression(callExpr: NameofCallExpression)
         {
             return {
                 expression: callExpr.typeArguments[0],
-                count: getCountFromNode(callExpr.arguments.length > 0 ? callExpr.arguments[0] : undefined),
+                count: getCountFromNode(callExpr.arguments.length > 0 ? callExpr.arguments[0] : undefined)
             };
         }
 
         return throwError(`Unsupported use of nameof.full: ${printCallExpression(callExpr)}`);
 
-        function shouldUseArguments()
+        /**
+         * Checks whether names should be determined based on function arguments.
+         *
+         * @returns
+         * A value indicating whether names should be determined based on function arguments.
+         */
+        function shouldUseArguments(): boolean
         {
             if (callExpr.arguments.length === 0)
             {
@@ -137,7 +240,13 @@ function getNodesFromCallExpression(callExpr: NameofCallExpression)
             return callExpr.arguments[0].kind === "Function";
         }
 
-        function getArgumentExpression()
+        /**
+         * Gets the target expression to determine the name of.
+         *
+         * @returns
+         * The target expression.
+         */
+        function getArgumentExpression(): Node
         {
             let expression = callExpr.arguments[0];
 
@@ -146,7 +255,7 @@ function getNodesFromCallExpression(callExpr: NameofCallExpression)
                 expression = expression.value;
 
                 // skip over the first identifier (ex. skip over `obj` in `obj => obj.test`)
-                if (expression.next == null)
+                if (expression.next === undefined)
                 {
                     return throwError(`A property must be accessed on the object: ${printNode(callExpr.arguments[0])}`);
                 }
@@ -156,9 +265,18 @@ function getNodesFromCallExpression(callExpr: NameofCallExpression)
             return expression;
         }
 
-        function getCountFromNode(countExpr: Node | undefined)
+        /**
+         * Gets the desired number of name parts to include as specified in the {@link countExpr `countExpr`}.
+         *
+         * @param countExpr
+         * The expression which is expected to hold the desired number of name parts to include.
+         *
+         * @returns
+         * The desired number of name parts to include.
+         */
+        function getCountFromNode(countExpr: Node | undefined): number
         {
-            if (countExpr == null)
+            if (countExpr === undefined)
             {
                 return 0;
             }
@@ -172,7 +290,19 @@ function getNodesFromCallExpression(callExpr: NameofCallExpression)
         }
     }
 
-    function getNodesFromCount(nodes: Node[], count: number)
+    /**
+     * Gets the specified amount of nodes.
+     *
+     * @param nodes
+     * The nodes to choose the targets from.
+     *
+     * @param count
+     * The number of targets to get. I the value is negative, elements will be taken from the end of the {@link nodes `nodes`} array.
+     *
+     * @returns
+     * The target nodes.
+     */
+    function getNodesFromCount(nodes: Node[], count: number): Node[]
     {
         if (count > 0)
         {
@@ -197,11 +327,26 @@ function getNodesFromCallExpression(callExpr: NameofCallExpression)
     }
 }
 
-function parseNameofExpression(expression: Node)
+/**
+ * Transforms the specified {@link expression `expression`}.
+ *
+ * @param expression
+ * The expression to transform.
+ *
+ * @returns
+ * The transformed expression.
+ */
+function parseNameofExpression(expression: Node): Node
 {
     return parseNode(getNodeForNameOf(), expression);
 
-    function getNodeForNameOf()
+    /**
+     * Gets the target node.
+     *
+     * @returns
+     * The target node.
+     */
+    function getNodeForNameOf(): Node
     {
         const node = getLastNextNode(expression);
 
@@ -209,7 +354,7 @@ function parseNameofExpression(expression: Node)
         {
             const argument = node.value;
 
-            if (argument.next == null)
+            if (argument.next === undefined)
             {
                 return throwError(`A property must be accessed on the object: ${printNode(expression)}`);
             }
@@ -220,7 +365,19 @@ function parseNameofExpression(expression: Node)
     }
 }
 
-function parseNode(node: Node, parent?: Node)
+/**
+ * Transforms the specified {@link node `node`}.
+ *
+ * @param node
+ * The node to transform.
+ *
+ * @param parent
+ * The parent of the specified {@link node `node`}.
+ *
+ * @returns
+ * The transformed node.
+ */
+function parseNode(node: Node, parent?: Node): Node
 {
     switch (node.kind)
     {
@@ -236,23 +393,33 @@ function parseNode(node: Node, parent?: Node)
             // make a copy
             return createStringLiteralNode(node.value.toString());
         case "Function":
-            return throwError(`Nesting functions is not supported: ${printNode(parent || node)}`);
+            return throwError(`Nesting functions is not supported: ${printNode(parent ?? node)}`);
         case "Computed":
-            if (node.value.kind === "StringLiteral" && node.value.next == null)
+            if (node.value.kind === "StringLiteral" && node.value.next === undefined)
             {
                 return createStringLiteralNode(node.value.value);
             }
 
-            return throwError(`First accessed property must not be computed except if providing a string: ${printNode(parent || node)}`);
+            return throwError(`First accessed property must not be computed except if providing a string: ${printNode(parent ?? node)}`);
         case "Interpolate":
         case "ArrayLiteral":
         case "ImportType":
-            return throwNotSupportedErrorForNode(node);
+            throwNotSupportedErrorForNode(node);
+            break;
         default:
             return assertNever(node, `Not implemented node: ${JSON.stringify(node)}`);
     }
 }
 
+/**
+ * Transforms the specified {@link expressionNodes `expressionNodes`}.
+ *
+ * @param expressionNodes
+ * The nodes to transform.
+ *
+ * @returns
+ * The transformed nodes.
+ */
 function parseNameofFullExpression(expressionNodes: Node[]): StringLiteralNode | TemplateExpressionNode
 {
     const nodeBuilder = new StringOrTemplateExpressionNodeBuilder();
@@ -271,7 +438,13 @@ function parseNameofFullExpression(expressionNodes: Node[]): StringLiteralNode |
 
     return nodeBuilder.buildNode();
 
-    function addNodeToBuilder(node: Node)
+    /**
+     * Adds the specified {@link node `node`} to the result.
+     *
+     * @param node
+     * The node to add.
+     */
+    function addNodeToBuilder(node: Node): void
     {
         switch (node.kind)
         {
@@ -316,14 +489,21 @@ function parseNameofFullExpression(expressionNodes: Node[]): StringLiteralNode |
             case "ArrayLiteral":
             case "ImportType":
             case "Function":
-                return throwNotSupportedErrorForNode(node);
+                throwNotSupportedErrorForNode(node);
+                break;
             default:
                 return assertNever(node, `Not implemented node: ${JSON.stringify(node)}`);
         }
     }
 }
 
-function throwNotSupportedErrorForNode(node: Node)
+/**
+ * Throws an exception stating that the specified {@link node `node`} is unsupported.
+ *
+ * @param node
+ * The unsupported node.
+ */
+function throwNotSupportedErrorForNode(node: Node): never
 {
-    return throwError(`The node \`${printNode(node)}\` is not supported in this scenario.`);
+    throwError(`The node \`${printNode(node)}\` is not supported in this scenario.`);
 }

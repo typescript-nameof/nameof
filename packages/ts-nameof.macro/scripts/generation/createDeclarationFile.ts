@@ -1,15 +1,21 @@
 import { ModuleDeclarationKind, Node, Project } from "ts-morph";
 
-export function createDeclarationFile(project: Project)
+/**
+ * Creates the declaration file.
+ *
+ * @param project
+ * The project to add the declaration file to.
+ */
+export function createDeclarationFile(project: Project): void
 {
     const globalFile = project.addSourceFileAtPath("../../lib/global.d.ts");
     const declarationFile = project.createSourceFile("ts-nameof.macro.d.ts", "", { overwrite: true });
 
     const namespaceDec = declarationFile.addModule(
         {
-            name: `"ts-nameof.macro"`,
+            name: '"ts-nameof.macro"',
             declarationKind: ModuleDeclarationKind.Module,
-            hasDeclareKeyword: true,
+            hasDeclareKeyword: true
         });
 
     namespaceDec.setBodyText(globalFile.getFullText());
@@ -25,6 +31,6 @@ export function createDeclarationFile(project: Project)
     namespaceDec.addExportAssignment(
         {
             expression: "nameof",
-            isExportEquals: false,
+            isExportEquals: false
         });
 }

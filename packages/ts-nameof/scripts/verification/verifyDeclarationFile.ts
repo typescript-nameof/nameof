@@ -1,6 +1,9 @@
 import { Project } from "ts-morph";
 
-export function verifyDeclarationFile()
+/**
+ * Verifies the declaration file.
+ */
+export function verifyDeclarationFile(): void
 {
     const project = new Project();
     const declarationFile = project.addSourceFileAtPath("ts-nameof.d.ts");

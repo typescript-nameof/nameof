@@ -2,10 +2,15 @@ import { assertNever } from "@ts-nameof/common";
 import { NameofCallExpression, Node, TemplateExpressionNode } from "./nodes";
 
 /**
- * Prints the call expression to a string. Useful for displaying diagnostic information to the user.
- * @param callExpr `nameof` call expression to print.
+ * Prints the specified {@link callExpr `callExpr`}.
+ *
+ * @param callExpr
+ * The expression to print.
+ *
+ * @returns
+ * The source code representing the specified {@link callExpr `callExpr`}.
  */
-export function printCallExpression(callExpr: NameofCallExpression)
+export function printCallExpression(callExpr: NameofCallExpression): string
 {
     let result = "nameof";
 
@@ -20,15 +25,21 @@ export function printCallExpression(callExpr: NameofCallExpression)
 
     return result;
 
-    function writePropertyName()
+    /**
+     * Adds a property access expression to the result.
+     */
+    function writePropertyName(): void
     {
-        if (callExpr.property != null)
+        if (callExpr.property !== undefined)
         {
             result += `.${callExpr.property}`;
         }
     }
 
-    function writeTypeArguments()
+    /**
+     * Adds the type arguments to the result.
+     */
+    function writeTypeArguments(): void
     {
         result += "<";
 
@@ -45,7 +56,10 @@ export function printCallExpression(callExpr: NameofCallExpression)
         result += ">";
     }
 
-    function writeArguments()
+    /**
+     * Adds the function arguments to the result.
+     */
+    function writeArguments(): void
     {
         result += "(";
 
@@ -64,15 +78,20 @@ export function printCallExpression(callExpr: NameofCallExpression)
 }
 
 /**
- * Prints a node to a string. Useful for displaying diagnostic information to the user.
- * @param node Node to print.
+ * Prints the specified {@link node `node`}.
+ *
+ * @param node
+ * The node to print.
+ *
+ * @returns
+ * The source code representing the specified {@link node `node`}.
  */
 export function printNode(node: Node): string
 {
     // todo: this should throw in more scenarios (ex. string literal after an identifier)
     let result = getCurrentText();
 
-    if (node.next != null)
+    if (node.next !== undefined)
     {
         if (node.next.kind === "Identifier")
         {
@@ -86,12 +105,18 @@ export function printNode(node: Node): string
 
     return result;
 
-    function getCurrentText()
+    /**
+     * Gets the source code of the {@link node `node`}.
+     *
+     * @returns
+     * The source code of the {@link node `node`}.
+     */
+    function getCurrentText(): string
     {
         switch (node.kind)
         {
             case "StringLiteral":
-                return `\"${node.value}\"`;
+                return `"${node.value}"`;
             case "NumericLiteral":
                 return node.value.toString();
             case "Identifier":
@@ -101,7 +126,7 @@ export function printNode(node: Node): string
             case "Function":
                 let functionResult = `(${node.parameterNames.join(", ")}) => ${printNode(node.value)}`;
 
-                if (node.next != null)
+                if (node.next !== undefined)
                 {
                     functionResult = `(${functionResult})`;
                 }
@@ -110,7 +135,7 @@ export function printNode(node: Node): string
             case "ArrayLiteral":
                 return `[${node.elements.map(e => printNode(e)).join(", ")}]`;
             case "ImportType":
-                return (node.isTypeOf ? "typeof " : "") + `import(${node.argument == null ? "" : printNode(node.argument)})`;
+                return (node.isTypeOf ? "typeof " : "") + `import(${node.argument === undefined ? "" : printNode(node.argument)})`;
             case "Interpolate":
                 return `nameof.interpolate(${node.expressionText})`;
             case "TemplateExpression":
@@ -120,7 +145,16 @@ export function printNode(node: Node): string
         }
     }
 
-    function printTemplateExpression(TemplateExpression: TemplateExpressionNode)
+    /**
+     * Prints the specified expression.
+     *
+     * @param TemplateExpression
+     * The expression to print.
+     *
+     * @returns
+     * The source code representing the specified {@link TemplateExpression `TemplateExpression`}.
+     */
+    function printTemplateExpression(TemplateExpression: TemplateExpressionNode): string
     {
         let text = "`";
 

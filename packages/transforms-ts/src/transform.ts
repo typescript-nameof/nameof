@@ -9,8 +9,16 @@ import { VisitSourceFileContext } from "./VisitSourceFileContext";
 export type TransformResult = ts.StringLiteral | ts.ArrayLiteralExpression | ts.NoSubstitutionTemplateLiteral | ts.TemplateExpression;
 
 /**
- * Transforms a common node to a TypeScript compiler node.
- * @param node Common node to be transformed.
+ * Converts the specified {@link node `node`} to a TypeScript AST node.
+ *
+ * @param node
+ * The node to convert.
+ *
+ * @param context
+ * The context of the transformation.
+ *
+ * @returns
+ * The converted node.
  */
 export function transform(node: common.Node, context: VisitSourceFileContext | undefined): TransformResult
 {
@@ -23,7 +31,7 @@ export function transform(node: common.Node, context: VisitSourceFileContext | u
         case "TemplateExpression":
             if (node.parts.length === 1 && typeof node.parts[0] === "string")
             {
-                return ts.factory.createNoSubstitutionTemplateLiteral(node.parts[0] as string);
+                return ts.factory.createNoSubstitutionTemplateLiteral(node.parts[0]);
             }
 
             return createTemplateExpression(node, context);
@@ -32,14 +40,32 @@ export function transform(node: common.Node, context: VisitSourceFileContext | u
     }
 }
 
-function createTemplateExpression(node: common.TemplateExpressionNode, context: VisitSourceFileContext | undefined)
+/**
+ * Converts the specified {@link node `node`} to a template expression.
+ *
+ * @param node
+ * The node to convert.
+ *
+ * @param context
+ * The context of the transformation.
+ *
+ * @returns
+ * The converted node.
+ */
+function createTemplateExpression(node: common.TemplateExpressionNode, context: VisitSourceFileContext | undefined): ts.TemplateExpression
 {
-    const firstPart = typeof node.parts[0] === "string" ? node.parts[0] as string : undefined;
-    const parts = firstPart != null ? node.parts.slice(1) : [...node.parts];
+    const firstPart = typeof node.parts[0] === "string" ? node.parts[0] : undefined;
+    const parts = firstPart !== undefined ? node.parts.slice(1) : [...node.parts];
 
-    return ts.factory.createTemplateExpression(ts.factory.createTemplateHead(firstPart || ""), getParts());
+    return ts.factory.createTemplateExpression(ts.factory.createTemplateHead(firstPart ?? ""), getParts());
 
-    function getParts()
+    /**
+     * Gets the parts of the template expression.
+     *
+     * @returns
+     * The parts of the template expression.
+     */
+    function getParts(): ts.TemplateSpan[]
     {
         const templateSpans: ts.TemplateSpan[] = [];
 
@@ -64,12 +90,12 @@ function createTemplateExpression(node: common.TemplateExpressionNode, context: 
             const tsText = !isLast ? ts.factory.createTemplateMiddle(text) : ts.factory.createTemplateTail(text);
 
             // mark this nameof.interpolate expression as being handled
-            if (context != null)
+            if (context !== undefined)
             {
                 context.interpolateExpressions.delete(tsExpression);
             }
 
-            templateSpans.push(ts.createTemplateSpan(tsExpression, tsText));
+            templateSpans.push(ts.factory.createTemplateSpan(tsExpression, tsText));
         }
         return templateSpans;
     }

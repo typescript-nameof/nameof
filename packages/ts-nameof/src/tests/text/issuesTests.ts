@@ -1,12 +1,21 @@
 import * as assert from "assert";
-import { replaceInFiles } from "../../text";
 import { getTestFilePath, readFile, writeFile } from "./helpers";
+import { replaceInFiles } from "../../text";
 
 describe(
     "replaceInFiles()",
     () =>
     {
-        async function runTest(fileName: string, expectedFileName: string)
+        /**
+         * Runs a test on the file with the specified {@link fileName `fileName`}.
+         *
+         * @param fileName
+         * The name of the file to test.
+         *
+         * @param expectedFileName
+         * The name of the file which contains the expected results.
+         */
+        async function runTest(fileName: string, expectedFileName: string): Promise<void>
         {
             fileName = getTestFilePath(fileName);
             expectedFileName = getTestFilePath(expectedFileName);
@@ -26,7 +35,13 @@ describe(
             }
         }
 
-        function runIssueTest(issueNumber: number)
+        /**
+         * Runs a test related to the issue with the specified {@link issueNumber `issueNumber`}.
+         *
+         * @param issueNumber
+         * The number of the issue to run tests for.
+         */
+        function runIssueTest(issueNumber: number): void
         {
             describe(
                 `issue ${issueNumber}`,

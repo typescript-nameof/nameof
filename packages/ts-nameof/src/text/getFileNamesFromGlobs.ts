@@ -1,6 +1,15 @@
-import glob from "glob";
+import G from "glob";
 
-export function getFileNamesFromGlobs(globs: ReadonlyArray<string>)
+/**
+ * Searches all files which apply to the specified {@link globs `globs`}.
+ *
+ * @param globs
+ * The globs to perform the search.
+ *
+ * @returns
+ * The names of all files which apply to the specified {@link globs `globs`}.
+ */
+export function getFileNamesFromGlobs(globs: readonly string[]): Promise<string[]>
 {
     const promises = globs.map(g => getFileNamesFromGlob(g));
 
@@ -9,12 +18,21 @@ export function getFileNamesFromGlobs(globs: ReadonlyArray<string>)
             (a, b) => a.concat(b), []));
 }
 
-function getFileNamesFromGlob(globFileName: string)
+/**
+ * Searches all files which apply to the specified {@link globFileName `globFileName`}.
+ *
+ * @param globFileName
+ * The glob to perform the search.
+ *
+ * @returns
+ * The names of all files which apply to the specified {@link globFileName `globFileName`}.
+ */
+function getFileNamesFromGlob(globFileName: string): Promise<string[]>
 {
     return new Promise<string[]>(
         (resolve, reject) =>
         {
-            glob(
+            G(
                 globFileName,
                 (err, files) =>
                 {

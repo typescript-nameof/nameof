@@ -1,12 +1,28 @@
 // common AST to share between babel and typescript
 
-export interface NameofCallExpression
-{
+/**
+ * Represents a `nameof` expression.
+ */
+export type NameofCallExpression = {
+    /**
+     * The property of `nameof` that is being called.
+     */
     property: string | undefined;
-    typeArguments: Node[];
-    arguments: Node[];
-}
 
+    /**
+     * The type arguments of the call.
+     */
+    typeArguments: Node[];
+
+    /**
+     * The arguments of the call.
+     */
+    arguments: Node[];
+};
+
+/**
+ * Represents a node.
+ */
 export type Node =
     | IdentifierNode
     | StringLiteralNode
@@ -18,78 +34,197 @@ export type Node =
     | TemplateExpressionNode
     | InterpolateNode;
 
-export interface IdentifierNode
-{
+/**
+ * Represents an identifier.
+ */
+export type IdentifierNode = {
+    /**
+     * The type of the node.
+     */
     kind: "Identifier";
-    value: string;
-    next: Node | undefined;
-}
 
-export interface StringLiteralNode
-{
+    /**
+     * The value of the node.
+     */
+    value: string;
+
+    /**
+     * The next node in the chain.
+     */
+    next: Node | undefined;
+};
+
+/**
+ * Represents a string literal.
+ */
+export type StringLiteralNode = {
+    /**
+     * The type of the node.
+     */
     kind: "StringLiteral";
+
+    /**
+     * The value of the node.
+     */
     value: string;
-    next: Node | undefined;
-}
 
-export interface NumericLiteralNode
-{
+    /**
+     * The next node in the chain.
+     */
+    next: Node | undefined;
+};
+
+/**
+ * Represents a numeric literal.
+ */
+export type NumericLiteralNode = {
+    /**
+     * The type of the node.
+     */
     kind: "NumericLiteral";
+
+    /**
+     * The value of the node.
+     */
     value: number;
-    next: Node | undefined;
-}
 
-export interface ArrayLiteralNode
-{
+    /**
+     * The next node in the chain.
+     */
+    next: Node | undefined;
+};
+
+/**
+ * Represents an array literal.
+ */
+export type ArrayLiteralNode = {
+    /**
+     * The type of the node.
+     */
     kind: "ArrayLiteral";
+
+    /**
+     * The elements of the array.
+     */
     elements: Node[];
+
+    /**
+     * The next node in the chain.
+     */
     next: Node | undefined;
-}
+};
 
 /**
- * Node surrounded in brackets.
- * Ex. `[4]` in `obj[4]`
+ * Represents a computed property access.
  */
-export interface ComputedNode
-{
+export type ComputedNode = {
+    /**
+     * The type of the node.
+     */
     kind: "Computed";
+
+    /**
+     * The value of the node.
+     */
     value: Node;
-    next: Node | undefined;
-}
 
-export interface FunctionNode
-{
-    kind: "Function";
-    parameterNames: string[];
-    value: Node;
+    /**
+     * The next node in the chain.
+     */
     next: Node | undefined;
-}
-
-export interface ImportTypeNode
-{
-    kind: "ImportType";
-    isTypeOf: boolean;
-    argument: Node | undefined;
-    next: Node | undefined;
-}
-
-export interface TemplateExpressionNode
-{
-    kind: "TemplateExpression";
-    parts: (string | InterpolateNode)[];
-    next: Node | undefined;
-}
+};
 
 /**
- * An interpolate node.
- * Ex. Created from call expressions such as: `nameof.interpolate(expression)`
+ * Represents a function.
  */
-export interface InterpolateNode
-{
-    kind: "Interpolate";
-    /** The original AST node. */
-    expression: unknown;
-    /** The expression text for printing purposes. */
-    expressionText: string;
+export type FunctionNode = {
+    /**
+     * The type of the node.
+     */
+    kind: "Function";
+
+    /**
+     * The function parameters.
+     */
+    parameterNames: string[];
+
+    /**
+     * The body of the function.
+     */
+    value: Node;
+
+    /**
+     * The next node in the chain.
+     */
     next: Node | undefined;
-}
+};
+
+/**
+ * Represents an import type.
+ */
+export type ImportTypeNode = {
+    /**
+     * The type of the node.
+     */
+    kind: "ImportType";
+
+    /**
+     * A value indicating whether the type is lead by the `typeof` keyword.
+     */
+    isTypeOf: boolean;
+
+    /**
+     * The argument of the import type.
+     */
+    argument: Node | undefined;
+
+    /**
+     * The next node in the chain.
+     */
+    next: Node | undefined;
+};
+
+/**
+ * Represents a template expression.
+ */
+export type TemplateExpressionNode = {
+    /**
+     * The type of the node.
+     */
+    kind: "TemplateExpression";
+
+    /**
+     * The parts of the template expression.
+     */
+    parts: Array<string | InterpolateNode>;
+
+    /**
+     * The next node in the chain.
+     */
+    next: Node | undefined;
+};
+
+/**
+ * Represents an interpolate call.
+ */
+export type InterpolateNode = {
+    /**
+     * The type of the node.
+     */
+    kind: "Interpolate";
+
+    /**
+     * The original AST.
+     */
+    expression: unknown;
+
+    /**
+     * The source code of the expression.
+     */
+    expressionText: string;
+
+    /**
+     * The next node in the chain.
+     */
+    next: Node | undefined;
+};

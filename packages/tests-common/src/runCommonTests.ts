@@ -3,11 +3,26 @@ import * as path from "path";
 import { Project } from "ts-morph";
 
 /**
- * Runs tests across different compilers.
- * @param getTransformedText Function to get the transformed text.
- * @param options Options for running the tests.
+ * Provides options for performing tests.
  */
-export function runCommonTests(getTransformedText: (text: string) => string, options: { commonPrefix?: string } = {})
+interface ITestOptions
+{
+    /**
+     * A prefix to prepend to the code snippets to test.
+     */
+    commonPrefix?: string;
+}
+
+/**
+ * Registers common tests.
+ *
+ * @param getTransformedText
+ * A function for transforming code.
+ *
+ * @param options
+ * The options for running the tests.
+ */
+export function runCommonTests(getTransformedText: (text: string) => string, options: ITestOptions = {}): void
 {
     describe(
         "nameof",
@@ -33,56 +48,56 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should get the result of an identifier",
                         () =>
                         {
-                            runTest(`nameof(myObj);`, `"myObj";`);
+                            runTest("nameof(myObj);", '"myObj";');
                         });
 
                     it(
                         "should get the result of the this keyword",
                         () =>
                         {
-                            runTest(`nameof(this);`, `"this";`);
+                            runTest("nameof(this);", '"this";');
                         });
 
                     it(
                         "should get the result of a property access expression",
                         () =>
                         {
-                            runTest(`nameof(myObj.prop);`, `"prop";`);
+                            runTest("nameof(myObj.prop);", '"prop";');
                         });
 
                     it(
                         "should get the result of an expression with a parenthesized expression",
                         () =>
                         {
-                            runTest(`nameof((myObj).prop);`, `"prop";`);
+                            runTest("nameof((myObj).prop);", '"prop";');
                         });
 
                     it(
                         "should get the result of an expression with a type assertion",
                         () =>
                         {
-                            runTest(`nameof((myObj as any).prop);`, `"prop";`);
+                            runTest("nameof((myObj as any).prop);", '"prop";');
                         });
 
                     it(
                         "should get the result of a property access expression with null assertion operators",
                         () =>
                         {
-                            runTest(`nameof(myObj!.prop!);`, `"prop";`);
+                            runTest("nameof(myObj!.prop!);", '"prop";');
                         });
 
                     it(
                         "should get the result of an identifier with a dollar sign",
                         () =>
                         {
-                            runTest(`nameof(myObj.$prop);`, `"$prop";`);
+                            runTest("nameof(myObj.$prop);", '"$prop";');
                         });
 
                     it(
                         "should resolve to string when nesting nameofs",
                         () =>
                         {
-                            runTest(`nameof(nameof(testing));`, `"testing";`);
+                            runTest("nameof(nameof(testing));", '"testing";');
                         });
                 });
 
@@ -94,42 +109,42 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should get the result of an identifier",
                         () =>
                         {
-                            runTest(`nameof<Test>();`, `"Test";`);
+                            runTest("nameof<Test>();", '"Test";');
                         });
 
                     it(
                         "should get the result of a fully qualified name",
                         () =>
                         {
-                            runTest(`nameof<This.Is.A.Test>();`, `"Test";`);
+                            runTest("nameof<This.Is.A.Test>();", '"Test";');
                         });
 
                     it(
                         "should get an identifier with a dollar sign",
                         () =>
                         {
-                            runTest(`nameof<Test$>();`, `"Test$";`);
+                            runTest("nameof<Test$>();", '"Test$";');
                         });
 
                     it(
                         "should handle when someone uses an import type as not the last node",
                         () =>
                         {
-                            runTest(`nameof<import('test').prop>();`, `"prop";`);
+                            runTest("nameof<import('test').prop>();", '"prop";');
                         });
 
                     it(
                         "should throw when someone only uses an import type",
                         () =>
                         {
-                            runThrowTest(`nameof<import('test')>();`, getNotSupportedErrorText("import(\"test\")"));
+                            runThrowTest("nameof<import('test')>();", getNotSupportedErrorText('import("test")'));
                         });
 
                     it(
                         "should throw when someone only uses an import type with typeof",
                         () =>
                         {
-                            runThrowTest(`nameof<typeof import('test')>();`, getNotSupportedErrorText("typeof import(\"test\")"));
+                            runThrowTest("nameof<typeof import('test')>();", getNotSupportedErrorText('typeof import("test")'));
                         });
                 });
 
@@ -141,42 +156,42 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should not allow a computed property to be at the end with a number",
                         () =>
                         {
-                            runThrowTest(`nameof(anyProp[0]);`, getFirstAccessedPropertyMustNotBeComputedErrorText(`anyProp[0]`));
+                            runThrowTest("nameof(anyProp[0]);", getFirstAccessedPropertyMustNotBeComputedErrorText("anyProp[0]"));
                         });
 
                     it(
                         "should get after the period",
                         () =>
                         {
-                            runTest(`nameof(anyProp[0].prop);`, `"prop";`);
+                            runTest("nameof(anyProp[0].prop);", '"prop";');
                         });
 
                     it(
                         "should get the string inside the computed property",
                         () =>
                         {
-                            runTest(`nameof(obj["prop"]);`, `"prop";`);
+                            runTest('nameof(obj["prop"]);', '"prop";');
                         });
 
                     it(
                         "should get the string inside the computed property for a function",
                         () =>
                         {
-                            runTest(`nameof<MyInterface>(i => i["prop"]);`, `"prop";`);
+                            runTest('nameof<MyInterface>(i => i["prop"]);', '"prop";');
                         });
 
                     it(
                         "should not allow a computed property to be at the end with a number when using a function",
                         () =>
                         {
-                            runThrowTest(`nameof<MyInterface>(i => i.prop[0]);`, getFirstAccessedPropertyMustNotBeComputedErrorText("(i) => i.prop[0]"));
+                            runThrowTest("nameof<MyInterface>(i => i.prop[0]);", getFirstAccessedPropertyMustNotBeComputedErrorText("(i) => i.prop[0]"));
                         });
 
                     it(
                         "should not allow an identifier nested in a computed property",
                         () =>
                         {
-                            runThrowTest(`nameof<MyInterface>(i => i.prop[prop[0]]);`, getFirstAccessedPropertyMustNotBeComputedErrorText("(i) => i.prop[prop[0]]"));
+                            runThrowTest("nameof<MyInterface>(i => i.prop[prop[0]]);", getFirstAccessedPropertyMustNotBeComputedErrorText("(i) => i.prop[prop[0]]"));
                         });
                 });
 
@@ -188,14 +203,14 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should not allow only an array",
                         () =>
                         {
-                            runThrowTest(`nameof([0]);`, getNotSupportedErrorText("[0]"));
+                            runThrowTest("nameof([0]);", getNotSupportedErrorText("[0]"));
                         });
 
                     it(
                         "should allow getting an array's property",
                         () =>
                         {
-                            runTest(`nameof([].length);`, `"length";`);
+                            runTest("nameof([].length);", '"length";');
                         });
                 });
 
@@ -207,7 +222,7 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should get the last string",
                         () =>
                         {
-                            runTest(`nameof<MyInterface>(i => i.prop1.prop2);`, `"prop2";`);
+                            runTest("nameof<MyInterface>(i => i.prop1.prop2);", '"prop2";');
                         });
 
                     it(
@@ -215,35 +230,35 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         () =>
                         {
                             // no reason for people to do this, but don't bother complaining
-                            runTest(`nameof<MyInterface>(i => { console.log('test'); return i.prop1.prop2; });`, `"prop2";`);
+                            runTest("nameof<MyInterface>(i => { console.log('test'); return i.prop1.prop2; });", '"prop2";');
                         });
 
                     it(
                         "should handle when someone uses an import type",
                         () =>
                         {
-                            runTest(`nameof<import('test')>(x => x.Foo);`, `"Foo";`);
+                            runTest("nameof<import('test')>(x => x.Foo);", '"Foo";');
                         });
 
                     it(
                         "should get when using an element access expression directly on the object",
                         () =>
                         {
-                            runTest(`nameof<MyInterface>(i => i["prop1"]);`, `"prop1";`);
+                            runTest('nameof<MyInterface>(i => i["prop1"]);', '"prop1";');
                         });
 
                     it(
                         "should throw when using an element access expression directly on the object and it is not a string",
                         () =>
                         {
-                            runThrowTest(`nameof<MyInterface>(i => i[0]);`, getFirstAccessedPropertyMustNotBeComputedErrorText(`(i) => i[0]`));
+                            runThrowTest("nameof<MyInterface>(i => i[0]);", getFirstAccessedPropertyMustNotBeComputedErrorText("(i) => i[0]"));
                         });
 
                     it(
                         "should throw when the function doesn't have a period",
                         () =>
                         {
-                            runThrowTest(`nameof<MyInterface>(i => i);`, "A property must be accessed on the object: (i) => i");
+                            runThrowTest("nameof<MyInterface>(i => i);", "A property must be accessed on the object: (i) => i");
                         });
 
                     it(
@@ -254,10 +269,10 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
 
                             const possibleMessages = [
                                 errorPrefix + "{ i; }", // babel
-                                errorPrefix + "{\n    i;\n}", // typescript
+                                errorPrefix + "{\n    i;\n}" // typescript
                             ];
 
-                            runThrowTest(`nameof<MyInterface>(i => { i; });`, possibleMessages);
+                            runThrowTest("nameof<MyInterface>(i => { i; });", possibleMessages);
                         });
                 });
 
@@ -270,14 +285,14 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         () =>
                         {
                             // this allows for nested nameofs
-                            runTest(`nameof("test");`, `"test";`);
+                            runTest('nameof("test");', '"test";');
                         });
 
                     it(
                         "should transform a numeric literal as a string",
                         () =>
                         {
-                            runTest(`nameof(5);`, `"5";`);
+                            runTest("nameof(5);", '"5";');
                         });
                 });
 
@@ -290,11 +305,11 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         () =>
                         {
                             runThrowTest(
-                                `nameof(nameof.interpolate(5));`,
+                                "nameof(nameof.interpolate(5));",
                                 [
                                     getNotSupportedErrorText("nameof.interpolate(5)"),
                                     // it will be this for babel because it checks the parent nodes
-                                    getUnusedNameofInterpolateErrorText("5"),
+                                    getUnusedNameofInterpolateErrorText("5")
                                 ]);
                         });
                 });
@@ -354,7 +369,7 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should ignore spread syntax",
                         () =>
                         {
-                            runTest(`nameof(...test);`, `"test";`);
+                            runTest("nameof(...test);", '"test";');
                         });
                 });
         });
@@ -383,70 +398,70 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should include everything when no count arg is provided",
                         () =>
                         {
-                            runTest(`nameof.full(obj.prop.other);`, `"obj.prop.other";`);
+                            runTest("nameof.full(obj.prop.other);", '"obj.prop.other";');
                         });
 
                     it(
                         "should not include null assertion operators",
                         () =>
                         {
-                            runTest(`nameof.full(obj!.prop!.other!);`, `"obj.prop.other";`);
+                            runTest("nameof.full(obj!.prop!.other!);", '"obj.prop.other";');
                         });
 
                     it(
                         "should not include null assertion operators when also using element access expressions",
                         () =>
                         {
-                            runTest(`nameof.full(obj!.prop![0].other!);`, `"obj.prop[0].other";`);
+                            runTest("nameof.full(obj!.prop![0].other!);", '"obj.prop[0].other";');
                         });
 
                     it(
                         "should escape string literals in element access expressions",
                         () =>
                         {
-                            runTest(`nameof.full(obj.prop["other"]);`, `"obj.prop[\\"other\\"]";`);
+                            runTest('nameof.full(obj.prop["other"]);', '"obj.prop[\\"other\\"]";');
                         });
 
                     it(
                         "should allow using a period index",
                         () =>
                         {
-                            runTest("nameof.full(MyTest.Test.This, 1);", `"Test.This";`);
+                            runTest("nameof.full(MyTest.Test.This, 1);", '"Test.This";');
                         });
 
                     it(
                         "should allow using a period index of 0",
                         () =>
                         {
-                            runTest("nameof.full(MyTest.Test.This, 0);", `"MyTest.Test.This";`);
+                            runTest("nameof.full(MyTest.Test.This, 0);", '"MyTest.Test.This";');
                         });
 
                     it(
                         "should allow using a period index up to its max value",
                         () =>
                         {
-                            runTest("nameof.full(MyTest.Test.This, 2);", `"This";`);
+                            runTest("nameof.full(MyTest.Test.This, 2);", '"This";');
                         });
 
                     it(
                         "should allow using a negative period index",
                         () =>
                         {
-                            runTest("nameof.full(MyTest.Test.This, -1);", `"This";`);
+                            runTest("nameof.full(MyTest.Test.This, -1);", '"This";');
                         });
 
                     it(
                         "should allow using a negative period index to its max value",
                         () =>
                         {
-                            runTest("nameof.full(MyTest.Test.This, -3);", `"MyTest.Test.This";`);
+                            runTest("nameof.full(MyTest.Test.This, -3);", '"MyTest.Test.This";');
                         });
 
                     it(
                         "should throw when the periodIndex is not a number literal",
                         () =>
                         {
-                            runThrowTest("nameof.full(MyTest.Test, 'test')", `Expected count to be a number, but was: "test"`);
+                            runThrowTest("nameof.full(MyTest.Test, 'test')", 'Expected count to be a number, but was: "test"');
                         });
 
                     it(
@@ -467,7 +482,7 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should resolve to string when nesting nameofs",
                         () =>
                         {
-                            runTest(`nameof.full(nameof(testing));`, `"testing";`);
+                            runTest("nameof.full(nameof(testing));", '"testing";');
                         });
 
                     it(
@@ -475,9 +490,8 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         () =>
                         {
                             runTest(
-                                `class Test {\n  constructor() {\n    nameof.full(super.test);\n  }\n}`,
-                                `class Test {\n  constructor() {\n    "super.test";\n  }\n}`,
-                            );
+                                "class Test {\n  constructor() {\n    nameof.full(super.test);\n  }\n}",
+                                'class Test {\n  constructor() {\n    "super.test";\n  }\n}');
                         });
                 });
 
@@ -489,49 +503,49 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should include everything when no count arg is provided",
                         () =>
                         {
-                            runTest(`nameof.full<Some.Test.Name>();`, `"Some.Test.Name";`);
+                            runTest("nameof.full<Some.Test.Name>();", '"Some.Test.Name";');
                         });
 
                     it(
                         "should allow using a period index",
                         () =>
                         {
-                            runTest("nameof.full<MyTest.Test.This>(1);", `"Test.This";`);
+                            runTest("nameof.full<MyTest.Test.This>(1);", '"Test.This";');
                         });
 
                     it(
                         "should allow using a period index of 0",
                         () =>
                         {
-                            runTest("nameof.full<MyTest.Test.This>(0);", `"MyTest.Test.This";`);
+                            runTest("nameof.full<MyTest.Test.This>(0);", '"MyTest.Test.This";');
                         });
 
                     it(
                         "should allow using a period index up to its max value",
                         () =>
                         {
-                            runTest("nameof.full<MyTest.Test.This>(2);", `"This";`);
+                            runTest("nameof.full<MyTest.Test.This>(2);", '"This";');
                         });
 
                     it(
                         "should allow using a negative period index",
                         () =>
                         {
-                            runTest("nameof.full<MyTest.Test.This>(-1);", `"This";`);
+                            runTest("nameof.full<MyTest.Test.This>(-1);", '"This";');
                         });
 
                     it(
                         "should allow using a negative period index to its max value",
                         () =>
                         {
-                            runTest("nameof.full<MyTest.Test.This>(-3);", `"MyTest.Test.This";`);
+                            runTest("nameof.full<MyTest.Test.This>(-3);", '"MyTest.Test.This";');
                         });
 
                     it(
                         "should throw when the periodIndex is not a number literal",
                         () =>
                         {
-                            runThrowTest("nameof.full<MyTest.Test>('test')", `Expected count to be a number, but was: "test"`);
+                            runThrowTest("nameof.full<MyTest.Test>('test')", 'Expected count to be a number, but was: "test"');
                         });
 
                     it(
@@ -552,7 +566,7 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should throw when someone uses an import type",
                         () =>
                         {
-                            runThrowTest(`nameof.full<import('test').other.test>();`, getNotSupportedErrorText("import(\"test\").other.test"));
+                            runThrowTest("nameof.full<import('test').other.test>();", getNotSupportedErrorText('import("test").other.test'));
                         });
                 });
 
@@ -564,7 +578,7 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should include the brackets",
                         () =>
                         {
-                            runTest(`nameof.full(anyProp[0].myProp);`, `"anyProp[0].myProp";`);
+                            runTest("nameof.full(anyProp[0].myProp);", '"anyProp[0].myProp";');
                         });
                 });
 
@@ -576,51 +590,51 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should get the text",
                         () =>
                         {
-                            runTest(`nameof.full<MyInterface>(i => i.prop1.prop2);`, `"prop1.prop2";`);
+                            runTest("nameof.full<MyInterface>(i => i.prop1.prop2);", '"prop1.prop2";');
                         });
 
                     it(
                         "should get the text without the null assertion operator",
                         () =>
                         {
-                            runTest(`nameof.full<MyInterface>(i => i.prop1!.prop2!);`, `"prop1.prop2";`);
+                            runTest("nameof.full<MyInterface>(i => i.prop1!.prop2!);", '"prop1.prop2";');
                         });
 
                     it(
                         "should get the text when there's a trailing comma with whitespace",
                         () =>
                         {
-                            runTest("nameof.full<IState>(state => state.field.dates, );", `"field.dates";`);
+                            runTest("nameof.full<IState>(state => state.field.dates, );", '"field.dates";');
                         });
 
                     it(
                         "should get the text when using a function",
                         () =>
                         {
-                            runTest(`nameof.full<MyInterface>(function(i) { return i.prop1.prop2; });`, `"prop1.prop2";`);
+                            runTest("nameof.full<MyInterface>(function(i) { return i.prop1.prop2; });", '"prop1.prop2";');
                         });
 
                     it(
                         "should get the text when providing a period",
                         () =>
                         {
-                            runTest(`nameof.full<MyInterface>(i => i.prop1.prop2, 0);`, `"prop1.prop2";`);
-                            runTest(`nameof.full<MyInterface>(i => i.prop1.prop2, 1);`, `"prop2";`);
-                            runTest(`nameof.full<MyInterface>(i => i.prop1.prop2.prop3, -1);`, `"prop3";`);
+                            runTest("nameof.full<MyInterface>(i => i.prop1.prop2, 0);", '"prop1.prop2";');
+                            runTest("nameof.full<MyInterface>(i => i.prop1.prop2, 1);", '"prop2";');
+                            runTest("nameof.full<MyInterface>(i => i.prop1.prop2.prop3, -1);", '"prop3";');
                         });
 
                     it(
                         "should throw when the function doesn't have a period",
                         () =>
                         {
-                            runThrowTest(`nameof.full<MyInterface>(i => i);`, "A property must be accessed on the object: (i) => i");
+                            runThrowTest("nameof.full<MyInterface>(i => i);", "A property must be accessed on the object: (i) => i");
                         });
 
                     it(
                         "should throw when someone nests a function within a function",
                         () =>
                         {
-                            runThrowTest(`nameof.full<MyInterface>(i => () => 5);`, "A property must be accessed on the object: (i) => () => 5");
+                            runThrowTest("nameof.full<MyInterface>(i => () => 5);", "A property must be accessed on the object: (i) => () => 5");
                         });
                 });
 
@@ -634,28 +648,28 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         "should interpolate the provided expression",
                         () =>
                         {
-                            runTest(`nameof.full(Test.Other[nameof.interpolate(other)]);`, "`Test.Other[${other}]`;");
+                            runTest("nameof.full(Test.Other[nameof.interpolate(other)]);", "`Test.Other[${other}]`;");
                         });
 
                     it(
                         "should interpolate when using a function",
                         () =>
                         {
-                            runTest(`nameof.full<a>(a => a.b.c[nameof.interpolate(index)].d);`, "`b.c[${index}].d`;");
+                            runTest("nameof.full<a>(a => a.b.c[nameof.interpolate(index)].d);", "`b.c[${index}].d`;");
                         });
 
                     it(
                         "should throw when the interpolate function has zero arguments",
                         () =>
                         {
-                            runThrowTest(`nameof.full(Test.Other[nameof.interpolate()]);`, singleArgumentErrorMessage);
+                            runThrowTest("nameof.full(Test.Other[nameof.interpolate()]);", singleArgumentErrorMessage);
                         });
 
                     it(
                         "should throw when the interpolate function has multiple arguments",
                         () =>
                         {
-                            runThrowTest(`nameof.full(Test.Other[nameof.interpolate(test, test)]);`, singleArgumentErrorMessage);
+                            runThrowTest("nameof.full(Test.Other[nameof.interpolate(test, test)]);", singleArgumentErrorMessage);
                         });
 
                     it(
@@ -670,7 +684,7 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                         () =>
                         {
                             runTest("nameof.full(m.Data[nameof.interpolate(i)].Title);", "`m.Data[${i}].Title`;");
-                            runTest("nameof.full(m.Data[i].Title);", `"m.Data[i].Title";`);
+                            runTest("nameof.full(m.Data[i].Title);", '"m.Data[i].Title";');
                         });
                 });
         });
@@ -683,35 +697,35 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                 "should return an array of values when given a function that returns an array as input",
                 () =>
                 {
-                    runTest(`nameof.toArray<MyInterface>(o => [o.Prop1, o.Prop2, o.Prop3]);`, `["Prop1", "Prop2", "Prop3"];`);
+                    runTest("nameof.toArray<MyInterface>(o => [o.Prop1, o.Prop2, o.Prop3]);", '["Prop1", "Prop2", "Prop3"];');
                 });
 
             it(
                 "should return an array of values when given multiple arguments",
                 () =>
                 {
-                    runTest(`nameof.toArray(myObject.Prop1, otherObject.Prop2);`, `["Prop1", "Prop2"];`);
+                    runTest("nameof.toArray(myObject.Prop1, otherObject.Prop2);", '["Prop1", "Prop2"];');
                 });
 
             it(
                 "should return an array with a single element if a non-function argument is passed",
                 () =>
                 {
-                    runTest(`nameof.toArray(myObject.Prop1);`, `["Prop1"];`);
+                    runTest("nameof.toArray(myObject.Prop1);", '["Prop1"];');
                 });
 
             it(
                 "should support nested nameof calls",
                 () =>
                 {
-                    runTest(`nameof.toArray(nameof.full(Some.Qualified.Name), Some.Qualified.Name);`, `["Some.Qualified.Name", "Name"];`);
+                    runTest("nameof.toArray(nameof.full(Some.Qualified.Name), Some.Qualified.Name);", '["Some.Qualified.Name", "Name"];');
                 });
 
             it(
                 "should support a non-arrow function expression",
                 () =>
                 {
-                    runTest(`nameof.toArray<MyInterface>(function(o) { return [o.Prop1, o.Prop2]; });`, `["Prop1", "Prop2"];`);
+                    runTest("nameof.toArray<MyInterface>(function(o) { return [o.Prop1, o.Prop2]; });", '["Prop1", "Prop2"];');
                 });
 
             it(
@@ -719,16 +733,15 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                 () =>
                 {
                     runThrowTest(
-                        `nameof.toArray<MyInterface>(o => o.Prop1);`,
-                        "Unsupported toArray call expression. An array must be returned by the provided function: nameof.toArray<MyInterface>((o) => o.Prop1)",
-                    );
+                        "nameof.toArray<MyInterface>(o => o.Prop1);",
+                        "Unsupported toArray call expression. An array must be returned by the provided function: nameof.toArray<MyInterface>((o) => o.Prop1)");
                 });
 
             it(
                 "should throw when no arguments are provided",
                 () =>
                 {
-                    runThrowTest(`nameof.toArray<MyInterface>();`, "Unable to parse call expression. No arguments provided: nameof.toArray<MyInterface>()");
+                    runThrowTest("nameof.toArray<MyInterface>();", "Unable to parse call expression. No arguments provided: nameof.toArray<MyInterface>()");
                 });
         });
 
@@ -740,70 +753,70 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                 "should return an array of values where each element is a subsequent part of the path provided",
                 () =>
                 {
-                    runTest(`nameof.split<MyInterface>(o => o.Prop1.Prop2.Prop3);`, `["Prop1", "Prop2", "Prop3"];`);
+                    runTest("nameof.split<MyInterface>(o => o.Prop1.Prop2.Prop3);", '["Prop1", "Prop2", "Prop3"];');
                 });
 
             it(
                 "should return an array of values where each element is a subsequent part of the path provided",
                 () =>
                 {
-                    runTest(`nameof.split(o.Prop1.Prop2.Prop3);`, `["o", "Prop1", "Prop2", "Prop3"];`);
+                    runTest("nameof.split(o.Prop1.Prop2.Prop3);", '["o", "Prop1", "Prop2", "Prop3"];');
                 });
 
             it(
                 "should allow using a period index",
                 () =>
                 {
-                    runTest(`nameof.split(MyTest.Test.This, 1);`, `["Test", "This"];`);
+                    runTest("nameof.split(MyTest.Test.This, 1);", '["Test", "This"];');
                 });
 
             it(
                 "should allow using a period index of 0",
                 () =>
                 {
-                    runTest(`nameof.split(MyTest.Test.This, 0);`, `["MyTest", "Test", "This"];`);
+                    runTest("nameof.split(MyTest.Test.This, 0);", '["MyTest", "Test", "This"];');
                 });
 
             it(
                 "should allow using a period index up to its max value",
                 () =>
                 {
-                    runTest(`nameof.split(MyTest.Test.This, 2);`, `["This"];`);
+                    runTest("nameof.split(MyTest.Test.This, 2);", '["This"];');
                 });
 
             it(
                 "should allow using a negative period index",
                 () =>
                 {
-                    runTest(`nameof.split(MyTest.Test.This, -1);`, `["This"];`);
+                    runTest("nameof.split(MyTest.Test.This, -1);", '["This"];');
                 });
 
             it(
                 "should allow using a negative period index to its max value",
                 () =>
                 {
-                    runTest(`nameof.split(MyTest.Test.This, -3);`, `["MyTest", "Test", "This"];`);
+                    runTest("nameof.split(MyTest.Test.This, -3);", '["MyTest", "Test", "This"];');
                 });
 
             it(
                 "should throw when the periodIndex is not a number literal",
                 () =>
                 {
-                    runThrowTest(`nameof.split(MyTest.Test, 'test')`, `Expected count to be a number, but was: "test"`);
+                    runThrowTest("nameof.split(MyTest.Test, 'test')", 'Expected count to be a number, but was: "test"');
                 });
 
             it(
                 "should throw when the periodIndex is greater than the number of periods",
                 () =>
                 {
-                    runThrowTest(`nameof.split(MyTest.Test, 2)`, "Count of 2 was larger than max count of 1: nameof.split(MyTest.Test, 2)");
+                    runThrowTest("nameof.split(MyTest.Test, 2)", "Count of 2 was larger than max count of 1: nameof.split(MyTest.Test, 2)");
                 });
 
             it(
                 "should throw when the absolute value of the negative periodIndex is greater than the number of periods + 1",
                 () =>
                 {
-                    runThrowTest(`nameof.split(MyTest.Test, -3)`, "Count of -3 was larger than max count of -2: nameof.split(MyTest.Test, -3)");
+                    runThrowTest("nameof.split(MyTest.Test, -3)", "Count of -3 was larger than max count of -2: nameof.split(MyTest.Test, -3)");
                 });
         });
 
@@ -815,7 +828,7 @@ export function runCommonTests(getTransformedText: (text: string) => string, opt
                 "should error when specifying a different nameof property",
                 () =>
                 {
-                    runThrowTest(`nameof.nonExistent()`, "Unsupported nameof call expression with property 'nonExistent': nameof.nonExistent()");
+                    runThrowTest("nameof.nonExistent()", "Unsupported nameof call expression with property 'nonExistent': nameof.nonExistent()");
                 });
 
             it(
@@ -861,8 +874,8 @@ nameof(window);
                     const expected = `"window";
 const t = /\`/g;
 \`nameof(window); /
-$\{"window"\}
-$\{"alert"\}
+$\{"window"}
+$\{"alert"}
 nameof(window);
 \`; // test
 "nameof(window);";
@@ -882,15 +895,24 @@ nameof(window);
                 "should handle division operators",
                 () =>
                 {
-                    const input = `const t = 2 / 1;\nnameof(testing);`;
-                    const expected = `const t = 2 / 1;\n"testing";`;
+                    const input = "const t = 2 / 1;\nnameof(testing);";
+                    const expected = "const t = 2 / 1;\n\"testing\";";
                     runTest(input, expected);
                 });
         });
 
-    function runTest(text: string, expected: string)
+    /**
+     * Tests the specified {@link text `text`}.
+     *
+     * @param text
+     * The code to transform.
+     *
+     * @param expected
+     * The expected result.
+     */
+    function runTest(text: string, expected: string): void
     {
-        if (options.commonPrefix != null)
+        if (options.commonPrefix)
         {
             text = options.commonPrefix + text;
         }
@@ -914,9 +936,18 @@ nameof(window);
         assert.strictEqual(sourceFile.getFullText(), expected);
     }
 
-    function runThrowTest(text: string, possibleExpectedMessages: string | string[])
+    /**
+     * Transforms the specified {@link text `text`} and asserts that one of the specified {@link possibleExpectedMessages `possibleExpectedMessages`} is returned.
+     *
+     * @param text
+     * The code to transform.
+     *
+     * @param possibleExpectedMessages
+     * The expected error message.
+     */
+    function runThrowTest(text: string, possibleExpectedMessages: string | string[]): void
     {
-        if (options.commonPrefix != null)
+        if (options.commonPrefix)
         {
             text = options.commonPrefix + text;
         }
@@ -932,7 +963,7 @@ nameof(window);
         {
             possibleExpectedMessages = getPossibleExpectedMessages();
 
-            const actualMessage = (ex as any).message;
+            const actualMessage = (ex).message;
 
             for (const message of possibleExpectedMessages)
             {
@@ -944,13 +975,19 @@ nameof(window);
 
             throw new Error(
                 `Expected the error message of ${JSON.stringify(actualMessage)} to equal ` +
-                `one of the following messages: ${JSON.stringify(possibleExpectedMessages)}`,
+                `one of the following messages: ${JSON.stringify(possibleExpectedMessages)}`
             );
         }
 
         throw new Error(`Expected to throw, but returned: ${transformedText}`);
 
-        function getPossibleExpectedMessages()
+        /**
+         * Gets the expected error messages.
+         *
+         * @returns
+         * The expected error messages.
+         */
+        function getPossibleExpectedMessages(): string[]
         {
             const result = getAsArray();
 
@@ -970,7 +1007,13 @@ nameof(window);
 
             return result;
 
-            function getAsArray()
+            /**
+             * Gets the {@link possibleExpectedMessages `possibleExpectedMessages`} as an array.
+             *
+             * @returns
+             * An array representing the {@link possibleExpectedMessages `possibleExpectedMessages`}.
+             */
+            function getAsArray(): string[]
             {
                 if (typeof possibleExpectedMessages === "string")
                 {
@@ -983,17 +1026,44 @@ nameof(window);
     }
 }
 
-function getFirstAccessedPropertyMustNotBeComputedErrorText(nodeText: string)
+/**
+ * Gets the error text for a disallowed computed property.
+ *
+ * @param nodeText
+ * The text of the incorrect node.
+ *
+ * @returns
+ * The error text for a disallowed computed property.
+ */
+function getFirstAccessedPropertyMustNotBeComputedErrorText(nodeText: string): string
 {
     return `First accessed property must not be computed except if providing a string: ${nodeText}`;
 }
 
-function getNotSupportedErrorText(nodeText: string)
+/**
+ * Gets the error message for an unsupported action.
+ *
+ * @param nodeText
+ * The text of the incorrect node.
+ *
+ * @returns
+ * The error text for an unsupported action.
+ */
+function getNotSupportedErrorText(nodeText: string): string
 {
     return `The node \`${nodeText}\` is not supported in this scenario.`;
 }
 
-function getUnusedNameofInterpolateErrorText(nodeText: string)
+/**
+ * Gets the error text for an unused `interpolate` call.
+ *
+ * @param nodeText
+ * The text of the incorrect code.
+ *
+ * @returns
+ * The error text for an unused `interpolate` call.
+ */
+function getUnusedNameofInterpolateErrorText(nodeText: string): string
 {
     return `Found a nameof.interpolate that did not exist within a nameof.full call expression: nameof.interpolate(${nodeText})`;
 }

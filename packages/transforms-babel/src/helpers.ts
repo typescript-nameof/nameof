@@ -1,7 +1,19 @@
 import * as babelTypes from "@babel/types";
-import { BlockStatement, Node, UnaryExpression } from "@babel/types";
+import type { BlockStatement, Node, UnaryExpression } from "@babel/types";
 import { throwError } from "@ts-nameof/common";
 
+/**
+ * Checks whether the specified {@link node `node`} is a negative numeric literal.
+ *
+ * @param t
+ * A component for handling babel types.
+ *
+ * @param node
+ * The node to check
+ *
+ * @returns
+ * A value indicating whether the specified {@link node `node`} is a negative numeric literal.
+ */
 export function isNegativeNumericLiteral(t: typeof babelTypes, node: Node): node is UnaryExpression
 {
     if (!t.isUnaryExpression(node))
@@ -12,7 +24,19 @@ export function isNegativeNumericLiteral(t: typeof babelTypes, node: Node): node
     return node.operator === "-" && t.isNumericLiteral(node.argument);
 }
 
-export function getNegativeNumericLiteralValue(t: typeof babelTypes, node: UnaryExpression)
+/**
+ * Either returns the value of the specified {@link node `node`} or throws an exception if the node is not a negative numeric literal.
+ *
+ * @param t
+ * A component for handling babel types.
+ *
+ * @param node
+ * The node to get the value from.
+ *
+ * @returns
+ * The value of the specified {@link node `node`}.
+ */
+export function getNegativeNumericLiteralValue(t: typeof babelTypes, node: UnaryExpression): number
 {
     if (node.operator !== "-" || !t.isNumericLiteral(node.argument))
     {
@@ -22,11 +46,23 @@ export function getNegativeNumericLiteralValue(t: typeof babelTypes, node: Unary
     return node.argument.value * -1;
 }
 
-export function getReturnStatementArgumentFromBlock(t: typeof babelTypes, block: BlockStatement)
+/**
+ * Gets the return value of the specified {@link block `block`}.
+ *
+ * @param t
+ * A component for handling babel types.
+ *
+ * @param block
+ * The block to get the return statement from.
+ *
+ * @returns
+ * The return value of the specified {@link block `block`}.
+ */
+export function getReturnStatementArgumentFromBlock(t: typeof babelTypes, block: BlockStatement): babelTypes.Expression | undefined
 {
     for (const statement of block.body)
     {
-        if (t.isReturnStatement(statement) && statement.argument != null)
+        if (t.isReturnStatement(statement) && statement.argument)
         {
             return statement.argument;
         }

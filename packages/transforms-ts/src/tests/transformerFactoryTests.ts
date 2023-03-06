@@ -2,20 +2,45 @@ import { runCommonTests } from "@ts-nameof/tests-common";
 import * as ts from "typescript";
 import { transformerFactory } from "../transformerFactory";
 
+/**
+ * Represents a file.
+ */
+interface IFileInfo
+{
+    /**
+     * The name of the file.
+     */
+    fileName: string;
+
+    /**
+     * The contents of the file.
+     */
+    fileText: string;
+}
+
 runCommonTests(run);
 
-function run(text: string)
+/**
+ * Transforms the specified {@link text `text`}.
+ *
+ * @param text
+ * The text to transform.
+ *
+ * @returns
+ * The transformed text.
+ */
+function run(text: string): string
 {
-    const results: { fileName: string; fileText: string }[] = [];
+    const results: IFileInfo[] = [];
 
     const compilerOptions: ts.CompilerOptions = {
         strictNullChecks: true,
-        target: ts.ScriptTarget.ES2017,
+        target: ts.ScriptTarget.ES2017
     };
 
     const transformers: ts.CustomTransformers = {
         before: [transformerFactory],
-        after: [],
+        after: []
     };
 
     const testFileName = "/file.ts";
@@ -41,7 +66,7 @@ function run(text: string)
         getDirectories: () => [],
         getCanonicalFileName: fileName => fileName,
         useCaseSensitiveFileNames: () => true,
-        getNewLine: () => "\n",
+        getNewLine: () => "\n"
     };
 
     const program = ts.createProgram(["/file.ts"], compilerOptions, host);

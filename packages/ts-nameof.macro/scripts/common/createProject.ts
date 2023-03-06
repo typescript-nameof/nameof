@@ -1,6 +1,12 @@
 import { Project } from "ts-morph";
 
-export function getProject()
+/**
+ * Creates a new project.
+ *
+ * @returns
+ * The newly created project.
+ */
+export function getProject(): Project
 {
     return new Project({ tsConfigFilePath: "tsconfig.json" });
 }

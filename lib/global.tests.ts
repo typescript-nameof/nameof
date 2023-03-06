@@ -1,6 +1,9 @@
 /// <reference path="./global.d.ts" />
+/* eslint-disable jsdoc/require-jsdoc */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace TestNamespace
 {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     export interface TestType
     {
         prop: string;
@@ -9,8 +12,9 @@ namespace TestNamespace
 
 class TestClass
 {
-    prop1 = "";
-    prop2 = "";
+    public prop1 = "";
+
+    public prop2 = "";
 }
 
 // nameof tests

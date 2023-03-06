@@ -1,6 +1,12 @@
 import { ModuleDeclarationKind, Project } from "ts-morph";
 
-export function createDeclarationFile(project: Project)
+/**
+ * Creates the declaration file.
+ *
+ * @param project
+ * The project to add the declaration file to.
+ */
+export function createDeclarationFile(project: Project): void
 {
     const mainFile = project.getSourceFileOrThrow("src/main.ts");
     const outputFiles = mainFile.getEmitOutput({ emitOnlyDtsFiles: true }).getOutputFiles();
@@ -18,37 +24,49 @@ export function createDeclarationFile(project: Project)
     wrapInGlobalModule();
     addGlobalDeclarations();
 
-    function removePreceedingCommentReference()
+    /**
+     * Removes preceding comments.
+     */
+    function removePreceedingCommentReference(): void
     {
         const firstChild = declarationFile.getFirstChildOrThrow();
         declarationFile.removeText(0, firstChild.getStart());
     }
 
-    function commentExternalTypes()
+    /**
+     * Comments out external types.
+     */
+    function commentExternalTypes(): void
     {
         // these types are made to be any so that this library will work when included in
         // web projects and NodeJS does not exist. See issue #22.
         const typesToComment = [
             "ts.TransformerFactory<ts.SourceFile>",
-            "NodeJS.ErrnoException",
+            "NodeJS.ErrnoException"
         ];
 
         declarationFile.forEachDescendant(
             descendant =>
             {
-                if (typesToComment.indexOf(descendant.getText()) >= 0)
+                if (typesToComment.includes(descendant.getText()))
                 {
                     descendant.replaceWithText(`any /* ${descendant.getText()} */`);
                 }
             });
     }
 
-    function removeTypeScriptImport()
+    /**
+     * Removes the `typescript` import.
+     */
+    function removeTypeScriptImport(): void
     {
         declarationFile.getImportDeclarationOrThrow("typescript").remove();
     }
 
-    function wrapInGlobalModule()
+    /**
+     * Wraps the whole content in a global module.
+     */
+    function wrapInGlobalModule(): void
     {
         const fileText = declarationFile.getText();
         declarationFile.removeText();
@@ -57,7 +75,7 @@ export function createDeclarationFile(project: Project)
             {
                 hasDeclareKeyword: true,
                 declarationKind: ModuleDeclarationKind.Module,
-                name: `"ts-nameof"`,
+                name: '"ts-nameof"'
             });
 
         apiModule.setBodyText(fileText);
@@ -67,7 +85,10 @@ export function createDeclarationFile(project: Project)
                 d => d.getName() === "api")).setHasDeclareKeyword(false);
     }
 
-    function addGlobalDeclarations()
+    /**
+     * Adds the global declarations.
+     */
+    function addGlobalDeclarations(): void
     {
         const globalFile = project.addSourceFileAtPath("../../lib/global.d.ts");
 

@@ -1,18 +1,37 @@
 import * as assert from "assert";
-import { replaceInFiles } from "../../text";
 import { getTestFilePath, readFile, writeFile } from "./helpers";
+import { replaceInFiles } from "../../text";
 
 describe(
     "replaceInFiles()",
     () =>
     {
-        interface FileInfo
+        /**
+         * Represents a file.
+         */
+        interface IFileInfo
         {
+            /**
+             * The name of the file.
+             */
             filePath: string;
+
+            /**
+             * The contents of the file.
+             */
             contents: string;
         }
 
-        async function runTest(paths: string[], expectedFiles: FileInfo[])
+        /**
+         * Runs a test on the files located at the specified {@link paths `paths`}.
+         *
+         * @param paths
+         * The names of the input files.
+         *
+         * @param expectedFiles
+         * The name of the files which contain the expected results.
+         */
+        async function runTest(paths: string[], expectedFiles: IFileInfo[]): Promise<void>
         {
             paths = paths.map(p => getTestFilePath(p));
             expectedFiles.forEach(f => f.filePath = getTestFilePath(f.filePath));
@@ -24,8 +43,8 @@ describe(
                             data => (
                                 {
                                     filePath: f.filePath,
-                                    contents: data,
-                                } as FileInfo))
+                                    contents: data
+                                } as IFileInfo))
                 ));
 
             try
@@ -63,7 +82,7 @@ describe(
                             [
                                 {
                                     filePath: "globFolder/MyGlobTestFile.txt",
-                                    contents: `console.log("console");\n`,
+                                    contents: 'console.log("console");\n'
                                 }
                             ]);
                     });
@@ -121,7 +140,7 @@ console.log("MyInnerInterface");
                                     [
                                         {
                                             filePath: "GeneralTestFile.txt",
-                                            contents: expected,
+                                            contents: expected
                                         }
                                     ]);
                             });

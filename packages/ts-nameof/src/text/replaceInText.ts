@@ -3,7 +3,56 @@ import * as ts from "typescript";
 
 const printer = ts.createPrinter();
 
-export function replaceInText(fileName: string, fileText: string): { fileText?: string; replaced: boolean }
+/**
+ * Represents the result of a substitution.
+ */
+interface ISubstitutionResult
+{
+    /**
+     * The resulting text of the file.
+     */
+    fileText?: string;
+
+    /**
+     * A value indicating whether a substitution has been performed.
+     */
+    replaced: boolean;
+}
+
+/**
+ * Represents a transformation.
+ */
+interface ITransformation
+{
+    /**
+     * The start offset of the text to replace.
+     */
+    start: number;
+
+    /**
+     * The end offset of the text to replace.
+     */
+    end: number;
+
+    /**
+     * The replacement of the transformation.
+     */
+    text: string;
+}
+
+/**
+ * Transforms the file with the specified {@link fileName `fileName`}.
+ *
+ * @param fileName
+ * The name of the file to transform.
+ *
+ * @param fileText
+ * The text of the file to transform.
+ *
+ * @returns
+ * The result of the substitution.
+ */
+export function replaceInText(fileName: string, fileText: string): ISubstitutionResult
 {
     // unofficial pre-2.0 backwards compatibility for this method
     if (arguments.length === 1)
@@ -13,11 +62,11 @@ export function replaceInText(fileName: string, fileText: string): { fileText?: 
     }
 
     const visitSourceFileContext: VisitSourceFileContext = {
-        interpolateExpressions: new Set<ts.Node>(),
+        interpolateExpressions: new Set<ts.Node>()
     };
 
     const sourceFile = ts.createSourceFile(fileName, fileText, ts.ScriptTarget.Latest, false);
-    const transformations: { start: number; end: number; text: string }[] = [];
+    const transformations: ITransformation[] = [];
 
     const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context =>
     {
@@ -36,7 +85,13 @@ export function replaceInText(fileName: string, fileText: string): { fileText?: 
 
     return { fileText: getTransformedText(), replaced: true };
 
-    function getTransformedText()
+    /**
+     * Performs the transformation.
+     *
+     * @returns
+     * The transformed text.
+     */
+    function getTransformedText(): string
     {
         let finalText = "";
         let lastPos = 0;
@@ -52,13 +107,31 @@ export function replaceInText(fileName: string, fileText: string): { fileText?: 
         return finalText;
     }
 
-    function visitSourceFile(context: ts.TransformationContext)
+    /**
+     * Transforms the {@link sourceFile `sourceFile`}.
+     *
+     * @param context
+     * The context of the transformation.
+     *
+     * @returns
+     * The transformed source file.
+     */
+    function visitSourceFile(context: ts.TransformationContext): ts.SourceFile
     {
         return visitNodeAndChildren(sourceFile) as ts.SourceFile;
 
+        /**
+         * Transforms the specified {@link node `node`} and its children.
+         *
+         * @param node
+         * The node to transform.
+         *
+         * @returns
+         * The transformed node.
+         */
         function visitNodeAndChildren(node: ts.Node): ts.Node
         {
-            if (node == null)
+            if (node === undefined)
             {
                 return node;
             }
@@ -75,13 +148,16 @@ export function replaceInText(fileName: string, fileText: string): { fileText?: 
 
             return resultNode;
 
-            function storeTransformation()
+            /**
+             * Stores the transformation.
+             */
+            function storeTransformation(): void
             {
                 const nodeStart = node.getStart(sourceFile);
                 const lastTransformation = transformations[transformations.length - 1];
 
                 // remove the last transformation if it's nested within this transformation
-                if (lastTransformation != null && lastTransformation.start > nodeStart)
+                if (lastTransformation !== undefined && lastTransformation.start > nodeStart)
                 {
                     transformations.pop();
                 }

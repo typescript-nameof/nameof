@@ -1,3 +1,6 @@
 /// @ts-check
 // hack to get tests working
-export { default } from "../../index";
+import createMacro from "../../index";
+
+// eslint-disable-next-line import/no-default-export
+export default createMacro;

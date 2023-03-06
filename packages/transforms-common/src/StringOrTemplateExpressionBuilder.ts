@@ -2,22 +2,40 @@ import { createStringLiteralNode, createTemplateExpressionNode } from "./nodeFac
 import { InterpolateNode, StringLiteralNode, TemplateExpressionNode } from "./nodes";
 
 /**
- * Builds up a string that will be a string literal if able, but will change to a template
- * expression if necessary.
+ * Provides the functionality to build string and template expressions.
  */
 export class StringOrTemplateExpressionNodeBuilder
 {
+    /**
+     * The text of the expression.
+     */
     private text: string | undefined = "";
-    private items: (string | InterpolateNode)[] = [];
 
-    hasText()
+    /**
+     * The parts of the template expression.
+     */
+    private items: Array<string | InterpolateNode> = [];
+
+    /**
+     * Checks whether the expression currently contains text.
+     *
+     * @returns
+     * A value indicating whether the expression currently contains text.
+     */
+    public hasText(): boolean
     {
-        return this.text != null && this.text.length > 0 || this.items.length > 0;
+        return this.text !== undefined && this.text.length > 0 || this.items.length > 0;
     }
 
-    buildNode(): StringLiteralNode | TemplateExpressionNode
+    /**
+     * Builds a node containing the current text.
+     *
+     * @returns
+     * The newly created node.
+     */
+    public buildNode(): StringLiteralNode | TemplateExpressionNode
     {
-        if (this.text != null)
+        if (this.text !== undefined)
         {
             return createStringLiteralNode(this.text);
         }
@@ -25,7 +43,13 @@ export class StringOrTemplateExpressionNodeBuilder
         return createTemplateExpressionNode(this.items);
     }
 
-    addItem(item: string | InterpolateNode | StringLiteralNode | TemplateExpressionNode)
+    /**
+     * Adds the specified {@link item `item`} to the current text.
+     *
+     * @param item
+     * The item to add to the text.
+     */
+    public addItem(item: string | InterpolateNode | StringLiteralNode | TemplateExpressionNode): void
     {
         if (typeof item === "string")
         {
@@ -48,13 +72,21 @@ export class StringOrTemplateExpressionNodeBuilder
         }
     }
 
-    addText(newText: string)
+    /**
+     * Adds the specified {@link newText `newText`} to the expression.
+     *
+     * @param newText
+     * The text to add.
+     */
+    public addText(newText: string): void
     {
-        if (this.text == null)
+        if (this.text === undefined)
         {
-            if (typeof this.items[this.items.length - 1] === "string")
+            let tail = this.items[this.items.length - 1];
+
+            if (typeof tail === "string")
             {
-                this.items[this.items.length - 1] += newText;
+                this.items[this.items.length - 1] = tail + newText;
             }
             else
             {
@@ -67,9 +99,15 @@ export class StringOrTemplateExpressionNodeBuilder
         }
     }
 
-    private addInterpolate(interpolate: InterpolateNode)
+    /**
+     * Adds an interpolate call to the expression.
+     *
+     * @param interpolate
+     * The interpolate call to add.
+     */
+    private addInterpolate(interpolate: InterpolateNode): void
     {
-        if (this.text != null)
+        if (this.text !== undefined)
         {
             this.items.push(this.text);
             this.text = undefined;

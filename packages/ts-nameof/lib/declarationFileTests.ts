@@ -1,11 +1,14 @@
 /// <reference path="../ts-nameof.d.ts" />
 /* istanbul ignore next */
-import tsNameOf = require("ts-nameof");
 import { assert, IsExact } from "conditional-type-checks";
+import tsNameOf = require("ts-nameof");
 import * as tsNameOfEs6 from "ts-nameof";
 
 /* istanbul ignore next */
-function testFunc()
+/**
+ * Provides some type tests.
+ */
+export function testFunc(): void
 {
     tsNameOf.replaceInFiles(["test"]);
     tsNameOf.replaceInFiles(["test"]).then(() => { });

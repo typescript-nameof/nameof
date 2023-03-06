@@ -1,18 +1,25 @@
-import { assertNever, throwError } from "@ts-nameof/common";
-import * as common from "@ts-nameof/transforms-common";
-import { createInterpolateNode, InterpolateNode } from "@ts-nameof/transforms-common";
+import { throwError } from "@ts-nameof/common";
+import { ArrayLiteralNode, createArrayLiteralNode, createComputedNode, createFunctionNode, createIdentifierNode, createImportTypeNode, createInterpolateNode, createNumericLiteralNode, createStringLiteralNode, createTemplateExpressionNode, FunctionNode, IdentifierNode, ImportTypeNode, InterpolateNode, NameofCallExpression, Node, NumericLiteralNode, StringLiteralNode, TemplateExpressionNode } from "@ts-nameof/transforms-common";
 import * as ts from "typescript";
 import { getNegativeNumericLiteralValue, getNodeText, getReturnStatementExpressionFromBlock, isNegativeNumericLiteral } from "./helpers";
 import { VisitSourceFileContext } from "./VisitSourceFileContext";
 
 /**
- * Parses a TypeScript AST node to a common NameofCallExpression or returns undefined if the current node
- * is not a nameof call expression.
- * @param parsingNode - Babel AST node to parse.
- * @param sourceFile - Containing source file.
- * @param context - Context for when visiting all the source file nodes
+ * Parses the specified {@link parsingNode `parsingNode`}.
+ *
+ * @param parsingNode
+ * The node to parse.
+ *
+ * @param sourceFile
+ * The source file which contains the specified {@link parsingNode `parsingNode`}.
+ *
+ * @param context
+ * The context of the transformation.
+ *
+ * @returns
+ * The parsed node.
  */
-export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: VisitSourceFileContext | undefined)
+export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: VisitSourceFileContext | undefined): NameofCallExpression | undefined
 {
     if (!isNameof(parsingNode))
     {
@@ -30,16 +37,34 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
 
     return parseNameof(parsingNode);
 
-    function parseNameof(callExpr: ts.CallExpression): common.NameofCallExpression
+    /**
+     * Parses the `nameof` call in the specified {@link callExpr `callExpr`}.
+     *
+     * @param callExpr
+     * The expression to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseNameof(callExpr: ts.CallExpression): NameofCallExpression
     {
         return {
             property: propertyName,
             typeArguments: parseTypeArguments(callExpr),
-            arguments: parseArguments(callExpr),
+            arguments: parseArguments(callExpr)
         };
     }
 
-    function parsePropertyName(callExpr: ts.CallExpression)
+    /**
+     * Gets the name of the `nameof` property which is being accessed inside the specified {@link callExpr `callExpr`}.
+     *
+     * @param callExpr
+     * The expression to get the property name from.
+     *
+     * @returns
+     * The name of the `nameof` property which is being accessed.
+     */
+    function parsePropertyName(callExpr: ts.CallExpression): string | undefined
     {
         const { expression } = callExpr;
 
@@ -51,9 +76,18 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
         return expression.name.text;
     }
 
-    function parseTypeArguments(callExpr: ts.CallExpression)
+    /**
+     * Gets the type arguments of the specified {@link callExpr `callExpr`}.
+     *
+     * @param callExpr
+     * The expression to get the type arguments from.
+     *
+     * @returns
+     * The type arguments of the specified {@link callExpr `callExpr`}.
+     */
+    function parseTypeArguments(callExpr: ts.CallExpression): Node[]
     {
-        if (callExpr.typeArguments == null)
+        if (callExpr.typeArguments === undefined)
         {
             return [];
         }
@@ -61,12 +95,30 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
         return callExpr.typeArguments.map(arg => parseCommonNode(arg));
     }
 
-    function parseArguments(callExpr: ts.CallExpression)
+    /**
+     * Gets the arguments of the specified {@link callExpr `callExpr`}.
+     *
+     * @param callExpr
+     * The expression to get the arguments from.
+     *
+     * @returns
+     * The arguments of the specified {@link callExpr `callExpr`}.
+     */
+    function parseArguments(callExpr: ts.CallExpression): Node[]
     {
         return callExpr.arguments.map(arg => parseCommonNode(arg));
     }
 
-    function parseCommonNode(node: ts.Expression | ts.TypeNode | ts.EntityName): common.Node
+    /**
+     * Parses the specified {@link node `node`}.
+     *
+     * @param node
+     * The node to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseCommonNode(node: ts.Expression | ts.TypeNode | ts.EntityName): Node
     {
         if (ts.isPropertyAccessExpression(node))
         {
@@ -140,17 +192,17 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
 
         if (node.kind === ts.SyntaxKind.ThisKeyword)
         {
-            return common.createIdentifierNode("this");
+            return createIdentifierNode("this");
         }
 
         if (node.kind === ts.SyntaxKind.SuperKeyword)
         {
-            return common.createIdentifierNode("super");
+            return createIdentifierNode("super");
         }
 
         if (ts.isNoSubstitutionTemplateLiteral(node))
         {
-            return common.createTemplateExpressionNode([node.text]);
+            return createTemplateExpressionNode([node.text]);
         }
 
         if (ts.isTemplateExpression(node))
@@ -165,17 +217,35 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
 
         return throwError(
             `Unhandled node kind (${node.kind}) in text: ${getNodeText(node, sourceFile)}` +
-            ` (Please open an issue if you believe this should be supported.)`,
+            " (Please open an issue if you believe this should be supported.)"
         );
     }
 
-    function parseArrayLiteralExpression(node: ts.ArrayLiteralExpression)
+    /**
+     * Parses the specified {@link node `node`}.
+     *
+     * @param node
+     * The node to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseArrayLiteralExpression(node: ts.ArrayLiteralExpression): ArrayLiteralNode
     {
         const elements = node.elements.map(element => parseCommonNode(element));
-        return common.createArrayLiteralNode(elements);
+        return createArrayLiteralNode(elements);
     }
 
-    function parsePropertyAccessExpression(node: ts.PropertyAccessExpression)
+    /**
+     * Parses the specified {@link node `node`}.
+     *
+     * @param node
+     * The node to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parsePropertyAccessExpression(node: ts.PropertyAccessExpression): Node
     {
         const expressionCommonNode = parseCommonNode(node.expression);
         const nameCommonNode = parseIdentifier(node.name);
@@ -183,16 +253,34 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
         return expressionCommonNode;
     }
 
-    function parseElementAccessExpression(node: ts.ElementAccessExpression)
+    /**
+     * Parses the specified {@link node `node`}.
+     *
+     * @param node
+     * The node to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseElementAccessExpression(node: ts.ElementAccessExpression): Node
     {
         const expressionCommonNode = parseCommonNode(node.expression);
         const argumentExpressionCommonNode = parseCommonNode(node.argumentExpression);
-        const computedCommonNode = common.createComputedNode(argumentExpressionCommonNode);
+        const computedCommonNode = createComputedNode(argumentExpressionCommonNode);
         getEndCommonNode(expressionCommonNode).next = computedCommonNode;
         return expressionCommonNode;
     }
 
-    function parseQualifiedName(node: ts.QualifiedName)
+    /**
+     * Parses the specified {@link node `node`}.
+     *
+     * @param node
+     * The node to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseQualifiedName(node: ts.QualifiedName): Node
     {
         const leftCommonNode = parseCommonNode(node.left);
         const rightCommonNode = parseCommonNode(node.right);
@@ -200,11 +288,26 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
         return leftCommonNode;
     }
 
-    function parseNumeric(node: ts.NumericLiteral | ts.PrefixUnaryExpression)
+    /**
+     * Parses the specified {@link node `node`}.
+     *
+     * @param node
+     * The node to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseNumeric(node: ts.NumericLiteral | ts.PrefixUnaryExpression): NumericLiteralNode
     {
-        return common.createNumericLiteralNode(getNodeValue());
+        return createNumericLiteralNode(getNodeValue());
 
-        function getNodeValue()
+        /**
+         * Gets the value of the {@link node `node`}.
+         *
+         * @returns
+         * The value of the {@link node `node`}.
+         */
+        function getNodeValue(): number
         {
             if (ts.isNumericLiteral(node))
             {
@@ -215,18 +318,48 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
         }
     }
 
-    function parseStringLiteral(node: ts.StringLiteral)
+    /**
+     * Parses the specified {@link node `node`}.
+     *
+     * @param node
+     * The node to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseStringLiteral(node: ts.StringLiteral): StringLiteralNode
     {
-        return common.createStringLiteralNode(node.text);
+        return createStringLiteralNode(node.text);
     }
 
-    function parseIdentifier(node: ts.Node)
+    /**
+     * Parses the specified {@link node `node`}.
+     *
+     * @param node
+     * The node to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseIdentifier(node: ts.Node): IdentifierNode
     {
         const text = getIdentifierTextOrThrow(node);
-        return common.createIdentifierNode(text);
+        return createIdentifierNode(text);
     }
 
-    function parseFunctionReturnExpression(functionLikeNode: ts.FunctionLike, node: ts.Expression)
+    /**
+     * Parses the specified {@link functionLikeNode `functionLikeNode`}.
+     *
+     * @param functionLikeNode
+     * The function node to parse.
+     *
+     * @param node
+     * The body of the specified function.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseFunctionReturnExpression(functionLikeNode: ts.SignatureDeclaration, node: ts.Expression): FunctionNode
     {
         const parameterNames = functionLikeNode.parameters.map(p =>
         {
@@ -240,24 +373,48 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
             return getNodeText(name, sourceFile);
         });
 
-        return common.createFunctionNode(parseCommonNode(node), parameterNames);
+        return createFunctionNode(parseCommonNode(node), parameterNames);
     }
 
-    function parseImportType(node: ts.ImportTypeNode)
+    /**
+     * Parses the specified {@link node `node`}.
+     *
+     * @param node
+     * The node to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseImportType(node: ts.ImportTypeNode): ImportTypeNode
     {
-        const importType = common.createImportTypeNode(node.isTypeOf || false, node.argument && parseCommonNode(node.argument));
+        const importType = createImportTypeNode(node.isTypeOf || false, node.argument && parseCommonNode(node.argument));
         const qualifier = node.qualifier && parseCommonNode(node.qualifier);
         getEndCommonNode(importType).next = qualifier;
         return importType;
     }
 
-    function parseTemplateExpression(node: ts.TemplateExpression)
+    /**
+     * Parses the specified {@link node `node`}.
+     *
+     * @param node
+     * The node to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseTemplateExpression(node: ts.TemplateExpression): TemplateExpressionNode
     {
-        return common.createTemplateExpressionNode(getParts());
+        return createTemplateExpressionNode(getParts());
 
-        function getParts()
+        /**
+         * Gets the template parts of the {@link node `node`}.
+         *
+         * @returns
+         * The template parts of the {@link node `node`}.
+         */
+        function getParts(): Array<InterpolateNode | string>
         {
-            const parts: (string | InterpolateNode)[] = [];
+            const parts: Array<InterpolateNode | string> = [];
 
             if (node.head.text.length > 0)
             {
@@ -274,19 +431,37 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
         }
     }
 
-    function parseInterpolateNode(node: ts.CallExpression)
+    /**
+     * Parses the specified {@link node `node`}.
+     *
+     * @param node
+     * The node to parse.
+     *
+     * @returns
+     * The parsed node.
+     */
+    function parseInterpolateNode(node: ts.CallExpression): InterpolateNode
     {
         if (node.arguments.length !== 1)
         {
-            return throwError(`Should never happen as this would have been tested for earlier.`);
+            return throwError("Should never happen as this would have been tested for earlier.");
         }
 
-        return common.createInterpolateNode(node.arguments[0], getNodeText(node.arguments[0], sourceFile));
+        return createInterpolateNode(node.arguments[0], getNodeText(node.arguments[0], sourceFile));
     }
 
-    function getEndCommonNode(commonNode: common.Node)
+    /**
+     * Gets the last node in the chain of the specified {@link commonNode `commonNode`}.
+     *
+     * @param commonNode
+     * The node to get the last item in the chain from.
+     *
+     * @returns
+     * The last node in the chain of the specified {@link commonNode `commonNode`}.
+     */
+    function getEndCommonNode(commonNode: Node): Node
     {
-        while (commonNode.next != null)
+        while (commonNode.next !== undefined)
         {
             commonNode = commonNode.next;
         }
@@ -294,7 +469,16 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
         return commonNode;
     }
 
-    function getArrowFunctionReturnExpression(func: ts.ArrowFunction)
+    /**
+     * Gets the return expression of the specified {@link func `func`}.
+     *
+     * @param func
+     * The function to get the return expression from.
+     *
+     * @returns
+     * The return expression of the specified {@link func `func`}.
+     */
+    function getArrowFunctionReturnExpression(func: ts.ArrowFunction): ts.Expression
     {
         if (ts.isBlock(func.body))
         {
@@ -304,7 +488,16 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
         return func.body;
     }
 
-    function getIdentifierTextOrThrow(node: ts.Node)
+    /**
+     * Gets the text of the specified {@link node `node`}.
+     *
+     * @param node
+     * The identifier to get the text from.
+     *
+     * @returns
+     * The text of the specified {@link node `node`}.
+     */
+    function getIdentifierTextOrThrow(node: ts.Node): string
     {
         if (!ts.isIdentifier(node))
         {
@@ -314,13 +507,28 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
         return node.text;
     }
 
-    function getReturnStatementExpressionFromBlockOrThrow(block: ts.Block)
+    /**
+     * Gets the return statement of the specified {@link block `block`} or throws an error if no return statement was found.
+     *
+     * @param block
+     * The block to get the return statement from.
+     *
+     * @returns
+     * The return statement of the specified {@link block `block`}.
+     */
+    function getReturnStatementExpressionFromBlockOrThrow(block: ts.Block): ts.Expression
     {
-        return getReturnStatementExpressionFromBlock(block) ||
+        return getReturnStatementExpressionFromBlock(block) ??
             throwError(`Cound not find return statement with an expression in function expression: ${getNodeText(block, sourceFile)}`);
     }
 
-    function handleNameofInterpolate(callExpr: ts.CallExpression)
+    /**
+     * Processes the `interpolate` call in the specified {@link callExpr `callExpr`}.
+     *
+     * @param callExpr
+     * The expression which contains the `interpolate` call.
+     */
+    function handleNameofInterpolate(callExpr: ts.CallExpression): void
     {
         if (callExpr.arguments.length !== 1)
         {
@@ -329,12 +537,21 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
 
         // Add the interpolate expression to the context so that it can be checked later to find
         // nameof.interpolate calls that were never resolved.
-        if (context != null)
+        if (context !== undefined)
         {
             context.interpolateExpressions.add(callExpr.arguments[0]);
         }
     }
 
+    /**
+     * Checks whether the specified {@link node `node`} is a `nameof` call.
+     *
+     * @param node
+     * The node to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@link node `node`} is a `nameof` call.
+     */
     function isNameof(node: ts.Node): node is ts.CallExpression
     {
         if (!ts.isCallExpression(node))
@@ -343,9 +560,18 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
         }
 
         const identifier = getIdentifierToInspect(node.expression);
-        return identifier != null && identifier.text === "nameof";
+        return identifier !== undefined && identifier.text === "nameof";
 
-        function getIdentifierToInspect(expression: ts.LeftHandSideExpression)
+        /**
+         * Gets the identifier which is expected to be the `nameof` reference.
+         *
+         * @param expression
+         * The expression to get the `nameof` portion from.
+         *
+         * @returns
+         * The expected `nameof` identifier.
+         */
+        function getIdentifierToInspect(expression: ts.LeftHandSideExpression): ts.Identifier | undefined
         {
             if (ts.isIdentifier(expression))
             {
@@ -359,7 +585,16 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
         }
     }
 
-    function isInterpolatePropertyName(propertyName: string | undefined)
+    /**
+     * Checks whether the specified {@link propertyName `propertyName`} indicates an `interpolate` call.
+     *
+     * @param propertyName
+     * The property name to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@link propertyName `propertyName`} indicates an `interpolate` call.
+     */
+    function isInterpolatePropertyName(propertyName: string | undefined): boolean
     {
         return propertyName === "interpolate";
     }
