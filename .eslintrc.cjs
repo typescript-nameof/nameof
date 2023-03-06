@@ -76,6 +76,7 @@ module.exports = {
             join(projectRoot("ts-nameof"), "tsconfig.config.json"),
             join(projectRoot("ts-nameof"), "lib", "tsconfig.json"),
             projectPath("types"),
+            join(projectRoot("types"), "tsconfig.eslint.json"),
             projectPath("ts-nameof.macro"),
             join(projectRoot("ts-nameof.macro"), "tsconfig.config.json"),
             projectPath("babel-plugin-ts-nameof"),

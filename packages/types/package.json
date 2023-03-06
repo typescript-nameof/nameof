@@ -1,3 +1,6 @@
 {
-    "name": "@typescript-nameof/types"
+    "name": "@typescript-nameof/types",
+    "devDependencies": {
+        "eslint-plugin-expect-type": "^0.2.2"
+    }
 }
