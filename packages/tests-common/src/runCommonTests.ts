@@ -877,7 +877,7 @@ nameof(window);
 "C:\\\\";
 "window";
 \`\${() => {
-    "console";
+  "console";
 }}\`;
 `;
                     runTest(input, expected);
