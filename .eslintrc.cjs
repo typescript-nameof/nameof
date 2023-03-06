@@ -75,6 +75,7 @@ module.exports = {
             projectPath("ts-nameof"),
             join(projectRoot("ts-nameof"), "tsconfig.config.json"),
             join(projectRoot("ts-nameof"), "lib", "tsconfig.json"),
+            projectPath("types"),
             projectPath("ts-nameof.macro"),
             join(projectRoot("ts-nameof.macro"), "tsconfig.config.json"),
             projectPath("babel-plugin-ts-nameof"),

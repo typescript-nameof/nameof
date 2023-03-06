@@ -10,6 +10,7 @@
     "packages/transforms-ts",
     "packages/ts-nameof",
     "packages/ts-nameof.macro",
+    "packages/types",
     "packages/babel-plugin-ts-nameof"
   ],
   "scripts": {

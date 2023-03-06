@@ -4,6 +4,9 @@
             "path": "./packages/ts-nameof"
         },
         {
+            "path": "./packages/types"
+        },
+        {
             "path": "./packages/ts-nameof.macro"
         },
         {
