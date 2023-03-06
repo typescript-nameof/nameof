@@ -16,6 +16,7 @@
     "clean": "yarn workspaces run clean",
     "build": "yarn workspaces run build",
     "test": "yarn workspaces run test",
+    "lint": "eslint --max-warnings 0 .",
     "verify": "yarn test && yarn verify-declaration-file",
     "create-declaration-file": "yarn workspace ts-nameof build:declarations && yarn workspace ts-nameof.macro build:declarations",
     "verify-declaration-file": "yarn workspace ts-nameof verify-declaration-file"
