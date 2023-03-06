@@ -1,13 +1,13 @@
 {
-  "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./dist"
-  },
-  "extends": "../../tsconfig.base.json",
-  "include": ["./src"],
-  "references": [
-    { "path": "../transforms-ts" },
-    { "path": "../tests-common" },
-    { "path": "../scripts-common" }
-  ]
+    "compilerOptions": {
+        "rootDir": "./src",
+        "outDir": "./dist"
+    },
+    "extends": "../../tsconfig.base.json",
+    "include": ["./src"],
+    "references": [
+        { "path": "../transforms-ts" },
+        { "path": "../tests-common" },
+        { "path": "../scripts-common" }
+    ]
 }

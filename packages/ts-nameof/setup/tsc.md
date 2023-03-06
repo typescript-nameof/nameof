@@ -18,9 +18,14 @@ In the meantime, this is possible using [ttypescript](https://github.com/cevek/t
 
    ```json
    {
-     "compilerOptions": {
-       "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
-     }
+       "compilerOptions": {
+           "plugins": [
+                {
+                    "transform": "ts-nameof",
+                    "type": "raw"
+                }
+            ]
+       }
    }
    ```
 

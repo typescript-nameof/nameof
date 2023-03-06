@@ -1,11 +1,11 @@
 {
-  "compilerOptions": {
-    "target": "es6",
-    "noEmit": true
-  },
-  "extends": "../../../tsconfig.base.json",
-  "exclude": [
-    "./lib",
-    "./src"
-  ]
+    "compilerOptions": {
+        "target": "es6",
+        "noEmit": true
+    },
+    "extends": "../../../tsconfig.base.json",
+    "exclude": [
+        "./lib",
+        "./src"
+    ]
 }
