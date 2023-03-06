@@ -36,6 +36,7 @@ declare module "ts-nameof.macro" {
          * When absent, the full expression will be parsed.
          * A negative index can be used, indicating an offset from the end of the sequence.
          */
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         function full<T>(periodIndex?: number): string;
 
         /**

@@ -6,9 +6,9 @@ Open the root directory of the repo and run:
 
 ```bash
 # install dependencies
-yarn install
+npm install
 # build
-yarn build
+npm run build
 ```
 
 ## Packages
@@ -27,17 +27,17 @@ yarn build
 
 ```bash
 # build (run in root dir)
-yarn build
+npm run build
 # run tests (run in root dir)
-yarn test
+npm test
 # format the code (download dprint from dprint.dev)
-dprint fmt
+npm run lint -- --fix
 ```
 
 ### Clean Rebuild
 
 ```
-yarn clean && yarn build
+npm run clean && npm run build
 ```
 
 ## Declaration File
@@ -48,18 +48,18 @@ The global definitions are stored in [lib/global.d.ts](lib/global.d.ts). To make
 
 1. Add a failing test in [lib/global.tests.ts](lib/global.tests.ts) (failing test means you get a compile error)
 2. Update [lib/global.d.ts](lib/global.d.ts).
-3. Run `yarn create-declaration-file` in the root directory
+3. Run `npm run create-declaration-file` in the root directory
 
 ### ts-nameof - Updating API
 
 1. Update [packages/ts-nameof/lib/declarationFileTests.ts](packages/ts-nameof/lib/declarationFileTests.ts) with a failing test.
 2. Update the API in [packages/ts-nameof/src/main.ts](packages/ts-nameof/src/main.ts).
-3. Run `yarn create-declaration-file` in the root directory
+3. Run `npm run create-declaration-file` in the root directory
 
 ## After Development
 
 Run the following command in the root directory, which will check that everything is good:
 
 ```bash
-yarn verify
+npm run verify
 ```

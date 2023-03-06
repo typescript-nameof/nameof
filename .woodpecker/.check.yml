@@ -2,19 +2,19 @@ pipeline:
   install:
     image: node
     commands:
-      - yarn install
+      - npm install
   build:
     image: node
     commands:
-      - yarn build
+      - npm run build
   lint:
     image: node
     commands:
-      - yarn lint
+      - npm run lint
   test:
     image: node
     commands:
-      - yarn verify
+      - npm run verify
 
 when:
   event:
