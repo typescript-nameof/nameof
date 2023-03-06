@@ -10,11 +10,11 @@ pipeline:
   lint:
     image: node
     commands:
-      - yarn verify
+      - yarn lint
   test:
     image: node
     commands:
-      - yarn test
+      - yarn verify
 
 when:
   event:
