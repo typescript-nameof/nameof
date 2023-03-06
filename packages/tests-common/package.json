@@ -13,9 +13,10 @@
     "build": "tsc --b",
     "test": "echo 'ignore'"
   },
+  "dependencies": {
+    "ts-morph": "^17.0.1"
+  },
   "devDependencies": {
-    "@dprint/formatter": "^0.1.5",
-    "@dprint/typescript": "^0.60.0",
     "@types/mocha": "^9.0.0",
     "@types/node": "^17.0.0",
     "rimraf": "^3.0.2",

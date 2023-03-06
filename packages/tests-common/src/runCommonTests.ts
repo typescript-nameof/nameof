@@ -1,11 +1,6 @@
-import { createFromBuffer } from "@dprint/formatter";
-// @ts-ignore
-import { getBuffer } from "@dprint/typescript";
 import * as assert from "assert";
 import * as path from "path";
-
-const formatter = createFromBuffer(getBuffer());
-formatter.setConfig({ indentWidth: 2 }, {});
+import { Project } from "ts-morph";
 
 /**
  * Runs tests across different compilers.
@@ -872,8 +867,8 @@ nameof(window);
 \`; // test
 "nameof(window);";
 "\\"nameof(window);";
-"nameof(window);";
-"'\\"nameof(window);";
+'nameof(window);';
+'\\'\\"nameof(window);';
 "C:\\\\";
 "window";
 \`\${() => {
@@ -907,7 +902,16 @@ nameof(window);
             expected += "\n";
         }
 
-        assert.strictEqual(formatter.formatText("file.ts", result), expected);
+        let project = new Project();
+        let sourceFile = project.createSourceFile("file.ts", result.trim());
+
+        sourceFile.formatText(
+            {
+                ensureNewLineAtEndOfFile: true,
+                indentSize: 2
+            });
+
+        assert.strictEqual(sourceFile.getFullText(), expected);
     }
 
     function runThrowTest(text: string, possibleExpectedMessages: string | string[])
