@@ -19,5 +19,17 @@
     "verify": "yarn test && yarn verify-declaration-file",
     "create-declaration-file": "yarn workspace ts-nameof build:declarations && yarn workspace ts-nameof.macro build:declarations",
     "verify-declaration-file": "yarn workspace ts-nameof verify-declaration-file"
+  },
+  "devDependencies": {
+    "@delagen/eslint-plugin-deprecation": "^1.3.2",
+    "@manuth/eslint-plugin-typescript": "^4.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "eslint": "^8.35.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsdoc": "^40.0.1",
+    "eslint-plugin-node": "^11.1.0"
   }
 }
