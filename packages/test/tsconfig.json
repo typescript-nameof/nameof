@@ -8,5 +8,8 @@
                 "transform": "ts-nameof"
             }
         ]
-    }
+    },
+    "exclude": [
+        "./src/macro"
+    ]
 }
