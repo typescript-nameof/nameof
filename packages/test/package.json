@@ -1,6 +1,10 @@
 {
   "name": "test",
   "private": true,
+  "scripts": {
+    "build-ts": "tsc --build .",
+    "watch-ts": "npm run build-ts -- --watch"
+  },
   "devDependencies": {
     "@types/nameof": "file:../types",
     "ts-nameof": "^5.0.0",
