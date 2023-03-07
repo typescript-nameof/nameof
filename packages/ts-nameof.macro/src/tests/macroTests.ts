@@ -3,6 +3,7 @@ import * as assert from "assert";
 import * as path from "path";
 import * as babel from "@babel/core";
 import "@babel/preset-typescript";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { runCommonTests } from "@ts-nameof/tests-common";
 import babelPluginMacros from "babel-plugin-macros";
 

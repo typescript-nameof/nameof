@@ -1,4 +1,5 @@
 import * as assert from "assert";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { runCommonTests } from "@ts-nameof/tests-common";
 import { replaceInText } from "../../text";
 
