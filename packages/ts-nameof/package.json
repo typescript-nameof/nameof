@@ -41,8 +41,6 @@
     "glob": "^7.2.0"
   },
   "devDependencies": {
-    "@ts-nameof/scripts-common": "^4.0.2",
-    "@ts-nameof/tests-common": "^4.2.0",
     "@types/glob": "^7.2.0",
     "@types/mocha": "^9.0.0",
     "@types/node": "^17.0.0",

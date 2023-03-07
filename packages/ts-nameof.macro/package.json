@@ -35,8 +35,6 @@
   "devDependencies": {
     "@babel/core": "^7.16.5",
     "@babel/preset-typescript": "^7.16.5",
-    "@ts-nameof/scripts-common": "^4.0.2",
-    "@ts-nameof/tests-common": "^4.2.0",
     "@types/babel__core": "^7.1.17",
     "@types/babel__generator": "^7.6.3",
     "@types/babel__template": "^7.4.1",
