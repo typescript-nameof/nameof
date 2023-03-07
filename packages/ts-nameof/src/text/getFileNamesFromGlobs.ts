@@ -1,4 +1,4 @@
-import G from "glob";
+import _default from "glob";
 
 /**
  * Searches all files which apply to the specified {@link globs `globs`}.
@@ -29,21 +29,5 @@ export function getFileNamesFromGlobs(globs: readonly string[]): Promise<string[
  */
 function getFileNamesFromGlob(globFileName: string): Promise<string[]>
 {
-    return new Promise<string[]>(
-        (resolve, reject) =>
-        {
-            G(
-                globFileName,
-                (err, files) =>
-                {
-                    /* istanbul ignore if */
-                    if (err)
-                    {
-                        reject(err);
-                        return;
-                    }
-
-                    resolve(files);
-                });
-        });
+    return _default(globFileName);
 }
