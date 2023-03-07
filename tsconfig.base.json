@@ -10,8 +10,7 @@
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
         "lib": [
-            "ES2015",
-            "DOM"
+            "ES2015"
         ],
         "esModuleInterop": true
     }
