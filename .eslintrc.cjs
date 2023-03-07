@@ -85,7 +85,8 @@ module.exports = {
             projectPath("transforms-babel"),
             projectPath("common"),
             projectPath("scripts-common"),
-            projectPath("tests-common")
+            projectPath("tests-common"),
+            projectPath("test")
         ]
     },
     ignorePatterns: [
