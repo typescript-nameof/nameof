@@ -1,6 +1,5 @@
 {
   "name": "@ts-nameof/tests-common",
-  "version": "4.2.0",
   "private": true,
   "description": "Common tests for ts-nameof packages.",
   "main": "./dist/index.js",
