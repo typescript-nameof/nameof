@@ -4,7 +4,7 @@
   "scripts": {
     "build-ts": "tsc --build .",
     "watch-ts": "npm run build-ts -- --watch",
-    "build-plugin": "babel --extensions .ts src --out-dir lib/plugin",
+    "build-plugin": "babel --extensions .ts src/common --out-dir lib/plugin",
     "watch-plugin": "npm run build-plugin -- --watch"
   },
   "devDependencies": {
