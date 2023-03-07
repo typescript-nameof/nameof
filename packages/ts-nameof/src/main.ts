@@ -1,12 +1,19 @@
 import { transformerFactory } from "@ts-nameof/transforms-ts";
-import { ProgramPattern } from "ttypescript/lib/PluginCreator";
 import * as ts from "typescript";
 import { replaceInFiles, replaceInText } from "./text";
 
 /**
  * The API of the module.
  */
-type Api = ProgramPattern & {
+type Api = {
+    /**
+     * Creates a transformer factory for replacing `nameof` calls.
+     *
+     * @param program
+     * The program containing the files to transform.
+     */
+    (program: ts.Program): ts.TransformerFactory<ts.SourceFile>;
+
     /**
      * Transforms the files with the specified {@link fileNames `fileNames`}.
      *
@@ -38,7 +45,7 @@ type Api = ProgramPattern & {
         };
 };
 
-let transformerFactoryBuilder: ts.ProgramPattern = (program, config, extras) =>
+let transformerFactoryBuilder: ts.ProgramPattern = (program, config?, extras?) =>
 {
     return transformerFactory;
 };
