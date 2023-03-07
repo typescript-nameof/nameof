@@ -1,17 +1,12 @@
 import { transformerFactory } from "@ts-nameof/transforms-ts";
+import { ProgramPattern } from "ttypescript/lib/PluginCreator";
 import * as ts from "typescript";
 import { replaceInFiles, replaceInText } from "./text";
 
 /**
  * The API of the module.
  */
-interface IApi
-{
-    /**
-     * Creates a component for transforming source files.
-     */
-    (): ts.TransformerFactory<ts.SourceFile>;
-
+type Api = ProgramPattern & {
     /**
      * Transforms the files with the specified {@link fileNames `fileNames`}.
      *
@@ -29,20 +24,26 @@ interface IApi
      * @param fileText
      * The contents of the file to transform.
      */
-    replaceInText(fileName: string, fileText: string): {
-        /**
-         * The new content of the file.
-         */
-        fileText?: string;
+    replaceInText(fileName: string, fileText: string):
+        {
+            /**
+             * The new content of the file.
+             */
+            fileText?: string;
 
-        /**
-         * A value indicating whether a transformation has been performed.
-         */
-        replaced: boolean;
-    };
-}
+            /**
+             * A value indicating whether a transformation has been performed.
+             */
+            replaced: boolean;
+        };
+};
 
-const api: IApi = transformerFactory as any as IApi;
+let transformerFactoryBuilder: ts.ProgramPattern = (program, config, extras) =>
+{
+    return transformerFactory;
+};
+
+const api: Api = transformerFactoryBuilder as Api;
 api.replaceInFiles = replaceInFiles;
 api.replaceInText = replaceInText;
 // this is for ts-jest support... not ideal
