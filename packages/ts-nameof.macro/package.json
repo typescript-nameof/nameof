@@ -21,10 +21,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dsherret/ts-nameof.git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git",
     "directory": "packages/ts-nameof.macro"
   },
-  "author": "David Sherret",
+  "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
   "license": "MIT",
   "peerDependencies": {
     "babel-plugin-macros": "^3.1.0"

@@ -1,13 +1,12 @@
 ﻿# ts-nameof.macro
 
-[![npm version](https://badge.fury.io/js/ts-nameof.macro.svg)](https://badge.fury.io/js/ts-nameof.macro)
-[![Build Status](https://travis-ci.org/dsherret/ts-nameof.svg)](https://travis-ci.org/dsherret/ts-nameof)
-[![Babel Macro](https://img.shields.io/badge/babel--macro-%F0%9F%8E%A3-f5da55.svg?style=flat-square)](https://github.com/kentcdodds/babel-plugin-macros)
-[![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
+![npm version](https://img.shields.io/npm/v/@typescript-nameof/babel-macro)
+[![Build Status](https://ci.nuth.ch/api/badges/typescript-nameof/nameof/status.svg)](https://ci.nuth.ch/typescript-nameof/nameof)
+[![Babel Macro](https://img.shields.io/badge/babel--macro-%F0%9F%8E%A3-f5da55.svg)](https://github.com/kentcdodds/babel-plugin-macros)
 
 [`nameof`](https://msdn.microsoft.com/en-us/library/dn986596.aspx) in TypeScript.
 
-This is a [babel macro](https://github.com/kentcdodds/babel-plugin-macros) of [ts-nameof](https://github.com/dsherret/ts-nameof).
+This is a [babel macro](https://github.com/kentcdodds/babel-plugin-macros) of [ts-nameof](https://github.com/typescript-nameof/nameof).
 
 ## Setup
 
@@ -35,9 +34,9 @@ Transforms to:
 
 ## Transforms
 
-[Read here](https://github.com/dsherret/ts-nameof/blob/master/README.md)
+[Read here](https://github.com/typescript-nameof/nameof/blob/master/README.md)
 
 ## Other
 
-- [Contributing](https://github.com/dsherret/ts-nameof/blob/master/CONTRIBUTING.md)
-- [Development](https://github.com/dsherret/ts-nameof/blob/master/DEVELOPMENT.md)
+- [Contributing](https://github.com/typescript-nameof/nameof/blob/master/CONTRIBUTING.md)
+- [Development](https://github.com/typescript-nameof/nameof/blob/master/DEVELOPMENT.md)

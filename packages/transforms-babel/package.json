@@ -3,7 +3,7 @@
   "version": "4.2.1",
   "description": "ts-nameof - Babel transforms for ts-nameof packages.",
   "main": "./dist/index.js",
-  "author": "David Sherret",
+  "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

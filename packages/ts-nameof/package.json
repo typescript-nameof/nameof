@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dsherret/ts-nameof.git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git",
     "directory": "packages/ts-nameof"
   },
   "keywords": [
@@ -26,20 +26,19 @@
     "transformer",
     "custom-transformer"
   ],
-  "author": "David Sherret",
+  "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dsherret/ts-nameof/issues"
+    "url": "https://github.com/typescript-nameof/nameof/issues"
   },
-  "homepage": "https://github.com/dsherret/ts-nameof#readme",
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
   "peerDependencies": {
     "typescript": "*"
   },
   "dependencies": {
     "@ts-nameof/common": "^4.2.1",
     "@ts-nameof/transforms-ts": "^4.2.1",
-    "glob": "^9.2.1",
-    "ttypescript": "^1.5.15"
+    "glob": "^9.2.1"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
