@@ -1,13 +1,13 @@
 declare module "ts-nameof" {
-    interface IApi {
-        (): any /* ts.TransformerFactory<ts.SourceFile> */;
+    type Api = {
+        (program: any /* ts.Program */): any /* ts.TransformerFactory<ts.SourceFile> */;
         replaceInFiles(fileNames: readonly string[]): Promise<void[]>;
         replaceInText(fileName: string, fileText: string): {
             fileText?: string;
             replaced: boolean;
         };
-    }
-    const api: IApi;
+    };
+    const api: Api;
     export = api;
 }
 

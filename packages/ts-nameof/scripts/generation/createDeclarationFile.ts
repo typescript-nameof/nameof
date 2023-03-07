@@ -41,6 +41,7 @@ export function createDeclarationFile(project: Project): void
         // these types are made to be any so that this library will work when included in
         // web projects and NodeJS does not exist. See issue #22.
         const typesToComment = [
+            "ts.Program",
             "ts.TransformerFactory<ts.SourceFile>",
             "NodeJS.ErrnoException"
         ];
