@@ -1,4 +1,4 @@
-import * as path from "path";
+import { join } from "upath";
 
 /**
  * Joins the specified {@link paths `paths`} relative to the test directory.
@@ -11,5 +11,5 @@ import * as path from "path";
  */
 export function getTestFilePath(...paths: string[]): string
 {
-    return path.join("./temp/testFiles", ...paths);
+    return join("./temp/testFiles", ...paths);
 }
