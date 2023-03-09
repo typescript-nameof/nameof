@@ -86,7 +86,8 @@ module.exports = {
             projectPath("common"),
             projectPath("scripts-common"),
             projectPath("tests-common"),
-            projectPath("test")
+            projectPath("test"),
+            join(projectRoot("test"), "src", "macro", "tsconfig.json")
         ]
     },
     ignorePatterns: [
