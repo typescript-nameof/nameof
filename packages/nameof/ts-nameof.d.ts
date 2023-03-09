@@ -1,7 +1,7 @@
 declare module "@typescript-nameof/nameof" {
-    type Api = any /* ts.TransformerFactory<ts.SourceFile> */ & {
-        (program: any /* ts.Program */): any /* ts.TransformerFactory<ts.SourceFile> */;
-        factory(compiler: any): any /* ts.TransformerFactory<ts.SourceFile> */;
+    type Api = unknown /* ts.TransformerFactory<ts.SourceFile> */ & {
+        (program: unknown /* ts.Program */): unknown /* ts.TransformerFactory<ts.SourceFile> */;
+        factory(compiler: any): unknown /* ts.TransformerFactory<ts.SourceFile> */;
         replaceInFiles(fileNames: readonly string[]): Promise<void[]>;
         replaceInText(fileName: string, fileText: string): {
             fileText?: string;

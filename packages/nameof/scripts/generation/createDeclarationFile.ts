@@ -51,7 +51,7 @@ export function createDeclarationFile(project: Project): void
             {
                 if (typesToComment.includes(descendant.getText()))
                 {
-                    descendant.replaceWithText(`any /* ${descendant.getText()} */`);
+                    descendant.replaceWithText(`unknown /* ${descendant.getText()} */`);
                 }
             });
     }
