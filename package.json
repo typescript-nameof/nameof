@@ -2,17 +2,7 @@
   "name": "typescript-nameof",
   "private": true,
   "workspaces": [
-    "packages/common",
-    "packages/scripts-common",
-    "packages/test",
-    "packages/tests-common",
-    "packages/transforms-common",
-    "packages/transforms-babel",
-    "packages/transforms-ts",
-    "packages/ts-nameof",
-    "packages/ts-nameof.macro",
-    "packages/types",
-    "packages/babel-plugin-ts-nameof"
+    "packages/*"
   ],
   "scripts": {
     "prepare": "ts-patch install",
