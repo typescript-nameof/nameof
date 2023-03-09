@@ -20,8 +20,8 @@ npm run build
 - [packages/transforms-babel](packages/transforms-babel) - Transforms from the Babel AST to the Common AST.
 - [packages/transforms-common](packages/transforms-common) - Nameof transforms done in the Common AST.
 - [packages/transforms-ts](packages/transforms-ts) - Transforms from the TypeScript AST to the Common AST.
-- [packages/ts-nameof](packages/ts-nameof) - ts-nameof library for the TypeScript compiler.
-- [packages/ts-nameof.macro](packages/ts-nameof) - ts-nameof.macro library for Babel macros.
+- [packages/ts-nameof](packages/ts-nameof) - nameof library for the TypeScript compiler.
+- [packages/ts-nameof.macro](packages/ts-nameof) - nameof library for Babel macros.
 
 ## Standard Commands
 
@@ -30,7 +30,7 @@ npm run build
 npm run build
 # run tests (run in root dir)
 npm test
-# format the code (download dprint from dprint.dev)
+# format the code
 npm run lint -- --fix
 ```
 
