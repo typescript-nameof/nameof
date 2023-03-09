@@ -13,7 +13,7 @@ export function createDeclarationFile(project: Project): void
 
     const namespaceDec = declarationFile.addModule(
         {
-            name: '"ts-nameof.macro"',
+            name: '"@typescript-nameof/babel-macro"',
             declarationKind: ModuleDeclarationKind.Module,
             hasDeclareKeyword: true
         });

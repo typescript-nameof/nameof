@@ -1,4 +1,4 @@
-declare module "ts-nameof.macro" {
+declare module "@typescript-nameof/babel-macro" {
     /**
      * Gets a string representation of the final identifier of the given expression.
      *

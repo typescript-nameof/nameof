@@ -1,4 +1,4 @@
-﻿# ts-nameof.macro
+﻿# @typescript-nameof/babel-macro
 
 ![npm version](https://img.shields.io/npm/v/@typescript-nameof/babel-macro)
 [![Build Status](https://ci.nuth.ch/api/badges/typescript-nameof/nameof/status.svg)](https://ci.nuth.ch/typescript-nameof/nameof)
@@ -13,7 +13,7 @@ This is a [babel macro](https://github.com/kentcdodds/babel-plugin-macros) of [t
 1. Install dependencies:
 
 ```
-npm install --save-dev babel-plugin-macros ts-nameof.macro
+npm install --save-dev babel-plugin-macros @typescript-nameof/babel-macro
 ```
 
 2. Ensure `babel-plugin-macros` is properly setup ([Instructions](https://github.com/kentcdodds/babel-plugin-macros/blob/master/other/docs/user.md)).
@@ -21,7 +21,7 @@ npm install --save-dev babel-plugin-macros ts-nameof.macro
 3. Import and use the default export. For example:
 
 ```ts
-import nameof from "ts-nameof.macro";
+import nameof from "@typescript-nameof/babel-macro";
 
 nameof(window.alert);
 ```
