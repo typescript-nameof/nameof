@@ -12,6 +12,11 @@
         "lib": [
             "ES2015"
         ],
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "paths": {
+            "@typescript-nameof/*": [
+                "./packages/*"
+            ]
+        }
     }
 }
