@@ -15,7 +15,7 @@
         "esModuleInterop": true,
         "paths": {
             "@typescript-nameof/*": [
-                "./packages/*"
+                "./packages/*/src"
             ]
         }
     }
