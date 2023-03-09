@@ -3,17 +3,15 @@
   "version": "0.0.1",
   "description": "Allows the Use of nameof in TypeScript",
   "main": "dist/main.js",
-  "typings": "ts-nameof.d.ts",
+  "typings": "dist/main.d.ts",
   "scripts": {
     "clean": "rimraf dist && tsc --b --clean",
-    "build": "tsc --b && npm run build:declarations",
+    "build": "tsc --b",
     "build-test": "tsc --build && npm run --silent copy-test-files",
     "test": "npm run build-test && mocha",
     "test:debug": "npm run build-test && mocha",
     "copy-test-files": "rimraf temp && copyfiles -u 2 \"./src/tests/testFiles/**/*{.js,.txt}\" \"./temp\"",
-    "build:declarations": "ts-node --project scripts/tsconfig.json scripts/generation/main create-declaration-file && npm run --silent verify-declaration-file",
-    "verify-declaration-file": "ts-node --project scripts/tsconfig.json scripts/verification/main verify-declaration-file",
-    "dopublish": "npm run test && npm run build && npm run verify-declaration-file && echo \"run: npm publish --otp\""
+    "dopublish": "npm run test && npm run build && echo \"run: npm publish --otp\""
   },
   "repository": {
     "type": "git",

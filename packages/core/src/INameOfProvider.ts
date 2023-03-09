@@ -1,32 +1,31 @@
-declare module "@typescript-nameof/nameof" {
-    type Api = unknown /* ts.TransformerFactory<ts.SourceFile> */ & {
-        (program: unknown /* ts.Program */): unknown /* ts.TransformerFactory<ts.SourceFile> */;
-        factory(compiler: any): unknown /* ts.TransformerFactory<ts.SourceFile> */;
-        replaceInFiles(fileNames: readonly string[]): Promise<void[]>;
-        replaceInText(fileName: string, fileText: string): {
-            fileText?: string;
-            replaced: boolean;
-        };
-    };
-    const api: Api;
-    export = api;
-}
-
-declare function nameof<T>(func?: (obj: T) => any): string;
-
 /**
- * Gets a string representation of the last identifier of the given expression.
- *
- * @example nameof(console) -> "console"
- * @example nameof(console.log) -> "log"
- * @example nameof(console["warn"]) -> "warn"
- *
- * @param obj An expression for which the last identifier will be parsed.
+ * Cool Stuff here!!
  */
-declare function nameof(obj: any): string;
-
-declare namespace nameof
+export interface INameOfProvider
 {
+    /**
+     * Gets a string representation of the final identifier of the given expression.
+     *
+     * @example nameof<MyInterface>() -> "MyInterface"
+     * @example nameof<Array<MyInterface>>() -> "Array"
+     * @example nameof<MyNamespace.MyInnerInterface>() -> "MyInnerInterface"
+     * @example nameof<MyInterface>(o => o.prop) -> "prop"
+     *
+     * @param func An optional function for which the last identifier of the expression will be parsed.
+     */
+    <T>(func?: (obj: T) => any): string;
+
+    /**
+     * Gets a string representation of the last identifier of the given expression.
+     *
+     * @example nameof(console) -> "console"
+     * @example nameof(console.log) -> "log"
+     * @example nameof(console["warn"]) -> "warn"
+     *
+     * @param obj An expression for which the last identifier will be parsed.
+     */
+    (obj: any): string;
+
     /**
      * Gets the string representation of the entire type parameter expression.
      *
@@ -40,7 +39,7 @@ declare namespace nameof
      * A negative index can be used, indicating an offset from the end of the sequence.
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function full<T>(periodIndex?: number): string;
+    full<T>(periodIndex?: number): string;
 
     /**
      * Gets the string representation of the entire resultant expression.
@@ -54,7 +53,7 @@ declare namespace nameof
      * When absent, the full expression will be parsed.
      * A negative index can be used, indicating an offset from the end of the sequence.
      */
-    function full<T>(func: (obj: T) => any, periodIndex?: number): string;
+    full<T>(func: (obj: T) => any, periodIndex?: number): string;
 
     /**
      * Gets the string representation of the entire given expression.
@@ -68,7 +67,7 @@ declare namespace nameof
      * When absent, the full expression will be parsed.
      * A negative index can be used, indicating an offset from the end of the sequence.
      */
-    function full(obj: any, periodIndex?: number): string;
+    full(obj: any, periodIndex?: number): string;
 
     /**
      * Gets an array containing the string representation of the final identifier of each expression in the array returned by the provided function.
@@ -78,7 +77,7 @@ declare namespace nameof
      *
      * @param func A function returning an array of expressions to be parsed, excluding the parameter's identifier.
      */
-    function toArray<T>(func: (obj: T) => any[]): string[];
+    toArray<T>(func: (obj: T) => any[]): string[];
 
     /**
      * Gets an array containing the string representation of each expression in the arguments.
@@ -88,7 +87,7 @@ declare namespace nameof
      *
      * @param args An array of expressions to be parsed.
      */
-    function toArray(...args: any[]): string[];
+    toArray(...args: any[]): string[];
 
     /**
      * Embeds an expression into the string representation of the result of nameof.full.
@@ -97,7 +96,7 @@ declare namespace nameof
      *
      * @param value The value to interpolate.
      */
-    function interpolate<T>(value: T): T;
+    interpolate<T>(value: T): T;
 
     /**
      * Gets an array of strings where each element is a subsequent part of the expression provided.
@@ -111,7 +110,7 @@ declare namespace nameof
      * When absent, the full expression will be parsed.
      * A negative index can be used, indicating an offset from the end of the sequence.
      */
-    function split<T>(func: (obj: T) => any, periodIndex?: number): string[];
+    split<T>(func: (obj: T) => any, periodIndex?: number): string[];
 
     /**
      * Gets an array of strings where each element is a subsequent part of the expression provided.
@@ -125,5 +124,5 @@ declare namespace nameof
      * When absent, the full expression will be parsed.
      * A negative index can be used, indicating an offset from the end of the sequence.
      */
-    function split(obj: any, periodIndex?: number): string[];
+    split(obj: any, periodIndex?: number): string[];
 }

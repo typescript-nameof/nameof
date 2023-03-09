@@ -1,4 +1,3 @@
-/// <reference path="./global.d.ts" />
 /* eslint-disable jsdoc/require-jsdoc */
 // eslint-disable-next-line @typescript-eslint/no-namespace
 namespace TestNamespace

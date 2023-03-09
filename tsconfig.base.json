@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "ES2015",
         "module": "CommonJS",
-        "declaration": false,
+        "declaration": true,
         "sourceMap": true,
         "strict": true,
         "removeComments": true,

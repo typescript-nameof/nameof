@@ -12,5 +12,10 @@
     "files": [
         "index.d.ts",
         "ts-nameof-tests.ts"
+    ],
+    "references": [
+        {
+            "path": "../core"
+        }
     ]
 }

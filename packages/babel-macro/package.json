@@ -6,8 +6,7 @@
   "types": "ts-nameof.macro.d.ts",
   "scripts": {
     "clean": "rimraf dist && tsc --b --clean",
-    "build": "tsc --b && npm run build:declarations",
-    "build:declarations": "ts-node --project scripts/tsconfig.json scripts/generation/main create-declaration-file",
+    "build": "tsc --b",
     "test": "tsc --build && mocha",
     "test:debug": "npm run build && mocha",
     "dopublish": "npm run install && npm run build && echo \"Run: npm publish --otp\""
