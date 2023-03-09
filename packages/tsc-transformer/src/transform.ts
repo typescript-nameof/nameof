@@ -1,5 +1,4 @@
-import { throwError } from "@typescript-nameof/core";
-import * as common from "@typescript-nameof/transformer-core";
+import * as core from "@typescript-nameof/core";
 import * as ts from "typescript";
 import { VisitSourceFileContext } from "./VisitSourceFileContext";
 
@@ -20,7 +19,7 @@ export type TransformResult = ts.StringLiteral | ts.ArrayLiteralExpression | ts.
  * @returns
  * The converted node.
  */
-export function transform(node: common.Node, context: VisitSourceFileContext | undefined): TransformResult
+export function transform(node: core.Node, context: VisitSourceFileContext | undefined): TransformResult
 {
     switch (node.kind)
     {
@@ -36,7 +35,7 @@ export function transform(node: common.Node, context: VisitSourceFileContext | u
 
             return createTemplateExpression(node, context);
         default:
-            return throwError(`Unsupported node kind: ${node.kind}`);
+            return core.throwError(`Unsupported node kind: ${node.kind}`);
     }
 }
 
@@ -52,7 +51,7 @@ export function transform(node: common.Node, context: VisitSourceFileContext | u
  * @returns
  * The converted node.
  */
-function createTemplateExpression(node: common.TemplateExpressionNode, context: VisitSourceFileContext | undefined): ts.TemplateExpression
+function createTemplateExpression(node: core.TemplateExpressionNode, context: VisitSourceFileContext | undefined): ts.TemplateExpression
 {
     const firstPart = typeof node.parts[0] === "string" ? node.parts[0] : undefined;
     const parts = firstPart !== undefined ? node.parts.slice(1) : [...node.parts];
@@ -76,14 +75,14 @@ function createTemplateExpression(node: common.TemplateExpressionNode, context: 
 
             if (typeof interpolatedNode === "string")
             {
-                return throwError("Unexpected scenario where an interpolated node was expected, but a string was found.");
+                return core.throwError("Unexpected scenario where an interpolated node was expected, but a string was found.");
             }
 
             const text = parts[i + 1];
 
             if (typeof text !== "string")
             {
-                return throwError("Unexpected scenario where a string was expected, but an interpolated node was found.");
+                return core.throwError("Unexpected scenario where a string was expected, but an interpolated node was found.");
             }
 
             const tsExpression = interpolatedNode.expression as ts.Expression;

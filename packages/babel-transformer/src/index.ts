@@ -2,8 +2,7 @@
 import type * as babel from "@babel/core";
 import type { Node, NodePath } from "@babel/traverse";
 import type * as babelTypes from "@babel/types";
-import { throwErrorForSourceFile } from "@typescript-nameof/core";
-import { transformCallExpression } from "@typescript-nameof/transformer-core";
+import { throwErrorForSourceFile, transformCallExpression } from "@typescript-nameof/core";
 import { parse, ParseOptions } from "./parse";
 import { transform } from "./transform";
 

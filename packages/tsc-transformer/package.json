@@ -15,8 +15,7 @@
     "test:debug": "npm run build && mocha"
   },
   "dependencies": {
-    "@typescript-nameof/core": "^0.0.1",
-    "@typescript-nameof/transformer-core": "^0.0.1"
+    "@typescript-nameof/core": "^0.0.1"
   },
   "devDependencies": {
     "mocha": "^10.2.0",

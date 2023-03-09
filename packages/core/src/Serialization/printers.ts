@@ -1,5 +1,5 @@
-import { assertNever } from "@typescript-nameof/core";
 import { NameofCallExpression, Node, TemplateExpressionNode } from "./nodes";
+import { assertNever } from "../errors";
 
 /**
  * Prints the specified {@link callExpr `callExpr`}.

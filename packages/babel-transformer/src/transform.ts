@@ -1,6 +1,5 @@
 import type * as babelTypes from "@babel/types";
-import { throwError } from "@typescript-nameof/core";
-import * as common from "@typescript-nameof/transformer-core";
+import core = require("@typescript-nameof/core");
 
 /**
  * Converts the specified {@link node `node`} to a babel node.
@@ -14,7 +13,7 @@ import * as common from "@typescript-nameof/transformer-core";
  * @returns
  * The converted node.
  */
-export function transform(t: typeof babelTypes, node: common.Node): babelTypes.StringLiteral | babelTypes.ArrayExpression | babelTypes.TemplateLiteral
+export function transform(t: typeof babelTypes, node: core.Node): babelTypes.StringLiteral | babelTypes.ArrayExpression | babelTypes.TemplateLiteral
 {
     switch (node.kind)
     {
@@ -25,7 +24,7 @@ export function transform(t: typeof babelTypes, node: common.Node): babelTypes.S
         case "TemplateExpression":
             return createTemplateLiteral(t, node);
         default:
-            return throwError(`Unsupported node kind: ${node.kind}`);
+            return core.throwError(`Unsupported node kind: ${node.kind}`);
     }
 }
 
@@ -41,7 +40,7 @@ export function transform(t: typeof babelTypes, node: common.Node): babelTypes.S
  * @returns
  * The converted node.
  */
-function createTemplateLiteral(t: typeof babelTypes, node: common.TemplateExpressionNode): babelTypes.TemplateLiteral
+function createTemplateLiteral(t: typeof babelTypes, node: core.TemplateExpressionNode): babelTypes.TemplateLiteral
 {
     const parts: babelTypes.TemplateElement[] = [];
     const expressions: babelTypes.Expression[] = [];

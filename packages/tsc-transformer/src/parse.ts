@@ -1,5 +1,4 @@
-import { throwError } from "@typescript-nameof/core";
-import { ArrayLiteralNode, createArrayLiteralNode, createComputedNode, createFunctionNode, createIdentifierNode, createImportTypeNode, createInterpolateNode, createNumericLiteralNode, createStringLiteralNode, createTemplateExpressionNode, FunctionNode, IdentifierNode, ImportTypeNode, InterpolateNode, NameofCallExpression, Node, NumericLiteralNode, StringLiteralNode, TemplateExpressionNode } from "@typescript-nameof/transformer-core";
+import { ArrayLiteralNode, createArrayLiteralNode, createComputedNode, createFunctionNode, createIdentifierNode, createImportTypeNode, createInterpolateNode, createNumericLiteralNode, createStringLiteralNode, createTemplateExpressionNode, FunctionNode, IdentifierNode, ImportTypeNode, InterpolateNode, NameofCallExpression, Node, NumericLiteralNode, StringLiteralNode, TemplateExpressionNode, throwError } from "@typescript-nameof/core";
 import * as ts from "typescript";
 import { getNegativeNumericLiteralValue, getNodeText, getReturnStatementExpressionFromBlock, isNegativeNumericLiteral } from "./helpers";
 import { VisitSourceFileContext } from "./VisitSourceFileContext";

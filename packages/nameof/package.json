@@ -36,7 +36,6 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@typescript-nameof/core": "^0.0.1",
     "@typescript-nameof/tsc-transformer": "^0.0.1",
     "glob": "^9.2.1"
   },

@@ -18,9 +18,7 @@ import type {
     UnaryExpression,
     V8IntrinsicIdentifier
 } from "@babel/types";
-import { throwError } from "@typescript-nameof/core";
-import * as common from "@typescript-nameof/transformer-core";
-import { NameofCallExpression } from "@typescript-nameof/transformer-core";
+import core = require("@typescript-nameof/core");
 import { getNegativeNumericLiteralValue, getReturnStatementArgumentFromBlock, isNegativeNumericLiteral } from "./helpers";
 
 /**
@@ -57,7 +55,7 @@ export interface ParseOptions
  * @returns
  * The parsed node.
  */
-export function parse(t: typeof babelTypes, path: NodePath, options: ParseOptions = {}): NameofCallExpression | undefined
+export function parse(t: typeof babelTypes, path: NodePath, options: ParseOptions = {}): core.NameofCallExpression | undefined
 {
     if (!isNameof(path.node))
     {
@@ -89,7 +87,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed `nameof` expression.
      */
-    function parseNameof(callExpr: CallExpression): NameofCallExpression
+    function parseNameof(callExpr: CallExpression): core.NameofCallExpression
     {
         return {
             property: propertyName,
@@ -128,7 +126,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The type arguments of the specified {@link callExpr `callExpr`}.
      */
-    function parseTypeArguments(callExpr: CallExpression): common.Node[]
+    function parseTypeArguments(callExpr: CallExpression): core.Node[]
     {
         // babel uses incorrect naming. these are type arguments
         const typeArguments = (callExpr as any).typeParameters as TSTypeParameterInstantiation | undefined;
@@ -150,7 +148,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The arguments of the specified {@link callExpr `callExpr`}.
      */
-    function parseArguments(callExpr: CallExpression): common.Node[]
+    function parseArguments(callExpr: CallExpression): core.Node[]
     {
         return callExpr.arguments.map(arg => parseCommonNode(arg));
     }
@@ -164,7 +162,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed node.
      */
-    function parseCommonNode(node: Node): common.Node
+    function parseCommonNode(node: Node): core.Node
     {
         if (t.isMemberExpression(node))
         {
@@ -223,12 +221,12 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
 
         if (t.isThisExpression(node))
         {
-            return common.createIdentifierNode("this");
+            return core.createIdentifierNode("this");
         }
 
         if (t.isSuper(node))
         {
-            return common.createIdentifierNode("super");
+            return core.createIdentifierNode("super");
         }
 
         if (t.isTSImportType(node))
@@ -256,7 +254,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
             return parseInterpolateNode(node);
         }
 
-        return throwError(`Unhandled node type (${node.type}) in text: ${getNodeText(node)} (Please open an issue if you believe this should be supported.)`);
+        return core.throwError(`Unhandled node type (${node.type}) in text: ${getNodeText(node)} (Please open an issue if you believe this should be supported.)`);
     }
 
     /**
@@ -268,22 +266,22 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed node.
      */
-    function parseArrayExpression(node: ArrayExpression): common.ArrayLiteralNode
+    function parseArrayExpression(node: ArrayExpression): core.ArrayLiteralNode
     {
-        const result: common.Node[] = [];
+        const result: core.Node[] = [];
 
         node.elements.forEach(
             element =>
             {
                 if (element === null)
                 {
-                    return throwError(`Unsupported scenario with empty element encountered in array: ${getNodeText(node)}`);
+                    return core.throwError(`Unsupported scenario with empty element encountered in array: ${getNodeText(node)}`);
                 }
 
                 result.push(parseCommonNode(element));
             });
 
-        return common.createArrayLiteralNode(result);
+        return core.createArrayLiteralNode(result);
     }
 
     /**
@@ -295,11 +293,11 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed node.
      */
-    function parseMemberExpression(node: MemberExpression): common.Node
+    function parseMemberExpression(node: MemberExpression): core.Node
     {
         const expressionCommonNode = parseCommonNode(node.object);
         const nameCommonNode = parseCommonNode(node.property);
-        const computedCommonNode = node.computed ? common.createComputedNode(nameCommonNode) : undefined;
+        const computedCommonNode = node.computed ? core.createComputedNode(nameCommonNode) : undefined;
         getEndCommonNode(expressionCommonNode).next = computedCommonNode ?? nameCommonNode;
         return expressionCommonNode;
     }
@@ -313,7 +311,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed node.
      */
-    function parseQualifiedName(node: TSQualifiedName): common.Node
+    function parseQualifiedName(node: TSQualifiedName): core.Node
     {
         const leftCommonNode = parseCommonNode(node.left);
         const rightCommonNode = parseCommonNode(node.right);
@@ -330,9 +328,9 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed node.
      */
-    function parseNumeric(node: NumericLiteral | UnaryExpression): common.NumericLiteralNode
+    function parseNumeric(node: NumericLiteral | UnaryExpression): core.NumericLiteralNode
     {
-        return common.createNumericLiteralNode(getNodeValue());
+        return core.createNumericLiteralNode(getNodeValue());
 
         /**
          * Gets the value of the {@link node `node`}.
@@ -360,9 +358,9 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed node.
      */
-    function parseStringLiteral(node: StringLiteral): common.StringLiteralNode
+    function parseStringLiteral(node: StringLiteral): core.StringLiteralNode
     {
-        return common.createStringLiteralNode(node.value);
+        return core.createStringLiteralNode(node.value);
     }
 
     /**
@@ -374,10 +372,10 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed node.
      */
-    function parseIdentifier(node: Node): common.IdentifierNode
+    function parseIdentifier(node: Node): core.IdentifierNode
     {
         const text = getIdentifierTextOrThrow(node);
-        return common.createIdentifierNode(text);
+        return core.createIdentifierNode(text);
     }
 
     /**
@@ -392,7 +390,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed node.
      */
-    function parseFunctionReturnExpression(functionNode: FunctionExpression | ArrowFunctionExpression, node: Expression): common.FunctionNode
+    function parseFunctionReturnExpression(functionNode: FunctionExpression | ArrowFunctionExpression, node: Expression): core.FunctionNode
     {
         const parameterNames = functionNode.params.map(
             p =>
@@ -404,7 +402,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
                 return getNodeText(p);
             });
 
-        return common.createFunctionNode(parseCommonNode(node), parameterNames);
+        return core.createFunctionNode(parseCommonNode(node), parameterNames);
     }
 
     /**
@@ -419,9 +417,9 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed node.
      */
-    function parseImportType(node: TSImportType, isTypeOf: boolean): common.ImportTypeNode
+    function parseImportType(node: TSImportType, isTypeOf: boolean): core.ImportTypeNode
     {
-        const importTypeNode = common.createImportTypeNode(isTypeOf, parseCommonNode(node.argument));
+        const importTypeNode = core.createImportTypeNode(isTypeOf, parseCommonNode(node.argument));
         const qualifier = node.qualifier ? parseCommonNode(node.qualifier) : undefined;
         getEndCommonNode(importTypeNode).next = qualifier;
         return importTypeNode;
@@ -436,9 +434,9 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed node.
      */
-    function parseTemplateExpression(node: TemplateLiteral): common.TemplateExpressionNode
+    function parseTemplateExpression(node: TemplateLiteral): core.TemplateExpressionNode
     {
-        return common.createTemplateExpressionNode(getParts());
+        return core.createTemplateExpressionNode(getParts());
 
         /**
          * Gets the template parts of the {@link node `node`}.
@@ -446,9 +444,9 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
          * @returns
          * The template parts of the {@link node `node`}.
          */
-        function getParts(): Array<string | common.InterpolateNode>
+        function getParts(): Array<string | core.InterpolateNode>
         {
-            const parts: Array<string | common.InterpolateNode> = [];
+            const parts: Array<string | core.InterpolateNode> = [];
 
             // the number of quasis will always be greater than the number of expressions
             for (let i = 0; i < node.quasis.length; i++)
@@ -458,7 +456,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
 
                 if (expression !== undefined)
                 {
-                    parts.push(common.createInterpolateNode(expression, getNodeText(expression)));
+                    parts.push(core.createInterpolateNode(expression, getNodeText(expression)));
                 }
             }
 
@@ -475,14 +473,14 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The parsed node.
      */
-    function parseInterpolateNode(node: CallExpression): common.InterpolateNode
+    function parseInterpolateNode(node: CallExpression): core.InterpolateNode
     {
         if (node.arguments.length !== 1)
         {
-            return throwError(`Expected a single argument for the nameof.interpolate function call ${getNodeText(node.arguments[0])}.`);
+            return core.throwError(`Expected a single argument for the nameof.interpolate function call ${getNodeText(node.arguments[0])}.`);
         }
 
-        return common.createInterpolateNode(node.arguments[0], getNodeText(node.arguments[0]));
+        return core.createInterpolateNode(node.arguments[0], getNodeText(node.arguments[0]));
     }
 
     /**
@@ -494,7 +492,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
      * @returns
      * The last node in the chain of the specified {@link commonNode `commonNode`}.
      */
-    function getEndCommonNode(commonNode: common.Node): common.Node
+    function getEndCommonNode(commonNode: core.Node): core.Node
     {
         while (commonNode.next !== undefined)
         {
@@ -535,7 +533,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
     {
         if (!t.isIdentifier(node))
         {
-            return throwError(`Expected node to be an identifier: ${getNodeText(node)}`);
+            return core.throwError(`Expected node to be an identifier: ${getNodeText(node)}`);
         }
 
         return node.name;
@@ -553,7 +551,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
     function getReturnStatementArgumentFromBlockOrThrow(block: BlockStatement): Expression
     {
         return getReturnStatementArgumentFromBlock(t, block) ??
-            throwError(`Cound not find return statement with an expression in function expression: ${getNodeText(block)}`);
+        core.throwError(`Cound not find return statement with an expression in function expression: ${getNodeText(block)}`);
     }
 
     /**
@@ -628,14 +626,14 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
     {
         if (!hasAncestorNameofFull())
         {
-            return throwError(
+            return core.throwError(
                 "Found a nameof.interpolate that did not exist within a " +
                 `nameof.full call expression: ${getNodeText(callExpr)}`);
         }
 
         if (callExpr.arguments.length !== 1)
         {
-            return throwError("Unexpected scenario where a nameof.interpolate function did not have a single argument.");
+            return core.throwError("Unexpected scenario where a nameof.interpolate function did not have a single argument.");
         }
 
         /**

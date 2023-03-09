@@ -1,7 +1,7 @@
 import * as assert from "assert";
-import * as factories from "../nodeFactories";
-import { NameofCallExpression, Node } from "../nodes";
-import * as printers from "../printers";
+import * as factories from "../Serialization/nodeFactories";
+import { NameofCallExpression, Node } from "../Serialization/nodes";
+import * as printers from "../Serialization/printers";
 
 describe(
     "printCallExpression",

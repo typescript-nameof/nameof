@@ -1,9 +1,9 @@
-import { assertNever, throwError } from "@typescript-nameof/core";
-import { createArrayLiteralNode, createStringLiteralNode, createTemplateExpressionNode } from "./nodeFactories";
-import { flattenNodeToArray, getLastNextNode } from "./nodeHelpers";
-import { ArrayLiteralNode, FunctionNode, NameofCallExpression, Node, StringLiteralNode, TemplateExpressionNode } from "./nodes";
-import { printCallExpression, printNode } from "./printers";
-import { StringOrTemplateExpressionNodeBuilder } from "./StringOrTemplateExpressionBuilder";
+import { assertNever, throwError } from "./errors";
+import { createArrayLiteralNode, createStringLiteralNode, createTemplateExpressionNode } from "./Serialization/nodeFactories";
+import { flattenNodeToArray, getLastNextNode } from "./Serialization/nodeHelpers";
+import { ArrayLiteralNode, FunctionNode, NameofCallExpression, Node, StringLiteralNode, TemplateExpressionNode } from "./Serialization/nodes";
+import { printCallExpression, printNode } from "./Serialization/printers";
+import { StringOrTemplateExpressionNodeBuilder } from "./Serialization/StringOrTemplateExpressionBuilder";
 
 /**
  * Represents the source to get a name from.
