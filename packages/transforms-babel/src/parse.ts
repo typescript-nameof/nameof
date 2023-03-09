@@ -18,9 +18,9 @@ import type {
     UnaryExpression,
     V8IntrinsicIdentifier
 } from "@babel/types";
-import { throwError } from "@ts-nameof/common";
-import * as common from "@ts-nameof/transforms-common";
-import { NameofCallExpression } from "@ts-nameof/transforms-common";
+import { throwError } from "@typescript-nameof/core";
+import * as common from "@typescript-nameof/transformer-core";
+import { NameofCallExpression } from "@typescript-nameof/transformer-core";
 import { getNegativeNumericLiteralValue, getReturnStatementArgumentFromBlock, isNegativeNumericLiteral } from "./helpers";
 
 /**

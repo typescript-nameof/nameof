@@ -1,6 +1,6 @@
 import * as babelTypes from "@babel/types";
 import type { BlockStatement, Node, UnaryExpression } from "@babel/types";
-import { throwError } from "@ts-nameof/common";
+import { throwError } from "@typescript-nameof/core";
 
 /**
  * Checks whether the specified {@link node `node`} is a negative numeric literal.

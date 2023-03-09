@@ -9,26 +9,31 @@ In the meantime, this is possible using [ttypescript](https://github.com/cevek/t
 1. Install `ttypescript` and `ts-nameof`:
 
    ```bash
-   npm install --save-dev ttypescript ts-nameof
+   npm install --save-dev ttypescript @typescript-nameof/nameof
    // or
-   yarn add --dev ttypescript ts-nameof
+   yarn add --dev ttypescript @typescript-nameof/nameof
    ```
 
-2. Add `ts-nameof` to `tsconfig.json` as a custom transformer:
+2. Install type declarations:
+   ```bash
+   npm install --save-dev @types/nameof@npm:@typescript-nameof/types
+   ```
+
+3. Add `@typescript-nameof/nameof` to `tsconfig.json` as a custom transformer:
 
    ```json
    {
        "compilerOptions": {
            "plugins": [
                 {
-                    "transform": "ts-nameof"
+                    "transform": "@typescript-nameof/nameof"
                 }
             ]
        }
    }
    ```
 
-3. Compile with `ttsc` instead of `tsc`:
+4. Compile with `ttsc` instead of `tsc`:
 
    ```bash
    npx ttsc

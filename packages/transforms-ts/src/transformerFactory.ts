@@ -1,5 +1,5 @@
-import { throwError, throwErrorForSourceFile } from "@ts-nameof/common";
-import { transformCallExpression } from "@ts-nameof/transforms-common";
+import { throwError, throwErrorForSourceFile } from "@typescript-nameof/core";
+import { transformCallExpression } from "@typescript-nameof/transformer-core";
 import * as ts from "typescript";
 import { getNodeText } from "./helpers";
 import { parse } from "./parse";

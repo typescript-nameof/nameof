@@ -1,5 +1,5 @@
 {
-  "name": "ts-nameof-workspace",
+  "name": "typescript-nameof",
   "private": true,
   "workspaces": [
     "packages/common",
@@ -21,8 +21,8 @@
     "test": "npm run --workspaces --if-present test",
     "lint": "eslint --max-warnings 0 .",
     "verify": "npm run test && npm run verify-declaration-file",
-    "create-declaration-file": "npm run --workspace ts-nameof build:declarations && npm run --workspace ts-nameof.macro build:declarations",
-    "verify-declaration-file": "npm run --workspace ts-nameof verify-declaration-file"
+    "create-declaration-file": "npm run --workspace @typescript-nameof/nameof build:declarations && npm run --workspace @typescript-nameof/babel-macro build:declarations",
+    "verify-declaration-file": "npm run --workspace @typescript-nameof/nameof verify-declaration-file"
   },
   "devDependencies": {
     "@delagen/eslint-plugin-deprecation": "^1.3.2",

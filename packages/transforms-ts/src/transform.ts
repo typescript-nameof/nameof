@@ -1,5 +1,5 @@
-import { throwError } from "@ts-nameof/common";
-import * as common from "@ts-nameof/transforms-common";
+import { throwError } from "@typescript-nameof/core";
+import * as common from "@typescript-nameof/transformer-core";
 import * as ts from "typescript";
 import { VisitSourceFileContext } from "./VisitSourceFileContext";
 

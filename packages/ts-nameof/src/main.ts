@@ -1,4 +1,4 @@
-import { transformerFactory } from "@ts-nameof/transforms-ts";
+import { transformerFactory } from "@typescript-nameof/tsc-transformer";
 import * as ts from "typescript";
 import { replaceInFiles, replaceInText } from "./text";
 

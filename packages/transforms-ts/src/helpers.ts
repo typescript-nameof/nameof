@@ -1,4 +1,4 @@
-import { throwError } from "@ts-nameof/common";
+import { throwError } from "@typescript-nameof/core";
 import * as ts from "typescript";
 
 /**

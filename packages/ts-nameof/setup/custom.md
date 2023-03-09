@@ -2,10 +2,10 @@
 
 ## Transformation API
 
-The export from `ts-nameof` is a `ts.TransformerFactory<ts.SourceFile>` so that can be used anywhere custom transformers are accepted. For example, see the [webpack instructions](webpack.md).
+The export from `@typescript-nameof/nameof` is a `ts.TransformerFactory<ts.SourceFile>` so that can be used anywhere custom transformers are accepted. For example, see the [webpack instructions](webpack.md).
 
 ```ts
-const tsNameof = require("ts-nameof");
+const tsNameof = require("@typescript-nameof/nameof");
 
 // tsNameof is a ts.TransformerFactory<ts.SourceFile>
 ```
@@ -22,7 +22,7 @@ transformation api which will be much faster.
 You can use `replaceInFiles` to replace in .ts files:
 
 ```javascript
-var replaceInFiles = require("ts-nameof").replaceInFiles;
+var replaceInFiles = require("typescript-nameof/nameof").replaceInFiles;
 replaceInFiles(["./dist/**/*.ts"]);
 ```
 
@@ -35,6 +35,6 @@ replaceInFiles(["./dist/**/*.ts"]);
 You can also use the `replaceInText` function to replace occurrences of `nameof` in any string:
 
 ```javascript
-var replaceInText = require("ts-nameof").replaceInText;
+var replaceInText = require("@typescript-nameof/nameof").replaceInText;
 var replacedText = replaceInText("filename.ts", "nameof(test);");
 ```

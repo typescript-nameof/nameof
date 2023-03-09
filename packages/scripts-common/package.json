@@ -1,5 +1,5 @@
 {
-  "name": "@ts-nameof/scripts-common",
+  "name": "@typescript-nameof/scripts-common",
   "private": true,
   "description": "ts-nameof - Common scripts for ts-nameof packages.",
   "main": "./dist/index.js",

@@ -5,7 +5,7 @@
         "outDir": "./lib/ts",
         "plugins": [
             {
-                "transform": "ts-nameof"
+                "transform": "@typescript-nameof/nameof"
             }
         ]
     },

@@ -1,6 +1,6 @@
 {
-  "name": "babel-plugin-ts-nameof",
-  "version": "4.2.1",
+  "name": "@typescript-nameof/babel-plugin",
+  "version": "0.0.1",
   "description": "nameof in TypeScript for babel.",
   "main": "dist/index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
   "license": "MIT",
   "dependencies": {
-    "@ts-nameof/transforms-babel": "^4.2.1"
+    "@typescript-nameof/babel-transformer": "^0.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",

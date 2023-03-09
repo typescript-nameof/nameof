@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { ArgsChecker } from "@ts-nameof/scripts-common";
+import { ArgsChecker } from "@typescript-nameof/scripts-common";
 import { verifyDeclarationFile } from "./verifyDeclarationFile";
 
 const argsChecker = new ArgsChecker();

@@ -2,9 +2,12 @@
 
 1. Setup jest with [ts-jest](https://github.com/kulshekhar/ts-jest)
 
-2. `npm install --save-dev ts-nameof @types/ts-nameof`
+2. `npm install --save-dev @typescript-nameof/nameof`
 
-3. In _package.json_ specify...
+3. Install the type declarations:  
+   `npm install --save-dev @types/nameof@npm:@typescript-nameof/types`
+
+5. In _package.json_ specify...
 
 ```jsonc
 {
@@ -12,7 +15,7 @@
     "jest": {
         "globals": {
             "ts-jest": {
-                "astTransformers": ["ts-nameof"]
+                "astTransformers": ["@typescript-nameof/nameof"]
             }
         }
     }
@@ -26,7 +29,7 @@ module.exports = {
     // ...
     globals: {
         "ts-jest": {
-            "astTransformers": ["ts-nameof"],
+            "astTransformers": ["@typescript-nameof/nameof"],
         },
     },
 };

@@ -1,4 +1,4 @@
-import { throwIfContextHasInterpolateExpressions, visitNode, VisitSourceFileContext } from "@ts-nameof/transforms-ts";
+import { throwIfContextHasInterpolateExpressions, visitNode, VisitSourceFileContext } from "@typescript-nameof/tsc-transformer";
 import * as ts from "typescript";
 
 const printer = ts.createPrinter();

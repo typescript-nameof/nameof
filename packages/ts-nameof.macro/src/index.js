@@ -1,6 +1,6 @@
 /// @ts-check
 /// <reference path="references.d.ts" />
-import { transformNode } from "@ts-nameof/transforms-babel";
+import { transformNode } from "@typescript-nameof/babel-transformer";
 import { createMacro, MacroError } from "babel-plugin-macros";
 
 // eslint-disable-next-line import/no-default-export

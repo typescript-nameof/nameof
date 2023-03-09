@@ -76,7 +76,7 @@ export function createDeclarationFile(project: Project): void
             {
                 hasDeclareKeyword: true,
                 declarationKind: ModuleDeclarationKind.Module,
-                name: '"ts-nameof"'
+                name: '"@typescript-nameof/nameof"'
             });
 
         apiModule.setBodyText(fileText);

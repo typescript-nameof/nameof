@@ -1,6 +1,6 @@
 {
-  "name": "@ts-nameof/transforms-common",
-  "version": "4.2.1",
+  "name": "@typescript-nameof/transformer-core",
+  "version": "0.0.1",
   "description": "ts-nameof - Common code for transforms.",
   "main": "./dist/index.js",
   "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
@@ -15,7 +15,7 @@
     "test:debug": "npm run build && mocha"
   },
   "dependencies": {
-    "@ts-nameof/common": "^4.2.1"
+    "@typescript-nameof/core": "^0.0.1"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",

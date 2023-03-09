@@ -1,4 +1,4 @@
-declare module "ts-nameof" {
+declare module "@typescript-nameof/nameof" {
     type Api = {
         (program: any /* ts.Program */): any /* ts.TransformerFactory<ts.SourceFile> */;
         replaceInFiles(fileNames: readonly string[]): Promise<void[]>;

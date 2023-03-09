@@ -1,6 +1,6 @@
 {
-  "name": "@ts-nameof/transforms-babel",
-  "version": "4.2.1",
+  "name": "@typescript-nameof/babel-transformer",
+  "version": "0.0.1",
   "description": "ts-nameof - Babel transforms for ts-nameof packages.",
   "main": "./dist/index.js",
   "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "@babel/types": "^7.21.2",
-    "@ts-nameof/common": "^4.2.1",
-    "@ts-nameof/transforms-common": "^4.2.1",
+    "@typescript-nameof/core": "^0.0.1",
+    "@typescript-nameof/transformer-core": "^0.0.1",
     "@types/babel__core": "^7.20.0",
     "@types/babel__traverse": "^7.18.3"
   },

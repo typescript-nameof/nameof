@@ -1,5 +1,5 @@
 {
-  "name": "@ts-nameof/tests-common",
+  "name": "@typescript-nameof/tests-common",
   "private": true,
   "description": "Common tests for ts-nameof packages.",
   "main": "./dist/index.js",

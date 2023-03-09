@@ -1,4 +1,4 @@
-import { assertNever, throwError } from "@ts-nameof/common";
+import { assertNever, throwError } from "@typescript-nameof/core";
 import { createArrayLiteralNode, createStringLiteralNode, createTemplateExpressionNode } from "./nodeFactories";
 import { flattenNodeToArray, getLastNextNode } from "./nodeHelpers";
 import { ArrayLiteralNode, FunctionNode, NameofCallExpression, Node, StringLiteralNode, TemplateExpressionNode } from "./nodes";

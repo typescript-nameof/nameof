@@ -1,6 +1,6 @@
 {
-  "name": "@ts-nameof/transforms-ts",
-  "version": "4.2.1",
+  "name": "@typescript-nameof/tsc-transformer",
+  "version": "0.0.1",
   "description": "ts-nameof - TypeScript compiler transforms for ts-nameof packages.",
   "main": "./dist/index.js",
   "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
@@ -15,8 +15,8 @@
     "test:debug": "npm run build && mocha"
   },
   "dependencies": {
-    "@ts-nameof/common": "^4.2.1",
-    "@ts-nameof/transforms-common": "^4.2.1"
+    "@typescript-nameof/core": "^0.0.1",
+    "@typescript-nameof/transformer-core": "^0.0.1"
   },
   "devDependencies": {
     "mocha": "^10.2.0",

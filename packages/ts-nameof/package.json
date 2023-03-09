@@ -1,6 +1,6 @@
 {
-  "name": "ts-nameof",
-  "version": "5.0.0",
+  "name": "@typescript-nameof/nameof",
+  "version": "0.0.1",
   "description": "nameof in TypeScript",
   "main": "dist/main.js",
   "typings": "ts-nameof.d.ts",
@@ -36,8 +36,8 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@ts-nameof/common": "^4.2.1",
-    "@ts-nameof/transforms-ts": "^4.2.1",
+    "@typescript-nameof/core": "^0.0.1",
+    "@typescript-nameof/tsc-transformer": "^0.0.1",
     "glob": "^9.2.1"
   },
   "devDependencies": {

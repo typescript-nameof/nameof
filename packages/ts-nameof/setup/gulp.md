@@ -5,7 +5,7 @@ Specify it as a custom transformer with [gulp-typescript](https://github.com/ivo
 ```javascript
 const gulp = require("gulp");
 const ts = require("gulp-typescript");
-const tsNameof = require("ts-nameof");
+const tsNameof = require("@typescript-nameof/nameof");
 
 gulp.task("typescript", function() {
     gulp.src("src/**/*.ts")

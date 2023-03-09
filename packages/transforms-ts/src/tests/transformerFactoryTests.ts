@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { runCommonTests } from "@ts-nameof/tests-common";
+import { runCommonTests } from "@typescript-nameof/tests-common";
 import * as ts from "typescript";
 import { transformerFactory } from "../transformerFactory";
 

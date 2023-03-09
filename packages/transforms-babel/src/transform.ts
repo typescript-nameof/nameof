@@ -1,6 +1,6 @@
 import type * as babelTypes from "@babel/types";
-import { throwError } from "@ts-nameof/common";
-import * as common from "@ts-nameof/transforms-common";
+import { throwError } from "@typescript-nameof/core";
+import * as common from "@typescript-nameof/transformer-core";
 
 /**
  * Converts the specified {@link node `node`} to a babel node.

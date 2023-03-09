@@ -5,7 +5,7 @@
 If using [ts-loader](https://github.com/TypeStrong/ts-loader) or [awesome-typescript-loader](https://github.com/s-panferov/awesome-typescript-loader), specify ts-nameof as a custom transformation like so in _webpack.config.js_:
 
 ```ts
-const tsNameof = require("ts-nameof");
+const tsNameof = require("@typescript-nameof/nameof");
 
 module.exports = {
     // ...etc...
