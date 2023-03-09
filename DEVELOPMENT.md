@@ -21,7 +21,7 @@ npm run build
 - [packages/transforms-common](packages/transforms-common) - Nameof transforms done in the Common AST.
 - [packages/transforms-ts](packages/transforms-ts) - Transforms from the TypeScript AST to the Common AST.
 - [packages/ts-nameof](packages/ts-nameof) - nameof library for the TypeScript compiler.
-- [packages/ts-nameof.macro](packages/ts-nameof) - nameof library for Babel macros.
+- [packages/ts-nameof.macro](packages/ts-nameof.macro) - nameof library for Babel macros.
 
 ## Standard Commands
 
