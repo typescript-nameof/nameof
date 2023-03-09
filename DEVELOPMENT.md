@@ -13,12 +13,12 @@ npm run build
 
 ## Packages
 
-- [packages/babel-plugin](packages/babel-plugin) - Transform plugin for Babel.
+- [packages/babel-plugin](packages/babel-plugin) - nameof plugin for Babel.
 - [packages/core](packages/core) - Common code used by almost everything.
 - [packages/scripts-common](packages/scripts-common) - Common scripts used by other packages.
 - [packages/tests-common](packages/tests-common) - Tests used by some packages. Write all your transform tests here.
 - [packages/babel-transformer](packages/babel-transformer) - Transforms from the Babel AST to the Common AST.
-- [packages/transformer-core](packages/transformer-core) - Nameof transforms done in the Common AST.
+- [packages/transformer-core](packages/transformer-core) - nameof transforms done in the Common AST.
 - [packages/tsc-transformer](packages/tsc-transformer) - Transforms from the TypeScript AST to the Common AST.
 - [packages/nameof](packages/nameof) - nameof library for the TypeScript compiler.
 - [packages/babel-macro](packages/babel-macro) - nameof library for Babel macros.
@@ -30,7 +30,9 @@ npm run build
 npm run build
 # run tests (run in root dir)
 npm test
-# format the code
+# lint the code
+npm run lint
+# or format it
 npm run lint -- --fix
 ```
 

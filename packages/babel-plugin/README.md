@@ -1,4 +1,4 @@
-﻿# babel-plugin-ts-nameof
+﻿# @typescript-nameof/babel-plugin
 
 ![npm version](https://img.shields.io/npm/v/@typescript-nameof/babel-plugin)
 [![Build Status](https://ci.nuth.ch/api/badges/typescript-nameof/nameof/status.svg)](https://ci.nuth.ch/typescript-nameof/nameof)
@@ -10,14 +10,14 @@
 1. Run:
 
 ```
-npm install babel-plugin-ts-nameof @types/ts-nameof --save-dev
+npm install @typescript-nameof/babel-plugin @types/ts-nameof --save-dev
 ```
 
-2. Add an entry to `.babelrc` for `babel-plugin-ts-nameof`:
+2. Add an entry to `.babelrc` for `@typescript-nameof/babel-plugin`:
 
 ```
 {
-  "plugins": ["babel-plugin-ts-nameof"]
+  "plugins": ["@typescript-nameof/babel-plugin"]
 }
 ```
 

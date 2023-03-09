@@ -4,11 +4,11 @@
 
 [`nameof`](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/nameof) in TypeScript.
 
-Monorepo for ts-nameof projects:
+Monorepo for typescript-nameof projects:
 
-- [ts-nameof](packages/nameof) (TypeScript compiler)
-- [babel-plugin-ts-nameof](packages/babel-plugin) (Babel compiler)
-- [ts-nameof.macro](packages/babel-macro) (Babel compiler)
+- [@typescript-nameof/nameof](packages/nameof) (TypeScript compiler)
+- [@typescript-nameof/babel-plugin](packages/babel-plugin) (Babel compiler)
+- [@typescript-nameof/babel-macro](packages/babel-macro) (Babel compiler)
 
 ## Recommend: Don't use this package
 
@@ -16,7 +16,7 @@ See [here](https://github.com/dsherret/ts-nameof/issues/121).
 
 ## Setup
 
-ts-nameof is a _compile time transform_ so it requires some setup. For setup instructions, see the packages above for the compiler you use.
+typescript-nameof is a _compile time transform_ so it requires some setup. For setup instructions, see the packages above for the compiler you use.
 
 ## nameof transform
 

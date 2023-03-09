@@ -1,7 +1,7 @@
 {
   "name": "@typescript-nameof/babel-macro",
   "version": "0.0.1",
-  "description": "Babel macro for nameof in TypeScript.",
+  "description": "Allows the Use of nameof in TypeScript Using a Babel Macro",
   "main": "dist/index.js",
   "types": "ts-nameof.macro.d.ts",
   "scripts": {

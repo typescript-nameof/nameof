@@ -1,7 +1,7 @@
 {
   "name": "@typescript-nameof/core",
   "version": "0.0.1",
-  "description": "ts-nameof - Common code across packages.",
+  "description": "Provides Core Functionalities for @typescript-nameof Packages",
   "main": "./dist/index.js",
   "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
   "license": "MIT",

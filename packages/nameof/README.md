@@ -1,4 +1,4 @@
-﻿# ts-nameof
+﻿# typescript-nameof
 
 ![npm version](https://img.shields.io/npm/v/@typescript-nameof/nameof)
 [![Build Status](https://ci.nuth.ch/api/badges/typescript-nameof/nameof/status.svg)](https://ci.nuth.ch/typescript-nameof/nameof)
@@ -6,7 +6,7 @@
 [`nameof`](https://msdn.microsoft.com/en-us/library/dn986596.aspx) in TypeScript.
 
 ```
-npm install ts-nameof @types/ts-nameof --save-dev
+npm install @typescript-nameof/nameof --save-dev
 ```
 
 ## Setup
@@ -32,7 +32,7 @@ These instructions need updating to use the transformation API, but will still w
 Install `@types/ts-nameof`:
 
 ```
-npm install @types/ts-nameof --save-dev
+npm install @types/nameof@npm:@typescript-nameof/types --save-dev
 ```
 
 ## Transforms

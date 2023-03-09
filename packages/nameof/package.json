@@ -1,7 +1,7 @@
 {
   "name": "@typescript-nameof/nameof",
   "version": "0.0.1",
-  "description": "nameof in TypeScript",
+  "description": "Allows the Use of nameof in TypeScript",
   "main": "dist/main.js",
   "typings": "ts-nameof.d.ts",
   "scripts": {

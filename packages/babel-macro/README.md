@@ -6,7 +6,7 @@
 
 [`nameof`](https://msdn.microsoft.com/en-us/library/dn986596.aspx) in TypeScript.
 
-This is a [babel macro](https://github.com/kentcdodds/babel-plugin-macros) of [ts-nameof](https://github.com/typescript-nameof/nameof).
+This is a [babel macro](https://github.com/kentcdodds/babel-plugin-macros) for the use of [@typescript-nameof](https://github.com/typescript-nameof/nameof).
 
 ## Setup
 

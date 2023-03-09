@@ -1,3 +1,6 @@
-# ts-nameof - Common
+# @typescript-nameof/core
+Provides Core Functionalities for @typescript-nameof Packages
 
-Contains common utilities functions.
+This package is used by a variety of `@typescript-nameof` packages internally.
+
+You might want to have a look at [`@typescript-nameof`](https://github.com/typescript-nameof/nameof) for more information.

@@ -1,7 +1,7 @@
 {
   "name": "@typescript-nameof/babel-transformer",
   "version": "0.0.1",
-  "description": "ts-nameof - Babel transforms for ts-nameof packages.",
+  "description": "Adds Babel Compatibility to @typescript-nameof Packages",
   "main": "./dist/index.js",
   "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
   "license": "MIT",
