@@ -2,6 +2,7 @@
 /* istanbul ignore next */
 import { assert, IsExact } from "conditional-type-checks";
 import tsNameOf = require("ts-nameof");
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as tsNameOfEs6 from "ts-nameof";
 
 /* istanbul ignore next */
