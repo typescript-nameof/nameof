@@ -20,7 +20,7 @@
     "build": "npm run --workspaces --if-present build",
     "test": "npm run --workspaces --if-present test",
     "lint": "eslint --max-warnings 0 .",
-    "verify": "npm run test test && npm run verify-declaration-file",
+    "verify": "npm run test && npm run verify-declaration-file",
     "create-declaration-file": "npm run --workspace ts-nameof build:declarations && npm run --workspace ts-nameof.macro build:declarations",
     "verify-declaration-file": "npm run --workspace ts-nameof verify-declaration-file"
   },
