@@ -1,21 +1,17 @@
 {
     "compilerOptions": {
+        "composite": true,
+        "declaration": true,
         "rootDir": "./src",
         "outDir": "./dist"
     },
     "extends": "../../tsconfig.base.json",
     "include": [
-        "./src"
+        "./src/**/*.ts"
     ],
     "references": [
         {
-            "path": "../transforms-ts"
-        },
-        {
-            "path": "../tests-common"
-        },
-        {
-            "path": "../scripts-common"
+            "path": "../core"
         }
     ]
 }

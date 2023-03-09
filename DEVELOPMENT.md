@@ -13,15 +13,15 @@ npm run build
 
 ## Packages
 
-- [packages/babel-plugin-ts-nameof](packages/babel-plugin-ts-nameof) - Transform plugin for Babel.
-- [packages/common](packages/common) - Common code used by almost everything.
+- [packages/babel-plugin](packages/babel-plugin) - Transform plugin for Babel.
+- [packages/core](packages/core) - Common code used by almost everything.
 - [packages/scripts-common](packages/scripts-common) - Common scripts used by other packages.
 - [packages/tests-common](packages/tests-common) - Tests used by some packages. Write all your transform tests here.
-- [packages/transforms-babel](packages/transforms-babel) - Transforms from the Babel AST to the Common AST.
-- [packages/transforms-common](packages/transforms-common) - Nameof transforms done in the Common AST.
-- [packages/transforms-ts](packages/transforms-ts) - Transforms from the TypeScript AST to the Common AST.
-- [packages/ts-nameof](packages/ts-nameof) - nameof library for the TypeScript compiler.
-- [packages/ts-nameof.macro](packages/ts-nameof.macro) - nameof library for Babel macros.
+- [packages/babel-transformer](packages/babel-transformer) - Transforms from the Babel AST to the Common AST.
+- [packages/transformer-core](packages/transformer-core) - Nameof transforms done in the Common AST.
+- [packages/tsc-transformer](packages/tsc-transformer) - Transforms from the TypeScript AST to the Common AST.
+- [packages/nameof](packages/nameof) - nameof library for the TypeScript compiler.
+- [packages/babel-macro](packages/babel-macro) - nameof library for Babel macros.
 
 ## Standard Commands
 
@@ -52,8 +52,8 @@ The global definitions are stored in [lib/global.d.ts](lib/global.d.ts). To make
 
 ### ts-nameof - Updating API
 
-1. Update [packages/ts-nameof/lib/declarationFileTests.ts](packages/ts-nameof/lib/declarationFileTests.ts) with a failing test.
-2. Update the API in [packages/ts-nameof/src/main.ts](packages/ts-nameof/src/main.ts).
+1. Update [packages/nameof/lib/declarationFileTests.ts](packages/nameof/lib/declarationFileTests.ts) with a failing test.
+2. Update the API in [packages/nameof/src/main.ts](packages/nameof/src/main.ts).
 3. Run `npm run create-declaration-file` in the root directory
 
 ## After Development

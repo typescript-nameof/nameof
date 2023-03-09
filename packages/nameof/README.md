@@ -15,12 +15,12 @@ npm install ts-nameof @types/ts-nameof --save-dev
 
 Follow any of these instructions:
 
-- [Webpack](https://github.com/typescript-nameof/nameof/blob/master/packages/ts-nameof/setup/webpack.md)
-- [Gulp](https://github.com/typescript-nameof/nameof/blob/master/packages/ts-nameof/setup/gulp.md)
-- [FuseBox](https://github.com/typescript-nameof/nameof/blob/master/packages/ts-nameof/setup/fusebox.md)
-- [tsc](https://github.com/typescript-nameof/nameof/blob/master/packages/ts-nameof/setup/tsc.md)
-- [Jest](https://github.com/typescript-nameof/nameof/blob/master/packages/ts-nameof/setup/jest.md)
-- [Custom](https://github.com/typescript-nameof/nameof/blob/master/packages/ts-nameof/setup/custom.md)
+- [Webpack](https://github.com/typescript-nameof/nameof/blob/master/packages/nameof/setup/webpack.md)
+- [Gulp](https://github.com/typescript-nameof/nameof/blob/master/packages/nameof/setup/gulp.md)
+- [FuseBox](https://github.com/typescript-nameof/nameof/blob/master/packages/nameof/setup/fusebox.md)
+- [tsc](https://github.com/typescript-nameof/nameof/blob/master/packages/nameof/setup/tsc.md)
+- [Jest](https://github.com/typescript-nameof/nameof/blob/master/packages/nameof/setup/jest.md)
+- [Custom](https://github.com/typescript-nameof/nameof/blob/master/packages/nameof/setup/custom.md)
 - Others - Open an [issue](https://github.com/typescript-nameof/nameof/issues).
 
 These instructions need updating to use the transformation API, but will still work in the meantime:

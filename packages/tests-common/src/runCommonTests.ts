@@ -998,11 +998,11 @@ nameof(window);
                 // ts
                 result.push("[ts-nameof:/file.ts]: " + originalText);
                 // babel
-                const babelPath = path.resolve(__dirname, "../../transforms-babel/src/tests/test.ts");
+                const babelPath = path.resolve(__dirname, "../../babel-transformer/src/tests/test.ts");
                 // todo: temporary... switch to one path in the year 2021 (old versions of babel won't have the prefixed path)
                 result.push(`${babelPath}: [ts-nameof:${babelPath}]: ${originalText}`);
                 // babel macro (not ideal, but whatever)
-                result.push(`${path.resolve(__dirname, "../../ts-nameof.macro/src/tests/test.ts")}: ./ts-nameof.macro: [ts-nameof]: ${originalText}`);
+                result.push(`${path.resolve(__dirname, "../../babel-macro/src/tests/test.ts")}: ./ts-nameof.macro: [ts-nameof]: ${originalText}`);
             }
 
             return result;

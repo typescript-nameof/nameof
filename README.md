@@ -6,9 +6,9 @@
 
 Monorepo for ts-nameof projects:
 
-- [ts-nameof](packages/ts-nameof) (TypeScript compiler)
-- [babel-plugin-ts-nameof](packages/babel-plugin-ts-nameof) (Babel compiler)
-- [ts-nameof.macro](packages/ts-nameof.macro) (Babel compiler)
+- [ts-nameof](packages/nameof) (TypeScript compiler)
+- [babel-plugin-ts-nameof](packages/babel-plugin) (Babel compiler)
+- [ts-nameof.macro](packages/babel-macro) (Babel compiler)
 
 ## Recommend: Don't use this package
 

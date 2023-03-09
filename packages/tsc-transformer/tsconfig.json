@@ -11,7 +11,13 @@
     ],
     "references": [
         {
-            "path": "../common"
+            "path": "../core"
+        },
+        {
+            "path": "../transformer-core"
+        },
+        {
+            "path": "../tests-common"
         }
     ]
 }

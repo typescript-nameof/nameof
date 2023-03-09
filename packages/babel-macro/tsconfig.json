@@ -10,7 +10,7 @@
     ],
     "references": [
         {
-            "path": "../transforms-babel"
+            "path": "../babel-transformer"
         },
         {
             "path": "../tests-common"

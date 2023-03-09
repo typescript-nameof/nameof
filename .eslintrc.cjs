@@ -72,18 +72,18 @@ module.exports = {
         project: [
             join(__dirname, "tsconfig.json"),
             join(__dirname, "tsconfig.eslint.json"),
-            projectPath("ts-nameof"),
-            join(projectRoot("ts-nameof"), "tsconfig.config.json"),
-            join(projectRoot("ts-nameof"), "lib", "tsconfig.json"),
+            projectPath("nameof"),
+            join(projectRoot("nameof"), "tsconfig.config.json"),
+            join(projectRoot("nameof"), "lib", "tsconfig.json"),
             projectPath("types"),
             join(projectRoot("types"), "tsconfig.eslint.json"),
-            projectPath("ts-nameof.macro"),
-            join(projectRoot("ts-nameof.macro"), "tsconfig.config.json"),
-            projectPath("babel-plugin-ts-nameof"),
-            projectPath("transforms-common"),
-            projectPath("transforms-ts"),
-            projectPath("transforms-babel"),
-            projectPath("common"),
+            projectPath("babel-macro"),
+            join(projectRoot("babel-macro"), "tsconfig.config.json"),
+            projectPath("babel-plugin"),
+            projectPath("transformer-core"),
+            projectPath("tsc-transformer"),
+            projectPath("babel-transformer"),
+            projectPath("core"),
             projectPath("scripts-common"),
             projectPath("tests-common"),
             projectPath("test"),
@@ -92,8 +92,8 @@ module.exports = {
     },
     ignorePatterns: [
         "packages/*/dist/**/*.*",
-        "packages/ts-nameof/ts-nameof.d.ts",
-        "packages/ts-nameof.macro/ts-nameof.macro.d.ts"
+        "packages/nameof/ts-nameof.d.ts",
+        "packages/babel-macro/ts-nameof.macro.d.ts"
     ],
     rules: {
         "node/no-unpublished-import": [

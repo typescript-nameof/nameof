@@ -1,28 +1,28 @@
 {
     "folders": [
         {
-            "path": "./packages/ts-nameof"
+            "path": "./packages/nameof"
         },
         {
             "path": "./packages/types"
         },
         {
-            "path": "./packages/ts-nameof.macro"
+            "path": "./packages/babel-macro"
         },
         {
-            "path": "./packages/babel-plugin-ts-nameof"
+            "path": "./packages/babel-plugin"
         },
         {
-            "path": "./packages/transforms-common"
+            "path": "./packages/transformer-core"
         },
         {
-            "path": "./packages/transforms-ts"
+            "path": "./packages/tsc-transformer"
         },
         {
-            "path": "./packages/transforms-babel"
+            "path": "./packages/babel-transformer"
         },
         {
-            "path": "./packages/common"
+            "path": "./packages/core"
         },
         {
             "path": "./packages/scripts-common"
@@ -44,8 +44,8 @@
             {
                 "type": "node",
                 "request": "launch",
-                "name": "Run transforms-babel tests",
-                "cwd": "${workspaceFolder:transforms-babel}",
+                "name": "Run babel-transformer tests",
+                "cwd": "${workspaceFolder:babel-transformer}",
                 "runtimeExecutable": "npm",
                 "runtimeArgs": [
                     "run",
@@ -55,8 +55,8 @@
             {
                 "type": "node",
                 "request": "launch",
-                "name": "Run transforms-common tests",
-                "cwd": "${workspaceFolder:transforms-common}",
+                "name": "Run transformer-core tests",
+                "cwd": "${workspaceFolder:transformer-core}",
                 "runtimeExecutable": "npm",
                 "runtimeArgs": [
                     "run",
@@ -66,8 +66,8 @@
             {
                 "type": "node",
                 "request": "launch",
-                "name": "Run transforms-ts tests",
-                "cwd": "${workspaceFolder:transforms-ts}",
+                "name": "Run tsc-transformer tests",
+                "cwd": "${workspaceFolder:tsc-transformer}",
                 "runtimeExecutable": "npm",
                 "runtimeArgs": [
                     "run",
@@ -77,8 +77,8 @@
             {
                 "type": "node",
                 "request": "launch",
-                "name": "Run ts-nameof.macro tests",
-                "cwd": "${workspaceFolder:ts-nameof.macro}",
+                "name": "Run babel-macro tests",
+                "cwd": "${workspaceFolder:babel-macro}",
                 "runtimeExecutable": "npm",
                 "runtimeArgs": [
                     "run",
@@ -88,8 +88,8 @@
             {
                 "type": "node",
                 "request": "launch",
-                "name": "Run ts-nameof tests",
-                "cwd": "${workspaceFolder:ts-nameof}",
+                "name": "Run nameof tests",
+                "cwd": "${workspaceFolder:nameof}",
                 "runtimeExecutable": "npm",
                 "runtimeArgs": [
                     "run",
