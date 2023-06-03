@@ -35,7 +35,8 @@
   },
   "dependencies": {
     "@typescript-nameof/tsc-transformer": "^0.0.1",
-    "glob": "^9.2.1"
+    "glob": "^9.2.1",
+    "ts-patch": "^2.1.0"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",

@@ -1,11 +1,12 @@
 import { transformerFactory } from "@typescript-nameof/tsc-transformer";
 // eslint-disable-next-line node/no-unpublished-import
 import type { TsCompilerInstance } from "ts-jest/dist/types";
-import * as ts from "typescript";
+import { ProgramPattern, TransformerExtras } from "ts-patch";
+import { Program, SourceFile, TransformationContext, TransformerFactory } from "typescript";
 import { Api } from "./Api";
 import { replaceInFiles, replaceInText } from "./text";
 
-let transformerFactoryBuilder: ts.ProgramPattern & ts.TransformerFactory<ts.SourceFile> = (...args: [ts.Program, Record<string, unknown>?, ts.TransformerExtras?] | [ts.TransformationContext]) =>
+let transformerFactoryBuilder: ProgramPattern & TransformerFactory<SourceFile> = (...args: [Program, Record<string, unknown>?, TransformerExtras?] | [TransformationContext]) =>
 {
     if (args.length === 1 &&
         !("getTypeChecker" in args[0]))
