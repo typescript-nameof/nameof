@@ -1,5 +1,5 @@
 /**
- * Cool Stuff here!!
+ * Represents a component for determining variable- and type names.
  */
 export interface INameOfProvider
 {
