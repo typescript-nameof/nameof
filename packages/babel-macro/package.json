@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Allows the Use of nameof in TypeScript Using a Babel Macro",
   "main": "dist/index.js",
-  "types": "ts-nameof.macro.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "clean": "rimraf dist && tsc --b --clean",
     "build": "tsc --b",
