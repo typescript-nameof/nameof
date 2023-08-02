@@ -29,7 +29,8 @@
     "babel-plugin-macros": "^3.1.0"
   },
   "dependencies": {
-    "@typescript-nameof/babel-transformer": "^0.0.1"
+    "@typescript-nameof/babel-transformer": "^0.0.1",
+    "@typescript-nameof/core": "^0.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",

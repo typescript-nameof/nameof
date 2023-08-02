@@ -1,19 +1,20 @@
-/// @ts-check
 /// <reference path="references.d.ts" />
 import { transformNode } from "@typescript-nameof/babel-transformer";
+import { INameOfProvider } from "@typescript-nameof/core";
 import { createMacro, MacroError } from "babel-plugin-macros";
 
+const nameof: INameOfProvider = createMacro(nameofMacro);
 // eslint-disable-next-line import/no-default-export
-export default createMacro(nameofMacro);
+export default nameof;
 
 /**
  * Transforms `nameof` calls.
  *
- * @param {any} context
+ * @param context
  * The context of the macro.
  */
 // @ts-ignore
-function nameofMacro(context)
+function nameofMacro(context: any): void
 {
     // go over in reverse as if traversing in post order
     const reverseDefault = context.references.default.slice().reverse();
@@ -34,10 +35,10 @@ function nameofMacro(context)
         /**
          * Gets the path to the node to transform.
          *
-         * @returns {any}
+         * @returns
          * The path to the node to transform.
          */
-        function getPath()
+        function getPath(): any
         {
             const parentPath = path.parentPath; // identifier;
 
