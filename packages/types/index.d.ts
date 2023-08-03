@@ -1,4 +1,4 @@
-import { INameOfProvider } from "@typescript-nameof/core";
+import { INameOfProvider } from "@typescript-nameof/common";
 
 declare global
 {

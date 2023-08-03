@@ -14,7 +14,7 @@ npm run build
 ## Packages
 
 - [packages/babel-plugin](packages/babel-plugin) - nameof plugin for Babel.
-- [packages/core](packages/core) - Common code used by almost everything.
+- [packages/common](packages/common) - Common code used by almost everything.
 - [packages/scripts-common](packages/scripts-common) - Common scripts used by other packages.
 - [packages/tests-common](packages/tests-common) - Tests used by some packages. Write all your transform tests here.
 - [packages/babel-transformer](packages/babel-transformer) - Transforms from the Babel AST to the Common AST.

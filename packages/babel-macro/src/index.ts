@@ -1,6 +1,6 @@
 /// <reference path="references.d.ts" />
 import { transformNode } from "@typescript-nameof/babel-transformer";
-import { INameOfProvider } from "@typescript-nameof/core";
+import { INameOfProvider } from "@typescript-nameof/common";
 import { createMacro, MacroError } from "babel-plugin-macros";
 
 const nameof: INameOfProvider = createMacro(nameofMacro);

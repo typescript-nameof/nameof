@@ -82,7 +82,7 @@ module.exports = {
             projectPath("babel-plugin"),
             projectPath("tsc-transformer"),
             projectPath("babel-transformer"),
-            projectPath("core"),
+            projectPath("common"),
             projectPath("scripts-common"),
             projectPath("tests-common"),
             projectPath("test"),

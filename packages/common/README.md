@@ -1,4 +1,4 @@
-# @typescript-nameof/core
+# @typescript-nameof/common
 Provides Core Functionalities for @typescript-nameof Packages
 
 This package is used by a variety of `@typescript-nameof` packages internally.

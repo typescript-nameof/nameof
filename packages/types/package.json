@@ -6,6 +6,6 @@
         "eslint-plugin-expect-type": "^0.2.2"
     },
     "dependencies": {
-        "@typescript-nameof/core": "^0.0.1"
+        "@typescript-nameof/common": "^0.0.1"
     }
 }

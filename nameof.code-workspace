@@ -19,7 +19,7 @@
             "path": "./packages/babel-transformer"
         },
         {
-            "path": "./packages/core"
+            "path": "./packages/common"
         },
         {
             "path": "./packages/scripts-common"
