@@ -22,9 +22,6 @@
             "path": "./packages/common"
         },
         {
-            "path": "./packages/scripts-common"
-        },
-        {
             "path": "./packages/tests-common"
         },
         {

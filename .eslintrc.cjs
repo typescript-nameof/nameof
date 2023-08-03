@@ -84,7 +84,6 @@ module.exports = {
             projectPath("tsc-transformer"),
             projectPath("babel-transformer"),
             projectPath("common"),
-            projectPath("scripts-common"),
             projectPath("tests-common"),
             projectPath("test"),
             join(projectRoot("test"), "src", "macro", "tsconfig.json")
