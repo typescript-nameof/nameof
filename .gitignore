@@ -12,6 +12,7 @@
 *.sln
 /packages/nameof/temp/
 /packages/*/dist/
+/packages/*/lib/
 /packages/*/node_modules/
 *.tsbuildinfo
 # Logs

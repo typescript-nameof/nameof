@@ -75,6 +75,7 @@ module.exports = {
             projectPath("nameof"),
             join(projectRoot("nameof"), "tsconfig.config.json"),
             join(projectRoot("nameof"), "lib", "tsconfig.json"),
+            projectPath("common-types"),
             projectPath("types"),
             join(projectRoot("types"), "tsconfig.eslint.json"),
             projectPath("babel-macro"),

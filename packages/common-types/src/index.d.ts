@@ -1,0 +1,1 @@
+export { INameOfProvider } from "./INameOfProvider";

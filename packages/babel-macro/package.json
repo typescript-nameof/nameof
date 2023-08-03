@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@typescript-nameof/babel-transformer": "^0.0.1",
-    "@typescript-nameof/common": "^0.0.1"
+    "@typescript-nameof/common-types": "^0.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",

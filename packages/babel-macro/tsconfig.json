@@ -13,6 +13,9 @@
             "path": "../babel-transformer"
         },
         {
+            "path": "../common-types"
+        },
+        {
             "path": "../tests-common"
         },
         {

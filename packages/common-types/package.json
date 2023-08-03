@@ -1,0 +1,15 @@
+{
+    "name": "@typescript-nameof/common-types",
+    "version": "0.0.1",
+    "description": "Provides Common Types for @typescript-nameof Packages",
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts"
+        },
+        "./package.json": "./package.json"
+    },
+    "scripts": {
+        "build": "tsc --build",
+        "clean": "npm run build -- --clean"
+    }
+}
