@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Allows the Use of nameof in TypeScript",
   "main": "dist/main.js",
-  "typings": "dist/main.d.ts",
+  "types": "dist/main.d.ts",
   "scripts": {
     "clean": "rimraf dist && tsc --b --clean",
     "build": "tsc --b",
@@ -39,6 +39,7 @@
     "ts-patch": "^2.1.0"
   },
   "devDependencies": {
+    "@tsd/typescript": "npm:nop@^1.0.0",
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.14.6",
@@ -49,7 +50,11 @@
     "ts-jest": "^29.0.5",
     "ts-morph": "^17.0.1",
     "ts-node": "^10.9.1",
+    "tsd": "^0.28.1",
     "typescript": "^4.9.5",
     "upath": "^2.0.1"
+  },
+  "tsd": {
+    "directory": "./src/tests/type-tests"
   }
 }

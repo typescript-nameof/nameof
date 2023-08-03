@@ -1,11 +1,15 @@
 {
     "compilerOptions": {
         "rootDir": "./src",
-        "outDir": "./dist"
+        "outDir": "./dist",
+        "composite": true
     },
     "extends": "../../tsconfig.base.json",
     "include": [
         "./src"
+    ],
+    "exclude": [
+        "./src/tests/type-tests"
     ],
     "references": [
         {

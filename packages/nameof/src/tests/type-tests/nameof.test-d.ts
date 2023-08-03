@@ -1,9 +1,8 @@
-/// <reference path="../ts-nameof.d.ts" />
 /* istanbul ignore next */
 import tsNameOf = require("@typescript-nameof/nameof");
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as tsNameOfEs6 from "@typescript-nameof/nameof";
-import { assert, IsExact } from "conditional-type-checks";
+import { expectType } from "tsd";
 
 /* istanbul ignore next */
 /**
@@ -17,10 +16,12 @@ export function testFunc(): void
     // replaceInText
     const replaceInTextResult = tsNameOf.replaceInText("fileName.ts", "const t = 5;");
     console.log(replaceInTextResult);
-    assert<IsExact<typeof replaceInTextResult.fileText, string | undefined>>(true);
-    assert<IsExact<typeof replaceInTextResult.replaced, boolean>>(true);
+    expectType<string | undefined>(replaceInTextResult.fileText);
+    expectType<boolean>(replaceInTextResult.replaced);
 
     // es6 test
     const es6Result = tsNameOfEs6.replaceInText("file.ts", "");
     console.log(es6Result.replaced);
+    expectType<string | undefined>(es6Result.fileText);
+    expectType<boolean>(es6Result.replaced);
 }
