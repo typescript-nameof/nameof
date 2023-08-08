@@ -1,10 +1,13 @@
 // eslint-disable-next-line node/no-unpublished-import
 import type * as babel from "@babel/core";
-import type { Node, NodePath } from "@babel/traverse";
+import type { NodePath } from "@babel/traverse";
 import type * as babelTypes from "@babel/types";
-import { throwErrorForSourceFile, transformCallExpression } from "@typescript-nameof/common";
-import { parse, ParseOptions } from "./parse";
-import { transform } from "./transform";
+import { NameofTransformer, throwErrorForSourceFile } from "@typescript-nameof/common";
+import { BabelAdapter } from "./BabelAdapter";
+import { ITransformerVisitorContext } from "./IVisitContext";
+import { ParseOptions } from "./parse";
+
+export { BabelAdapter };
 
 /**
  * Represents a plugin context.
@@ -36,6 +39,8 @@ export interface TransformOptions extends ParseOptions
  */
 export function plugin(context: IPluginContext): babel.PluginItem
 {
+    let transformer = new NameofTransformer(new BabelAdapter(context.types));
+
     const visitor = {
         CallExpression(path: NodePath, state: unknown)
         {
@@ -44,11 +49,10 @@ export function plugin(context: IPluginContext): babel.PluginItem
             try
             {
                 transformNode(
-                    context.types,
+                    transformer,
                     path,
                     {
-                        // temp assertion because I'm too lazy to investigate what's going on here
-                        traverseChildren: () => path.traverse(visitor as any, state as any)
+                        traverseChildren: () => path.traverse(visitor, state as any)
                     });
             }
             catch (err: any)
@@ -62,27 +66,30 @@ export function plugin(context: IPluginContext): babel.PluginItem
 }
 
 /**
- * Transforms the node located at the specified {@link path `path`}.
+ * Transforms the node at the specified {@linkcode path}.
  *
- * @param t
- * A component for handling babel types.
+ * @param transformer
+ * A component for performing the transformation.
  *
  * @param path
  * The path to the node to transform.
  *
  * @param options
  * The options for the transformation.
+ *
+ * @returns
+ * The transformed node.
  */
-export function transformNode(t: typeof babelTypes, path: NodePath, options: TransformOptions = {}): void
+export function transformNode(transformer: NameofTransformer<ITransformerVisitorContext, babelTypes.Node>, path: NodePath, options: ParseOptions): void
 {
-    const parseResult = parse(t, path, options);
+    let transformed = transformer.Transform(
+        {
+            path,
+            options
+        });
 
-    if (parseResult === undefined)
+    if (transformed)
     {
-        return;
+        path.replaceWith(transformed);
     }
-
-    const transformResult = transform(t, transformCallExpression(parseResult));
-    // temporary assertion due to conflicting type declaration versions
-    path.replaceWith(transformResult as Node);
 }

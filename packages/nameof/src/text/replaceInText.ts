@@ -1,4 +1,5 @@
-import { throwIfContextHasInterpolateExpressions, visitNode, VisitSourceFileContext } from "@typescript-nameof/tsc-transformer";
+import { NameofTransformer } from "@typescript-nameof/common";
+import { throwIfContextHasInterpolateExpressions, TypeScriptAdapter, visitNode } from "@typescript-nameof/tsc-transformer";
 import * as ts from "typescript";
 
 const printer = ts.createPrinter();
@@ -61,10 +62,6 @@ export function replaceInText(fileName: string, fileText: string): ISubstitution
         fileName = "/file.tsx"; // assume tsx
     }
 
-    const visitSourceFileContext: VisitSourceFileContext = {
-        interpolateExpressions: new Set<ts.Node>()
-    };
-
     const sourceFile = ts.createSourceFile(fileName, fileText, ts.ScriptTarget.Latest, false);
     const transformations: ITransformation[] = [];
 
@@ -74,9 +71,10 @@ export function replaceInText(fileName: string, fileText: string): ISubstitution
         return _ => visitSourceFile(context);
     };
 
+    let adapter = new TypeScriptAdapter(sourceFile);
+    let transformer = new NameofTransformer(adapter);
     ts.transform(sourceFile, [transformerFactory]);
-
-    throwIfContextHasInterpolateExpressions(visitSourceFileContext, sourceFile);
+    throwIfContextHasInterpolateExpressions(adapter.Context, sourceFile);
 
     if (transformations.length === 0)
     {
@@ -138,7 +136,7 @@ export function replaceInText(fileName: string, fileText: string): ISubstitution
 
             node = ts.visitEachChild(node, childNode => visitNodeAndChildren(childNode), context);
 
-            const resultNode = visitNode(node, sourceFile, visitSourceFileContext);
+            const resultNode = visitNode(transformer, node);
             const wasTransformed = resultNode !== node;
 
             if (wasTransformed)

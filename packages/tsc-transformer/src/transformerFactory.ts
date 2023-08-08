@@ -1,8 +1,8 @@
-import { throwError, throwErrorForSourceFile, transformCallExpression } from "@typescript-nameof/common";
+import { NameofTransformer, throwError, throwErrorForSourceFile } from "@typescript-nameof/common";
 import * as ts from "typescript";
 import { getNodeText } from "./helpers";
-import { parse } from "./parse";
-import { transform, TransformResult } from "./transform";
+import { TransformResult } from "./transform";
+import { TypeScriptAdapter } from "./TypeScriptAdapter";
 import { VisitSourceFileContext } from "./VisitSourceFileContext";
 
 /**
@@ -33,20 +33,8 @@ export const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context 
  */
 export function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext): ts.SourceFile
 {
-    const visitSourceFileContext: VisitSourceFileContext = {
-        interpolateExpressions: new Set()
-    };
-
-    try
-    {
-        const result = visitNodeAndChildren(sourceFile) as ts.SourceFile;
-        throwIfContextHasInterpolateExpressions(visitSourceFileContext, sourceFile);
-        return result;
-    }
-    catch (err: any)
-    {
-        return throwErrorForSourceFile(err.message, sourceFile.fileName);
-    }
+    let adapter = new TypeScriptAdapter(sourceFile);
+    let transformer = new NameofTransformer(adapter);
 
     /**
      * Transforms the specified {@link node `node`} and its children.
@@ -66,7 +54,18 @@ export function visitSourceFile(sourceFile: ts.SourceFile, context: ts.Transform
 
         // visit the children in post order
         node = ts.visitEachChild(node, childNode => visitNodeAndChildren(childNode), context);
-        return visitNode(node, sourceFile, visitSourceFileContext);
+        return visitNode(transformer, node);
+    }
+
+    try
+    {
+        const result = visitNodeAndChildren(sourceFile) as ts.SourceFile;
+        throwIfContextHasInterpolateExpressions(adapter.Context, sourceFile);
+        return result;
+    }
+    catch (err: any)
+    {
+        return throwErrorForSourceFile(err.message, sourceFile.fileName);
     }
 }
 
@@ -95,57 +94,17 @@ export function throwIfContextHasInterpolateExpressions(context: VisitSourceFile
 /**
  * Transforms the specified {@link visitingNode `visitingNode`}.
  *
- * @param visitingNode
- * The node to transform.
+ * @param transformer
+ * The component for performing the transformation.
  *
- * @param sourceFile
- * The source file of the node to transform.
+ * @param node
+ * The node to transform.
  *
  * @returns
  * The result of the transformation.
  */
-export function visitNode(visitingNode: ts.Node, sourceFile: ts.SourceFile): TransformResult;
-
-/**
- * Transforms the specified {@link visitingNode `visitingNode`}.
- *
- * @param visitingNode
- * The node to transform.
- *
- * @param sourceFile
- * The source file of the node to transform.
- *
- * @param context
- * The context of the transformation.
- *
- * @returns
- * The result of the transformation.
- */
-export function visitNode(visitingNode: ts.Node, sourceFile: ts.SourceFile, context: VisitSourceFileContext | undefined): TransformResult;
-
-/**
- * Transforms the specified {@link visitingNode `visitingNode`}.
- *
- * @param visitingNode
- * The node to transform.
- *
- * @param sourceFile
- * The source file of the node to transform.
- *
- * @param context
- * The context of the transformation.
- *
- * @returns
- * The result of the transformation.
- */
-export function visitNode(visitingNode: ts.Node, sourceFile: ts.SourceFile, context?: VisitSourceFileContext): TransformResult
+export function visitNode(transformer: NameofTransformer<ts.Node, TransformResult>, node: ts.Node): ts.Node
 {
-    const parseResult = parse(visitingNode, sourceFile, context);
-
-    if (parseResult === undefined)
-    {
-        return visitingNode as TransformResult;
-    }
-
-    return transform(transformCallExpression(parseResult), context);
+    let result = transformer.Transform(node);
+    return result ?? node;
 }
