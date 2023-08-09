@@ -62,8 +62,8 @@ classDiagram
         (T node) : T
     }
 
-    ErrorHandler <|-- TSPatchErrorHandler
-    TSJestErrorHandler --|> ErrorHandler
+    IErrorHandler <|-- TSPatchErrorHandler
+    TSJestErrorHandler --|> IErrorHandler
 
     TSPatchErrorHandler --> TSPatchPlugin
     TSJestTransformerPlugin <-- TSJestErrorHandler
