@@ -8,8 +8,7 @@ import { replaceInFiles, replaceInText } from "./text";
 
 let transformerFactoryBuilder: ProgramPattern & TransformerFactory<SourceFile> = (...args: [Program, Record<string, unknown>?, TransformerExtras?] | [TransformationContext]) =>
 {
-    if (args.length === 1 &&
-        ("factory" in args[0]))
+    if ("factory" in args[0])
     {
         return transformerFactory(args[0]) as any;
     }
