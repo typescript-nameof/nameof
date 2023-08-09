@@ -13,7 +13,7 @@ classDiagram
     }
 
     class ErrorHandler {
-        Process(Error error) void
+        Process(SourceFile file, Node node, Error error) void
     }
 
     class TSPatchErrorHandler {
