@@ -17,7 +17,7 @@ classDiagram
     }
 
     class TSPatchErrorHandler {
-        TSPatchErrorHandler(TransformerExtras? extras)
+        TSPatchErrorHandler(PluginConfig? config, TransformerExtras? extras)
     }
 
     class TSJestErrorHandler {
