@@ -1,3 +1,54 @@
+## Plugins
+
+```mermaid
+classDiagram
+    class TSLoaderPlugin
+
+    class TSPatchTransformerPlugin {
+        <<type>>
+        (Program program, PluginConfig? config, TransformerExtras? extras) : TransformerFactory~SourceFile~
+    }
+
+    class TTypeScriptTransformerPlugin {
+        <<type>>
+        (Program program, getProgram() => Program) : TransformerFactory~SourceFile~
+    }
+
+    class TSJestTransformerPlugin {
+        number version
+        string name
+        factory(TsCompilerInstance compilerInstance, object? options) TransformerFactory~SourceFile~
+    }
+
+    class TransformerFactory~T~ {
+        <<type>>
+        (TransformationContext context) : Transformer~T~
+    }
+
+    class Transformer~T~ {
+        (T node) : T
+    }
+
+    class BabelTransformer {
+        Transform(NodePath path) void
+        Visitor
+    }
+
+    class BabelPlugin {
+        <<type>>
+        (BabelAPI babel) : Visitor
+    }
+
+    TransformerFactory <|-- TSLoaderPlugin
+    TransformerFactory <-- TSPatchTransformerPlugin
+    TTypeScriptTransformerPlugin --> TransformerFactory
+    TSJestTransformerPlugin --> TransformerFactory
+    TransformerFactory --> Transformer
+    BabelTransformer <-- BabelPlugin
+```
+
+## Transformers
+
 ```mermaid
 classDiagram
     class IAdapter~T~ {
