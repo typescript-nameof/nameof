@@ -12,7 +12,8 @@ classDiagram
         (BabelAPI babel) : Visitor
     }
 
-    class ErrorHandler {
+    class IErrorHandler {
+        <<interface>>
         Process(SourceFile file, Node node, Error error) void
     }
 
