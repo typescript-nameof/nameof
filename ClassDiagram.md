@@ -2,6 +2,34 @@
 
 ```mermaid
 classDiagram
+    class BabelTransformer {
+        Transform(NodePath path) void
+        Visitor
+    }
+
+    class BabelPlugin {
+        <<type>>
+        (BabelAPI babel) : Visitor
+    }
+
+    class ErrorHandler {
+        Process(Error error) void
+    }
+
+    class TSPatchErrorHandler {
+        TSPatchErrorHandler(TransformerExtras? extras)
+    }
+
+    class TSJestErrorHandler {
+        TSPatchErrorHandler(TsCompilerInstance? compiler)
+    }
+
+    class TypeScriptTransformerPlugin {
+        TypeScriptTransformerPlugin()
+        TypeScriptTransformerPlugin(ErrorHandler errorHandler)
+        TransformerFactory~T~ Factory
+    }
+
     class TSLoaderPlugin
 
     class TSPatchTransformerPlugin {
@@ -29,22 +57,21 @@ classDiagram
         (T node) : T
     }
 
-    class BabelTransformer {
-        Transform(NodePath path) void
-        Visitor
-    }
+    ErrorHandler <|-- TSPatchErrorHandler
+    TSJestErrorHandler --|> ErrorHandler
 
-    class BabelPlugin {
-        <<type>>
-        (BabelAPI babel) : Visitor
-    }
+    TSPatchErrorHandler --> TSPatchTransformerPlugin
+    TSJestTransformerPlugin <-- TSJestErrorHandler
 
-    TransformerFactory <|-- TSLoaderPlugin
-    TransformerFactory <-- TSPatchTransformerPlugin
-    TTypeScriptTransformerPlugin --> TransformerFactory
-    TSJestTransformerPlugin --> TransformerFactory
+    TTypeScriptTransformerPlugin --> TypeScriptTransformerPlugin
+    TSJestTransformerPlugin --> TypeScriptTransformerPlugin
+    TypeScriptTransformerPlugin <-- TSPatchTransformerPlugin
+    TypeScriptTransformerPlugin <-- TSLoaderPlugin
+
+    TransformerFactory <-- TypeScriptTransformerPlugin
+
     TransformerFactory --> Transformer
-    BabelTransformer <-- BabelPlugin
+    BabelPlugin --> BabelTransformer
 ```
 
 ## Transformers
