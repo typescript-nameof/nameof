@@ -27,14 +27,18 @@ classDiagram
     class TypeScriptTransformerPlugin {
         TypeScriptTransformerPlugin()
         TypeScriptTransformerPlugin(ErrorHandler errorHandler)
+        TypeScript TypeScript
         TransformerFactory~T~ Factory
     }
 
     class TSLoaderPlugin
 
-    class TSPatchTransformerPlugin {
+    class TSPatchPlugin {
         <<type>>
         (Program program, PluginConfig? config, TransformerExtras? extras) : TransformerFactory~SourceFile~
+    }
+
+    class TSPatchTransformerPlugin {
     }
 
     class TTypeScriptTransformerPlugin {
@@ -60,12 +64,14 @@ classDiagram
     ErrorHandler <|-- TSPatchErrorHandler
     TSJestErrorHandler --|> ErrorHandler
 
-    TSPatchErrorHandler --> TSPatchTransformerPlugin
+    TSPatchErrorHandler --> TSPatchPlugin
     TSJestTransformerPlugin <-- TSJestErrorHandler
+
+    TypeScriptTransformerPlugin <|-- TSPatchTransformerPlugin
 
     TTypeScriptTransformerPlugin --> TypeScriptTransformerPlugin
     TSJestTransformerPlugin --> TypeScriptTransformerPlugin
-    TypeScriptTransformerPlugin <-- TSPatchTransformerPlugin
+    TSPatchTransformerPlugin <-- TSPatchPlugin
     TypeScriptTransformerPlugin <-- TSLoaderPlugin
 
     TransformerFactory <-- TypeScriptTransformerPlugin
