@@ -2,6 +2,7 @@
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import type ts = require("typescript");
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
+
 /**
  * Provides the functionality to handle errors using `ts-jest` components.
  */
@@ -43,13 +44,10 @@ export class TSJestFeatures extends TypeScriptFeatures
     /**
      * @inheritdoc
      *
-     * @param file
-     * The file related to the diagnostic.
-     *
      * @param diagnostic
      * The diagnostic to report.
      */
-    public ReportDiagnostic(file: ts.SourceFile, diagnostic: ts.Diagnostic): void
+    public ReportDiagnostic(diagnostic: ts.Diagnostic): void
     {
         this.Compiler.configSet.raiseDiagnostics([diagnostic]);
     }

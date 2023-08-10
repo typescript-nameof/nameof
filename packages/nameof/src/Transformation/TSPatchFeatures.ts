@@ -43,13 +43,10 @@ export class TSPatchFeatures extends TypeScriptFeatures
     /**
      * @inheritdoc
      *
-     * @param file
-     * The file related to the diagnostic.
-     *
      * @param diagnostic
      * The diagnostic to report.
      */
-    public ReportDiagnostic(file: ts.SourceFile, diagnostic: ts.Diagnostic): void
+    public ReportDiagnostic(diagnostic: ts.Diagnostic): void
     {
         this.Extras.addDiagnostic(diagnostic);
     }

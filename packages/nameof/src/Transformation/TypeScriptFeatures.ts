@@ -24,20 +24,16 @@ export class TypeScriptFeatures
      */
     public ReportError(node: ts.Node, error: Error): void
     {
-        let file = node.getSourceFile();
-        this.ReportDiagnostic(file, this.GetDiagnostic(node, error));
+        this.ReportDiagnostic(this.GetDiagnostic(node, error));
     }
 
     /**
      * Reports the specified {@linkcode diagnostic}.
      *
-     * @param file
-     * The file related to the diagnostic.
-     *
      * @param diagnostic
      * The diagnostic to report.
      */
-    protected ReportDiagnostic(file: ts.SourceFile, diagnostic: ts.Diagnostic): void
+    protected ReportDiagnostic(diagnostic: ts.Diagnostic): void
     { }
 
     /**
