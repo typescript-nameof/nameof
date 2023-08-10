@@ -1,3 +1,4 @@
+import { ErrorHandler } from "./ErrorHandler";
 import { IErrorHandler } from "./IErrorHandler";
 
 /**
@@ -8,7 +9,7 @@ export class TransformerFeatures<T>
     /**
      * A component for reporting errors.
      */
-    private errorHandler: IErrorHandler<T>;
+    private errorHandler: IErrorHandler<T> | undefined;
 
     /**
      * Initializes a new instance of the {@linkcode TransformerFeatures TransformerFeatures<T>} class.
@@ -16,7 +17,7 @@ export class TransformerFeatures<T>
      * @param errorHandler
      * A component for reporting errors.
      */
-    public constructor(errorHandler: IErrorHandler<T>)
+    public constructor(errorHandler?: IErrorHandler<T>)
     {
         this.errorHandler = errorHandler;
     }
@@ -24,8 +25,13 @@ export class TransformerFeatures<T>
     /**
      * Gets a component for reporting errors.
      */
-    protected get ErrorHandler(): IErrorHandler<T>
+    protected get ErrorHandler(): IErrorHandler<T> | undefined
     {
+        if (!this.errorHandler)
+        {
+            this.errorHandler = this.InitializeErrorHandler();
+        }
+
         return this.errorHandler;
     }
 
@@ -40,6 +46,17 @@ export class TransformerFeatures<T>
      */
     public ReportError(item: T, error: Error): void
     {
-        this.ErrorHandler.Report(item, error);
+        this.ErrorHandler?.Report(item, error);
+    }
+
+    /**
+     * Initializes a new error handler.
+     *
+     * @returns
+     * The newly created error handler.
+     */
+    protected InitializeErrorHandler(): IErrorHandler<T>
+    {
+        return new ErrorHandler();
     }
 }

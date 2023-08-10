@@ -1,10 +1,12 @@
+import { IErrorHandler } from "@typescript-nameof/common";
 // eslint-disable-next-line node/no-unpublished-import
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import type ts = require("typescript");
+import { TSJestErrorHandler } from "./Diagnostics/TSJestErrorHandler";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
 
 /**
- * Provides the functionality to handle errors using `ts-jest` components.
+ * Provides features for `ts-jest` transformations.
  */
 export class TSJestFeatures extends TypeScriptFeatures
 {
@@ -28,7 +30,7 @@ export class TSJestFeatures extends TypeScriptFeatures
     /**
      * @inheritdoc
      */
-    protected get TypeScript(): typeof ts
+    public get TypeScript(): typeof ts
     {
         return this.Compiler.configSet.compilerModule;
     }
@@ -36,7 +38,7 @@ export class TSJestFeatures extends TypeScriptFeatures
     /**
      * Gets the compiler of the plugin.
      */
-    protected get Compiler(): TsCompilerInstance
+    public get Compiler(): TsCompilerInstance
     {
         return this.compiler;
     }
@@ -44,11 +46,11 @@ export class TSJestFeatures extends TypeScriptFeatures
     /**
      * @inheritdoc
      *
-     * @param diagnostic
-     * The diagnostic to report.
+     * @returns
+     * The newly created error handler
      */
-    public ReportDiagnostic(diagnostic: ts.Diagnostic): void
+    protected InitializeErrorHandler(): IErrorHandler<ts.Node>
     {
-        this.Compiler.configSet.raiseDiagnostics([diagnostic], diagnostic.file?.fileName);
+        return new TSJestErrorHandler(this);
     }
 }

@@ -1,14 +1,28 @@
+import { TransformerFeatures } from "@typescript-nameof/common";
+import { IErrorHandler } from "@typescript-nameof/common/src/Transformation/IErrorHandler";
 import type ts = require("typescript");
+import { TypeScriptErrorHandler } from "./Diagnostics/TypeScriptErrorHandler";
 
 /**
  * Provides features for transforming TypeScript code.
  */
-export class TypeScriptFeatures
+export class TypeScriptFeatures extends TransformerFeatures<ts.Node>
 {
+    /**
+     * Initializes a new instance of the {@linkcode TransformerFeatures TypeScriptFeatures<T>} class.
+     *
+     * @param errorHandler
+     * A component for reporting errors.
+     */
+    public constructor(errorHandler?: IErrorHandler<ts.Node>)
+    {
+        super(errorHandler);
+    }
+
     /**
      * Gets an instance of a TypeScript compiler.
      */
-    protected get TypeScript(): typeof ts
+    public get TypeScript(): typeof ts
     {
         return require("typescript");
     }
@@ -24,39 +38,17 @@ export class TypeScriptFeatures
      */
     public ReportError(node: ts.Node, error: Error): void
     {
-        this.ReportDiagnostic(this.GetDiagnostic(node, error));
+        this.ErrorHandler?.Report(node, error);
     }
 
     /**
-     * Reports the specified {@linkcode diagnostic}.
-     *
-     * @param diagnostic
-     * The diagnostic to report.
-     */
-    protected ReportDiagnostic(diagnostic: ts.Diagnostic): void
-    { }
-
-    /**
-     * Creates a diagnostic for the specified {@linkcode error}.
-     *
-     * @param node
-     * The node related to the error.
-     *
-     * @param error
-     * The error to create a diagnostic for.
+     * Initializes a new error handler.
      *
      * @returns
-     * The diagnostic for the specified {@linkcode error}.
+     * The newly created error handler.
      */
-    protected GetDiagnostic(node: ts.Node, error: Error): ts.Diagnostic
+    protected InitializeErrorHandler(): IErrorHandler<ts.Node>
     {
-        return {
-            file: node.getSourceFile(),
-            category: this.TypeScript.DiagnosticCategory.Error,
-            messageText: error.message,
-            code: 1337,
-            start: node.getStart(),
-            length: node.getWidth()
-        };
+        return new TypeScriptErrorHandler(this);
     }
 }

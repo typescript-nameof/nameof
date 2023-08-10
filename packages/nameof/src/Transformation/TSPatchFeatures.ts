@@ -1,5 +1,7 @@
+import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerExtras } from "ts-patch";
 import type ts = require("typescript");
+import { TSPatchErrorHandler } from "./Diagnostics/TSPatchErrorHandler";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
 
 /**
@@ -27,7 +29,7 @@ export class TSPatchFeatures extends TypeScriptFeatures
     /**
      * @inheritdoc
      */
-    protected get TypeScript(): typeof ts
+    public get TypeScript(): typeof ts
     {
         return this.Extras.ts;
     }
@@ -35,7 +37,7 @@ export class TSPatchFeatures extends TypeScriptFeatures
     /**
      * Gets a set of tools for interacting with `ts-patch`.
      */
-    protected get Extras(): TransformerExtras
+    public get Extras(): TransformerExtras
     {
         return this.extras;
     }
@@ -43,11 +45,11 @@ export class TSPatchFeatures extends TypeScriptFeatures
     /**
      * @inheritdoc
      *
-     * @param diagnostic
-     * The diagnostic to report.
+     * @returns
+     * The newly created error handler.
      */
-    public ReportDiagnostic(diagnostic: ts.Diagnostic): void
+    protected InitializeErrorHandler(): IErrorHandler<ts.Node>
     {
-        this.Extras.addDiagnostic(diagnostic);
+        return new TSPatchErrorHandler(this);
     }
 }
