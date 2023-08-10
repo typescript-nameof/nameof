@@ -16,18 +16,16 @@ export class TransformerFeatures
     /**
      * Reports the specified {@linkcode error}.
      *
-     * @param file
-     * The file related to the error.
-     *
      * @param node
      * The node related to the error.
      *
      * @param error
      * The error to process.
      */
-    public ReportError(file: ts.SourceFile, node: ts.Node, error: Error): void
+    public ReportError(node: ts.Node, error: Error): void
     {
-        this.ReportDiagnostic(file, this.GetDiagnostic(file, node, error));
+        let file = node.getSourceFile();
+        this.ReportDiagnostic(file, this.GetDiagnostic(node, error));
     }
 
     /**
@@ -45,9 +43,6 @@ export class TransformerFeatures
     /**
      * Creates a diagnostic for the specified {@linkcode error}.
      *
-     * @param file
-     * The file to get a diagnostic for.
-     *
      * @param node
      * The node related to the error.
      *
@@ -57,10 +52,10 @@ export class TransformerFeatures
      * @returns
      * The diagnostic for the specified {@linkcode error}.
      */
-    protected GetDiagnostic(file: ts.SourceFile, node: ts.Node, error: Error): ts.Diagnostic
+    protected GetDiagnostic(node: ts.Node, error: Error): ts.Diagnostic
     {
         return {
-            file,
+            file: node.getSourceFile(),
             category: this.TypeScript.DiagnosticCategory.Error,
             messageText: error.message,
             code: 1337,
