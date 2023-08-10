@@ -4,6 +4,7 @@ import { BabelAdapter } from "./BabelAdapter";
 import { ParseOptions } from "./parse";
 import { BabelTransformer } from "./Transformation/BabelTransformer";
 
+export { ITransformTarget } from "./ITransformTarget";
 export { BabelAdapter, BabelTransformer };
 
 /**
