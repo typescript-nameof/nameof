@@ -49,6 +49,6 @@ export class TSJestFeatures extends TypeScriptFeatures
      */
     public ReportDiagnostic(diagnostic: ts.Diagnostic): void
     {
-        this.Compiler.configSet.raiseDiagnostics([diagnostic]);
+        this.Compiler.configSet.raiseDiagnostics([diagnostic], diagnostic.file?.fileName);
     }
 }
