@@ -1,6 +1,10 @@
 {
     "folders": [
         {
+            "name": "Solution Items",
+            "path": "."
+        },
+        {
             "path": "./packages/nameof"
         },
         {
@@ -23,10 +27,6 @@
         },
         {
             "path": "./packages/tests-common"
-        },
-        {
-            "name": "Solution Items",
-            "path": "."
         }
     ],
     "launch": {
