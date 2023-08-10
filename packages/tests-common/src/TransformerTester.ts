@@ -13,6 +13,13 @@ import { TestErrorHandler } from "./TestErrorHandler";
 export abstract class TransformerTester<T>
 {
     /**
+     * Registers common tests.
+     */
+    public RegisterCommon(): void
+    {
+    }
+
+    /**
      * Transforms the specified {@linkcode code}.
      *
      * @param code
@@ -21,7 +28,7 @@ export abstract class TransformerTester<T>
      * @returns
      * The transformed representation of the specified {@linkcode code}.
      */
-    public async Transform(code: string): Promise<INameofOutput>
+    protected async Transform(code: string): Promise<INameofOutput>
     {
         let output: string | undefined;
         let errorHandler = new TestErrorHandler(this.DefaultErrorHandler);
@@ -123,13 +130,6 @@ export abstract class TransformerTester<T>
                 `Expected the code ${JSON.stringify(input)} to cause an error, but returned the following result:\n` +
                 `${JSON.stringify(result.output)}`);
         }
-    }
-
-    /**
-     * Registers common tests.
-     */
-    protected RegisterCommon(): void
-    {
     }
 
     /**
