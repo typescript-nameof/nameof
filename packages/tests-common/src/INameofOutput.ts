@@ -4,9 +4,9 @@
 export interface INameofOutput
 {
     /**
-     * The error which occurred during the transformation.
+     * The errors which occurred during the transformation.
      */
-    error?: Error;
+    errors: Error[];
 
     /**
      * The transformed code.

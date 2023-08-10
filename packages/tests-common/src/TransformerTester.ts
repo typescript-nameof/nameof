@@ -1,11 +1,16 @@
 import { strictEqual } from "assert";
 import { resolve } from "path";
+import { ErrorHandler, IErrorHandler } from "@typescript-nameof/common";
 import { INameofOutput } from "./INameofOutput";
+import { TestErrorHandler } from "./TestErrorHandler";
 
 /**
  * Provides the functionality to transform source code.
+ *
+ * @template T
+ * The type of the node which are being transformed.
  */
-export abstract class TransformerTester
+export abstract class TransformerTester<T>
 {
     /**
      * Transforms the specified {@linkcode code}.
@@ -16,7 +21,37 @@ export abstract class TransformerTester
      * @returns
      * The transformed representation of the specified {@linkcode code}.
      */
-    public abstract Transform(code: string): Promise<INameofOutput>;
+    public async Transform(code: string): Promise<INameofOutput>
+    {
+        let output: string | undefined;
+        let errorHandler = new TestErrorHandler(this.DefaultErrorHandler);
+
+        try
+        {
+            output = await this.Run(code, errorHandler);
+        }
+        catch
+        { }
+
+        return {
+            errors: [...errorHandler.Errors],
+            output
+        };
+    }
+
+    /**
+     * Runs the transformation of the specified {@linkcode code}.
+     *
+     * @param code
+     * The code to transform.
+     *
+     * @param errorHandler
+     * A component for reporting errors.
+     *
+     * @returns
+     * The transformed representation of the specified {@linkcode code}.
+     */
+    protected abstract Run(code: string, errorHandler?: IErrorHandler<T>): Promise<string>;
 
     /**
      * Pre-processes the specified {@linkcode code}.
@@ -43,7 +78,7 @@ export abstract class TransformerTester
      */
     protected async AssertTransformation(input: string, expected: string): Promise<void>
     {
-        strictEqual(await this.Transform(input), expected);
+        strictEqual((await this.Transform(input)).output, expected);
     }
 
     /**
@@ -57,6 +92,7 @@ export abstract class TransformerTester
      */
     protected async AssertError(input: string, ...potentialMessages: string[]): Promise<void>
     {
+        let result = await this.Transform(input);
         let babelPath = resolve(__dirname, "..", "..", "babel-transformer", "src", "tests", "test.ts");
 
         let messages = potentialMessages.flatMap(
@@ -70,15 +106,15 @@ export abstract class TransformerTester
                 ];
             });
 
-        let result = await this.Transform(input);
-
-        if (result.error)
+        if (result.errors.length > 0)
         {
-            if (!messages.includes(result.error.message))
+            if (!result.errors.some((error) => messages.includes(error.message)))
             {
                 throw new Error(
-                    `Expected the error message ${JSON.stringify(result.error.message)} to equal one of the following messages:\n` +
-                    `${JSON.stringify(messages, null, 4)}`);
+                    "Expected one of the following messages:\n" +
+                    `${JSON.stringify(messages, null, 4)}\n` +
+                    "but got\n" +
+                    `${JSON.stringify(result.errors.map((error) => error.message), null, 4)}`);
             }
         }
         else
@@ -94,5 +130,13 @@ export abstract class TransformerTester
      */
     protected RegisterCommon(): void
     {
+    }
+
+    /**
+     * Gets the default error handler of the transformer under test.
+     */
+    protected get DefaultErrorHandler(): IErrorHandler<T>
+    {
+        return new ErrorHandler();
     }
 }

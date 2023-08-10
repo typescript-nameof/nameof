@@ -14,6 +14,7 @@
     "test": "echo 'ignore'"
   },
   "dependencies": {
+    "@typescript-nameof/common": "^0.0.1",
     "ts-morph": "^17.0.1"
   },
   "devDependencies": {
