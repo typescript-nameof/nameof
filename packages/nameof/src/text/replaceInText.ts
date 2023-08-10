@@ -1,4 +1,4 @@
-import { NameofTransformer } from "@typescript-nameof/common";
+import { NameofNodeTransformer } from "@typescript-nameof/common";
 import { throwIfContextHasInterpolateExpressions, TypeScriptAdapter, visitNode } from "@typescript-nameof/tsc-transformer";
 import * as ts from "typescript";
 
@@ -72,7 +72,7 @@ export function replaceInText(fileName: string, fileText: string): ISubstitution
     };
 
     let adapter = new TypeScriptAdapter(sourceFile);
-    let transformer = new NameofTransformer(adapter);
+    let transformer = new NameofNodeTransformer(adapter);
     ts.transform(sourceFile, [transformerFactory]);
     throwIfContextHasInterpolateExpressions(adapter.Context, sourceFile);
 

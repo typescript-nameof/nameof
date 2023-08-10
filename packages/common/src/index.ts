@@ -4,4 +4,4 @@ export * from "./Serialization/nodeFactories";
 export * from "./transformCallExpression";
 export { Adapter } from "./Transformation/Adapter";
 export { IAdapter } from "./Transformation/IAdapter";
-export { NameofTransformer } from "./Transformation/NameofTransformer";
+export { NameofNodeTransformer } from "./Transformation/NameofNodeTransformer";

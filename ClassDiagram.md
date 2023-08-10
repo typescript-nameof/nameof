@@ -94,7 +94,7 @@ classDiagram
         Dump(Array~OutputNode~ nodes) T
     }
 
-    class NameOfTransformer {
+    class NameofNodeTransformer {
         Transform(Node node) Node
         TransformFull(Node node) Node
     }

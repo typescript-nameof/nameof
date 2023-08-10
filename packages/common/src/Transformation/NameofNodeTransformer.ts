@@ -4,7 +4,7 @@ import { transformCallExpression } from "../transformCallExpression";
 /**
  * Provides the functionality to transform `nameof` calls.
  */
-export class NameofTransformer<TInput, out TOutput = TInput>
+export class NameofNodeTransformer<TInput, out TOutput = TInput>
 {
     /**
      * A component for parsing and dumping `nameof` calls.
@@ -12,7 +12,7 @@ export class NameofTransformer<TInput, out TOutput = TInput>
     private adapter: IAdapter<TInput, TOutput>;
 
     /**
-     * Initializes a new instance of the {@linkcode NameofTransformer NameofTransformer<TInput, TOutput>} class.
+     * Initializes a new instance of the {@linkcode NameofNodeTransformer NameofNodeTransformer<TInput, TOutput>} class.
      *
      * @param adapter
      * A component for parsing and dumping `nameof` calls.

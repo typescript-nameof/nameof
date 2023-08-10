@@ -1,4 +1,4 @@
-import { NameofTransformer, throwError, throwErrorForSourceFile } from "@typescript-nameof/common";
+import { NameofNodeTransformer, throwError, throwErrorForSourceFile } from "@typescript-nameof/common";
 import * as ts from "typescript";
 import { getNodeText } from "./helpers";
 import { TransformResult } from "./transform";
@@ -34,7 +34,7 @@ export const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context 
 export function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext): ts.SourceFile
 {
     let adapter = new TypeScriptAdapter(sourceFile);
-    let transformer = new NameofTransformer(adapter);
+    let transformer = new NameofNodeTransformer(adapter);
 
     /**
      * Transforms the specified {@link node `node`} and its children.
@@ -103,7 +103,7 @@ export function throwIfContextHasInterpolateExpressions(context: VisitSourceFile
  * @returns
  * The result of the transformation.
  */
-export function visitNode(transformer: NameofTransformer<ts.Node, TransformResult>, node: ts.Node): ts.Node
+export function visitNode(transformer: NameofNodeTransformer<ts.Node, TransformResult>, node: ts.Node): ts.Node
 {
     let result = transformer.Transform(node);
     return result ?? node;
