@@ -1,10 +1,11 @@
 import type babelAPI = require("@babel/core");
 import { TransformerFeatures } from "@typescript-nameof/common";
+import { ITransformTarget } from "../ITransformTarget";
 
 /**
  * @inheritdoc
  */
-export abstract class BabelFeatures extends TransformerFeatures<babelAPI.NodePath>
+export abstract class BabelFeatures extends TransformerFeatures<ITransformTarget>
 {
     /**
      * An instance of the babel compiler.
