@@ -1,11 +1,11 @@
 import { TransformerExtras } from "ts-patch";
 import type ts = require("typescript");
-import { TransformerFeatures } from "./TransformerFeatures";
+import { TypeScriptFeatures } from "./TypeScriptFeatures";
 
 /**
  * Provides the functionality to handle errors using `ts-patch` components.
  */
-export class TSPatchFeatures extends TransformerFeatures
+export class TSPatchFeatures extends TypeScriptFeatures
 {
     /**
      * A set of tools for interacting with `ts-patch`.

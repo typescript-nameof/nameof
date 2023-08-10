@@ -3,7 +3,7 @@ import type ts = require("typescript");
 /**
  * Provides features for transforming TypeScript code.
  */
-export class TransformerFeatures
+export class TypeScriptFeatures
 {
     /**
      * Gets an instance of a TypeScript compiler.

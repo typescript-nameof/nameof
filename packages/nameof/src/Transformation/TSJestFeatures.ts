@@ -1,11 +1,11 @@
 // eslint-disable-next-line node/no-unpublished-import
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import type ts = require("typescript");
-import { TransformerFeatures } from "./TransformerFeatures";
+import { TypeScriptFeatures } from "./TypeScriptFeatures";
 /**
  * Provides the functionality to handle errors using `ts-jest` components.
  */
-export class TSJestFeatures extends TransformerFeatures
+export class TSJestFeatures extends TypeScriptFeatures
 {
     /**
      * The compiler of the plugin.
