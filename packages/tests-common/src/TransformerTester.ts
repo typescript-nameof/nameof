@@ -1,4 +1,6 @@
-import { rejects, strictEqual } from "assert";
+import { strictEqual } from "assert";
+import { resolve } from "path";
+import { INameofOutput } from "./INameofOutput";
 
 /**
  * Provides the functionality to transform source code.
@@ -14,7 +16,7 @@ export abstract class TransformerTester
      * @returns
      * The transformed representation of the specified {@linkcode code}.
      */
-    public abstract Transform(code: string): Promise<string>;
+    public abstract Transform(code: string): Promise<INameofOutput>;
 
     /**
      * Pre-processes the specified {@linkcode code}.
@@ -50,14 +52,41 @@ export abstract class TransformerTester
      * @param input
      * The input of the transformation.
      *
-     * @param message
-     * The expected error message.
+     * @param potentialMessages
+     * A set of messages of which at least one is expected to occur.
      */
-    protected async AssertError(input: string, message: string): Promise<void>
+    protected async AssertError(input: string, ...potentialMessages: string[]): Promise<void>
     {
-        rejects(
-            () => this.Transform(input),
-            message);
+        let babelPath = resolve(__dirname, "..", "..", "babel-transformer", "src", "tests", "test.ts");
+
+        let messages = potentialMessages.flatMap(
+            (message) =>
+            {
+                return [
+                    `[ts-nameof]: ${message}`,
+                    `[ts-nameof:/file.ts]: ${message}`,
+                    `${babelPath}: [ts-nameof:${babelPath}]: ${message}`,
+                    `${resolve(__dirname, "..", "..", "babel-macro", "src", "tests", "test.ts")}: ./ts-nameof.macro: [ts-nameof]: ${message}`
+                ];
+            });
+
+        let result = await this.Transform(input);
+
+        if (result.error)
+        {
+            if (!messages.includes(result.error.message))
+            {
+                throw new Error(
+                    `Expected the error message ${JSON.stringify(result.error.message)} to equal one of the following messages:\n` +
+                    `${JSON.stringify(messages, null, 4)}`);
+            }
+        }
+        else
+        {
+            throw new Error(
+                `Expected the code ${JSON.stringify(input)} to cause an error, but returned the following result:\n` +
+                `${JSON.stringify(result.output)}`);
+        }
     }
 
     /**
