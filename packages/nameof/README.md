@@ -29,7 +29,7 @@ These instructions need updating to use the transformation API, but will still w
 
 ### 2. Declaring global `nameof` function
 
-Install `@types/ts-nameof`:
+Install `@typescript-nameof/types`:
 
 ```
 npm install @types/nameof@npm:@typescript-nameof/types --save-dev
