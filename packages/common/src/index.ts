@@ -6,4 +6,5 @@ export { Adapter } from "./Transformation/Adapter";
 export { IAdapter } from "./Transformation/IAdapter";
 export { IErrorHandler } from "./Transformation/IErrorHandler";
 export { NameofNodeTransformer } from "./Transformation/NameofNodeTransformer";
+export { TransformerBase } from "./Transformation/TransformerBase";
 export { TransformerFeatures } from "./Transformation/TransformerFeatures";

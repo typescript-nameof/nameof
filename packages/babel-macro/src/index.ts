@@ -1,6 +1,5 @@
 /// <reference path="references.d.ts" />
-import { BabelAdapter, transformNode } from "@typescript-nameof/babel-transformer";
-import { NameofNodeTransformer } from "@typescript-nameof/common";
+import { BabelTransformer } from "@typescript-nameof/babel-transformer";
 import { INameOfProvider } from "@typescript-nameof/common-types";
 import { createMacro, MacroError } from "babel-plugin-macros";
 
@@ -17,20 +16,15 @@ export default nameof;
 // @ts-ignore
 function nameofMacro(context: any): void
 {
-    let transformer = new NameofNodeTransformer(new BabelAdapter(context.babel.types));
+    let transformer = new BabelTransformer(context.babel);
+
     // go over in reverse as if traversing in post order
     const reverseDefault = context.references.default.slice().reverse();
 
     // @ts-ignore
     reverseDefault.forEach(path =>
     {
-        transformNode(
-            transformer,
-            getPath(),
-            {
-                // tell the transformation to expect this identifier's name
-                nameofIdentifierName: path.node.name
-            });
+        transformer.TransformNode(getPath(), { nameofIdentifierName: path.node.name });
 
         /**
          * Gets the path to the node to transform.
