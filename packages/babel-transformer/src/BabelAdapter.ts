@@ -1,13 +1,13 @@
 import babelTypes = require("@babel/types");
 import { Adapter, NameofCallExpression, Node } from "@typescript-nameof/common";
-import { ITransformerVisitorContext } from "./IVisitContext";
+import { ITransformTarget } from "./ITransformTarget";
 import { parse } from "./parse";
 import { transform } from "./transform";
 
 /**
  * Provides the functionality to parse and dump `nameof` calls for babel.
  */
-export class BabelAdapter extends Adapter<ITransformerVisitorContext, babelTypes.Node>
+export class BabelAdapter extends Adapter<ITransformTarget, babelTypes.Node>
 {
     /**
      * A component for handling babel types.
@@ -43,7 +43,7 @@ export class BabelAdapter extends Adapter<ITransformerVisitorContext, babelTypes
      * @returns
      * The parsed `nameof` expression.
      */
-    public Parse(item: ITransformerVisitorContext): NameofCallExpression | undefined
+    public Parse(item: ITransformTarget): NameofCallExpression | undefined
     {
         return parse(this.Types, item.path, item.options);
     }

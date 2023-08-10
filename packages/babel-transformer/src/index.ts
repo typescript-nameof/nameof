@@ -4,7 +4,7 @@ import type { NodePath } from "@babel/traverse";
 import type * as babelTypes from "@babel/types";
 import { NameofNodeTransformer, throwErrorForSourceFile } from "@typescript-nameof/common";
 import { BabelAdapter } from "./BabelAdapter";
-import { ITransformerVisitorContext } from "./IVisitContext";
+import { ITransformTarget } from "./ITransformTarget";
 import { ParseOptions } from "./parse";
 
 export { BabelAdapter };
@@ -80,7 +80,7 @@ export function plugin(context: IPluginContext): babel.PluginItem
  * @returns
  * The transformed node.
  */
-export function transformNode(transformer: NameofNodeTransformer<ITransformerVisitorContext, babelTypes.Node>, path: NodePath, options: ParseOptions): void
+export function transformNode(transformer: NameofNodeTransformer<ITransformTarget, babelTypes.Node>, path: NodePath, options: ParseOptions): void
 {
     let transformed = transformer.Transform(
         {

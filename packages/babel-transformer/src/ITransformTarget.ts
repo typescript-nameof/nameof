@@ -4,7 +4,7 @@ import { ParseOptions } from "./parse";
 /**
  * Represents the context of a visitor.
  */
-export interface ITransformerVisitorContext
+export interface ITransformTarget
 {
     /**
      * The path to the node to transform.
