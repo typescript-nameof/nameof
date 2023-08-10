@@ -384,7 +384,7 @@ export abstract class TransformerTester<T>
 
         try
         {
-            output = await this.Run(code, errorHandler);
+            output = await this.Run(await this.Preprocess(code), errorHandler);
         }
         catch
         { }
