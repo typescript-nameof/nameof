@@ -1,11 +1,11 @@
 import { TransformerExtras } from "ts-patch";
 import type ts = require("typescript");
-import { ErrorHandler } from "./ErrorHandler";
+import { TransformerFeatures } from "./TransformerFeatures";
 
 /**
  * Provides the functionality to handle errors using `ts-patch` components.
  */
-export class TSPatchErrorHandler extends ErrorHandler
+export class TSPatchFeatures extends TransformerFeatures
 {
     /**
      * A set of tools for interacting with `ts-patch`.
@@ -44,16 +44,13 @@ export class TSPatchErrorHandler extends ErrorHandler
      * @inheritdoc
      *
      * @param file
-     * The file related to the error.
+     * The file related to the diagnostic.
      *
-     * @param node
-     * The node related to the error.
-     *
-     * @param error
-     * The error to process.
+     * @param diagnostic
+     * The diagnostic to report.
      */
-    public Process(file: ts.SourceFile, node: ts.Node, error: Error): void
+    public ReportDiagnostic(file: ts.SourceFile, diagnostic: ts.Diagnostic): void
     {
-        this.Extras.addDiagnostic(this.GetDiagnostic(file, node, error));
+        this.Extras.addDiagnostic(diagnostic);
     }
 }

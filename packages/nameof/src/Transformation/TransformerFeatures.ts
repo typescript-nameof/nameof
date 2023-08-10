@@ -1,17 +1,20 @@
 import type ts = require("typescript");
 
 /**
- * Provides the functionality to handle errors.
+ * Provides features for transforming TypeScript code.
  */
-export abstract class ErrorHandler
+export class TransformerFeatures
 {
     /**
-     * Gets a TypeScript instance.
+     * Gets an instance of a TypeScript compiler.
      */
-    protected abstract get TypeScript(): typeof ts;
+    protected get TypeScript(): typeof ts
+    {
+        return require("typescript");
+    }
 
     /**
-     * Processes the specified {@linkcode error}.
+     * Reports the specified {@linkcode error}.
      *
      * @param file
      * The file related to the error.
@@ -22,7 +25,22 @@ export abstract class ErrorHandler
      * @param error
      * The error to process.
      */
-    public abstract Process(file: ts.SourceFile, node: ts.Node, error: Error): void;
+    public ReportError(file: ts.SourceFile, node: ts.Node, error: Error): void
+    {
+        this.ReportDiagnostic(file, this.GetDiagnostic(file, node, error));
+    }
+
+    /**
+     * Reports the specified {@linkcode diagnostic}.
+     *
+     * @param file
+     * The file related to the diagnostic.
+     *
+     * @param diagnostic
+     * The diagnostic to report.
+     */
+    protected ReportDiagnostic(file: ts.SourceFile, diagnostic: ts.Diagnostic): void
+    { }
 
     /**
      * Creates a diagnostic for the specified {@linkcode error}.

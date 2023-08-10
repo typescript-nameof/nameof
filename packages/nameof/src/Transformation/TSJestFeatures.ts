@@ -1,12 +1,11 @@
 // eslint-disable-next-line node/no-unpublished-import
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import type ts = require("typescript");
-import { ErrorHandler } from "./ErrorHandler";
-
+import { TransformerFeatures } from "./TransformerFeatures";
 /**
  * Provides the functionality to handle errors using `ts-jest` components.
  */
-export class TSJestErrorHandler extends ErrorHandler
+export class TSJestFeatures extends TransformerFeatures
 {
     /**
      * The compiler of the plugin.
@@ -14,7 +13,7 @@ export class TSJestErrorHandler extends ErrorHandler
     private compiler: TsCompilerInstance;
 
     /**
-     * Initializes a new instance of the {@linkcode TSJestErrorHandler} class.
+     * Initializes a new instance of the {@linkcode TSJestFeatures} class.
      *
      * @param compiler
      * The compiler of the plugin.
@@ -45,19 +44,13 @@ export class TSJestErrorHandler extends ErrorHandler
      * @inheritdoc
      *
      * @param file
-     * The file related to the error.
+     * The file related to the diagnostic.
      *
-     * @param node
-     * The node related to the error.
-     *
-     * @param error
-     * The error to process.
+     * @param diagnostic
+     * The diagnostic to report.
      */
-    public Process(file: ts.SourceFile, node: ts.Node, error: Error): void
+    public ReportDiagnostic(file: ts.SourceFile, diagnostic: ts.Diagnostic): void
     {
-        this.Compiler.configSet.raiseDiagnostics(
-            [
-                this.GetDiagnostic(file, node, error)
-            ]);
+        this.Compiler.configSet.raiseDiagnostics([diagnostic]);
     }
 }
