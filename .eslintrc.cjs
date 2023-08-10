@@ -73,6 +73,7 @@ module.exports = {
             join(__dirname, "tsconfig.eslint.json"),
             projectPath("nameof"),
             join(projectRoot("nameof"), "tsconfig.config.json"),
+            join(projectRoot("nameof"), "src", "tests", "type-tests", "tsconfig.json"),
             projectPath("common-types"),
             projectPath("types"),
             join(projectRoot("types"), "tsconfig.eslint.json"),
@@ -82,9 +83,7 @@ module.exports = {
             projectPath("tsc-transformer"),
             projectPath("babel-transformer"),
             projectPath("common"),
-            projectPath("tests-common"),
-            projectPath("test"),
-            join(projectRoot("test"), "src", "macro", "tsconfig.json")
+            projectPath("tests-common")
         ]
     },
     ignorePatterns: [
