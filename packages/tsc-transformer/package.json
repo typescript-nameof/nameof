@@ -15,7 +15,8 @@
     "test:debug": "npm run build && mocha"
   },
   "dependencies": {
-    "@typescript-nameof/common": "^0.0.1"
+    "@typescript-nameof/common": "^0.0.1",
+    "@typescript-nameof/tests-common": "*"
   },
   "devDependencies": {
     "mocha": "^10.2.0",

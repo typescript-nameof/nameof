@@ -88,6 +88,7 @@ module.exports = {
     },
     ignorePatterns: [
         "packages/*/dist/**/*.*",
+        "packages/*/lib/**/*.*",
         "packages/nameof/ts-nameof.d.ts",
         "packages/babel-macro/ts-nameof.macro.d.ts"
     ],
