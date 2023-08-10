@@ -83,7 +83,7 @@ export abstract class TransformerTester<T>
      * @param expected
      * The expected output of the transformation.
      */
-    protected async AssertTransformation(input: string, expected: string): Promise<void>
+    protected async Assert(input: string, expected: string): Promise<void>
     {
         strictEqual((await this.Transform(input)).output, expected);
     }
