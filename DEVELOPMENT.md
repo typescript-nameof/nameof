@@ -17,8 +17,7 @@ npm run build
 - [packages/common](packages/common) - Common code used by almost everything.
 - [packages/tests-common](packages/tests-common) - Tests used by some packages. Write all your transform tests here.
 - [packages/transformer-core](packages/transformer-core) - nameof transforms done in the Common AST.
-- [packages/tsc-transformer](packages/tsc-transformer) - Transforms from the TypeScript AST to the Common AST.
-- [packages/nameof](packages/nameof) - nameof library for the TypeScript compiler.
+- [packages/nameof](packages/nameof) - nameof library for the TypeScript compiler and components for converting TypeScript AST.
 - [packages/babel-macro](packages/babel-macro) - nameof library for Babel macros.
 
 ## Standard Commands

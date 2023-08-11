@@ -1,6 +1,7 @@
 import { NameofNodeTransformer } from "@typescript-nameof/common";
-import { throwIfContextHasInterpolateExpressions, TypeScriptAdapter, visitNode } from "@typescript-nameof/tsc-transformer";
 import * as ts from "typescript";
+import { throwIfContextHasInterpolateExpressions, visitNode } from "../Transformation/transformerFactory";
+import { TypeScriptAdapter } from "../Transformation/TypeScriptAdapter";
 
 const printer = ts.createPrinter();
 

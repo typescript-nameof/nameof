@@ -1,9 +1,9 @@
 import { IErrorHandler } from "@typescript-nameof/common";
-import { TypeScriptFeatures } from "@typescript-nameof/tsc-transformer";
 // eslint-disable-next-line node/no-unpublished-import
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import type ts = require("typescript");
 import { TSJestErrorHandler } from "./Diagnostics/TSJestErrorHandler";
+import { TypeScriptFeatures } from "./TypeScriptFeatures";
 
 /**
  * Provides features for `ts-jest` transformations.

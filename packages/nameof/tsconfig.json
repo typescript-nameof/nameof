@@ -13,9 +13,6 @@
     ],
     "references": [
         {
-            "path": "../tsc-transformer"
-        },
-        {
             "path": "../tests-common"
         }
     ]

@@ -1,5 +1,5 @@
-import { TypeScriptErrorHandler } from "@typescript-nameof/tsc-transformer";
 import { Diagnostic } from "typescript";
+import { TypeScriptErrorHandler } from "./TypeScriptErrorHandler";
 import { TSPatchFeatures } from "../TSPatchFeatures";
 
 /**

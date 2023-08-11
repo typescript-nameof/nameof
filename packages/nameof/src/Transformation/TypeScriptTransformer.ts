@@ -1,6 +1,6 @@
 import { IErrorHandler } from "@typescript-nameof/common";
 import { Node } from "typescript";
-import { TypeScriptFeatures } from "./Transformation/TypeScriptFeatures";
+import { TypeScriptFeatures } from "./TypeScriptFeatures";
 import { TypeScriptTransformerBase } from "./TypeScriptTransformerBase";
 
 /**

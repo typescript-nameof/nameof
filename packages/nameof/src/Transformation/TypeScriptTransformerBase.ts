@@ -1,7 +1,7 @@
 import { NameofNodeTransformer, TransformerBase } from "@typescript-nameof/common";
 import { Node, SourceFile, TransformationContext, TransformerFactory } from "typescript";
-import { TypeScriptFeatures } from "./Transformation/TypeScriptFeatures";
 import { TypeScriptAdapter } from "./TypeScriptAdapter";
+import { TypeScriptFeatures } from "./TypeScriptFeatures";
 
 /**
  * Provides a basic implementation of a TypeScript transformer.
