@@ -15,10 +15,10 @@
     "test:debug": "npm run build && mocha"
   },
   "dependencies": {
-    "@typescript-nameof/common": "^0.0.1",
-    "@typescript-nameof/tests-common": "*"
+    "@typescript-nameof/common": "^0.0.1"
   },
   "devDependencies": {
+    "@typescript-nameof/tests-common": "*",
     "mocha": "^10.2.0",
     "rimraf": "^4.3.1",
     "ts-node": "^10.9.1",

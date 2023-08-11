@@ -35,7 +35,6 @@
   },
   "dependencies": {
     "@typescript-nameof/common": "^0.0.1",
-    "@typescript-nameof/tests-common": "*",
     "@typescript-nameof/tsc-transformer": "^0.0.1",
     "glob": "^9.2.1",
     "ts-patch": "^2.1.0"
@@ -45,6 +44,7 @@
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.14.6",
+    "@typescript-nameof/tests-common": "*",
     "conditional-type-checks": "^1.0.6",
     "copyfiles": "^2.4.1",
     "mocha": "^10.2.0",
