@@ -1,8 +1,8 @@
 import { IErrorHandler } from "@typescript-nameof/common";
+import { TypeScriptFeatures } from "@typescript-nameof/tsc-transformer";
 import { TransformerExtras } from "ts-patch";
 import type ts = require("typescript");
 import { TSPatchErrorHandler } from "./Diagnostics/TSPatchErrorHandler";
-import { TypeScriptFeatures } from "./TypeScriptFeatures";
 
 /**
  * Provides the functionality to handle errors using `ts-patch` components.
