@@ -23,6 +23,9 @@
             "path": "./packages/common"
         },
         {
+            "path": "./packages/common-types"
+        },
+        {
             "path": "./packages/tests-common"
         }
     ],
