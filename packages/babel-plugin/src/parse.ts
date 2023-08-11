@@ -1,5 +1,6 @@
+// eslint-disable-next-line node/no-unpublished-import
+import type { types } from "@babel/core";
 import type { NodePath } from "@babel/traverse";
-import * as babelTypes from "@babel/types";
 import type {
     ArrayExpression,
     ArrowFunctionExpression,
@@ -7,6 +8,7 @@ import type {
     CallExpression,
     Expression,
     FunctionExpression,
+    Identifier,
     MemberExpression,
     Node,
     NumericLiteral,
@@ -55,7 +57,7 @@ export interface ParseOptions
  * @returns
  * The parsed node.
  */
-export function parse(t: typeof babelTypes, path: NodePath, options: ParseOptions = {}): common.NameofCallExpression | undefined
+export function parse(t: typeof types, path: NodePath, options: ParseOptions = {}): common.NameofCallExpression | undefined
 {
     if (!isNameof(path.node))
     {
@@ -600,7 +602,7 @@ export function parse(t: typeof babelTypes, path: NodePath, options: ParseOption
          * @returns
          * The expected `nameof` identifier.
          */
-        function getIdentifierToInspect(expression: Expression | V8IntrinsicIdentifier): babelTypes.Identifier | undefined
+        function getIdentifierToInspect(expression: Expression | V8IntrinsicIdentifier): Identifier | undefined
         {
             if (t.isIdentifier(expression))
             {

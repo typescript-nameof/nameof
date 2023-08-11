@@ -10,7 +10,7 @@
     ],
     "references": [
         {
-            "path": "../babel-transformer"
+            "path": "../babel-plugin"
         },
         {
             "path": "../common-types"

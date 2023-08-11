@@ -1,6 +1,6 @@
 import { join } from "path";
 import babel = require("@babel/core");
-import { ITransformTarget } from "@typescript-nameof/babel-transformer";
+import { ITransformTarget } from "@typescript-nameof/babel-plugin";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
 import macroPlugin from "babel-plugin-macros";

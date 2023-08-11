@@ -20,9 +20,6 @@
             "path": "./packages/tsc-transformer"
         },
         {
-            "path": "./packages/babel-transformer"
-        },
-        {
             "path": "./packages/common"
         },
         {
@@ -32,17 +29,6 @@
     "launch": {
         "version": "0.2.0",
         "configurations": [
-            {
-                "type": "node",
-                "request": "launch",
-                "name": "Run babel-transformer tests",
-                "cwd": "${workspaceFolder:babel-transformer}",
-                "runtimeExecutable": "npm",
-                "runtimeArgs": [
-                    "run",
-                    "test:debug"
-                ]
-            },
             {
                 "type": "node",
                 "request": "launch",

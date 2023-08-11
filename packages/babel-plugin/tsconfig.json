@@ -1,16 +1,14 @@
 {
     "compilerOptions": {
         "rootDir": "./src",
-        "outDir": "./dist"
+        "outDir": "./dist",
+        "composite": true
     },
     "extends": "../../tsconfig.base.json",
     "include": [
         "./src"
     ],
     "references": [
-        {
-            "path": "../babel-transformer"
-        },
         {
             "path": "../tests-common"
         }

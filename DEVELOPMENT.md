@@ -13,10 +13,9 @@ npm run build
 
 ## Packages
 
-- [packages/babel-plugin](packages/babel-plugin) - nameof plugin for Babel.
+- [packages/babel-plugin](packages/babel-plugin) - nameof plugin for Babel and components for converting Babel AST.
 - [packages/common](packages/common) - Common code used by almost everything.
 - [packages/tests-common](packages/tests-common) - Tests used by some packages. Write all your transform tests here.
-- [packages/babel-transformer](packages/babel-transformer) - Transforms from the Babel AST to the Common AST.
 - [packages/transformer-core](packages/transformer-core) - nameof transforms done in the Common AST.
 - [packages/tsc-transformer](packages/tsc-transformer) - Transforms from the TypeScript AST to the Common AST.
 - [packages/nameof](packages/nameof) - nameof library for the TypeScript compiler.

@@ -1,5 +1,5 @@
 /// <reference path="references.d.ts" />
-import { BabelTransformer } from "@typescript-nameof/babel-transformer";
+import { BabelTransformer } from "@typescript-nameof/babel-plugin";
 import { INameOfProvider } from "@typescript-nameof/common-types";
 import { createMacro, MacroError } from "babel-plugin-macros";
 

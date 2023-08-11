@@ -1,5 +1,6 @@
-import * as babelTypes from "@babel/types";
-import type { BlockStatement, Node, UnaryExpression } from "@babel/types";
+// eslint-disable-next-line node/no-unpublished-import
+import type { types } from "@babel/core";
+import type { BlockStatement, Expression, Node, UnaryExpression } from "@babel/types";
 import { throwError } from "@typescript-nameof/common";
 
 /**
@@ -14,7 +15,7 @@ import { throwError } from "@typescript-nameof/common";
  * @returns
  * A value indicating whether the specified {@link node `node`} is a negative numeric literal.
  */
-export function isNegativeNumericLiteral(t: typeof babelTypes, node: Node): node is UnaryExpression
+export function isNegativeNumericLiteral(t: typeof types, node: Node): node is UnaryExpression
 {
     if (!t.isUnaryExpression(node))
     {
@@ -36,7 +37,7 @@ export function isNegativeNumericLiteral(t: typeof babelTypes, node: Node): node
  * @returns
  * The value of the specified {@link node `node`}.
  */
-export function getNegativeNumericLiteralValue(t: typeof babelTypes, node: UnaryExpression): number
+export function getNegativeNumericLiteralValue(t: typeof types, node: UnaryExpression): number
 {
     if (node.operator !== "-" || !t.isNumericLiteral(node.argument))
     {
@@ -58,7 +59,7 @@ export function getNegativeNumericLiteralValue(t: typeof babelTypes, node: Unary
  * @returns
  * The return value of the specified {@link block `block`}.
  */
-export function getReturnStatementArgumentFromBlock(t: typeof babelTypes, block: BlockStatement): babelTypes.Expression | undefined
+export function getReturnStatementArgumentFromBlock(t: typeof types, block: BlockStatement): Expression | undefined
 {
     for (const statement of block.body)
     {
