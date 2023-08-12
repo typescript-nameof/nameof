@@ -94,7 +94,8 @@ classDiagram
         Dump(Array~OutputNode~ nodes) T
     }
 
-    class NameofNodeTransformer {
+    class NameofNodeTransformer~T~ {
+        IAdapter~T~ adapter
         Transform(Node node) Node
         TransformFull(Node node) Node
     }
@@ -123,45 +124,69 @@ classDiagram
         number Value
     }
 
-    class TemplateLiteralNode {
-        Array~string~ TemplateSpans
-        Array~string~ Variables
-    }
-
-    class OutputNode {
+    class PathPart {
         <<type>>
     }
 
-    class PathPart {
-        string Type
+    class Accessor {
+        string type
+        string|number Value
     }
 
-    class RootPathPart {
+    class PropertyAccessor {
     }
 
-    class PropertyPathPart {
-        string identifier
+    class IndexedAccessor {
     }
 
-    class IndexedPathPart {
-        var Identifier
-    }
-
-    class InterpolationPathPart {
+    class InterpolationAccessor~T~ {
+        T node
         string VariableName
+    }
+
+    class ResultType {
+        <<enum>>
+        Plain
+        Template
+    }
+
+    class IResult {
+        <<interface>>
+        ResultType type
+    }
+
+    class IPlainResult {
+        <<interface>>
+        string name
+    }
+
+    class ITemplateResult~T~ {
+        <<interface>>
+        string[] templateParts
+        T[] nodes
+    }
+
+    class NameofResult~T~ {
+        <<type>>
     }
 
     Node <|-- IndexedAccessNode
     Node <|-- PropertyAccessNode
     Node <|-- StringLiteralNode
     Node <|-- NumericLiteralNode
-    Node <|-- TemplateLiteralNode
 
-    OutputNode <|-- StringLiteralNode
-    OutputNode <|-- TemplateLiteralNode
+    IAdapter <-- NameofNodeTransformer
 
-    PathPart <|-- PropertyPathPart
-    PropertyPathPart <|-- RootPathPart
-    PathPart <|-- IndexedPathPart
-    PathPart <|-- InterpolationPathPart
+    Accessor <|-- PropertyAccessor
+    Accessor <|-- IndexedAccessor
+    PropertyAccessor <-- PathPart
+    IndexedAccessor <-- PathPart
+    InterpolationAccessor <-- PathPart
+
+    ResultType <-- IResult
+    IResult <|-- IPlainResult
+    IResult <|-- ITemplateResult
+
+    IPlainResult <-- NameofResult
+    ITemplateResult <-- NameofResult
 ```
