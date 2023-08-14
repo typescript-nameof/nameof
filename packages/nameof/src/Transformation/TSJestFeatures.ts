@@ -20,10 +20,13 @@ export class TSJestFeatures extends TypeScriptFeatures
      *
      * @param compiler
      * The compiler of the plugin.
+     *
+     * @param errorHandler
+     * A component for reporting errors.
      */
-    public constructor(compiler: TsCompilerInstance)
+    public constructor(compiler: TsCompilerInstance, errorHandler?: IErrorHandler<ts.Node>)
     {
-        super();
+        super(errorHandler);
         this.compiler = compiler;
     }
 

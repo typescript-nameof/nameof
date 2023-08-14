@@ -19,10 +19,13 @@ export class TSPatchFeatures extends TypeScriptFeatures
      *
      * @param extras
      * A set of tools for interacting with `ts-patch`.
+     *
+     * @param errorHandler
+     * A component for reporting errors.
      */
-    public constructor(extras: TransformerExtras)
+    public constructor(extras: TransformerExtras, errorHandler?: IErrorHandler<ts.Node>)
     {
-        super();
+        super(errorHandler);
         this.extras = extras;
     }
 
