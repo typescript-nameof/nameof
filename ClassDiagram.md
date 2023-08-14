@@ -141,6 +141,7 @@ classDiagram
     Node <|-- PropertyAccessNode
     Node <|-- StringLiteralNode
     Node <|-- NumericLiteralNode
+    Node <|-- FunctionNode
 ```
 
 ## Results
