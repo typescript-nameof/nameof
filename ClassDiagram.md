@@ -137,11 +137,15 @@ classDiagram
         T body
     }
 
+    class UnsupportedNode~T~ {
+    }
+
     Node <|-- IndexedAccessNode
     Node <|-- PropertyAccessNode
     Node <|-- StringLiteralNode
     Node <|-- NumericLiteralNode
     Node <|-- FunctionNode
+    Node <|-- UnsupportedNode
 ```
 
 ## Results
