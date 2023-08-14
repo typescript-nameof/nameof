@@ -88,7 +88,7 @@ classDiagram
     class IAdapter~T~ {
         <<interface>>
         HandleError(Error error) void
-        Parse(T node) Node
+        Parse(T node) Node~T~
         GetTrailingIdentifier(T node) T
         Dump(OutputNode node) T
         Dump(Array~OutputNode~ nodes) T
@@ -96,8 +96,8 @@ classDiagram
 
     class NameofNodeTransformer~T~ {
         IAdapter~T~ adapter
-        Transform(Node node) Node
-        TransformFull(Node node) Node
+        Transform(Node node) NameofResult~T~
+        TransformFull(Node node) NameofResult~T~
     }
 
     IAdapter <-- NameofNodeTransformer
@@ -106,30 +106,46 @@ classDiagram
 ## Nodes
 ```mermaid
 classDiagram
-    class Node {
+    class Node~T~ {
         string Type
+        T source
         PathPart LastPart
         Array~PathPart~ Path
     }
 
-    class PropertyAccessNode {
+    class PropertyAccessNode~T~ {
         Node Expression
         string Name
     }
 
-    class IndexedAccessNode {
+    class IndexedAccessNode~T~ {
         Node Object
         Node Index
     }
 
-    class StringLiteralNode {
+    class StringLiteralNode~T~ {
         string Value
     }
 
-    class NumericLiteralNode {
+    class NumericLiteralNode~T~ {
         number Value
     }
 
+    class FunctionNode~T~ {
+        T[] arguments
+        T body
+    }
+
+    Node <|-- IndexedAccessNode
+    Node <|-- PropertyAccessNode
+    Node <|-- StringLiteralNode
+    Node <|-- NumericLiteralNode
+```
+
+## Results
+
+```mermaid
+classDiagram
     class PathPart {
         <<type>>
     }
@@ -175,11 +191,6 @@ classDiagram
     class NameofResult~T~ {
         <<type>>
     }
-
-    Node <|-- IndexedAccessNode
-    Node <|-- PropertyAccessNode
-    Node <|-- StringLiteralNode
-    Node <|-- NumericLiteralNode
 
     Accessor <|-- PropertyAccessor
     Accessor <|-- IndexedAccessor
