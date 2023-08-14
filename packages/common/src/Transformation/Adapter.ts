@@ -1,11 +1,36 @@
 import { IAdapter } from "./IAdapter";
+import { TransformerFeatures } from "./TransformerFeatures";
 import { NameofCallExpression, Node } from "../Serialization/nodes";
 
 /**
  * Provides the functionality to parse and dump `nameof` expressions.
  */
-export abstract class Adapter<TInput, out TOutput = TInput> implements IAdapter<TInput, TOutput>
+export abstract class Adapter<TFeatures extends TransformerFeatures<TInput>, TInput, out TOutput = TInput> implements IAdapter<TInput, TOutput>
 {
+    /**
+     * The features of the transformer integration.
+     */
+    private features: TFeatures;
+
+    /**
+     * Initializes a new instance of the {@linkcode Adapter Adapter<TFeatures, TInput, TOutput>} class.
+     *
+     * @param features
+     * The features of the transformer integration.
+     */
+    public constructor(features: TFeatures)
+    {
+        this.features = features;
+    }
+
+    /**
+     * Gets the features of the transformer integration.
+     */
+    public get Features(): TFeatures
+    {
+        return this.features;
+    }
+
     /**
      * @inheritdoc
      *

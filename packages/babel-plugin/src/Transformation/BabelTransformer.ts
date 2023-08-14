@@ -27,7 +27,7 @@ export class BabelTransformer extends TransformerBase<ITransformTarget, BabelFea
     public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<ITransformTarget>)
     {
         super(new BabelFeatures(babelAPI, errorHandler));
-        this.transformer = new NameofNodeTransformer(new BabelAdapter(this.Features.Types));
+        this.transformer = new NameofNodeTransformer(new BabelAdapter(this.Features));
     }
 
     /**

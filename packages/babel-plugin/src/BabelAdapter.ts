@@ -1,37 +1,33 @@
-import babelTypes = require("@babel/types");
+// eslint-disable-next-line node/no-unpublished-import
+import { types } from "@babel/core";
 import { Adapter, NameofCallExpression, Node } from "@typescript-nameof/common";
 import { ITransformTarget } from "./ITransformTarget";
 import { parse } from "./parse";
 import { transform } from "./transform";
+import { BabelFeatures } from "./Transformation/BabelFeatures";
 
 /**
  * Provides the functionality to parse and dump `nameof` calls for babel.
  */
-export class BabelAdapter extends Adapter<ITransformTarget, babelTypes.Node>
+export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types.Node>
 {
-    /**
-     * A component for handling babel types.
-     */
-    private types: typeof babelTypes;
-
     /**
      * Initializes a new instance of the {@linkcode BabelAdapter} class.
      *
-     * @param types
-     * A component for handling babel types.
+     * @param features
+     * The features of the babel transformer.
      */
-    public constructor(types: typeof babelTypes)
+    public constructor(features: BabelFeatures)
     {
-        super();
-        this.types = types;
+        super(features);
     }
 
     /**
      * Gets a component for handling babel types.
      */
-    protected get Types(): typeof babelTypes
+    protected get Types(): typeof types
     {
-        return this.types;
+        return this.Features.Types;
     }
 
     /**
@@ -57,7 +53,7 @@ export class BabelAdapter extends Adapter<ITransformTarget, babelTypes.Node>
      * @returns
      * The converted representation of the specified {@linkcode node}.
      */
-    public Dump(node: Node): babelTypes.Node
+    public Dump(node: Node): types.Node
     {
         return transform(this.Types, node);
     }

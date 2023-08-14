@@ -51,7 +51,7 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
     public VisitSourceFile(file: SourceFile, context: TransformationContext): SourceFile
     {
         return this.VisitNode(
-            new NameofNodeTransformer(new TypeScriptAdapter(file)),
+            new NameofNodeTransformer(new TypeScriptAdapter(this.Features)),
             file,
             context);
     }

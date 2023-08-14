@@ -3,6 +3,7 @@ import * as ts from "typescript";
 import { getNodeText } from "./helpers";
 import { TransformResult } from "./transform";
 import { TypeScriptAdapter } from "./TypeScriptAdapter";
+import { TypeScriptFeatures } from "./TypeScriptFeatures";
 import { VisitSourceFileContext } from "./VisitSourceFileContext";
 
 /**
@@ -33,7 +34,7 @@ export const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context 
  */
 export function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext): ts.SourceFile
 {
-    let adapter = new TypeScriptAdapter(sourceFile);
+    let adapter = new TypeScriptAdapter(new TypeScriptFeatures());
     let transformer = new NameofNodeTransformer(adapter);
 
     /**

@@ -1,19 +1,15 @@
 import { Adapter, NameofCallExpression, Node as NameofNode } from "@typescript-nameof/common";
-import type { Node, SourceFile } from "typescript";
+import type { Node } from "typescript";
 import { parse } from "./parse";
 import { transform, TransformResult } from "./transform";
+import { TypeScriptFeatures } from "./TypeScriptFeatures";
 import { VisitSourceFileContext } from "./VisitSourceFileContext";
 
 /**
  * Provides the functionality to parse and dump `nameof` calls for typescript.
  */
-export class TypeScriptAdapter extends Adapter<Node, TransformResult>
+export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, Node, TransformResult>
 {
-    /**
-     * The source file which contains the nodes to transform.
-     */
-    private sourceFile: SourceFile;
-
     /**
      * The context of the visitor.
      */
@@ -22,25 +18,16 @@ export class TypeScriptAdapter extends Adapter<Node, TransformResult>
     /**
      * Initializes a new instance of the {@linkcode TypeScriptAdapter} class.
      *
-     * @param sourceFile
-     * The source file which contains the nodes to transform.
+     * @param features
+     * The features of the platform integration.
      */
-    public constructor(sourceFile: SourceFile)
+    public constructor(features: TypeScriptFeatures)
     {
-        super();
-        this.sourceFile = sourceFile;
+        super(features);
 
         this.context = {
             interpolateExpressions: new Set()
         };
-    }
-
-    /**
-     * Gets the source file which contains the nodes to transform.
-     */
-    protected get SourceFile(): SourceFile
-    {
-        return this.sourceFile;
     }
 
     /**
@@ -62,7 +49,7 @@ export class TypeScriptAdapter extends Adapter<Node, TransformResult>
      */
     public Parse(item: Node): NameofCallExpression | undefined
     {
-        return parse(item, this.SourceFile, this.Context);
+        return parse(item, item.getSourceFile(), this.Context);
     }
 
     /**
