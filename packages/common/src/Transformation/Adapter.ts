@@ -58,6 +58,6 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TInput>, TIn
      */
     public HandleError(error: Error, item: TInput): void
     {
-        throw error;
+        this.Features.ReportError(item, error);
     }
 }
