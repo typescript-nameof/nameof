@@ -100,6 +100,12 @@ classDiagram
         TransformFull(Node node) Node
     }
 
+    IAdapter <-- NameofNodeTransformer
+```
+
+## Nodes
+```mermaid
+classDiagram
     class Node {
         string Type
         PathPart LastPart
@@ -174,8 +180,6 @@ classDiagram
     Node <|-- PropertyAccessNode
     Node <|-- StringLiteralNode
     Node <|-- NumericLiteralNode
-
-    IAdapter <-- NameofNodeTransformer
 
     Accessor <|-- PropertyAccessor
     Accessor <|-- IndexedAccessor
