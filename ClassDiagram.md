@@ -119,7 +119,7 @@ classDiagram
     }
 
     class IndexedAccessNode~T~ {
-        Node Object
+        Node Expression
         Node Index
     }
 
@@ -132,6 +132,7 @@ classDiagram
     }
 
     class FunctionNode~T~ {
+        T expression
         T[] arguments
         T body
     }
