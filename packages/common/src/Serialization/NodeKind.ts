@@ -9,6 +9,11 @@ export const enum NodeKind
     UnsupportedNode = "",
 
     /**
+     * Indicates an identifier node.
+     */
+    IdentifierNode = "IdentifierNode",
+
+    /**
      * Indicates a numeric literal node.
      */
     NumericLiteralNode = "NumericLiteralNode",
@@ -19,6 +24,11 @@ export const enum NodeKind
     StringLiteralNode = "StringLiteralNode",
 
     /**
+     * Indicates a call expression node.
+     */
+    CallExpressionNode = "CallExpressionNode",
+
+    /**
      * Indicates a property access node.
      */
     PropertyAccessNode = "PropertyAccessNode",
@@ -27,6 +37,11 @@ export const enum NodeKind
      * Indicates an index access node.
      */
     IndexAccessNode = "IndexAccessNode",
+
+    /**
+     * Indicates a function node.
+     */
+    FunctionNode = "FunctionNode",
 
     /**
      * Indicates an interpolation node.
