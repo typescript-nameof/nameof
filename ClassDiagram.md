@@ -113,6 +113,16 @@ classDiagram
         Array~PathPart~ Path
     }
 
+    class IdentifierNode~T~ {
+        string Name
+    }
+
+    class CallExpressionNode~T~ {
+        Node Expression
+        T[] TypeArguments
+        T[] Arguments
+    }
+
     class PropertyAccessNode~T~ {
         Node Expression
         string Name
@@ -132,7 +142,6 @@ classDiagram
     }
 
     class FunctionNode~T~ {
-        T expression
         T[] arguments
         T body
     }
@@ -140,6 +149,7 @@ classDiagram
     class UnsupportedNode~T~ {
     }
 
+    Node <|-- IdentifierNode
     Node <|-- IndexedAccessNode
     Node <|-- PropertyAccessNode
     Node <|-- StringLiteralNode
