@@ -43,7 +43,7 @@ export class NameofNodeTransformer<TInput, out TOutput = TInput>
     {
         try
         {
-            let node = this.Adapter.Parse(item);
+            let node = this.Adapter.LegacyParse(item);
 
             if (node)
             {

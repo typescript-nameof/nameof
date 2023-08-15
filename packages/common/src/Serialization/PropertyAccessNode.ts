@@ -17,7 +17,7 @@ export class PropertyAccessNode<T> extends Node<T>
     /**
      * The expression of the property access operation.
      */
-    private expression: Node<T>;
+    private expression: ParsedNode<T>;
 
     /**
      * The name of the property to access.
@@ -36,7 +36,7 @@ export class PropertyAccessNode<T> extends Node<T>
      * @param propertyName
      * The name of the property to access.
      */
-    public constructor(source: T, expression: Node<T>, propertyName: string)
+    public constructor(source: T, expression: ParsedNode<T>, propertyName: string)
     {
         super(source);
         this.expression = expression;
@@ -46,7 +46,7 @@ export class PropertyAccessNode<T> extends Node<T>
     /**
      * @inheritdoc
      */
-    public get Expression(): Node<T>
+    public get Expression(): ParsedNode<T>
     {
         return this.expression;
     }

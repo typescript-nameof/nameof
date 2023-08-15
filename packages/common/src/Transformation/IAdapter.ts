@@ -14,7 +14,7 @@ export interface IAdapter<TInput, out TOutput = TInput>
      * @returns
      * The parsed `nameof` expression.
      */
-    Parse(item: TInput): NameofCallExpression | undefined;
+    LegacyParse(item: TInput): NameofCallExpression | undefined;
 
     /**
      * Dumps the specified {@linkcode node}.

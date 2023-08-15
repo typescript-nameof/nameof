@@ -37,7 +37,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TInput>, TIn
      * @param item
      * The item to parse.
      */
-    public abstract Parse(item: TInput): NameofCallExpression | undefined;
+    public abstract LegacyParse(item: TInput): NameofCallExpression | undefined;
 
     /**
      * @inheritdoc
