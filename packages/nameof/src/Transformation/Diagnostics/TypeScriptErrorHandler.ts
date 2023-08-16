@@ -63,12 +63,21 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
     protected GetDiagnostic(node: Node, error: Error): Diagnostic
     {
         return {
-            file: node.getSourceFile(),
             category: this.Features.TypeScript.DiagnosticCategory.Error,
             messageText: error.message,
             code: 1337,
-            start: node.getStart(),
-            length: node.getWidth()
+            ...(
+                node.getSourceFile() ?
+                {
+                    file: node.getSourceFile(),
+                    start: node.getStart(),
+                    length: node.getWidth()
+                } :
+                {
+                    file: undefined,
+                    start: undefined,
+                    length: undefined
+                })
         };
     }
 
