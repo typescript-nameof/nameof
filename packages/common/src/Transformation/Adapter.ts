@@ -88,4 +88,12 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     {
         this.Features.ReportError(item, context, error);
     }
+
+    /**
+     * Checks whether the specified {@linkcode item} is a call expression.
+     *
+     * @param item
+     * The item to check.
+     */
+    protected abstract IsCallExpression(item: TNode): boolean;
 }

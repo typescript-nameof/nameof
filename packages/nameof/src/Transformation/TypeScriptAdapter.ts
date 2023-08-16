@@ -116,4 +116,18 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     {
         return transform(node, this.Context);
     }
+
+    /**
+     * Checks whether the specified {@linkcode item} is a function.
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} is a call expression.
+     */
+    protected IsCallExpression(item: ts.Node): item is ts.CallExpression
+    {
+        return this.TypeScript.isCallExpression(item);
+    }
 }

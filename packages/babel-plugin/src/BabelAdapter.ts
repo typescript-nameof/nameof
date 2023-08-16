@@ -92,4 +92,18 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
     {
         return transform(this.Types, node);
     }
+
+    /**
+     * Checks whether the specified {@linkcode item} is a call expression.
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} is a call expression.
+     */
+    protected IsCallExpression(item: types.Node): boolean
+    {
+        throw new Error("Method not implemented.");
+    }
 }
