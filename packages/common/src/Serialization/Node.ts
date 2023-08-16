@@ -1,5 +1,6 @@
 import { NodeKind } from "./NodeKind";
 import { ParsedNode } from "./ParsedNode";
+import { PathKind } from "./PathKind";
 import { PathPart } from "./PathPart";
 
 /**
@@ -60,6 +61,6 @@ export abstract class Node<T>
      */
     public get Root(): ParsedNode<T>
     {
-        return new UnsupportedNode(this.Source);
+        return this as any;
     }
 }
