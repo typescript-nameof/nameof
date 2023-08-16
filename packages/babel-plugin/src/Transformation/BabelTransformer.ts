@@ -1,19 +1,19 @@
 import type babel = require("@babel/core");
 import { IErrorHandler, NameofNodeTransformer, throwErrorForSourceFile, TransformerBase } from "@typescript-nameof/common";
+import { BabelContext } from "./BabelContext";
 import { BabelFeatures } from "./BabelFeatures";
 import { BabelAdapter } from "../BabelAdapter";
 import { ITransformTarget } from "../ITransformTarget";
-import { ParseOptions } from "../parse";
 
 /**
  * Provides the functionality to transform babel nodes and files.
  */
-export class BabelTransformer extends TransformerBase<babel.Node, Record<string, never>, BabelFeatures>
+export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, BabelFeatures>
 {
     /**
      * A component for transforming `babel` nodes.
      */
-    private transformer: NameofNodeTransformer<ITransformTarget, babel.Node>;
+    private transformer: NameofNodeTransformer<ITransformTarget, babel.Node, BabelContext>;
 
     /**
      * Initializes a new instance of the {@linkcode BabelTransformer} class.
@@ -24,7 +24,7 @@ export class BabelTransformer extends TransformerBase<babel.Node, Record<string,
      * @param errorHandler
      * A component for handling errors.
      */
-    public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<babel.Node>)
+    public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<babel.Node, BabelContext>)
     {
         super(new BabelFeatures(babelAPI, errorHandler));
         this.transformer = new NameofNodeTransformer(new BabelAdapter(this.Features));
@@ -45,6 +45,7 @@ export class BabelTransformer extends TransformerBase<babel.Node, Record<string,
                     this.TransformNode(
                         path,
                         {
+                            state,
                             traverseChildren: () => path.traverse(visitor, state)
                         });
                 }
@@ -72,7 +73,7 @@ export class BabelTransformer extends TransformerBase<babel.Node, Record<string,
     /**
      * Gets a component for transforming `babel` nodes.
      */
-    protected get Transformer(): NameofNodeTransformer<ITransformTarget, babel.Node, Record<string, unknown>>
+    protected get Transformer(): NameofNodeTransformer<ITransformTarget, babel.Node, BabelContext>
     {
         return this.transformer;
     }
@@ -83,17 +84,17 @@ export class BabelTransformer extends TransformerBase<babel.Node, Record<string,
      * @param path
      * The path to the node to transform.
      *
-     * @param options
-     * An object containing options for the transformation.
+     * @param context
+     * The context of the operation.
      */
-    public TransformNode(path: babel.NodePath, options: ParseOptions): void
+    public TransformNode(path: babel.NodePath, context: BabelContext): void
     {
         let transformed = this.Transformer.Transform(
             {
                 path,
-                options
+                options: context
             },
-            {});
+            context);
 
         if (transformed)
         {

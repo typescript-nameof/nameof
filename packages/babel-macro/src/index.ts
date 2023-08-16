@@ -24,7 +24,7 @@ function nameofMacro(context: any): void
     // @ts-ignore
     reverseDefault.forEach(path =>
     {
-        transformer.TransformNode(getPath(), { nameofIdentifierName: path.node.name });
+        transformer.TransformNode(getPath(), { state: context.state, nameofIdentifierName: path.node.name });
 
         /**
          * Gets the path to the node to transform.
