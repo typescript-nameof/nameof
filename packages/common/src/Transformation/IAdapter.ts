@@ -6,6 +6,17 @@ import { NameofCallExpression, Node } from "../Serialization/nodes";
 export interface IAdapter<TInput, out TOutput = TInput>
 {
     /**
+     * Extracts the actual node from the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to extract.
+     *
+     * @returns
+     * The extracted node.
+     */
+    Extract(item: TInput): TOutput;
+
+    /**
      * Parses the specified {@linkcode item}.
      *
      * @param item

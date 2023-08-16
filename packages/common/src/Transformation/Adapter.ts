@@ -32,6 +32,17 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TInput>, TIn
     }
 
     /**
+     * Extracts the actual node from the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to extract.
+     *
+     * @returns
+     * The extracted node.
+     */
+    public abstract Extract(item: TInput): TOutput;
+
+    /**
      * @inheritdoc
      *
      * @param item

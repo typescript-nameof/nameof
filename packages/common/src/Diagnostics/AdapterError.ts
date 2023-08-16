@@ -10,7 +10,7 @@ import { IAdapter } from "../Transformation/IAdapter";
  * @template TOutput
  * The type of the output of the adapter.
  */
-export class AdapterError<TInput, TOutput> extends NameofError
+export abstract class AdapterError<TInput, TOutput> extends NameofError
 {
     /**
      * The adapter which caused the error.
@@ -20,7 +20,7 @@ export class AdapterError<TInput, TOutput> extends NameofError
     /**
      * The node related to the error.
      */
-    private node: TOutput;
+    private node: TInput;
 
     /**
      * Initializes a new instance of the {@linkcode AdapterError} class.
@@ -31,7 +31,7 @@ export class AdapterError<TInput, TOutput> extends NameofError
      * @param node
      * The node related to the error.
      */
-    public constructor(adapter: IAdapter<TInput, TOutput>, node: TOutput)
+    public constructor(adapter: IAdapter<TInput, TOutput>, node: TInput)
     {
         super();
         this.adapter = adapter;
@@ -57,7 +57,7 @@ export class AdapterError<TInput, TOutput> extends NameofError
     /**
      * Gets the node related to the error.
      */
-    protected get Node(): TOutput
+    protected get Node(): TInput
     {
         return this.node;
     }
@@ -67,13 +67,19 @@ export class AdapterError<TInput, TOutput> extends NameofError
      */
     protected get SourceCode(): string
     {
-        return this.Adapter.ExtractCode(this.Node);
+        return this.Adapter.ExtractCode(this.Adapter.Extract(this.Node));
     }
+
+    /**
+     * The message of the error.
+     */
+    protected abstract get Message(): string;
 
     /**
      * Reports the error.
      */
     protected Report(): void
     {
+        this.Adapter.HandleError(new Error(this.Message), this.Node);
     }
 }
