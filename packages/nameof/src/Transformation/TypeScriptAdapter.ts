@@ -1,4 +1,4 @@
-import { Adapter, NameofCallExpression, Node as NameofNode } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, NameofCallExpression, Node as NameofNode, UnsupportedNode } from "@typescript-nameof/common";
 import ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { parse } from "./parse";
@@ -144,6 +144,15 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
      */
     protected ParseInternal(item: ts.Node, context: ITypeScriptContext): ParsedNode<ts.Node>
     {
-        throw new Error("Method not implemented.");
+        if (this.IsCallExpression(item))
+        {
+            return new CallExpressionNode<ts.Node>(
+                item,
+                item.expression,
+                item.typeArguments ?? [],
+                item.arguments);
+        }
+
+        return new UnsupportedNode(item);
     }
 }
