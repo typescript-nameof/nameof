@@ -2,13 +2,12 @@ import { resolve } from "path";
 import babel = require("@babel/core");
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
-import { ITransformTarget } from "../ITransformTarget";
 import { BabelTransformer } from "../Transformation/BabelTransformer";
 
 /**
  * Provides the functionality to test the babel plugin.
  */
-export class BabelPluginTester extends TransformerTester<ITransformTarget>
+export class BabelPluginTester extends TransformerTester<babel.Node>
 {
     /**
      * @inheritdoc
@@ -22,7 +21,7 @@ export class BabelPluginTester extends TransformerTester<ITransformTarget>
      * @returns
      * The transformed representation of the specified {@linkcode code}.
      */
-    protected async Run(code: string, errorHandler?: IErrorHandler<ITransformTarget>): Promise<string>
+    protected async Run(code: string, errorHandler?: IErrorHandler<babel.Node>): Promise<string>
     {
         let plugin = (babelAPI: typeof babel): babel.PluginObj =>
         {

@@ -8,12 +8,12 @@ import { ParseOptions } from "../parse";
 /**
  * Provides the functionality to transform babel nodes and files.
  */
-export class BabelTransformer extends TransformerBase<ITransformTarget, BabelFeatures>
+export class BabelTransformer extends TransformerBase<babel.Node, BabelFeatures>
 {
     /**
      * A component for transforming `babel` nodes.
      */
-    private transformer: NameofNodeTransformer<ITransformTarget, babel.Node>;
+    private transformer: NameofNodeTransformer<ITransformTarget, babel.Node, Record<string, unknown>>;
 
     /**
      * Initializes a new instance of the {@linkcode BabelTransformer} class.
@@ -24,7 +24,7 @@ export class BabelTransformer extends TransformerBase<ITransformTarget, BabelFea
      * @param errorHandler
      * A component for handling errors.
      */
-    public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<ITransformTarget>)
+    public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<babel.Node>)
     {
         super(new BabelFeatures(babelAPI, errorHandler));
         this.transformer = new NameofNodeTransformer(new BabelAdapter(this.Features));
@@ -72,7 +72,7 @@ export class BabelTransformer extends TransformerBase<ITransformTarget, BabelFea
     /**
      * Gets a component for transforming `babel` nodes.
      */
-    protected get Transformer(): NameofNodeTransformer<ITransformTarget, babel.Node>
+    protected get Transformer(): NameofNodeTransformer<ITransformTarget, babel.Node, Record<string, unknown>>
     {
         return this.transformer;
     }

@@ -4,20 +4,20 @@ import { transformCallExpression } from "../transformCallExpression";
 /**
  * Provides the functionality to transform `nameof` calls.
  */
-export class NameofNodeTransformer<TInput, out TOutput = TInput>
+export class NameofNodeTransformer<TInput, TNode, TContext>
 {
     /**
      * A component for parsing and dumping `nameof` calls.
      */
-    private adapter: IAdapter<TInput, TOutput>;
+    private adapter: IAdapter<TInput, TNode, TContext>;
 
     /**
-     * Initializes a new instance of the {@linkcode NameofNodeTransformer NameofNodeTransformer<TInput, TOutput>} class.
+     * Initializes a new instance of the {@linkcode NameofNodeTransformer NameofNodeTransformer<TInput, TNode, TContext>} class.
      *
      * @param adapter
      * A component for parsing and dumping `nameof` calls.
      */
-    public constructor(adapter: IAdapter<TInput, TOutput>)
+    public constructor(adapter: IAdapter<TInput, TNode, TContext>)
     {
         this.adapter = adapter;
     }
@@ -25,7 +25,7 @@ export class NameofNodeTransformer<TInput, out TOutput = TInput>
     /**
      * Gets a component for parsing and dumping `nameof` calls.
      */
-    protected get Adapter(): IAdapter<TInput, TOutput>
+    protected get Adapter(): IAdapter<TInput, TNode, TContext>
     {
         return this.adapter;
     }
@@ -39,22 +39,22 @@ export class NameofNodeTransformer<TInput, out TOutput = TInput>
      * @returns
      * The transformed {@linkcode item}.
      */
-    public Transform(item: TInput): TOutput | undefined
+    public Transform(item: TInput): TNode | undefined
     {
         try
         {
-            let node = this.Adapter.LegacyParse(item);
+            let node = this.Adapter.LegacyParse(item, undefined as any);
 
             if (node)
             {
-                return this.Adapter.Dump(transformCallExpression(node));
+                return this.Adapter.Dump(transformCallExpression(node), undefined as any);
             }
         }
         catch (error)
         {
             if (error instanceof Error)
             {
-                this.Adapter.HandleError(error, item);
+                this.Adapter.HandleError(error, this.Adapter.Extract(item));
             }
         }
 

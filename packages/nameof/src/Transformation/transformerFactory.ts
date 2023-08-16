@@ -1,7 +1,6 @@
 import { NameofNodeTransformer, throwError, throwErrorForSourceFile } from "@typescript-nameof/common";
 import * as ts from "typescript";
 import { getNodeText } from "./helpers";
-import { TransformResult } from "./transform";
 import { TypeScriptAdapter } from "./TypeScriptAdapter";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
 import { VisitSourceFileContext } from "./VisitSourceFileContext";
@@ -104,7 +103,7 @@ export function throwIfContextHasInterpolateExpressions(context: VisitSourceFile
  * @returns
  * The result of the transformation.
  */
-export function visitNode(transformer: NameofNodeTransformer<ts.Node, TransformResult>, node: ts.Node): ts.Node
+export function visitNode(transformer: NameofNodeTransformer<ts.Node, ts.Node, Record<string, unknown>>, node: ts.Node): ts.Node
 {
     let result = transformer.Transform(node);
     return result ?? node;

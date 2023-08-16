@@ -71,7 +71,7 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      * @returns
      * The transformed representation of the specified {@linkcode node}.
      */
-    protected VisitNode<T extends Node>(transformer: NameofNodeTransformer<Node>, node: T, context: TransformationContext): T
+    protected VisitNode<T extends Node>(transformer: NameofNodeTransformer<Node, Node, Record<string, unknown>>, node: T, context: TransformationContext): T
     {
         node = this.Features.TypeScript.visitEachChild(
             node,
