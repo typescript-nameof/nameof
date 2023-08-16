@@ -46,11 +46,11 @@ export class NameofNodeTransformer<TInput, TNode = TInput, TContext = Record<str
     {
         try
         {
-            let node = this.Adapter.LegacyParse(item, undefined as any);
+            let node = this.Adapter.LegacyParse(item, context);
 
             if (node)
             {
-                return this.Adapter.Dump(transformCallExpression(node), undefined as any);
+                return this.Adapter.Dump(transformCallExpression(node), context);
             }
         }
         catch (error)
