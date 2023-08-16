@@ -100,7 +100,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         catch
         { }
 
-        return parse(item, item.getSourceFile(), this.Context);
+        return parse(item, context.file, this.Context);
     }
 
     /**
