@@ -4,7 +4,7 @@ import { PathKind } from "./PathKind";
 /**
  * Represents an interpolation.
  */
-export interface IInterpolation<T> extends IPathPart
+export interface IInterpolation<T> extends IPathPart<T>
 {
     /**
      * @inheritdoc

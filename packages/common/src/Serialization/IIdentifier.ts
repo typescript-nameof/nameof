@@ -4,7 +4,7 @@ import { PathKind } from "./PathKind";
 /**
  * Represents an identifier.
  */
-export interface IIdentifier extends INamedPathPart<string>
+export interface IIdentifier<T> extends INamedPathPart<T, string>
 {
     /**
      * @inheritdoc

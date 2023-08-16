@@ -66,6 +66,7 @@ export class PropertyAccessNode<T> extends Node<T>
     {
         return {
             type: PathKind.PropertyAccess,
+            source: this.Source,
             value: this.PropertyName
         };
     }

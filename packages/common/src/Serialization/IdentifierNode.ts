@@ -48,6 +48,7 @@ export class IdentifierNode<T> extends Node<T>
     {
         return {
             type: PathKind.Identifier,
+            source: this.Source,
             value: this.Name
         };
     }

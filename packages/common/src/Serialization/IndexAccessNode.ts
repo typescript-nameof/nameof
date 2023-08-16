@@ -65,6 +65,8 @@ export class IndexAccessNode<T> extends Node<T>
      */
     public override get PathPart(): PathPart<T>
     {
+        let source = this.Index.Source;
+
         switch (this.Index.Type)
         {
             case NodeKind.NumericLiteralNode:
@@ -82,11 +84,13 @@ export class IndexAccessNode<T> extends Node<T>
 
                 return {
                     type: PathKind.IndexAccess,
+                    source,
                     value
                 };
             case NodeKind.InterpolationNode:
                 return {
                     type: PathKind.Interpolation,
+                    source,
                     node: this.Index.Expression
                 };
             default:
