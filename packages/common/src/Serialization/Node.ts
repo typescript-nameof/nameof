@@ -1,7 +1,6 @@
 import { NodeKind } from "./NodeKind";
 import { ParsedNode } from "./ParsedNode";
 import { PathPart } from "./PathPart";
-import { UnsupportedNode } from "./UnsupportedNode";
 
 /**
  * Represents a node.
@@ -42,7 +41,10 @@ export abstract class Node<T>
      */
     public get PathPart(): PathPart<T>
     {
-        return new UnsupportedNode(this.Source);
+        return {
+            type: PathKind.Unsupported,
+            source: this.Source
+        };
     }
 
     /**

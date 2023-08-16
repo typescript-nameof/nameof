@@ -4,6 +4,11 @@
 export const enum PathKind
 {
     /**
+     * Indicates an unsupported path.
+     */
+    Unsupported = "Unsupported",
+
+    /**
      * Indicates an identifier.
      */
     Identifier = "Identifier",

@@ -3,7 +3,6 @@ import { NodeKind } from "./NodeKind";
 import { ParsedNode } from "./ParsedNode";
 import { PathKind } from "./PathKind";
 import { PathPart } from "./PathPart";
-import { UnsupportedNode } from "./UnsupportedNode";
 
 /**
  * Represents an index access node.
@@ -94,7 +93,10 @@ export class IndexAccessNode<T> extends Node<T>
                     node: this.Index.Expression
                 };
             default:
-                return new UnsupportedNode(this.Index.Source);
+                return {
+                    type: PathKind.Unsupported,
+                    source
+                };
         }
     }
 
