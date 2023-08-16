@@ -21,10 +21,13 @@ export class TSJestErrorHandler extends TypeScriptErrorHandler<TSJestFeatures>
     /**
      * @inheritdoc
      *
+     * @param error
+     * The original error.
+     *
      * @param diagnostic
      * The diagnostic to report.
      */
-    protected ReportDiagnostic(diagnostic: Diagnostic): void
+    protected ReportDiagnostic(error: Error, diagnostic: Diagnostic): void
     {
         this.Features.Compiler.configSet.raiseDiagnostics([diagnostic], diagnostic.file?.fileName);
     }

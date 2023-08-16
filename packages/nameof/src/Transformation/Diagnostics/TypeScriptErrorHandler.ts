@@ -49,7 +49,7 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
      */
     public Report(item: Node, context: ITypeScriptContext, error: Error): void
     {
-        this.ReportDiagnostic(this.GetDiagnostic(item, context, error));
+        this.ReportDiagnostic(error, this.GetDiagnostic(item, context, error));
     }
 
     /**
@@ -91,9 +91,14 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
     /**
      * Reports the specified {@linkcode diagnostic}.
      *
+     * @param error
+     * The original error.
+     *
      * @param diagnostic
      * The diagnostic to report.
      */
-    protected ReportDiagnostic(diagnostic: Diagnostic): void
-    { }
+    protected ReportDiagnostic(error: Error, diagnostic: Diagnostic): void
+    {
+        throw error;
+    }
 }

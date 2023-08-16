@@ -21,10 +21,13 @@ export class TSPatchErrorHandler extends TypeScriptErrorHandler<TSPatchFeatures>
     /**
      * @inheritdoc
      *
+     * @param error
+     * The original error.
+     *
      * @param diagnostic
      * The diagnostic to report.
      */
-    public ReportDiagnostic(diagnostic: Diagnostic): void
+    public ReportDiagnostic(error: Error, diagnostic: Diagnostic): void
     {
         this.Features.Extras.addDiagnostic(diagnostic);
     }
