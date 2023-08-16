@@ -42,6 +42,17 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TInput>, TIn
     /**
      * @inheritdoc
      *
+     * @param item
+     * The item to get the source code from.
+     */
+    public ExtractCode(item: TOutput): string
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    /**
+     * @inheritdoc
+     *
      * @param node
      * The node to dump.
      */

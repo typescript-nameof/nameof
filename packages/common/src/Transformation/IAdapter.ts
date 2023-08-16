@@ -28,6 +28,14 @@ export interface IAdapter<TInput, out TOutput = TInput>
     Dump(node: Node): TOutput;
 
     /**
+     * Extracts the source code of the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to get the source code from.
+     */
+    ExtractCode(item: TOutput): string;
+
+    /**
      * Handles the specified {@linkcode error}.
      *
      * @param error
