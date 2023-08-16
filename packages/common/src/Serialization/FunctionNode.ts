@@ -12,9 +12,9 @@ export class FunctionNode<T> extends Node<T>
     public readonly Type = NodeKind.FunctionNode;
 
     /**
-     * The arguments of the function.
+     * The parameters of the function.
      */
-    private arguments: T[];
+    private parameters: string[];
 
     /**
      * The body of the function.
@@ -27,25 +27,25 @@ export class FunctionNode<T> extends Node<T>
      * @param source
      * The source of the node.
      *
-     * @param args
+     * @param parameters
      * The arguments of the function.
      *
      * @param body
      * The body of the function.
      */
-    public constructor(source: T, args: T[], body: T)
+    public constructor(source: T, parameters: string[], body: T)
     {
         super(source);
-        this.arguments = args;
+        this.parameters = parameters;
         this.body = body;
     }
 
     /**
-     * Gets the arguments of the function.
+     * Gets the parameters of the function.
      */
-    public get Arguments(): T[]
+    public get Parameters(): string[]
     {
-        return this.arguments;
+        return this.parameters;
     }
 
     /**
