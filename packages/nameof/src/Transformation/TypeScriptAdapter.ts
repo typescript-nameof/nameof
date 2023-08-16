@@ -61,7 +61,6 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         return input;
     }
 
-
     /**
      * @inheritdoc
      *
@@ -129,5 +128,22 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     protected IsCallExpression(item: ts.Node): item is ts.CallExpression
     {
         return this.TypeScript.isCallExpression(item);
+    }
+
+    /**
+     * Parses the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    protected ParseInternal(item: ts.Node, context: ITypeScriptContext): ParsedNode<ts.Node>
+    {
+        throw new Error("Method not implemented.");
     }
 }

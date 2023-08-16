@@ -1,6 +1,6 @@
 // eslint-disable-next-line node/no-unpublished-import
 import { types } from "@babel/core";
-import { Adapter, NameofCallExpression, Node } from "@typescript-nameof/common";
+import { Adapter, NameofCallExpression, Node, ParsedNode } from "@typescript-nameof/common";
 import { ITransformTarget } from "./ITransformTarget";
 import { parse } from "./parse";
 import { transform } from "./transform";
@@ -103,6 +103,23 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      * A value indicating whether the specified {@linkcode item} is a call expression.
      */
     protected IsCallExpression(item: types.Node): boolean
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    protected ParseInternal(item: types.Node, context: BabelContext): ParsedNode<types.Node>
     {
         throw new Error("Method not implemented.");
     }

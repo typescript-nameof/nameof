@@ -7,6 +7,7 @@ export {
     StringLiteralNode as LegacyStringLiteralNode
 } from "./Serialization/nodes";
 export * from "./Serialization/nodeFactories";
+export { ParsedNode } from "./Serialization/ParsedNode";
 export * from "./transformCallExpression";
 export { Adapter } from "./Transformation/Adapter";
 export { ErrorHandler } from "./Transformation/ErrorHandler";

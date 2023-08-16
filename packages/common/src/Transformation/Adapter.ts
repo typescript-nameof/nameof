@@ -1,6 +1,7 @@
 import { IAdapter } from "./IAdapter";
 import { TransformerFeatures } from "./TransformerFeatures";
 import { NameofCallExpression, Node } from "../Serialization/nodes";
+import { ParsedNode } from "../Serialization/ParsedNode";
 
 /**
  * Provides the functionality to parse and dump `nameof` expressions.
@@ -96,4 +97,18 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * The item to check.
      */
     protected abstract IsCallExpression(item: TNode): boolean;
+
+    /**
+     * Parses the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    protected abstract ParseInternal(item: TNode, context: TContext): ParsedNode<TNode>;
 }
