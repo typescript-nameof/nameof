@@ -1,6 +1,5 @@
 import { join } from "path";
 import babel = require("@babel/core");
-import { ITransformTarget } from "@typescript-nameof/babel-plugin";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
 import macroPlugin from "babel-plugin-macros";
@@ -8,7 +7,7 @@ import macroPlugin from "babel-plugin-macros";
 /**
  * Provides the functionality to test the babel macro.
  */
-export class BabelMacroTester extends TransformerTester<ITransformTarget>
+export class BabelMacroTester extends TransformerTester<undefined>
 {
     /**
      * The name of the component to import.
@@ -59,7 +58,7 @@ export class BabelMacroTester extends TransformerTester<ITransformTarget>
      * @returns
      * The transformed representation of the specified {@linkcode code}.
      */
-    protected async Run(code: string, errorHandler?: IErrorHandler<ITransformTarget> | undefined): Promise<string>
+    protected async Run(code: string, errorHandler?: IErrorHandler<undefined> | undefined): Promise<string>
     {
         let result: string | undefined | null;
 
@@ -86,7 +85,7 @@ export class BabelMacroTester extends TransformerTester<ITransformTarget>
         {
             if (exception instanceof Error)
             {
-                errorHandler?.Report(undefined as any, {}, exception);
+                errorHandler?.Report(undefined, {}, exception);
             }
         }
 
