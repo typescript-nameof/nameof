@@ -5,7 +5,6 @@ import { NameofCallExpression, Node } from "../Serialization/nodes";
  */
 export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
 {
-
     /**
      * Extracts the node from the specified {@linkcode input}.
      *
