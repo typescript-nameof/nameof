@@ -39,7 +39,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      * @returns
      * The parsed `nameof` expression.
      */
-    public Parse(item: ITransformTarget): NameofCallExpression | undefined
+    public LegacyParse(item: ITransformTarget): NameofCallExpression | undefined
     {
         return parse(this.Types, item.path, item.options);
     }

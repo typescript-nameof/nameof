@@ -55,7 +55,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, Tran
      * @returns
      * The parsed `nameof` expression.
      */
-    public Parse(item: ts.Node): NameofCallExpression | undefined
+    public LegacyParse(item: ts.Node): NameofCallExpression | undefined
     {
         return parse(item, item.getSourceFile(), this.Context);
     }
