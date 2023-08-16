@@ -33,6 +33,20 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
     /**
      * @inheritdoc
      *
+     * @param input
+     * The input to extract the node from.
+     *
+     * @returns
+     * The node that was extracted from the specified {@linkcode input}.
+     */
+    public Extract(input: ITransformTarget): types.Node
+    {
+        return input.path.node;
+    }
+
+    /**
+     * @inheritdoc
+     *
      * @param item
      * The item to parse.
      *

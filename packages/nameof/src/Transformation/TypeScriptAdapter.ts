@@ -49,6 +49,20 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node>
     /**
      * @inheritdoc
      *
+     * @param input
+     * The input to extract the node from.
+     *
+     * @returns
+     * The node that was extracted from the specified {@linkcode input}.
+     */
+    public Extract(input: ts.Node): ts.Node
+    {
+        return input;
+    }
+
+    /**
+     * @inheritdoc
+     *
      * @param item
      * The item to parse.
      *
