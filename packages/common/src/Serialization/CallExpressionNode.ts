@@ -19,12 +19,12 @@ export class CallExpressionNode<T> extends Node<T>
     /**
      * The type arguments of the call.
      */
-    private typeArguments: T[];
+    private typeArguments: readonly T[];
 
     /**
      * The arguments of the call.
      */
-    private arguments: T[];
+    private arguments: readonly T[];
 
     /**
      * Initializes a new instance of the {@linkcode CallExpressionNode} class.
@@ -41,7 +41,7 @@ export class CallExpressionNode<T> extends Node<T>
      * @param args
      * The arguments of the call.
      */
-    public constructor(source: T, expression: T, typeArguments: T[], args: T[])
+    public constructor(source: T, expression: T, typeArguments: readonly T[], args: readonly T[])
     {
         super(source);
         this.expression = expression;
@@ -60,7 +60,7 @@ export class CallExpressionNode<T> extends Node<T>
     /**
      * Gets the type arguments of the call.
      */
-    public get TypeArguments(): T[]
+    public get TypeArguments(): readonly T[]
     {
         return this.typeArguments;
     }
@@ -68,7 +68,7 @@ export class CallExpressionNode<T> extends Node<T>
     /**
      * Gets the arguments of the call.
      */
-    public get Arguments(): T[]
+    public get Arguments(): readonly T[]
     {
         return this.arguments;
     }
