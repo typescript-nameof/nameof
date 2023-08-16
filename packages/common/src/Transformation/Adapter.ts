@@ -58,8 +58,11 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      *
      * @param item
      * The item to get the source code from.
+     *
+     * @param context
+     * The context of the operation.
      */
-    public ExtractCode(item: TNode): string
+    public ExtractCode(item: TNode, context: TContext): string
     {
         throw new Error("Method not implemented.");
     }
