@@ -1,4 +1,4 @@
-import { ArrayLiteralNode, createArrayLiteralNode, createComputedNode, createFunctionNode, createIdentifierNode, createImportTypeNode, createInterpolateNode, createNumericLiteralNode, createStringLiteralNode, createTemplateExpressionNode, FunctionNode, IdentifierNode, ImportTypeNode, InterpolateNode, NameofCallExpression, Node, NumericLiteralNode, StringLiteralNode, TemplateExpressionNode, throwError } from "@typescript-nameof/common";
+import { ArrayLiteralNode, createArrayLiteralNode, createComputedNode, createFunctionNode, createIdentifierNode, createImportTypeNode, createInterpolateNode, createNumericLiteralNode, createStringLiteralNode, createTemplateExpressionNode, ImportTypeNode, InterpolateNode, LegacyFunctionNode, LegacyIdentifierNode, LegacyNumericLiteralNode, LegacyStringLiteralNode, NameofCallExpression, Node, TemplateExpressionNode, throwError } from "@typescript-nameof/common";
 import * as ts from "typescript";
 import { getNegativeNumericLiteralValue, getNodeText, getReturnStatementExpressionFromBlock, isNegativeNumericLiteral } from "./helpers";
 import { VisitSourceFileContext } from "./VisitSourceFileContext";
@@ -296,7 +296,7 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
      * @returns
      * The parsed node.
      */
-    function parseNumeric(node: ts.NumericLiteral | ts.PrefixUnaryExpression): NumericLiteralNode
+    function parseNumeric(node: ts.NumericLiteral | ts.PrefixUnaryExpression): LegacyNumericLiteralNode
     {
         return createNumericLiteralNode(getNodeValue());
 
@@ -326,7 +326,7 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
      * @returns
      * The parsed node.
      */
-    function parseStringLiteral(node: ts.StringLiteral): StringLiteralNode
+    function parseStringLiteral(node: ts.StringLiteral): LegacyStringLiteralNode
     {
         return createStringLiteralNode(node.text);
     }
@@ -340,7 +340,7 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
      * @returns
      * The parsed node.
      */
-    function parseIdentifier(node: ts.Node): IdentifierNode
+    function parseIdentifier(node: ts.Node): LegacyIdentifierNode
     {
         const text = getIdentifierTextOrThrow(node);
         return createIdentifierNode(text);
@@ -358,7 +358,7 @@ export function parse(parsingNode: ts.Node, sourceFile: ts.SourceFile, context: 
      * @returns
      * The parsed node.
      */
-    function parseFunctionReturnExpression(functionLikeNode: ts.SignatureDeclaration, node: ts.Expression): FunctionNode
+    function parseFunctionReturnExpression(functionLikeNode: ts.SignatureDeclaration, node: ts.Expression): LegacyFunctionNode
     {
         const parameterNames = functionLikeNode.parameters.map(p =>
         {

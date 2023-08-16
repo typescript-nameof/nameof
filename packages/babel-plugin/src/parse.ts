@@ -330,7 +330,7 @@ export function parse(t: typeof types, path: NodePath, options: ParseOptions = {
      * @returns
      * The parsed node.
      */
-    function parseNumeric(node: NumericLiteral | UnaryExpression): common.NumericLiteralNode
+    function parseNumeric(node: NumericLiteral | UnaryExpression): common.LegacyNumericLiteralNode
     {
         return common.createNumericLiteralNode(getNodeValue());
 
@@ -360,7 +360,7 @@ export function parse(t: typeof types, path: NodePath, options: ParseOptions = {
      * @returns
      * The parsed node.
      */
-    function parseStringLiteral(node: StringLiteral): common.StringLiteralNode
+    function parseStringLiteral(node: StringLiteral): common.LegacyStringLiteralNode
     {
         return common.createStringLiteralNode(node.value);
     }
@@ -374,7 +374,7 @@ export function parse(t: typeof types, path: NodePath, options: ParseOptions = {
      * @returns
      * The parsed node.
      */
-    function parseIdentifier(node: Node): common.IdentifierNode
+    function parseIdentifier(node: Node): common.LegacyIdentifierNode
     {
         const text = getIdentifierTextOrThrow(node);
         return common.createIdentifierNode(text);
@@ -392,7 +392,7 @@ export function parse(t: typeof types, path: NodePath, options: ParseOptions = {
      * @returns
      * The parsed node.
      */
-    function parseFunctionReturnExpression(functionNode: FunctionExpression | ArrowFunctionExpression, node: Expression): common.FunctionNode
+    function parseFunctionReturnExpression(functionNode: FunctionExpression | ArrowFunctionExpression, node: Expression): common.LegacyFunctionNode
     {
         const parameterNames = functionNode.params.map(
             p =>

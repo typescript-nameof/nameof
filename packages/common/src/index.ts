@@ -1,5 +1,11 @@
 export * from "./errors";
 export * from "./Serialization/nodes";
+export {
+    IdentifierNode as LegacyIdentifierNode,
+    FunctionNode as LegacyFunctionNode,
+    NumericLiteralNode as LegacyNumericLiteralNode,
+    StringLiteralNode as LegacyStringLiteralNode
+} from "./Serialization/nodes";
 export * from "./Serialization/nodeFactories";
 export * from "./transformCallExpression";
 export { Adapter } from "./Transformation/Adapter";
