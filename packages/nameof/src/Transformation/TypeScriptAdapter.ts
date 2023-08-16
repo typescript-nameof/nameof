@@ -1,4 +1,4 @@
-import { Adapter, CallExpressionNode, NameofCallExpression, Node as NameofNode, UnsupportedNode } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, NameofCallExpression, Node as NameofNode, ParsedNode, UnsupportedNode } from "@typescript-nameof/common";
 import ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { parse } from "./parse";
