@@ -1,14 +1,14 @@
-import { Accessor } from "./Accessor";
-import { AccessorKind } from "./AccessorKind";
+import { PathComponent } from "./PathComponent";
+import { PathKind } from "./PathKind";
 
 /**
  * Represents an interpolation.
  */
-export type Interpolation<T> = Accessor & {
+export type Interpolation<T> = PathComponent & {
     /**
      * @inheritdoc
      */
-    type: AccessorKind.Interpolation;
+    type: PathKind.Interpolation;
 
     /**
      * The interpolated node.

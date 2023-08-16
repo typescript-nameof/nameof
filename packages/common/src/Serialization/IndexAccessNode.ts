@@ -1,7 +1,7 @@
-import { AccessorKind } from "./AccessorKind";
 import { Node } from "./Node";
 import { NodeKind } from "./NodeKind";
 import { ParsedNode } from "./ParsedNode";
+import { PathKind } from "./PathKind";
 import { PathPart } from "./PathPart";
 import { UnsupportedNode } from "./UnsupportedNode";
 
@@ -89,12 +89,12 @@ export class IndexAccessNode<T> extends Node<T>
                 }
 
                 return {
-                    type: AccessorKind.IndexAccess,
+                    type: PathKind.IndexAccess,
                     value
                 };
             case NodeKind.InterpolationNode:
                 return {
-                    type: AccessorKind.Interpolation,
+                    type: PathKind.Interpolation,
                     node: this.Index.Expression
                 };
             default:

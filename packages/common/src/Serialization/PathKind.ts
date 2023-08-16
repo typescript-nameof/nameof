@@ -1,7 +1,7 @@
 /**
  * Represents the kind of an accessor.
  */
-export const enum AccessorKind
+export const enum PathKind
 {
     /**
      * Indicates a property access.

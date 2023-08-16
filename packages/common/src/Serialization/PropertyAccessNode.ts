@@ -1,7 +1,7 @@
-import { AccessorKind } from "./AccessorKind";
 import { Node } from "./Node";
 import { NodeKind } from "./NodeKind";
 import { ParsedNode } from "./ParsedNode";
+import { PathKind } from "./PathKind";
 import { PathPart } from "./PathPart";
 
 /**
@@ -73,7 +73,7 @@ export class PropertyAccessNode<T> extends Node<T>
     public override get PathPart(): PathPart<T>
     {
         return {
-            type: AccessorKind.PropertyAccess,
+            type: PathKind.PropertyAccess,
             propertyName: this.PropertyName
         };
     }
