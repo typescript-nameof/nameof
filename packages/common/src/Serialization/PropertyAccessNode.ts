@@ -62,19 +62,30 @@ export class PropertyAccessNode<T> extends Node<T>
     /**
      * @inheritdoc
      */
-    public override get Root(): ParsedNode<T>
+    public override get PathPart(): PathPart<T>
     {
-        return this.Expression.Root;
+        return {
+            type: PathKind.PropertyAccess,
+            value: this.PropertyName
+        };
     }
 
     /**
      * @inheritdoc
      */
-    public override get PathPart(): PathPart<T>
+    public override get Path(): Array<PathPart<T>>
     {
-        return {
-            type: PathKind.PropertyAccess,
-            propertyName: this.PropertyName
-        };
+        return [
+            ...this.Expression.Path,
+            this.PathPart
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public override get Root(): ParsedNode<T>
+    {
+        return this.Expression.Root;
     }
 }

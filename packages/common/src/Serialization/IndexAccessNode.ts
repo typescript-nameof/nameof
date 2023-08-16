@@ -63,14 +63,6 @@ export class IndexAccessNode<T> extends Node<T>
     /**
      * @inheritdoc
      */
-    public override get Root(): ParsedNode<T>
-    {
-        return this.Expression.Root;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public override get PathPart(): PathPart<T>
     {
         switch (this.Index.Type)
@@ -100,5 +92,24 @@ export class IndexAccessNode<T> extends Node<T>
             default:
                 return new UnsupportedNode(this.Index.Source);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public override get Path(): Array<PathPart<T>>
+    {
+        return [
+            ...this.Expression.Path,
+            this.PathPart
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public override get Root(): ParsedNode<T>
+    {
+        return this.Expression.Root;
     }
 }

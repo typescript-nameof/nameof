@@ -46,6 +46,14 @@ export abstract class Node<T>
     }
 
     /**
+     * The full path of the node.
+     */
+    public get Path(): Array<PathPart<T>>
+    {
+        return [this.PathPart];
+    }
+
+    /**
      * Gets the root of the node.
      */
     public get Root(): ParsedNode<T>

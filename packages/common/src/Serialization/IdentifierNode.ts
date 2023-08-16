@@ -1,5 +1,7 @@
 import { Node } from "./Node";
 import { NodeKind } from "./NodeKind";
+import { PathKind } from "./PathKind";
+import { PathPart } from "./PathPart";
 
 /**
  * Represents an identifier node.
@@ -37,5 +39,16 @@ export class IdentifierNode<T> extends Node<T>
     public get Name(): string
     {
         return this.name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public get PathPart(): PathPart<T>
+    {
+        return {
+            type: PathKind.Identifier,
+            value: this.Name
+        };
     }
 }
