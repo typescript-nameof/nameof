@@ -104,7 +104,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      */
     protected IsCallExpression(item: types.Node): boolean
     {
-        throw new Error("Method not implemented.");
+        return this.Types.isCallExpression(item);
     }
 
     /**
