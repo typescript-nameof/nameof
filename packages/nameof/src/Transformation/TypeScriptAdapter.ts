@@ -61,6 +61,24 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         return input;
     }
 
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to get the source code from.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The code of the specified {@linkcode item}.
+     */
+    public ExtractCode(item: ts.Node, context: ITypeScriptContext): string
+    {
+        return item.getText(context.file);
+    }
+
     /**
      * @inheritdoc
      *

@@ -49,6 +49,23 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      * @inheritdoc
      *
      * @param item
+     * The item to get the source code from.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The code of the specified {@linkcode item}.
+     */
+    public ExtractCode(item: types.Node, context: BabelContext): string
+    {
+        return context.state.file.code.slice(item.start as number, item.end as number);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
      * The item to parse.
      *
      * @param context

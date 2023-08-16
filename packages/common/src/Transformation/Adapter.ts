@@ -62,10 +62,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @param context
      * The context of the operation.
      */
-    public ExtractCode(item: TNode, context: TContext): string
-    {
-        throw new Error("Method not implemented.");
-    }
+    public abstract ExtractCode(item: TNode, context: TContext): string;
 
     /**
      * @inheritdoc
