@@ -1,5 +1,6 @@
 import { NameofNodeTransformer, TransformerBase } from "@typescript-nameof/common";
 import { Node, SourceFile, TransformationContext, TransformerFactory } from "typescript";
+import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TypeScriptAdapter } from "./TypeScriptAdapter";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
 
@@ -9,7 +10,7 @@ import { TypeScriptFeatures } from "./TypeScriptFeatures";
  * @template TFeatures
  * The type of the features for the transformer.
  */
-export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeatures> extends TransformerBase<Node, TFeatures>
+export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeatures> extends TransformerBase<Node, ITypeScriptContext, TFeatures>
 {
     /**
      * Initializes a new instance of the {@linkcode TypeScriptTransformerBase} class.
@@ -53,6 +54,7 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
         return this.VisitNode(
             new NameofNodeTransformer(new TypeScriptAdapter(this.Features)),
             file,
+            file,
             context);
     }
 
@@ -61,6 +63,9 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      *
      * @param transformer
      * A component for performing the transformation.
+     *
+     * @param file
+     * The file of the specified {@linkcode node}.
      *
      * @param node
      * The node to transform.
@@ -71,16 +76,16 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      * @returns
      * The transformed representation of the specified {@linkcode node}.
      */
-    protected VisitNode<T extends Node>(transformer: NameofNodeTransformer<Node, Node, Record<string, unknown>>, node: T, context: TransformationContext): T
+    protected VisitNode<T extends Node>(transformer: NameofNodeTransformer<Node, Node, ITypeScriptContext>, file: SourceFile, node: T, context: TransformationContext): T
     {
         node = this.Features.TypeScript.visitEachChild(
             node,
             (node) =>
             {
-                return this.VisitNode(transformer, node, context);
+                return this.VisitNode(transformer, file, node, context);
             },
             context);
 
-        return transformer.Transform(node) as T ?? node;
+        return transformer.Transform(node, { file }) as T ?? node;
     }
 }

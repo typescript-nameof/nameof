@@ -47,8 +47,11 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode>, TInp
      *
      * @param item
      * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
      */
-    public abstract LegacyParse(item: TInput): NameofCallExpression | undefined;
+    public abstract LegacyParse(item: TInput, context: TContext): NameofCallExpression | undefined;
 
     /**
      * @inheritdoc
@@ -72,14 +75,17 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode>, TInp
     /**
      * @inheritdoc
      *
-     * @param error
-     * The error to handle.
-     *
      * @param item
      * The item related to the error.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @param error
+     * The error to handle.
      */
-    public HandleError(error: Error, item: TNode): void
+    public HandleError(item: TNode, context: TContext, error: Error): void
     {
-        this.Features.ReportError(item, error);
+        this.Features.ReportError(item, context, error);
     }
 }

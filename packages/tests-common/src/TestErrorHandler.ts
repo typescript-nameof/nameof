@@ -3,7 +3,7 @@ import { IErrorHandler } from "@typescript-nameof/common";
 /**
  * Provides the functionality to collect errors.
  */
-export class TestErrorHandler<T> implements IErrorHandler<T>
+export class TestErrorHandler<TNode, TContext> implements IErrorHandler<TNode, TContext>
 {
     /**
      * The errors which have occurred.
@@ -13,7 +13,7 @@ export class TestErrorHandler<T> implements IErrorHandler<T>
     /**
      * The error handler under test.
      */
-    private errorHandler?: IErrorHandler<T>;
+    private errorHandler?: IErrorHandler<TNode, TContext>;
 
     /**
      * Initialize a new instance of the {@linkcode TestErrorHandler} class.
@@ -21,7 +21,7 @@ export class TestErrorHandler<T> implements IErrorHandler<T>
      * @param errorHandler
      * The error handler under test.
      */
-    public constructor(errorHandler?: IErrorHandler<T>)
+    public constructor(errorHandler?: IErrorHandler<TNode, TContext>)
     {
         this.errorHandler = errorHandler;
     }
@@ -37,7 +37,7 @@ export class TestErrorHandler<T> implements IErrorHandler<T>
     /**
      * Gets the error handler under test.
      */
-    protected get ErrorHandler(): IErrorHandler<T> | undefined
+    protected get ErrorHandler(): IErrorHandler<TNode, TContext> | undefined
     {
         return this.errorHandler;
     }
@@ -48,12 +48,15 @@ export class TestErrorHandler<T> implements IErrorHandler<T>
      * @param item
      * The item related to the specified {@linkcode error}.
      *
+     * @param context
+     * The context of the operation.
+     *
      * @param error
      * The error to report.
      */
-    public Report(item: T, error: Error): void
+    public Report(item: TNode, context: TContext, error: Error): void
     {
         this.errors.push(error);
-        this.ErrorHandler?.Report(item, error);
+        this.ErrorHandler?.Report(item, context, error);
     }
 }

@@ -4,12 +4,12 @@ import { IErrorHandler } from "./IErrorHandler";
 /**
  * Provides features for performing `nameof` transformations.
  */
-export class TransformerFeatures<T>
+export class TransformerFeatures<TNode, TContext = Record<string, never>>
 {
     /**
      * A component for reporting errors.
      */
-    private errorHandler: IErrorHandler<T> | undefined;
+    private errorHandler: IErrorHandler<TNode, TContext> | undefined;
 
     /**
      * Initializes a new instance of the {@linkcode TransformerFeatures TransformerFeatures<T>} class.
@@ -17,7 +17,7 @@ export class TransformerFeatures<T>
      * @param errorHandler
      * A component for reporting errors.
      */
-    public constructor(errorHandler?: IErrorHandler<T>)
+    public constructor(errorHandler?: IErrorHandler<TNode, TContext>)
     {
         this.errorHandler = errorHandler;
     }
@@ -25,7 +25,7 @@ export class TransformerFeatures<T>
     /**
      * Gets a component for reporting errors.
      */
-    protected get ErrorHandler(): IErrorHandler<T> | undefined
+    protected get ErrorHandler(): IErrorHandler<TNode, TContext> | undefined
     {
         if (!this.errorHandler)
         {
@@ -41,12 +41,15 @@ export class TransformerFeatures<T>
      * @param item
      * The item the specified {@linkcode error} is related to.
      *
+     * @param context
+     * The context of the operation.
+     *
      * @param error
      * The error to report.
      */
-    public ReportError(item: T, error: Error): void
+    public ReportError(item: TNode, context: TContext, error: Error): void
     {
-        this.ErrorHandler?.Report(item, error);
+        this.ErrorHandler?.Report(item, context, error);
     }
 
     /**
@@ -55,7 +58,7 @@ export class TransformerFeatures<T>
      * @returns
      * The newly created error handler.
      */
-    protected InitializeErrorHandler(): IErrorHandler<T>
+    protected InitializeErrorHandler(): IErrorHandler<TNode, TContext>
     {
         return new ErrorHandler();
     }

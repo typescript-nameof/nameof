@@ -1,11 +1,12 @@
 import { ErrorHandler, TransformerFeatures } from "@typescript-nameof/common";
 import { IErrorHandler } from "@typescript-nameof/common/src/Transformation/IErrorHandler";
 import type ts = require("typescript");
+import { ITypeScriptContext } from "./ITypeScriptContext";
 
 /**
  * Provides features for transforming TypeScript code.
  */
-export class TypeScriptFeatures extends TransformerFeatures<ts.Node>
+export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScriptContext>
 {
     /**
      * Initializes a new instance of the {@linkcode TransformerFeatures TypeScriptFeatures<T>} class.
@@ -13,7 +14,7 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node>
      * @param errorHandler
      * A component for reporting errors.
      */
-    public constructor(errorHandler?: IErrorHandler<ts.Node>)
+    public constructor(errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext>)
     {
         super(errorHandler);
     }
@@ -32,12 +33,15 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node>
      * @param node
      * The node related to the error.
      *
+     * @param context
+     * The context of the operation.
+     *
      * @param error
      * The error to process.
      */
-    public ReportError(node: ts.Node, error: Error): void
+    public ReportError(node: ts.Node, context: ITypeScriptContext, error: Error): void
     {
-        this.ErrorHandler?.Report(node, error);
+        this.ErrorHandler?.Report(node, context, error);
     }
 
     /**
@@ -46,7 +50,7 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node>
      * @returns
      * The newly created error handler.
      */
-    protected InitializeErrorHandler(): IErrorHandler<ts.Node>
+    protected InitializeErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
     {
         return new ErrorHandler();
     }

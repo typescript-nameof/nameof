@@ -1,5 +1,6 @@
 import { Adapter, NameofCallExpression, Node as NameofNode } from "@typescript-nameof/common";
 import ts = require("typescript");
+import { ITypeScriptContext } from "./ITypeScriptContext";
 import { parse } from "./parse";
 import { transform } from "./transform";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
@@ -8,7 +9,7 @@ import { VisitSourceFileContext } from "./VisitSourceFileContext";
 /**
  * Provides the functionality to parse and dump `nameof` calls for typescript.
  */
-export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node>
+export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.Node, ITypeScriptContext>
 {
     /**
      * The context of the visitor.
@@ -66,11 +67,21 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node>
      * @param item
      * The item to parse.
      *
+     * @param context
+     * The context of the operation.
+     *
      * @returns
      * The parsed `nameof` expression.
      */
-    public LegacyParse(item: ts.Node): NameofCallExpression | undefined
+    public LegacyParse(item: ts.Node, context: ITypeScriptContext): NameofCallExpression | undefined
     {
+        try
+        {
+            this.Transform(item, context);
+        }
+        catch
+        { }
+
         return parse(item, item.getSourceFile(), this.Context);
     }
 

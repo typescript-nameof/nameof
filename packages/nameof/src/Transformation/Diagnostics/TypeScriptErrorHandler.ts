@@ -1,5 +1,6 @@
 import { IErrorHandler } from "@typescript-nameof/common";
 import { Diagnostic, Node } from "typescript";
+import { ITypeScriptContext } from "../ITypeScriptContext";
 import { TypeScriptFeatures } from "../TypeScriptFeatures";
 
 /**
@@ -8,7 +9,7 @@ import { TypeScriptFeatures } from "../TypeScriptFeatures";
  * @template TFeatures
  * The type of the features for the error handler.
  */
-export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeScriptFeatures> implements IErrorHandler<Node>
+export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeScriptFeatures> implements IErrorHandler<Node, ITypeScriptContext>
 {
     /**
      * A set of features for the error handler.
@@ -40,12 +41,15 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
      * @param item
      * The item related to the specified {@linkcode error}.
      *
+     * @param context
+     * The context of the operation.
+     *
      * @param error
      * The error to report.
      */
-    public Report(item: Node, error: Error): void
+    public Report(item: Node, context: ITypeScriptContext, error: Error): void
     {
-        this.ReportDiagnostic(this.GetDiagnostic(item, error));
+        this.ReportDiagnostic(this.GetDiagnostic(item, context, error));
     }
 
     /**
@@ -54,24 +58,27 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
      * @param node
      * The node related to the error.
      *
+     * @param context
+     * The context of the operation.
+     *
      * @param error
      * The error to create a diagnostic for.
      *
      * @returns
      * The diagnostic for the specified {@linkcode error}.
      */
-    protected GetDiagnostic(node: Node, error: Error): Diagnostic
+    protected GetDiagnostic(node: Node, context: ITypeScriptContext, error: Error): Diagnostic
     {
         return {
             category: this.Features.TypeScript.DiagnosticCategory.Error,
             messageText: error.message,
             code: 1337,
             ...(
-                node.getSourceFile() ?
+                context.file ?
                 {
-                    file: node.getSourceFile(),
-                    start: node.getStart(),
-                    length: node.getWidth()
+                    file: context.file,
+                    start: node.getStart(context.file),
+                    length: node.getWidth(context.file)
                 } :
                 {
                     file: undefined,

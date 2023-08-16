@@ -3,10 +3,13 @@ import { IErrorHandler } from "./IErrorHandler";
 /**
  * Provides the functionality to report errors.
  *
- * @template T
+ * @template TNode
  * The type of the nodes to report errors for.
+ *
+ * @template TContext
+ * The type of the context of the operation.
  */
-export class ErrorHandler<T> implements IErrorHandler<T>
+export class ErrorHandler<TNode, TContext> implements IErrorHandler<TNode, TContext>
 {
     /**
      * @inheritdoc
@@ -14,10 +17,13 @@ export class ErrorHandler<T> implements IErrorHandler<T>
      * @param item
      * The item related to the specified {@linkcode error}.
      *
+     * @param context
+     * The context of the operation.
+     *
      * @param error
      * The error to report.
      */
-    public Report(item: T, error: Error): void
+    public Report(item: TNode, context: TContext, error: Error): void
     {
         throw error;
     }

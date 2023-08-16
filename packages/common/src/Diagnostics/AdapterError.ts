@@ -23,6 +23,11 @@ export abstract class AdapterError<TInput, TNode, TContext> extends NameofError
     private node: TNode;
 
     /**
+     * The context of the operation.
+     */
+    private context: TContext;
+
+    /**
      * Initializes a new instance of the {@linkcode AdapterError} class.
      *
      * @param adapter
@@ -30,12 +35,16 @@ export abstract class AdapterError<TInput, TNode, TContext> extends NameofError
      *
      * @param node
      * The node related to the error.
+     *
+     * @param context
+     * The context of the operation.
      */
-    public constructor(adapter: IAdapter<TInput, TNode, TContext>, node: TNode)
+    public constructor(adapter: IAdapter<TInput, TNode, TContext>, node: TNode, context: TContext)
     {
         super();
         this.adapter = adapter;
         this.node = node;
+        this.context = context;
     }
 
     /**
@@ -63,11 +72,19 @@ export abstract class AdapterError<TInput, TNode, TContext> extends NameofError
     }
 
     /**
+     * Gets the context of the operation.
+     */
+    protected get Context(): TContext
+    {
+        return this.context;
+    }
+
+    /**
      * Gets the source code which caused the error.
      */
     protected get SourceCode(): string
     {
-        return this.Adapter.ExtractCode(this.Node);
+        return this.Adapter.ExtractCode(this.Node, this.Context);
     }
 
     /**
@@ -80,6 +97,6 @@ export abstract class AdapterError<TInput, TNode, TContext> extends NameofError
      */
     protected Report(): void
     {
-        this.Adapter.HandleError(new Error(this.Message), this.Node);
+        this.Adapter.HandleError(this.Node, this.Context, new Error(this.Message));
     }
 }

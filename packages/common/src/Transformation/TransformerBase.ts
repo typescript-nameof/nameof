@@ -9,7 +9,7 @@ import { TransformerFeatures } from "./TransformerFeatures";
  * @template TFeatures
  * The type of the features
  */
-export class TransformerBase<TNode, TFeatures extends TransformerFeatures<TNode>>
+export class TransformerBase<TNode, TContext, TFeatures extends TransformerFeatures<TNode, TContext>>
 {
     /**
      * A set of features for performing transformations.

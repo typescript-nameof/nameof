@@ -138,7 +138,7 @@ export function replaceInText(fileName: string, fileText: string): ISubstitution
 
             node = ts.visitEachChild(node, childNode => visitNodeAndChildren(childNode), context);
 
-            const resultNode = visitNode(transformer, node);
+            const resultNode = visitNode(transformer, sourceFile, node);
             const wasTransformed = resultNode !== node;
 
             if (wasTransformed)

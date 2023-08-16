@@ -86,7 +86,7 @@ export class BabelMacroTester extends TransformerTester<ITransformTarget>
         {
             if (exception instanceof Error)
             {
-                errorHandler?.Report(undefined as any, exception);
+                errorHandler?.Report(undefined as any, {}, exception);
             }
         }
 

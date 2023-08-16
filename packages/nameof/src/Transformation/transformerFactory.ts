@@ -1,6 +1,7 @@
 import { NameofNodeTransformer, throwError, throwErrorForSourceFile } from "@typescript-nameof/common";
 import * as ts from "typescript";
 import { getNodeText } from "./helpers";
+import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TypeScriptAdapter } from "./TypeScriptAdapter";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
 import { VisitSourceFileContext } from "./VisitSourceFileContext";
@@ -54,7 +55,7 @@ export function visitSourceFile(sourceFile: ts.SourceFile, context: ts.Transform
 
         // visit the children in post order
         node = ts.visitEachChild(node, childNode => visitNodeAndChildren(childNode), context);
-        return visitNode(transformer, node);
+        return visitNode(transformer, sourceFile, node);
     }
 
     try
@@ -97,14 +98,17 @@ export function throwIfContextHasInterpolateExpressions(context: VisitSourceFile
  * @param transformer
  * The component for performing the transformation.
  *
+ * @param file
+ * The file of the specified {@linkcode node}.
+ *
  * @param node
  * The node to transform.
  *
  * @returns
  * The result of the transformation.
  */
-export function visitNode(transformer: NameofNodeTransformer<ts.Node, ts.Node, Record<string, unknown>>, node: ts.Node): ts.Node
+export function visitNode(transformer: NameofNodeTransformer<ts.Node, ts.Node, ITypeScriptContext>, file: ts.SourceFile, node: ts.Node): ts.Node
 {
-    let result = transformer.Transform(node);
+    let result = transformer.Transform(node, { file });
     return result ?? node;
 }
