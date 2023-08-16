@@ -1,6 +1,7 @@
-import { ErrorHandler, TransformerFeatures } from "@typescript-nameof/common";
+import { TransformerFeatures } from "@typescript-nameof/common";
 import { IErrorHandler } from "@typescript-nameof/common/src/Transformation/IErrorHandler";
 import type ts = require("typescript");
+import { TypeScriptErrorHandler } from "./Diagnostics/TypeScriptErrorHandler";
 import { ITypeScriptContext } from "./ITypeScriptContext";
 
 /**
@@ -52,6 +53,6 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScript
      */
     protected InitializeErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
     {
-        return new ErrorHandler();
+        return new TypeScriptErrorHandler(this);
     }
 }
