@@ -1,10 +1,11 @@
-import { PathComponent } from "./PathComponent";
+import { IPathPart } from "./IPathPart";
 import { PathKind } from "./PathKind";
 
 /**
  * Represents an interpolation.
  */
-export type Interpolation<T> = PathComponent & {
+export interface IInterpolation<T> extends IPathPart
+{
     /**
      * @inheritdoc
      */
@@ -14,4 +15,4 @@ export type Interpolation<T> = PathComponent & {
      * The interpolated node.
      */
     node: T;
-};
+}

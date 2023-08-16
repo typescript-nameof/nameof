@@ -1,13 +1,13 @@
-import { IndexAccessor } from "./IndexAccessor";
-import { Interpolation } from "./Interpolation";
-import { PropertyAccessor } from "./PropertyAccessor";
+import { IIndexAccessor } from "./IIndexAccessor";
+import { IInterpolation } from "./IInterpolation";
+import { IPropertyAccessor } from "./IPropertyAccessor";
 import { UnsupportedNode } from "./UnsupportedNode";
 
 /**
  * Represents the path of an accessor path.
  */
 export type PathPart<T> =
-    PropertyAccessor |
-    IndexAccessor |
-    Interpolation<T> |
+    IPropertyAccessor |
+    IIndexAccessor |
+    IInterpolation<T> |
     UnsupportedNode<T>;
