@@ -1,14 +1,14 @@
 import { Adapter, NameofCallExpression, Node as NameofNode } from "@typescript-nameof/common";
 import ts = require("typescript");
 import { parse } from "./parse";
-import { transform, TransformResult } from "./transform";
+import { transform } from "./transform";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
 import { VisitSourceFileContext } from "./VisitSourceFileContext";
 
 /**
  * Provides the functionality to parse and dump `nameof` calls for typescript.
  */
-export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, TransformResult>
+export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node>
 {
     /**
      * The context of the visitor.
@@ -50,20 +50,6 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, Tran
      * @inheritdoc
      *
      * @param item
-     * The item to extract.
-     *
-     * @returns
-     * The extracted node.
-     */
-    public Extract(item: ts.Node): TransformResult
-    {
-        return item as any;
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param item
      * The item to parse.
      *
      * @returns
@@ -83,7 +69,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, Tran
      * @returns
      * The converted representation of the specified {@linkcode node}.
      */
-    public Dump(node: NameofNode): TransformResult
+    public Dump(node: NameofNode): ts.Node
     {
         return transform(node, this.Context);
     }

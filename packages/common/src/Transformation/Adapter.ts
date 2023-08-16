@@ -5,7 +5,7 @@ import { NameofCallExpression, Node } from "../Serialization/nodes";
 /**
  * Provides the functionality to parse and dump `nameof` expressions.
  */
-export abstract class Adapter<TFeatures extends TransformerFeatures<TInput>, TInput, out TOutput = TInput> implements IAdapter<TInput, TOutput>
+export abstract class Adapter<TFeatures extends TransformerFeatures<TNode>, TInput, TNode = TInput, TContext = Record<string, never>> implements IAdapter<TInput, TNode, TContext>
 {
     /**
      * The features of the transformer integration.
@@ -13,7 +13,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TInput>, TIn
     private features: TFeatures;
 
     /**
-     * Initializes a new instance of the {@linkcode Adapter Adapter<TFeatures, TInput, TOutput>} class.
+     * Initializes a new instance of the {@linkcode Adapter Adapter<TFeatures, TInput, TNode, TContext>} class.
      *
      * @param features
      * The features of the transformer integration.
@@ -32,17 +32,6 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TInput>, TIn
     }
 
     /**
-     * Extracts the actual node from the specified {@linkcode item}.
-     *
-     * @param item
-     * The item to extract.
-     *
-     * @returns
-     * The extracted node.
-     */
-    public abstract Extract(item: TInput): TOutput;
-
-    /**
      * @inheritdoc
      *
      * @param item
@@ -56,7 +45,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TInput>, TIn
      * @param item
      * The item to get the source code from.
      */
-    public ExtractCode(item: TOutput): string
+    public ExtractCode(item: TNode): string
     {
         throw new Error("Method not implemented.");
     }
@@ -67,7 +56,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TInput>, TIn
      * @param node
      * The node to dump.
      */
-    public abstract Dump(node: Node): TOutput;
+    public abstract Dump(node: Node): TNode;
 
     /**
      * @inheritdoc
@@ -78,7 +67,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TInput>, TIn
      * @param item
      * The item related to the error.
      */
-    public HandleError(error: Error, item: TInput): void
+    public HandleError(error: Error, item: TNode): void
     {
         this.Features.ReportError(item, error);
     }

@@ -2,14 +2,14 @@
 import { types } from "@babel/core";
 import { Adapter, NameofCallExpression, Node } from "@typescript-nameof/common";
 import { ITransformTarget } from "./ITransformTarget";
-import { parse } from "./parse";
+import { parse, ParseOptions } from "./parse";
 import { transform } from "./transform";
 import { BabelFeatures } from "./Transformation/BabelFeatures";
 
 /**
  * Provides the functionality to parse and dump `nameof` calls for babel.
  */
-export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types.Node>
+export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types.Node, ParseOptions>
 {
     /**
      * Initializes a new instance of the {@linkcode BabelAdapter} class.
@@ -28,20 +28,6 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
     protected get Types(): typeof types
     {
         return this.Features.Types;
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param item
-     * The item to extract.
-     *
-     * @returns
-     * The extracted node.
-     */
-    public Extract(item: ITransformTarget): types.Node
-    {
-        return item.path.node;
     }
 
     /**

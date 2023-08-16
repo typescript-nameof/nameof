@@ -1,11 +1,10 @@
 import type babelAPI = require("@babel/core");
 import { IErrorHandler, TransformerFeatures } from "@typescript-nameof/common";
-import { ITransformTarget } from "../ITransformTarget";
 
 /**
  * @inheritdoc
  */
-export class BabelFeatures extends TransformerFeatures<ITransformTarget>
+export class BabelFeatures extends TransformerFeatures<babelAPI.Node>
 {
     /**
      * An instance of the babel compiler.
@@ -21,7 +20,7 @@ export class BabelFeatures extends TransformerFeatures<ITransformTarget>
      * @param errorHandler
      * A component for handling errors.
      */
-    public constructor(babel: typeof babelAPI, errorHandler?: IErrorHandler<ITransformTarget>)
+    public constructor(babel: typeof babelAPI, errorHandler?: IErrorHandler<babelAPI.Node>)
     {
         super(errorHandler);
         this.babel = babel;

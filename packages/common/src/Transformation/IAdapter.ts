@@ -3,29 +3,21 @@ import { NameofCallExpression, Node } from "../Serialization/nodes";
 /**
  * Represents a component for parsing and dumping `nameof` expressions.
  */
-export interface IAdapter<TInput, out TOutput = TInput>
+export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
 {
-    /**
-     * Extracts the actual node from the specified {@linkcode item}.
-     *
-     * @param item
-     * The item to extract.
-     *
-     * @returns
-     * The extracted node.
-     */
-    Extract(item: TInput): TOutput;
-
     /**
      * Parses the specified {@linkcode item}.
      *
      * @param item
      * The item to parse.
      *
+     * @param context
+     * The context of the operation.
+     *
      * @returns
      * The parsed `nameof` expression.
      */
-    LegacyParse(item: TInput): NameofCallExpression | undefined;
+    LegacyParse(item: TInput, context: TContext): NameofCallExpression | undefined;
 
     /**
      * Dumps the specified {@linkcode node}.
@@ -33,10 +25,13 @@ export interface IAdapter<TInput, out TOutput = TInput>
      * @param node
      * The node to dump.
      *
+     * @param context
+     * The context of the operation.
+     *
      * @returns
      * The converted representation of the specified {@linkcode node}.
      */
-    Dump(node: Node): TOutput;
+    Dump(node: Node, context: TContext): TNode;
 
     /**
      * Extracts the source code of the specified {@linkcode item}.
@@ -44,7 +39,7 @@ export interface IAdapter<TInput, out TOutput = TInput>
      * @param item
      * The item to get the source code from.
      */
-    ExtractCode(item: TOutput): string;
+    ExtractCode(item: TNode): string;
 
     /**
      * Handles the specified {@linkcode error}.
@@ -55,5 +50,5 @@ export interface IAdapter<TInput, out TOutput = TInput>
      * @param item
      * The item related to the error.
      */
-    HandleError(error: Error, item: TInput): void;
+    HandleError(error: Error, item: TNode): void;
 }
