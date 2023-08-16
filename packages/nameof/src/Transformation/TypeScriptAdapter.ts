@@ -50,6 +50,20 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, Tran
      * @inheritdoc
      *
      * @param item
+     * The item to extract.
+     *
+     * @returns
+     * The extracted node.
+     */
+    public Extract(item: ts.Node): TransformResult
+    {
+        return item as any;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
      * The item to parse.
      *
      * @returns
