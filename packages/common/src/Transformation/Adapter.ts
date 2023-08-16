@@ -5,7 +5,7 @@ import { NameofCallExpression, Node } from "../Serialization/nodes";
 /**
  * Provides the functionality to parse and dump `nameof` expressions.
  */
-export abstract class Adapter<TFeatures extends TransformerFeatures<TNode>, TInput, TNode = TInput, TContext = Record<string, never>> implements IAdapter<TInput, TNode, TContext>
+export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TContext>, TInput, TNode = TInput, TContext = Record<string, never>> implements IAdapter<TInput, TNode, TContext>
 {
     /**
      * The features of the transformer integration.
