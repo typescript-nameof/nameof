@@ -1,10 +1,10 @@
-import { IAccessor } from "./IAccessor";
+import { INamedPathPart } from "./INamedPathPart";
 import { PathKind } from "./PathKind";
 
 /**
  * Represents an index accessor.
  */
-export interface IIndexAccessor extends IAccessor<string | number>
+export interface IIndexAccessor extends INamedPathPart<string | number>
 {
     /**
      * @inheritdoc

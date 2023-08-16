@@ -4,6 +4,11 @@
 export const enum PathKind
 {
     /**
+     * Indicates an identifier.
+     */
+    Identifier = "Identifier",
+
+    /**
      * Indicates a property access.
      */
     PropertyAccess = "PropertyAccess",

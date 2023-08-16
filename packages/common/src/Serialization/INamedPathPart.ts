@@ -3,10 +3,10 @@ import { IPathPart } from "./IPathPart";
 /**
  * Represents an accessor.
  */
-export interface IAccessor<T> extends IPathPart
+export interface INamedPathPart<T> extends IPathPart
 {
     /**
-     * The value of the item that is accessed.
+     * The name of the path part.
      */
     value: T;
 }

@@ -2,12 +2,12 @@ import { INamedPathPart } from "./INamedPathPart";
 import { PathKind } from "./PathKind";
 
 /**
- * Represents a property accessor.
+ * Represents an identifier.
  */
-export interface IPropertyAccessor extends INamedPathPart<string>
+export interface IIdentifier extends INamedPathPart<string>
 {
     /**
      * @inheritdoc
      */
-    type: PathKind.PropertyAccess;
+    type: PathKind.Identifier;
 }
