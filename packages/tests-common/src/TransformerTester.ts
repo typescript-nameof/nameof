@@ -10,7 +10,7 @@ import { TestErrorHandler } from "./TestErrorHandler";
  * @template T
  * The type of the node which are being transformed.
  */
-export abstract class TransformerTester<T>
+export abstract class TransformerTester<TNode, TContext = Record<string, never>>
 {
     /**
      * Registers common tests.
@@ -407,7 +407,7 @@ export abstract class TransformerTester<T>
      * @returns
      * The transformed representation of the specified {@linkcode code}.
      */
-    protected abstract Run(code: string, errorHandler?: IErrorHandler<T>): Promise<string>;
+    protected abstract Run(code: string, errorHandler?: IErrorHandler<TNode, TContext>): Promise<string>;
 
     /**
      * Pre-processes the specified {@linkcode code}.
@@ -526,7 +526,7 @@ export abstract class TransformerTester<T>
     /**
      * Gets the default error handler of the transformer under test.
      */
-    protected get DefaultErrorHandler(): IErrorHandler<T>
+    protected get DefaultErrorHandler(): IErrorHandler<TNode, TContext>
     {
         return new ErrorHandler();
     }

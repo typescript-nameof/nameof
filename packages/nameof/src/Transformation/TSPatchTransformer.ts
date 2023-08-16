@@ -1,6 +1,7 @@
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerExtras } from "ts-patch";
 import { Node } from "typescript";
+import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TSPatchFeatures } from "./TSPatchFeatures";
 import { TypeScriptTransformerBase } from "./TypeScriptTransformerBase";
 
@@ -18,7 +19,7 @@ export class TSPatchTransformer extends TypeScriptTransformerBase<TSPatchFeature
      * @param errorHandler
      * A component for reporting errors.
      */
-    public constructor(extras: TransformerExtras, errorHandler?: IErrorHandler<Node>)
+    public constructor(extras: TransformerExtras, errorHandler?: IErrorHandler<Node, ITypeScriptContext>)
     {
         super(new TSPatchFeatures(extras, errorHandler));
     }

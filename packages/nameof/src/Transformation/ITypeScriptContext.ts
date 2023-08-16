@@ -8,5 +8,5 @@ export interface ITypeScriptContext
     /**
      * The file that is transformed.
      */
-    file?: SourceFile;
+    file: SourceFile;
 }

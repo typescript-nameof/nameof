@@ -2,6 +2,7 @@ import { IErrorHandler } from "@typescript-nameof/common";
 // eslint-disable-next-line node/no-unpublished-import
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import { Node } from "typescript";
+import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TSJestFeatures } from "./TSJestFeatures";
 import { TypeScriptTransformerBase } from "./TypeScriptTransformerBase";
 
@@ -19,7 +20,7 @@ export class TSJestTransformer extends TypeScriptTransformerBase<TSJestFeatures>
      * @param errorHandler
      * A component for reporting errors.
      */
-    public constructor(compiler: TsCompilerInstance, errorHandler?: IErrorHandler<Node>)
+    public constructor(compiler: TsCompilerInstance, errorHandler?: IErrorHandler<Node, ITypeScriptContext>)
     {
         super(new TSJestFeatures(compiler, errorHandler));
     }

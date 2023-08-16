@@ -1,5 +1,6 @@
 import { IErrorHandler } from "@typescript-nameof/common";
 import { Node } from "typescript";
+import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
 import { TypeScriptTransformerBase } from "./TypeScriptTransformerBase";
 
@@ -17,7 +18,7 @@ export class TypeScriptTransformer extends TypeScriptTransformerBase<TypeScriptF
      * @param errorHandler
      * A component for reporting errors.
      */
-    public constructor(errorHandler?: IErrorHandler<Node>)
+    public constructor(errorHandler?: IErrorHandler<Node, ITypeScriptContext>)
     {
         super(new TypeScriptFeatures(errorHandler));
     }

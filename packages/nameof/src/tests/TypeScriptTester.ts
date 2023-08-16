@@ -1,12 +1,13 @@
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
 import ts = require("typescript");
+import { ITypeScriptContext } from "../Transformation/ITypeScriptContext";
 import { TypeScriptTransformer } from "../Transformation/TypeScriptTransformer";
 
 /**
  * Provides the functionality to test typescript transformers.
  */
-export class TypeScriptTester extends TransformerTester<ts.Node>
+export class TypeScriptTester extends TransformerTester<ts.Node, ITypeScriptContext>
 {
     /**
      * @inheritdoc
@@ -20,7 +21,7 @@ export class TypeScriptTester extends TransformerTester<ts.Node>
      * @returns
      * The transformed representation of the specified {@linkcode code}.
      */
-    protected async Run(code: string, errorHandler?: IErrorHandler<ts.Node> | undefined): Promise<string>
+    protected async Run(code: string, errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext> | undefined): Promise<string>
     {
         /**
          * Represents an emitted file.

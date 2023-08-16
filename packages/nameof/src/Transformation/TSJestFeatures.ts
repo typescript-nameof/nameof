@@ -3,6 +3,7 @@ import { IErrorHandler } from "@typescript-nameof/common";
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import type ts = require("typescript");
 import { TSJestErrorHandler } from "./Diagnostics/TSJestErrorHandler";
+import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
 
 /**
@@ -24,7 +25,7 @@ export class TSJestFeatures extends TypeScriptFeatures
      * @param errorHandler
      * A component for reporting errors.
      */
-    public constructor(compiler: TsCompilerInstance, errorHandler?: IErrorHandler<ts.Node>)
+    public constructor(compiler: TsCompilerInstance, errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext>)
     {
         super(errorHandler);
         this.compiler = compiler;
@@ -52,7 +53,7 @@ export class TSJestFeatures extends TypeScriptFeatures
      * @returns
      * The newly created error handler
      */
-    protected InitializeErrorHandler(): IErrorHandler<ts.Node>
+    protected InitializeErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
     {
         return new TSJestErrorHandler(this);
     }
