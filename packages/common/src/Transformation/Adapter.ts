@@ -178,7 +178,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Transforms the specified {@linkcode call}.
+     * Transforms the specified `nameof` {@linkcode call}.
      *
      * @param call
      * The call to transform.
