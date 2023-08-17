@@ -122,6 +122,30 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     protected abstract IsCallExpression(item: TNode): boolean;
 
     /**
+     * Checks whether the specified {@linkcode item} is a string literal.
+     *
+     * @param item
+     * The item to check.
+     */
+    protected abstract IsStringLiteral(item: TNode): boolean;
+
+    /**
+     * Checks whether the specified {@linkcode item} is a template literal.
+     *
+     * @param item
+     * The item to check.
+     */
+    protected abstract IsTemplateLiteral(item: TNode): boolean;
+
+    /**
+     * Checks whether the specified {@linkcode item} is an array literal.
+     *
+     * @param item
+     * The item to check.
+     */
+    protected abstract IsArrayLiteral(item: TNode): boolean;
+
+    /**
      * @inheritdoc
      *
      * @param item

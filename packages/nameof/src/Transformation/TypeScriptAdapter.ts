@@ -124,6 +124,48 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     }
 
     /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} is a string literal.
+     */
+    protected IsStringLiteral(item: ts.Node): item is ts.StringLiteral
+    {
+        return this.TypeScript.isStringLiteral(item);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} is a template literal.
+     */
+    protected IsTemplateLiteral(item: ts.Node): boolean
+    {
+        return this.TypeScript.isTemplateLiteral(item);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} is a array literal.
+     */
+    protected IsArrayLiteral(item: ts.Node): item is ts.ArrayLiteralExpression
+    {
+        return this.TypeScript.isArrayLiteralExpression(item);
+    }
+
+    /**
      * Parses the specified {@linkcode item}.
      *
      * @param item
@@ -166,7 +208,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         {
             return new NumericLiteralNode(item, parseFloat(item.text));
         }
-        else if (this.TypeScript.isStringLiteral(item))
+        else if (this.IsStringLiteral(item))
         {
             return new StringLiteralNode(item, item.text);
         }

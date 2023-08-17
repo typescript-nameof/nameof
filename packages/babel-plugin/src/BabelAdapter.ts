@@ -111,6 +111,48 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      * @inheritdoc
      *
      * @param item
+     * The item to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} is a string literal.
+     */
+    protected IsStringLiteral(item: types.Node): item is types.StringLiteral
+    {
+        return this.Types.isStringLiteral(item);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} is a template literal.
+     */
+    protected IsTemplateLiteral(item: types.Node): boolean
+    {
+        return this.Types.isTemplateLiteral(item);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} is a array literal.
+     */
+    protected IsArrayLiteral(item: types.Node): item is types.ArrayExpression
+    {
+        return this.Types.isArrayExpression(item);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
      * The item to parse.
      *
      * @param context
@@ -148,7 +190,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
         {
             return new NumericLiteralNode(item, item.value);
         }
-        else if (this.Types.isStringLiteral(item))
+        else if (this.IsStringLiteral(item))
         {
             return new StringLiteralNode(item, item.value);
         }
