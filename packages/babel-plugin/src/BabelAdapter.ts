@@ -196,11 +196,12 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
             }
             else if (this.Types.isIdentifier(item.property))
             {
-                return new PropertyAccessNode(
-                    item,
-                    this.ParseNode(item.object, context),
-                    item.property.name);
+                return this.ParsePropertyAccessExpression(item, item.object, item.property, context);
             }
+        }
+        else if (this.Types.isTSQualifiedName(item))
+        {
+            return this.ParsePropertyAccessExpression(item, item.left, item.right, context);
         }
         else if (
             this.Types.isFunctionExpression(item) ||
@@ -235,6 +236,32 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
         }
 
         return new UnsupportedNode(item);
+    }
+
+    /**
+     * Parses a {@linkcode PropertyAccessNode} with the specified {@linkcode expression} and {@linkcode property}.
+     *
+     * @param source
+     * The source of the node.
+     *
+     * @param expression
+     * The expression of the property access expression.
+     *
+     * @param property
+     * The property that is accessed in the expression.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode source}.
+     */
+    protected ParsePropertyAccessExpression(source: types.Node, expression: types.Node, property: types.Identifier, context: BabelContext): PropertyAccessNode<types.Node>
+    {
+        return new PropertyAccessNode(
+            source,
+            this.ParseNode(expression, context),
+            property.name);
     }
 
     /**
