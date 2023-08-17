@@ -189,7 +189,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The parsed representation of the specified {@linkcode item}.
      */
-    protected TransformDefaultCall(call: NameofCall<TNode>, context: TContext): NameofResult<TNode>
+    protected TransformDefault(call: NameofCall<TNode>, context: TContext): NameofResult<TNode>
     {
         return this.GetName(call, this.TransformSingle(call, context), context);
     }
