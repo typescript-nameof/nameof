@@ -187,6 +187,23 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * The context of the operation.
      *
      * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    protected TransformDefaultCall(call: NameofCall<TNode>, context: TContext): NameofResult<TNode>
+    {
+        return this.GetName(call, this.TransformSingle(call, context), context);
+    }
+
+    /**
+     * Transforms the specified {@linkcode call}.
+     *
+     * @param call
+     * The call to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
      * The transformed call.
      */
     protected TransformSingle(call: NameofCall<TNode>, context: TContext): Array<PathPart<TNode>>
