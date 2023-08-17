@@ -1,7 +1,7 @@
 /**
  * Represents the type of a result.
  */
-export const enum ResultType
+export enum ResultType
 {
     /**
      * Indicates a plain text result.
