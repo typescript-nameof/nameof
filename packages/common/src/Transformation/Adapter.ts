@@ -298,6 +298,85 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
+     * Transforms the specified `nameof.toArray` {@linkcode call}.
+     *
+     * @param call
+     * The call to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode call}.
+     */
+    protected TransformArray(call: NameofCall<TNode>, context: TContext): Array<NameofResult<TNode>>
+    {
+        let expressions: readonly TNode[] = call.arguments;
+
+        let processor = (node: TNode): NameofResult<TNode> =>
+        {
+            return this.GetName(call, this.ParseNode(node, context).Path, context);
+        };
+
+        if (call.arguments.length === 1)
+        {
+            let parsedNode = this.ParseNode(call.arguments[0], context);
+
+            if (parsedNode.Type === NodeKind.FunctionNode)
+            {
+                let functionNode = parsedNode;
+                let elements = this.GetArrayElements(parsedNode.Body);
+
+                if (elements)
+                {
+                    expressions = elements;
+
+                    processor = (node) =>
+                    {
+                        return this.GetName(call, this.TransformFunctionBody(functionNode, node, context), context);
+                    };
+
+                    return elements.map(
+                        (expression) =>
+                        {
+                            if (
+                                this.IsStringLiteral(expression) ||
+                                this.IsTemplateLiteral(expression))
+                            {
+                                return {
+                                    type: ResultType.Node,
+                                    node: expression
+                                };
+                            }
+                            else
+                            {
+                                return this.GetName(call, this.TransformFunctionBody(functionNode, expression, context), context);
+                            }
+                        });
+                }
+            }
+        }
+
+        return expressions.map(
+            (expression): NameofResult<TNode> =>
+            {
+                if (
+                    this.IsStringLiteral(expression) ||
+                    this.IsTemplateLiteral(expression))
+                {
+                    return {
+                        type: ResultType.Node,
+                        node: expression
+                    };
+                }
+                else
+                {
+                    return processor(expression);
+                }
+            });
+    }
+
+    /**
      * Transforms a segment of the specified {@linkcode call}.
      *
      * @param call
