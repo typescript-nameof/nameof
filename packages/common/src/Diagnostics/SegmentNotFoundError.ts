@@ -1,17 +1,12 @@
-import { AdapterError } from "./AdapterError";
+import { NameofCallError } from "./NameofCallError";
 import { NameofCall } from "../Serialization/NameofCall";
 import { IAdapter } from "../Transformation/IAdapter";
 
 /**
  * Represents an error indicating that the requested segment could not be found.
  */
-export class SegmentNotFoundError<TInput, TNode, TContext> extends AdapterError<TInput, TNode, TContext>
+export class SegmentNotFoundError<TInput, TNode, TContext> extends NameofCallError<TInput, TNode, TContext>
 {
-    /**
-     * The `nameof` call which caused the error.
-     */
-    private call: NameofCall<TNode>;
-
     /**
      * Initializes a new instance of the {@linkcode SegmentNotFoundError} class.
      *
@@ -26,16 +21,7 @@ export class SegmentNotFoundError<TInput, TNode, TContext> extends AdapterError<
      */
     public constructor(adapter: IAdapter<TInput, TNode, TContext>, call: NameofCall<TNode>, context: TContext)
     {
-        super(adapter, call.source, context);
-        this.call = call;
-    }
-
-    /**
-     * Gets the `nameof` call which caused the error.
-     */
-    protected get Call(): NameofCall<TNode>
-    {
-        return this.call;
+        super(adapter, call, context);
     }
 
     /**
