@@ -1,17 +1,12 @@
-import { AdapterError } from "./AdapterError";
+import { NameofCallError } from "./NameofCallError";
 import { NameofCall } from "../Serialization/NameofCall";
 import { IAdapter } from "../Transformation/IAdapter";
 
 /**
  * Represents an error indicating an invalid `interpolate` call.
  */
-export class InvalidArgumentCountError<TInput, TNode, TContext> extends AdapterError<TInput, TNode, TContext>
+export class InvalidArgumentCountError<TInput, TNode, TContext> extends NameofCallError<TInput, TNode, TContext>
 {
-    /**
-     * The `nameof` call which caused the error.
-     */
-    private call: NameofCall<TNode>;
-
     /**
      * The expected number of arguments.
      */
@@ -34,17 +29,8 @@ export class InvalidArgumentCountError<TInput, TNode, TContext> extends AdapterE
      */
     public constructor(adapter: IAdapter<TInput, TNode, TContext>, call: NameofCall<TNode>, expected: number, context: TContext)
     {
-        super(adapter, call.source, context);
-        this.call = call;
+        super(adapter, call, context);
         this.expected = expected;
-    }
-
-    /**
-     * Gets the `nameof` call which caused the error.
-     */
-    protected get Call(): NameofCall<TNode>
-    {
-        return this.call;
     }
 
     /**
