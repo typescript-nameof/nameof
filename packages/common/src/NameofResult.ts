@@ -1,3 +1,4 @@
+import { INodeResult } from "./INodeResult";
 import { IPlainResult } from "./IPlainResult";
 import { ITemplateResult } from "./ITemplateResult";
 
@@ -6,4 +7,5 @@ import { ITemplateResult } from "./ITemplateResult";
  */
 export type NameofResult<T> =
     IPlainResult |
-    ITemplateResult<T>;
+    ITemplateResult<T> |
+    INodeResult<T>;

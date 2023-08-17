@@ -11,5 +11,10 @@ export enum ResultType
     /**
      * Indicates a template result.
      */
-    Template
+    Template,
+
+    /**
+     * Indicates a node result.
+     */
+    Node
 }
