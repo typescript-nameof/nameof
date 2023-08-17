@@ -1,5 +1,8 @@
 import { IAdapter } from "./IAdapter";
 import { TransformerFeatures } from "./TransformerFeatures";
+import { CallExpressionNode } from "../Serialization/CallExpressionNode";
+import { NameofCall } from "../Serialization/NameofCall";
+import { NodeKind } from "../Serialization/NodeKind";
 import { NameofCallExpression, Node } from "../Serialization/nodes";
 import { ParsedNode } from "../Serialization/ParsedNode";
 
@@ -88,6 +91,48 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     public HandleError(item: TNode, context: TContext, error: Error): void
     {
         this.Features.ReportError(item, context, error);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed {@linkcode NameofCall} or `code` if no `nameof` call was found.
+     */
+    protected GetNameofCall(item: TNode, context: TContext): NameofCall<TNode> | undefined
+    {
+        if (this.IsCallExpression(item))
+        {
+            let callNode = this.ParseInternal(item, context) as CallExpressionNode<TNode>;
+            let expression = this.ParseInternal(callNode.Expression, context);
+            let property: string | undefined;
+
+            if (expression.Type === NodeKind.PropertyAccessNode)
+            {
+                property = expression.PropertyName;
+                expression = expression.Expression;
+            }
+
+            if (
+                expression.Type === NodeKind.IdentifierNode &&
+                expression.Name === "nameof")
+            {
+                return {
+                    source: item,
+                    function: property,
+                    typeArguments: callNode.TypeArguments,
+                    arguments: callNode.Arguments
+                };
+            }
+        }
+
+        return undefined;
     }
 
     /**
