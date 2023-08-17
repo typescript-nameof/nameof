@@ -129,6 +129,12 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
                 item.typeParameters?.params ?? [],
                 item.arguments);
         }
+        else if (
+            this.Types.isThisExpression(item) ||
+            this.Types.isSuper(item))
+        {
+            return new IdentifierNode(item, this.ExtractCode(item, context));
+        }
         else if (this.Types.isIdentifier(item))
         {
             return new IdentifierNode(item, item.name);

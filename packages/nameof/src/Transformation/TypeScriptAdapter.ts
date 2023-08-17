@@ -145,6 +145,14 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                 item.typeArguments ?? [],
                 item.arguments);
         }
+        else if (
+            [
+                this.TypeScript.SyntaxKind.ThisKeyword,
+                this.TypeScript.SyntaxKind.SuperKeyword
+            ].includes(item.kind))
+        {
+            return new IdentifierNode(item, item.getText(context.file));
+        }
         else if (this.TypeScript.isIdentifier(item))
         {
             return new IdentifierNode(item, item.getText(context.file));
