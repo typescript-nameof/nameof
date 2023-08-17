@@ -6,6 +6,8 @@ import { NameofError } from "../Diagnostics/NameofError";
 import { OutOfBoundsError } from "../Diagnostics/OutOfBoundsError";
 import { UnsupportedNodeError } from "../Diagnostics/UnsupportedNodeError";
 import { NameofFunction } from "../NameofFunction";
+import { NameofResult } from "../NameofResult";
+import { ResultType } from "../ResultType";
 import { CallExpressionNode } from "../Serialization/CallExpressionNode";
 import { InterpolationNode } from "../Serialization/InterpolationNode";
 import { NameofCall } from "../Serialization/NameofCall";
