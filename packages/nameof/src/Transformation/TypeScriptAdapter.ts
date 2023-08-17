@@ -148,7 +148,16 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         else if (
             [
                 this.TypeScript.SyntaxKind.ThisKeyword,
-                this.TypeScript.SyntaxKind.SuperKeyword
+                this.TypeScript.SyntaxKind.SuperKeyword,
+                this.TypeScript.SyntaxKind.AnyKeyword,
+                this.TypeScript.SyntaxKind.UnknownKeyword,
+                this.TypeScript.SyntaxKind.VoidKeyword,
+                this.TypeScript.SyntaxKind.NeverKeyword,
+                this.TypeScript.SyntaxKind.ObjectKeyword,
+                this.TypeScript.SyntaxKind.BooleanKeyword,
+                this.TypeScript.SyntaxKind.NumberKeyword,
+                this.TypeScript.SyntaxKind.BigIntKeyword,
+                this.TypeScript.SyntaxKind.StringKeyword
             ].includes(item.kind))
         {
             return new IdentifierNode(item, item.getText(context.file));

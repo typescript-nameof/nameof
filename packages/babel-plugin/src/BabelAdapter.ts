@@ -131,7 +131,16 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
         }
         else if (
             this.Types.isThisExpression(item) ||
-            this.Types.isSuper(item))
+            this.Types.isSuper(item) ||
+            this.Types.isTSAnyKeyword(item) ||
+            this.Types.isTSUnknownKeyword(item) ||
+            this.Types.isTSVoidKeyword(item) ||
+            this.Types.isTSNeverKeyword(item) ||
+            this.Types.isTSObjectKeyword(item) ||
+            this.Types.isTSBooleanKeyword(item) ||
+            this.Types.isTSNumberKeyword(item) ||
+            this.Types.isTSBigIntKeyword(item) ||
+            this.Types.isTSStringKeyword(item))
         {
             return new IdentifierNode(item, this.GetSourceCode(item, context));
         }
