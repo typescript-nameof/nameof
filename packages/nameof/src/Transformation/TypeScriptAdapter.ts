@@ -159,10 +159,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         }
         else if (this.TypeScript.isPropertyAccessExpression(item))
         {
-            return new PropertyAccessNode(
-                item,
-                this.ParseNode(item.expression, context),
-                item.name.getText(context.file));
+            return this.ParsePropertyAccessExpression(item, item.expression, item.name, context);
         }
         else if (this.TypeScript.isElementAccessExpression(item))
         {
@@ -179,6 +176,32 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         }
 
         return new UnsupportedNode(item);
+    }
+
+    /**
+     * Parses a {@linkcode PropertyAccessNode} with the specified {@linkcode expression} and {@linkcode property}.
+     *
+     * @param source
+     * The source of the node.
+     *
+     * @param expression
+     * The expression of the property access expression.
+     *
+     * @param property
+     * The property that is accessed in the expression.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode source}.
+     */
+    protected ParsePropertyAccessExpression(source: ts.Node, expression: ts.Node, property: ts.MemberName, context: ITypeScriptContext): PropertyAccessNode<ts.Node>
+    {
+        return new PropertyAccessNode(
+            source,
+            this.ParseNode(expression, context),
+            property.getText(context.file));
     }
 
     /**
