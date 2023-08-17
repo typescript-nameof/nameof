@@ -76,23 +76,6 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      */
     public LegacyParse(item: ITransformTarget, context: BabelContext): NameofCallExpression | undefined
     {
-        try
-        {
-            this.Transform(item, context);
-        }
-        catch
-        {
-            console.log("Code caused error:");
-            console.log(this.ExtractCode(this.Extract(item), context));
-            console.log();
-
-            try
-            {
-                this.Transform(item, context);
-            }
-            catch {}
-        }
-
         return parse(this.Types, item.path, item.options);
     }
 
