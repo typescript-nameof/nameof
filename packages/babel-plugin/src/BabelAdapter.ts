@@ -1,6 +1,6 @@
 // eslint-disable-next-line node/no-unpublished-import
 import { types } from "@babel/core";
-import { Adapter, CallExpressionNode, IdentifierNode, IndexAccessNode, NameofCallExpression, Node, ParsedNode, PropertyAccessNode, UnsupportedNode } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, NameofCallExpression, Node, NoReturnExpressionError, ParsedNode, PropertyAccessNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import { ITransformTarget } from "./ITransformTarget";
 import { parse } from "./parse";
 import { transform } from "./transform";
@@ -76,6 +76,23 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      */
     public LegacyParse(item: ITransformTarget, context: BabelContext): NameofCallExpression | undefined
     {
+        try
+        {
+            this.Transform(item, context);
+        }
+        catch
+        {
+            console.log("Code caused error:");
+            console.log(this.ExtractCode(this.Extract(item), context));
+            console.log();
+
+            try
+            {
+                this.Transform(item, context);
+            }
+            catch {}
+        }
+
         return parse(this.Types, item.path, item.options);
     }
 
@@ -156,7 +173,70 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
                     item.property.name);
             }
         }
+        else if (
+            this.Types.isFunctionExpression(item) ||
+            this.Types.isArrowFunctionExpression(item))
+        {
+            let expression = this.Types.isBlock(item.body) ?
+                this.GetReturnExpression(item.body, context) :
+                item.body;
+
+            if (expression)
+            {
+                return new FunctionNode<types.Node>(
+                    item,
+                    item.params.map(
+                        (parameter) =>
+                        {
+                            if (this.Types.isIdentifier(parameter))
+                            {
+                                return parameter.name;
+                            }
+                            else
+                            {
+                                throw new UnsupportedNodeError(this, parameter, context);
+                            }
+                        }),
+                    expression);
+            }
+            else
+            {
+                throw new NoReturnExpressionError(this, item, context);
+            }
+        }
 
         return new UnsupportedNode(item);
+    }
+
+    /**
+     * Gets the expression that is returned in the specified {@linkcode block}.
+     *
+     * @param block
+     * The block to get the returned expression from.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The return expression of the specified {@linkcode block}.
+     */
+    protected GetReturnExpression(block: types.Block, context: BabelContext): types.Node | undefined
+    {
+        for (let statement of block.body)
+        {
+            if (this.Types.isReturnStatement(statement))
+            {
+                if (statement.argument)
+                {
+                    return statement.argument;
+                }
+            }
+            else
+            {
+                // ToDo: Throw error for non-return statements.
+            }
+        }
+
+        return undefined;
     }
 }

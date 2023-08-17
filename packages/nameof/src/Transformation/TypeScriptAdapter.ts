@@ -1,4 +1,4 @@
-import { Adapter, CallExpressionNode, IdentifierNode, IndexAccessNode, NameofCallExpression, Node as NameofNode, ParsedNode, PropertyAccessNode, UnsupportedNode } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, NameofCallExpression, Node as NameofNode, NoReturnExpressionError, ParsedNode, PropertyAccessNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { parse } from "./parse";
@@ -171,7 +171,89 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                 this.ParseInternal(item.expression, context),
                 this.ParseNode(item.argumentExpression, context));
         }
+        else if (
+            this.TypeScript.isArrowFunction(item) ||
+            this.TypeScript.isFunctionExpression(item))
+        {
+            return this.ParseFunction(item, context);
+        }
 
         return new UnsupportedNode(item);
+    }
+
+    /**
+     * Parses the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    protected ParseFunction(item: ts.ArrowFunction | ts.FunctionExpression, context: ITypeScriptContext): FunctionNode<ts.Node>
+    {
+        let expression = this.GetReturnExpression(item.body);
+
+        if (expression)
+        {
+            return new FunctionNode(
+                item,
+                item.parameters.map(
+                    (parameter) =>
+                    {
+                        if (this.TypeScript.isIdentifier(parameter.name))
+                        {
+                            return parameter.name.getText(context.file);
+                        }
+                        else
+                        {
+                            throw new UnsupportedNodeError(this, parameter, context);
+                        }
+                    }),
+                expression);
+        }
+        else
+        {
+            throw new NoReturnExpressionError(this, item, context);
+        }
+    }
+
+    /**
+     * Gets the return expression from the specified {@linkcode body}.
+     *
+     * @param body
+     * The function body to get the return statement from.
+     *
+     * @returns
+     * The expression in the return statement of the specified {@linkcode body}.
+     */
+    protected GetReturnExpression(body: ts.ConciseBody): ts.Node | undefined
+    {
+        if (this.TypeScript.isBlock(body))
+        {
+            for (let statement of body.statements)
+            {
+                if (this.TypeScript.isReturnStatement(statement))
+                {
+                    if (statement.expression)
+                    {
+                        return statement.expression;
+                    }
+                }
+                else
+                {
+                    // ToDo: Throw error regarding non-return statement
+                }
+            }
+
+            return undefined;
+        }
+        else
+        {
+            return body;
+        }
     }
 }

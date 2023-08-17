@@ -1,3 +1,5 @@
+export { UnsupportedNodeError } from "./Diagnostics/UnsupportedNodeError";
+export { NoReturnExpressionError } from "./Diagnostics/NoReturnExpressionError";
 export * from "./errors";
 export * from "./Serialization/nodes";
 export {
