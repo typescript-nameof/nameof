@@ -37,4 +37,59 @@ export abstract class NameofCallError<TInput, TNode, TContext> extends AdapterEr
     {
         return this.call;
     }
+
+    /**
+     * Gets the arguments of the function call.
+     */
+    protected get Arguments(): readonly TNode[]
+    {
+        return this.Call.arguments;
+    }
+
+    /**
+     * Gets the type arguments of the function call.
+     */
+    protected get TypeArguments(): readonly TNode[]
+    {
+        return this.Call.typeArguments;
+    }
+
+    /**
+     * Gets a text indicating the number of arguments.
+     */
+    protected get ArgumentCountText(): string
+    {
+        let count = this.Arguments.length;
+        return `${count} argument${this.GetPluralSuffix(count)}`;
+    }
+
+    /**
+     * Gets a text indicating the number of type arguments.
+     */
+    protected get TypeArgumentCountText(): string
+    {
+        let count = this.TypeArguments.length;
+        return `${count} type argument${this.GetPluralSuffix(count)}`;
+    }
+
+    /**
+     * Gets the proper plural suffix for the specified {@linkcode amount} of entities.
+     *
+     * @param amount
+     * The number of entities to get the plural suffix for.
+     *
+     * @returns
+     * The proper suffix for the specified {@linkcode amount}.
+     */
+    protected GetPluralSuffix(amount: number): string
+    {
+        if (amount === 1)
+        {
+            return "";
+        }
+        else
+        {
+            return "s";
+        }
+    }
 }
