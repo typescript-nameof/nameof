@@ -1,6 +1,6 @@
 // eslint-disable-next-line node/no-unpublished-import
 import { types } from "@babel/core";
-import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, Node, NoReturnExpressionError, ParsedNode, PropertyAccessNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, Node, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import { ITransformTarget } from "./ITransformTarget";
 import { parse } from "./parse";
 import { transform } from "./transform";
@@ -134,6 +134,14 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
             this.Types.isSuper(item))
         {
             return new IdentifierNode(item, this.ExtractCode(item, context));
+        }
+        else if (this.Types.isNumericLiteral(item))
+        {
+            return new NumericLiteralNode(item, item.value);
+        }
+        else if (this.Types.isStringLiteral(item))
+        {
+            return new StringLiteralNode(item, item.value);
         }
         else if (this.Types.isIdentifier(item))
         {

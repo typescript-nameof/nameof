@@ -1,4 +1,4 @@
-import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, Node as NameofNode, NoReturnExpressionError, ParsedNode, PropertyAccessNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, Node as NameofNode, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { parse } from "./parse";
@@ -152,6 +152,14 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
             ].includes(item.kind))
         {
             return new IdentifierNode(item, item.getText(context.file));
+        }
+        else if (this.TypeScript.isNumericLiteral(item))
+        {
+            return new NumericLiteralNode(item, parseFloat(item.text));
+        }
+        else if (this.TypeScript.isStringLiteral(item))
+        {
+            return new StringLiteralNode(item, item.text);
         }
         else if (this.TypeScript.isIdentifier(item))
         {
