@@ -348,7 +348,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     {
         try
         {
-            let lastNode = this.GetPath(call, path, path.length - 1, 1, context)[0];
+            let lastNode = this.GetPathSegments(call, path, path.length - 1, 1, context)[0];
 
             switch (lastNode.type)
             {
@@ -409,7 +409,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The specified portion of the specified {@linkcode path}.
      */
-    protected GetPath(call: NameofCall<TNode>, path: Array<PathPart<TNode>>, start: number, count: number, context: TContext): Array<PathPart<TNode>>
+    protected GetPathSegments(call: NameofCall<TNode>, path: Array<PathPart<TNode>>, start: number, count: number, context: TContext): Array<PathPart<TNode>>
     {
         if (start < path.length)
         {
