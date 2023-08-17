@@ -142,12 +142,12 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
                     this.ParseInternal(item.object, context),
                     this.ParseInternal(item.property, context));
             }
-            else
+            else if (this.Types.isIdentifier(item.property))
             {
                 return new PropertyAccessNode(
                     item,
                     this.ParseInternal(item, context),
-                    this.ExtractCode(item.property, context));
+                    item.property.name);
             }
         }
 
