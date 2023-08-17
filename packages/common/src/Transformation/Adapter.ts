@@ -220,7 +220,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             }
             else
             {
-                return this.ParseNode(targets[0], context).Path;
+                return node.Path;
             }
         }
         else
