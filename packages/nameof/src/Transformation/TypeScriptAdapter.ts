@@ -1,4 +1,4 @@
-import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, NameofCallExpression, Node as NameofNode, NoReturnExpressionError, ParsedNode, PropertyAccessNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, Node as NameofNode, NoReturnExpressionError, ParsedNode, PropertyAccessNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { parse } from "./parse";
@@ -157,9 +157,29 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         {
             return new IdentifierNode(item, item.getText(context.file));
         }
+        else if (this.TypeScript.isTypeReferenceNode(item))
+        {
+            return this.ParseNode(item.typeName, context);
+        }
+        else if (this.TypeScript.isImportTypeNode(item))
+        {
+            if (item.qualifier)
+            {
+                return this.ParseNode(item.qualifier, context);
+            }
+            else
+            {
+                throw new MissingImportTypeQualifierError(this, item, context);
+            }
+        }
         else if (this.TypeScript.isPropertyAccessExpression(item))
         {
             return this.ParsePropertyAccessExpression(item, item.expression, item.name, context);
+        }
+        // Dotted paths in type references
+        else if (this.TypeScript.isQualifiedName(item))
+        {
+            return this.ParsePropertyAccessExpression(item, item.left, item.right, context);
         }
         else if (this.TypeScript.isElementAccessExpression(item))
         {

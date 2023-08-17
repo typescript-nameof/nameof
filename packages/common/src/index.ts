@@ -1,4 +1,5 @@
 export { UnsupportedNodeError } from "./Diagnostics/UnsupportedNodeError";
+export { MissingImportTypeQualifierError } from "./Diagnostics/MissingImportTypeQualifierError";
 export { NoReturnExpressionError } from "./Diagnostics/NoReturnExpressionError";
 export * from "./errors";
 export * from "./Serialization/nodes";
