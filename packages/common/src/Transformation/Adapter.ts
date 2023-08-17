@@ -2,6 +2,8 @@ import { IAdapter } from "./IAdapter";
 import { TransformerFeatures } from "./TransformerFeatures";
 import { InvalidArgumentCountError } from "../Diagnostics/InvalidArgumentCountError";
 import { NameofError } from "../Diagnostics/NameofError";
+import { OutOfBoundsError } from "../Diagnostics/OutOfBoundsError";
+import { UnsupportedNodeError } from "../Diagnostics/UnsupportedNodeError";
 import { NameofFunction } from "../NameofFunction";
 import { CallExpressionNode } from "../Serialization/CallExpressionNode";
 import { InterpolationNode } from "../Serialization/InterpolationNode";
@@ -9,6 +11,8 @@ import { NameofCall } from "../Serialization/NameofCall";
 import { NodeKind } from "../Serialization/NodeKind";
 import { NameofCallExpression, Node } from "../Serialization/nodes";
 import { ParsedNode } from "../Serialization/ParsedNode";
+import { PathKind } from "../Serialization/PathKind";
+import { PathPart } from "../Serialization/PathPart";
 import { UnsupportedNode } from "../Serialization/UnsupportedNode";
 
 /**
@@ -213,4 +217,57 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * The parsed representation of the specified {@linkcode item}.
      */
     protected abstract ParseInternal(item: TNode, context: TContext): ParsedNode<TNode>;
+
+    /**
+     * Gets the specified portion from the specified {@linkcode path}.
+     *
+     * @param call
+     * The call which is being transformed.
+     *
+     * @param path
+     * The path to extract the specified portion from.
+     *
+     * @param start
+     * The index of the item to start extracting the path.
+     *
+     * @param count
+     * The number if items to get.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The specified portion of the specified {@linkcode path}.
+     */
+    protected GetPath(call: NameofCall<TNode>, path: Array<PathPart<TNode>>, start: number, count: number, context: TContext): Array<PathPart<TNode>>
+    {
+        if (start < path.length)
+        {
+            let result = path.slice(start);
+
+            if (result.length >= count)
+            {
+                result = result.slice(0, count);
+
+                for (let pathPart of result)
+                {
+                    if (pathPart.type === PathKind.Unsupported)
+                    {
+                        if (pathPart.reason)
+                        {
+                            throw pathPart.reason;
+                        }
+                        else
+                        {
+                            throw new UnsupportedNodeError(this, pathPart.source, context);
+                        }
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        throw new OutOfBoundsError(this, call, context);
+    }
 }
