@@ -139,14 +139,14 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
             {
                 return new IndexAccessNode(
                     item,
-                    this.ParseInternal(item.object, context),
-                    this.ParseInternal(item.property, context));
+                    this.ParseNode(item.object, context),
+                    this.ParseNode(item.property, context));
             }
             else if (this.Types.isIdentifier(item.property))
             {
                 return new PropertyAccessNode(
                     item,
-                    this.ParseInternal(item.object, context),
+                    this.ParseNode(item.object, context),
                     item.property.name);
             }
         }

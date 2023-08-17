@@ -1,6 +1,8 @@
 import { IAdapter } from "./IAdapter";
 import { TransformerFeatures } from "./TransformerFeatures";
+import { InvalidInterpolateCallError } from "../Diagnostics/InvalidInterpolateCallError";
 import { CallExpressionNode } from "../Serialization/CallExpressionNode";
+import { InterpolationNode } from "../Serialization/InterpolationNode";
 import { NameofCall } from "../Serialization/NameofCall";
 import { NodeKind } from "../Serialization/NodeKind";
 import { NameofCallExpression, Node } from "../Serialization/nodes";
@@ -142,6 +144,42 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * The item to check.
      */
     protected abstract IsCallExpression(item: TNode): boolean;
+
+    /**
+     * Parses the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    protected ParseNode(item: TNode, context: TContext): ParsedNode<TNode>
+    {
+        if (this.IsCallExpression(item))
+        {
+            let nameofCall = this.GetNameofCall(item, context);
+
+            if (
+                nameofCall &&
+                nameofCall.function === NameofFunction.Interpolate)
+            {
+                if (nameofCall.arguments.length === 1)
+                {
+                    return new InterpolationNode(nameofCall.source, nameofCall.arguments[0]);
+                }
+                else
+                {
+                    throw new InvalidInterpolateCallError(this, nameofCall, context);
+                }
+            }
+        }
+
+        return this.ParseInternal(item, context);
+    }
 
     /**
      * Parses the specified {@linkcode item}.
