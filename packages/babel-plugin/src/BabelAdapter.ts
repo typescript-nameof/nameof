@@ -1,6 +1,6 @@
 // eslint-disable-next-line node/no-unpublished-import
 import { types } from "@babel/core";
-import { Adapter, CallExpressionNode, IdentifierNode, NameofCallExpression, Node, ParsedNode, UnsupportedNode } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, IdentifierNode, IndexAccessNode, NameofCallExpression, Node, ParsedNode, PropertyAccessNode, UnsupportedNode } from "@typescript-nameof/common";
 import { ITransformTarget } from "./ITransformTarget";
 import { parse } from "./parse";
 import { transform } from "./transform";
@@ -132,6 +132,23 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
         else if (this.Types.isIdentifier(item))
         {
             return new IdentifierNode(item, item.name);
+        }
+        else if (this.Types.isMemberExpression(item))
+        {
+            if (item.computed)
+            {
+                return new IndexAccessNode(
+                    item,
+                    this.ParseInternal(item.object, context),
+                    this.ParseInternal(item.property, context));
+            }
+            else
+            {
+                return new PropertyAccessNode(
+                    item,
+                    this.ParseInternal(item, context),
+                    this.ExtractCode(item.property, context));
+            }
         }
 
         return new UnsupportedNode(item);

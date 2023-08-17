@@ -1,4 +1,4 @@
-import { Adapter, CallExpressionNode, IdentifierNode, NameofCallExpression, Node as NameofNode, ParsedNode, UnsupportedNode } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, IdentifierNode, IndexAccessNode, NameofCallExpression, Node as NameofNode, ParsedNode, PropertyAccessNode, UnsupportedNode } from "@typescript-nameof/common";
 import ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { parse } from "./parse";
@@ -148,6 +148,20 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         else if (this.TypeScript.isIdentifier(item))
         {
             return new IdentifierNode(item, item.getText(context.file));
+        }
+        else if (this.TypeScript.isPropertyAccessExpression(item))
+        {
+            return new PropertyAccessNode(
+                item,
+                this.ParseInternal(item.expression, context),
+                item.name.getText(context.file));
+        }
+        else if (this.TypeScript.isElementAccessExpression(item))
+        {
+            return new IndexAccessNode(
+                item,
+                this.ParseInternal(item.expression, context),
+                this.ParseInternal(item.argumentExpression, context));
         }
 
         return new UnsupportedNode(item);
