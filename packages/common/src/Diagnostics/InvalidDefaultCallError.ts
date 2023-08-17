@@ -8,7 +8,7 @@ import { IAdapter } from "../Transformation/IAdapter";
 export class InvalidDefaultCallError<TInput, TNode, TContext> extends NameofCallError<TInput, TNode, TContext>
 {
     /**
-     * Initializes a new instance of the {@linkcode NameofCallError}.
+     * Initializes a new instance of the {@linkcode InvalidDefaultCallError}.
      *
      * @param adapter
      * The adapter which caused the error.
