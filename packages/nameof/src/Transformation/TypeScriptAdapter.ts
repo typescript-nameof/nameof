@@ -92,13 +92,6 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
      */
     public LegacyParse(item: ts.Node, context: ITypeScriptContext): NameofCallExpression | undefined
     {
-        try
-        {
-            this.Transform(item, context);
-        }
-        catch
-        { }
-
         return parse(item, context.file, this.Context);
     }
 
