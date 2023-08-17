@@ -106,6 +106,14 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
+     * Checks whether the specified {@linkcode item} is a call expression.
+     *
+     * @param item
+     * The item to check.
+     */
+    protected abstract IsCallExpression(item: TNode): boolean;
+
+    /**
      * @inheritdoc
      *
      * @param item
@@ -146,14 +154,6 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
 
         return undefined;
     }
-
-    /**
-     * Checks whether the specified {@linkcode item} is a call expression.
-     *
-     * @param item
-     * The item to check.
-     */
-    protected abstract IsCallExpression(item: TNode): boolean;
 
     /**
      * Parses the specified {@linkcode item}.
