@@ -376,7 +376,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
         catch (error)
         {
-            if (error instanceof OutOfBoundsError)
+            if (error instanceof SegmentNotFoundError)
             {
                 throw new CustomError(
                     this,
