@@ -1,4 +1,5 @@
 import { IAdapter } from "./IAdapter";
+import { ResultBuilder } from "./ResultBuilder";
 import { TransformerFeatures } from "./TransformerFeatures";
 import { CustomError } from "../Diagnostics/CustomError";
 import { IndexOutOfBoundsError } from "../Diagnostics/IndexOutOfBoundsError";
@@ -206,6 +207,31 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         {
             throw new InvalidDefaultCallError(this, call, context);
         }
+    }
+
+    /**
+     * Transforms the specified `nameof.full` {@linkcode call}.
+     *
+     * @param call
+     * The call to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode call}.
+     */
+    protected TransformFull(call: NameofCall<TNode>, context: TContext): NameofResult<TNode>
+    {
+        let path = this.TransformSegment(call, context);
+        let resultBuilder = new ResultBuilder(this, context);
+
+        for (let pathPart of path)
+        {
+            resultBuilder.Add(pathPart);
+        }
+
+        return resultBuilder.Result;
     }
 
     /**
