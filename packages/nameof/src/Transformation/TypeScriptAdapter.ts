@@ -180,6 +180,13 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                 throw new MissingImportTypeQualifierError(this, item, context);
             }
         }
+        else if (
+            this.TypeScript.isNonNullExpression(item) ||
+            this.TypeScript.isParenthesizedExpression(item) ||
+            this.TypeScript.isAsExpression(item))
+        {
+            return this.ParseNode(item.expression, context);
+        }
         else if (this.TypeScript.isPrefixUnaryExpression(item))
         {
             if (

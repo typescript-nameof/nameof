@@ -162,6 +162,13 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
                 throw new MissingImportTypeQualifierError(this, item, context);
             }
         }
+        else if (
+            this.Types.isTSNonNullExpression(item) ||
+            this.Types.isParenthesizedExpression(item) ||
+            this.Types.isTSAsExpression(item))
+        {
+            return this.ParseNode(item.expression, context);
+        }
         else if (this.Types.isUnaryExpression(item))
         {
             if (
