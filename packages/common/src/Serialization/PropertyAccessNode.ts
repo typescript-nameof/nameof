@@ -2,7 +2,7 @@ import { Node } from "./Node";
 import { NodeKind } from "./NodeKind";
 import { ParsedNode } from "./ParsedNode";
 import { PathKind } from "./PathKind";
-import { PathPart } from "./PathPart";
+import { PathPartCandidate } from "./PathPartCandidate";
 
 /**
  * Represents a property access.
@@ -62,7 +62,7 @@ export class PropertyAccessNode<T> extends Node<T>
     /**
      * @inheritdoc
      */
-    public override get PathPart(): PathPart<T>
+    public override get PathPart(): PathPartCandidate<T>
     {
         return {
             type: PathKind.PropertyAccess,
@@ -74,7 +74,7 @@ export class PropertyAccessNode<T> extends Node<T>
     /**
      * @inheritdoc
      */
-    public override get Path(): Array<PathPart<T>>
+    public override get Path(): Array<PathPartCandidate<T>>
     {
         return [
             ...this.Expression.Path,

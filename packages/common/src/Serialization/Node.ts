@@ -1,7 +1,7 @@
 import { NodeKind } from "./NodeKind";
 import { ParsedNode } from "./ParsedNode";
 import { PathKind } from "./PathKind";
-import { PathPart } from "./PathPart";
+import { PathPartCandidate } from "./PathPartCandidate";
 
 /**
  * Represents a node.
@@ -40,7 +40,7 @@ export abstract class Node<T>
     /**
      * Gets the expression path component of this node.
      */
-    public get PathPart(): PathPart<T>
+    public get PathPart(): PathPartCandidate<T>
     {
         return {
             type: PathKind.Unsupported,
@@ -51,7 +51,7 @@ export abstract class Node<T>
     /**
      * The full path of the node.
      */
-    public get Path(): Array<PathPart<T>>
+    public get Path(): Array<PathPartCandidate<T>>
     {
         return [this.PathPart];
     }

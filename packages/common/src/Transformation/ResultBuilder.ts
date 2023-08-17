@@ -1,5 +1,4 @@
 import { IAdapter } from "./IAdapter";
-import { UnsupportedNodeError } from "../Diagnostics/UnsupportedNodeError";
 import { NameofResult } from "../NameofResult";
 import { ResultType } from "../ResultType";
 import { PathKind } from "../Serialization/PathKind";
@@ -158,8 +157,6 @@ export class ResultBuilder<TInput, TNode, TContext>
                 this.Push();
                 this.Current += "]";
                 break;
-            case PathKind.Unsupported:
-                throw pathPart.reason ?? new UnsupportedNodeError(this.Adapter, pathPart.source, this.Context);
         }
     }
 

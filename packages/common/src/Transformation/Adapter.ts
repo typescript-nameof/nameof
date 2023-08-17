@@ -23,6 +23,7 @@ import { NumericLiteralNode } from "../Serialization/NumericLiteralNode";
 import { ParsedNode } from "../Serialization/ParsedNode";
 import { PathKind } from "../Serialization/PathKind";
 import { PathPart } from "../Serialization/PathPart";
+import { PathPartCandidate } from "../Serialization/PathPartCandidate";
 import { UnsupportedNode } from "../Serialization/UnsupportedNode";
 
 /**
@@ -314,7 +315,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
         else
         {
-            return path;
+            return this.GetPathSegments(call, path, 0, path.length, context);
         }
     }
 
@@ -333,7 +334,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The transformed call.
      */
-    protected TransformSingle(call: NameofCall<TNode>, node: TNode, context: TContext): Array<PathPart<TNode>>
+    protected TransformSingle(call: NameofCall<TNode>, node: TNode, context: TContext): Array<PathPartCandidate<TNode>>
     {
         let result = this.ParseNode(node, context);
 
@@ -362,7 +363,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The transformed representation of the specified {@linkcode node}.
      */
-    protected TransformFunctionBody(functionNode: FunctionNode<TNode>, node: TNode, context: TContext): Array<PathPart<TNode>>
+    protected TransformFunctionBody(functionNode: FunctionNode<TNode>, node: TNode, context: TContext): Array<PathPartCandidate<TNode>>
     {
         let path = this.ParseNode(node, context).Path;
 
@@ -462,7 +463,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The trailing name of the specified {@linkcode path}.
      */
-    protected GetName(call: NameofCall<TNode>, path: Array<PathPart<TNode>>, context: TContext): NameofResult<TNode>
+    protected GetName(call: NameofCall<TNode>, path: Array<PathPartCandidate<TNode>>, context: TContext): NameofResult<TNode>
     {
         try
         {
@@ -479,14 +480,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                     };
 
                 default:
-                    if (lastNode.type === PathKind.Unsupported && lastNode.reason)
-                    {
-                        throw lastNode.reason;
-                    }
-                    else
-                    {
-                        throw new UnsupportedNodeError(this, lastNode.source, context);
-                    }
+                    throw new UnsupportedNodeError(this, lastNode.source, context);
             }
         }
         catch (error)
@@ -524,7 +518,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * A portion of the specified {@linkcode path} according to the specified {@linkcode index}.
      */
-    protected GetPath(call: NameofCall<TNode>, path: Array<PathPart<TNode>>, index: NumericLiteralNode<TNode>, context: TContext): Array<PathPart<TNode>>
+    protected GetPath(call: NameofCall<TNode>, path: Array<PathPartCandidate<TNode>>, index: NumericLiteralNode<TNode>, context: TContext): Array<PathPart<TNode>>
     {
         if (Math.abs(index.Value) > path.length)
         {
@@ -571,17 +565,18 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The specified portion of the specified {@linkcode path}.
      */
-    protected GetPathSegments(call: NameofCall<TNode>, path: Array<PathPart<TNode>>, start: number, count: number, context: TContext): Array<PathPart<TNode>>
+    protected GetPathSegments(call: NameofCall<TNode>, path: Array<PathPartCandidate<TNode>>, start: number, count: number, context: TContext): Array<PathPart<TNode>>
     {
         if (start < path.length)
         {
-            let result = path.slice(start);
+            let result: Array<PathPart<TNode>> = [];
+            let candidates = path.slice(start);
 
-            if (result.length >= count)
+            if (candidates.length >= count)
             {
-                result = result.slice(0, count);
+                candidates = candidates.slice(0, count);
 
-                for (let pathPart of result)
+                for (let pathPart of candidates)
                 {
                     if (pathPart.type === PathKind.Unsupported)
                     {
@@ -593,6 +588,10 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                         {
                             throw new UnsupportedNodeError(this, pathPart.source, context);
                         }
+                    }
+                    else
+                    {
+                        result.push(pathPart);
                     }
                 }
 

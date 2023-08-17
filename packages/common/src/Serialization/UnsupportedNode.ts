@@ -1,7 +1,7 @@
 import { Node } from "./Node";
 import { NodeKind } from "./NodeKind";
 import { PathKind } from "./PathKind";
-import { PathPart } from "./PathPart";
+import { PathPartCandidate } from "./PathPartCandidate";
 import { NameofError } from "../Diagnostics/NameofError";
 
 /**
@@ -45,7 +45,7 @@ export class UnsupportedNode<T> extends Node<T>
     /**
      * @inheritdoc
      */
-    public get PathPart(): PathPart<T>
+    public get PathPart(): PathPartCandidate<T>
     {
         return {
             type: PathKind.Unsupported,

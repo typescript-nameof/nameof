@@ -2,12 +2,14 @@ import { IIdentifier } from "./IIdentifier";
 import { IIndexAccessor } from "./IIndexAccessor";
 import { IInterpolation } from "./IInterpolation";
 import { IPropertyAccessor } from "./IPropertyAccessor";
+import { IUnsupportedPath } from "./IUnsupportedPath";
 
 /**
- * Represents the path of an accessor path.
+ * Represents a potential path part.
  */
-export type PathPart<T> =
+export type PathPartCandidate<T> =
     IIdentifier<T> |
     IPropertyAccessor<T> |
     IIndexAccessor<T> |
-    IInterpolation<T>;
+    IInterpolation<T> |
+    IUnsupportedPath<T>;
