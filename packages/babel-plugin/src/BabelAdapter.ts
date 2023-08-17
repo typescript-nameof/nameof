@@ -171,9 +171,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
         }
         else if (this.Types.isUnaryExpression(item))
         {
-            if (
-                item.operator === "-" ||
-                item.operator === "+")
+            if (["-", "+"].includes(item.operator))
             {
                 let node = this.ParseNode(item.argument, context);
 
