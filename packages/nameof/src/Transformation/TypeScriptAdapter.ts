@@ -190,8 +190,10 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         else if (this.TypeScript.isPrefixUnaryExpression(item))
         {
             if (
-                item.operator === this.TypeScript.SyntaxKind.MinusToken ||
-                item.operator === this.TypeScript.SyntaxKind.PlusToken)
+                [
+                    this.TypeScript.SyntaxKind.PlusToken,
+                    this.TypeScript.SyntaxKind.MinusToken
+                ].includes(item.operator))
             {
                 let node = this.ParseNode(item.operand, context);
 
