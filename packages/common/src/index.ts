@@ -8,8 +8,10 @@ export {
 } from "./Serialization/nodes";
 export * from "./Serialization/nodeFactories";
 export { CallExpressionNode } from "./Serialization/CallExpressionNode";
+export { IndexAccessNode } from "./Serialization/IndexAccessNode";
 export { IdentifierNode } from "./Serialization/IdentifierNode";
 export { ParsedNode } from "./Serialization/ParsedNode";
+export { PropertyAccessNode } from "./Serialization/PropertyAccessNode";
 export { UnsupportedNode } from "./Serialization/UnsupportedNode";
 export * from "./transformCallExpression";
 export { Adapter } from "./Transformation/Adapter";
