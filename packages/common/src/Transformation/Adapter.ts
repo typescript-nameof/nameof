@@ -9,6 +9,7 @@ import { NameofFunction } from "../NameofFunction";
 import { NameofResult } from "../NameofResult";
 import { ResultType } from "../ResultType";
 import { CallExpressionNode } from "../Serialization/CallExpressionNode";
+import { FunctionNode } from "../Serialization/FunctionNode";
 import { InterpolationNode } from "../Serialization/InterpolationNode";
 import { NameofCall } from "../Serialization/NameofCall";
 import { NodeKind } from "../Serialization/NodeKind";
@@ -153,6 +154,96 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
 
         return undefined;
+    }
+
+    /**
+     * Gets the targets of the specified `nameof` {@linkcode call}.
+     *
+     * @param call
+     * The call to get the targets from.
+     *
+     * @returns
+     * The targets of the specified {@linkcode call}.
+     */
+    protected GetTargets(call: NameofCall<TNode>): readonly TNode[]
+    {
+        if (call.arguments.length > 0)
+        {
+            return call.arguments;
+        }
+        else
+        {
+            return call.typeArguments;
+        }
+    }
+
+    /**
+     * Transforms the specified {@linkcode call}.
+     *
+     * @param call
+     * The call to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The transformed call.
+     */
+    protected TransformSingle(call: NameofCall<TNode>, context: TContext): Array<PathPart<TNode>>
+    {
+        let targets = this.GetTargets(call);
+
+        if (targets.length === 1)
+        {
+            let node = this.ParseNode(targets[0], context);
+
+            if (node.Type === NodeKind.FunctionNode)
+            {
+                return this.TransformFunctionBody(node, node.Body, context);
+            }
+            else
+            {
+                return this.ParseNode(targets[0], context).Path;
+            }
+        }
+        else
+        {
+            throw new InvalidArgumentCountError(this, call, 1, context);
+        }
+    }
+
+    /**
+     * Transforms the specified {@linkcode node}.
+     *
+     * @param functionNode
+     * The function of the node to transform.
+     *
+     * @param node
+     * The node to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The transformed representation of the specified {@linkcode node}.
+     */
+    protected TransformFunctionBody(functionNode: FunctionNode<TNode>, node: TNode, context: TContext): Array<PathPart<TNode>>
+    {
+        let path = this.ParseNode(node, context).Path;
+
+        if (
+            path[0].type === PathKind.Identifier &&
+            functionNode.Parameters.includes(path[0].value))
+        {
+            path.splice(0, 1);
+
+            if (path.length === 0)
+            {
+                throw new Error(); // TODO: Throw error stating that no property was accessed.
+            }
+        }
+
+        return path;
     }
 
     /**
