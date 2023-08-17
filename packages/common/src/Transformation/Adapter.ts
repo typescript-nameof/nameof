@@ -199,7 +199,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
         else
         {
-            throw new InvalidArgumentCountError(this, call, 1, context);
+            throw new InvalidDefaultCallError(this, call, context);
         }
     }
 
