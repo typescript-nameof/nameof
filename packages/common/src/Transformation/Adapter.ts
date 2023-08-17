@@ -187,11 +187,20 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * The context of the operation.
      *
      * @returns
-     * The parsed representation of the specified {@linkcode item}.
+     * The parsed representation of the specified {@linkcode call}.
      */
     protected TransformDefault(call: NameofCall<TNode>, context: TContext): NameofResult<TNode>
     {
-        return this.GetName(call, this.TransformSingle(call, context), context);
+        let targets = this.GetTargets(call);
+
+        if (targets.length === 1)
+        {
+            return this.GetName(call, this.TransformSingle(call, targets[0], context), context);
+        }
+        else
+        {
+            throw new InvalidArgumentCountError(this, call, 1, context);
+        }
     }
 
     /**
@@ -200,32 +209,26 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @param call
      * The call to transform.
      *
+     * @param node
+     * The node to transform.
+     *
      * @param context
      * The context of the operation.
      *
      * @returns
      * The transformed call.
      */
-    protected TransformSingle(call: NameofCall<TNode>, context: TContext): Array<PathPart<TNode>>
+    protected TransformSingle(call: NameofCall<TNode>, node: TNode, context: TContext): Array<PathPart<TNode>>
     {
-        let targets = this.GetTargets(call);
+        let result = this.ParseNode(node, context);
 
-        if (targets.length === 1)
+        if (result.Type === NodeKind.FunctionNode)
         {
-            let node = this.ParseNode(targets[0], context);
-
-            if (node.Type === NodeKind.FunctionNode)
-            {
-                return this.TransformFunctionBody(node, node.Body, context);
-            }
-            else
-            {
-                return node.Path;
-            }
+            return this.TransformFunctionBody(result, result.Body, context);
         }
         else
         {
-            throw new InvalidArgumentCountError(this, call, 1, context);
+            return result.Path;
         }
     }
 
