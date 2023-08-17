@@ -84,7 +84,7 @@ export abstract class AdapterError<TInput, TNode, TContext> extends NameofError
      */
     protected get SourceCode(): string
     {
-        return this.Adapter.ExtractCode(this.Node, this.Context);
+        return this.Adapter.GetSourceCode(this.Node, this.Context);
     }
 
     /**

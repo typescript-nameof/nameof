@@ -73,7 +73,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
      * @returns
      * The code of the specified {@linkcode item}.
      */
-    public ExtractCode(item: ts.Node, context: ITypeScriptContext): string
+    public GetSourceCode(item: ts.Node, context: ITypeScriptContext): string
     {
         return item.getText(context.file);
     }

@@ -45,7 +45,7 @@ export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
     Dump(node: Node, context: TContext): TNode;
 
     /**
-     * Extracts the source code of the specified {@linkcode item}.
+     * Gets the source code of the specified {@linkcode item}.
      *
      * @param context
      * The context of the operation.
@@ -53,7 +53,7 @@ export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
      * @param item
      * The item to get the source code from.
      */
-    ExtractCode(item: TNode, context: TContext): string;
+    GetSourceCode(item: TNode, context: TContext): string;
 
     /**
      * Handles the specified {@linkcode error}.

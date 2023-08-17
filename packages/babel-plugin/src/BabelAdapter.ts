@@ -57,7 +57,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      * @returns
      * The code of the specified {@linkcode item}.
      */
-    public ExtractCode(item: types.Node, context: BabelContext): string
+    public GetSourceCode(item: types.Node, context: BabelContext): string
     {
         return context.state.file.code.slice(item.start as number, item.end as number);
     }
@@ -133,7 +133,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
             this.Types.isThisExpression(item) ||
             this.Types.isSuper(item))
         {
-            return new IdentifierNode(item, this.ExtractCode(item, context));
+            return new IdentifierNode(item, this.GetSourceCode(item, context));
         }
         else if (this.Types.isNumericLiteral(item))
         {

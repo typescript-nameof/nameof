@@ -78,7 +78,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @param context
      * The context of the operation.
      */
-    public abstract ExtractCode(item: TNode, context: TContext): string;
+    public abstract GetSourceCode(item: TNode, context: TContext): string;
 
     /**
      * @inheritdoc
