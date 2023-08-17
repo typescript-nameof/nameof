@@ -138,12 +138,15 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     protected abstract IsTemplateLiteral(item: TNode): boolean;
 
     /**
-     * Checks whether the specified {@linkcode item} is an array literal.
+     * Gets the elements from the specified {@linkcode arrayLiteral}.
      *
-     * @param item
-     * The item to check.
+     * @param arrayLiteral
+     * The array to get the elements from.
+     *
+     * @returns
+     * Either the elements of the {@linkcode arrayLiteral} or `undefined` if the specified {@linkcode arrayLiteral} is invalid.
      */
-    protected abstract IsArrayLiteral(item: TNode): boolean;
+    protected abstract GetArrayElements(arrayLiteral: TNode): TNode[] | undefined;
 
     /**
      * @inheritdoc

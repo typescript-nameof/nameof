@@ -136,17 +136,34 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
     }
 
     /**
-     * @inheritdoc
+     * Gets the elements of the specified {@linkcode arrayLiteral}.
      *
-     * @param item
-     * The item to check.
+     * @param arrayLiteral
+     * The array literal to get the elements from.
      *
      * @returns
-     * A value indicating whether the specified {@linkcode item} is a array literal.
+     * Either the elements of the {@linkcode arrayLiteral} or `undefined` if the specified {@linkcode arrayLiteral} is invalid.
      */
-    protected IsArrayLiteral(item: types.Node): item is types.ArrayExpression
+    protected GetArrayElements(arrayLiteral: types.Node): types.Node[] | undefined
     {
-        return this.Types.isArrayExpression(item);
+        if (this.Types.isArrayExpression(arrayLiteral))
+        {
+            let result: types.Node[] = [];
+
+            for (let element of arrayLiteral.elements)
+            {
+                if (element)
+                {
+                    result.push(element);
+                }
+            }
+
+            return result;
+        }
+        else
+        {
+            return undefined;
+        }
     }
 
     /**

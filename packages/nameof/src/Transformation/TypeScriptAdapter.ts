@@ -152,17 +152,34 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     }
 
     /**
-     * @inheritdoc
+     * Gets the elements of the specified {@linkcode arrayLiteral}.
      *
-     * @param item
-     * The item to check.
+     * @param arrayLiteral
+     * The array literal to get the elements from.
      *
      * @returns
-     * A value indicating whether the specified {@linkcode item} is a array literal.
+     * Either the elements of the {@linkcode arrayLiteral} or `undefined` if the specified {@linkcode arrayLiteral} is invalid.
      */
-    protected IsArrayLiteral(item: ts.Node): item is ts.ArrayLiteralExpression
+    protected GetArrayElements(arrayLiteral: ts.Node): ts.Node[] | undefined
     {
-        return this.TypeScript.isArrayLiteralExpression(item);
+        if (this.TypeScript.isArrayLiteralExpression(arrayLiteral))
+        {
+            let result: ts.Node[] = [];
+
+            for (let element of arrayLiteral.elements)
+            {
+                if (element)
+                {
+                    result.push(element);
+                }
+            }
+
+            return result;
+        }
+        else
+        {
+            return undefined;
+        }
     }
 
     /**
