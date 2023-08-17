@@ -21,9 +21,6 @@ export class OutOfBoundsError<TInput, TNode, TContext> extends AdapterError<TInp
      * @param call
      * The `nameof` call which caused the error.
      *
-     * @param expected
-     * The expected number of arguments.
-     *
      * @param context
      * The context of the operation.
      */
