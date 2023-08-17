@@ -1,5 +1,7 @@
 import { Node } from "./Node";
 import { NodeKind } from "./NodeKind";
+import { PathKind } from "./PathKind";
+import { PathPart } from "./PathPart";
 import { NameofError } from "../Diagnostics/NameofError";
 
 /**
@@ -38,5 +40,17 @@ export class UnsupportedNode<T> extends Node<T>
     public get Reason(): NameofError | undefined
     {
         return this.reason;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public get PathPart(): PathPart<T>
+    {
+        return {
+            type: PathKind.Unsupported,
+            source: this.Source,
+            reason: this.Reason
+        };
     }
 }

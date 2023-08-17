@@ -1,6 +1,7 @@
 import { IAdapter } from "./IAdapter";
 import { TransformerFeatures } from "./TransformerFeatures";
 import { InvalidArgumentCountError } from "../Diagnostics/InvalidArgumentCountError";
+import { NameofError } from "../Diagnostics/NameofError";
 import { NameofFunction } from "../NameofFunction";
 import { CallExpressionNode } from "../Serialization/CallExpressionNode";
 import { InterpolationNode } from "../Serialization/InterpolationNode";
@@ -8,6 +9,7 @@ import { NameofCall } from "../Serialization/NameofCall";
 import { NodeKind } from "../Serialization/NodeKind";
 import { NameofCallExpression, Node } from "../Serialization/nodes";
 import { ParsedNode } from "../Serialization/ParsedNode";
+import { UnsupportedNode } from "../Serialization/UnsupportedNode";
 
 /**
  * Provides the functionality to parse and dump `nameof` expressions.
@@ -181,7 +183,21 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             }
         }
 
-        return this.ParseInternal(item, context);
+        try
+        {
+            return this.ParseInternal(item, context);
+        }
+        catch (error)
+        {
+            if (error instanceof NameofError)
+            {
+                return new UnsupportedNode(item, error);
+            }
+            else
+            {
+                throw error;
+            }
+        }
     }
 
     /**
