@@ -236,6 +236,41 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
+     * Transforms the specified `nameof.split` {@linkcode call}.
+     *
+     * @param call
+     * The call to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode call}.
+     */
+    protected TransformSplit(call: NameofCall<TNode>, context: TContext): Array<NameofResult<TNode>>
+    {
+        let path = this.TransformSegment(call, context);
+        let result: Array<NameofResult<TNode>> = [];
+
+        for (let pathPart of path)
+        {
+            switch (pathPart.type)
+            {
+                case PathKind.Interpolation:
+                    throw new UnsupportedNodeError(this, pathPart.source, context);
+                default:
+                    result.push(
+                        {
+                            type: ResultType.Plain,
+                            text: `${pathPart.value}`
+                        });
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Transforms a segment of the specified {@linkcode call}.
      *
      * @param call
