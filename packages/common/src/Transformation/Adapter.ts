@@ -1,5 +1,6 @@
 import { IAdapter } from "./IAdapter";
 import { TransformerFeatures } from "./TransformerFeatures";
+import { CustomError } from "../Diagnostics/CustomError";
 import { InvalidArgumentCountError } from "../Diagnostics/InvalidArgumentCountError";
 import { NameofError } from "../Diagnostics/NameofError";
 import { OutOfBoundsError } from "../Diagnostics/OutOfBoundsError";
@@ -217,6 +218,65 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * The parsed representation of the specified {@linkcode item}.
      */
     protected abstract ParseInternal(item: TNode, context: TContext): ParsedNode<TNode>;
+
+    /**
+     * Gets the trailing name of the specified {@linkcode path}.
+     *
+     * @param call
+     * The call which is being transformed.
+     *
+     * @param path
+     * The path to get the name from.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The trailing name of the specified {@linkcode path}.
+     */
+    protected GetName(call: NameofCall<TNode>, path: Array<PathPart<TNode>>, context: TContext): NameofResult<TNode>
+    {
+        try
+        {
+            let lastNode = this.GetPath(call, path, path.length - 1, 1, context)[0];
+
+            switch (lastNode.type)
+            {
+                case PathKind.Identifier:
+                case PathKind.IndexAccess:
+                case PathKind.PropertyAccess:
+                    return {
+                        type: ResultType.Plain,
+                        text: `${lastNode.value}`
+                    };
+
+                default:
+                    if (lastNode.type === PathKind.Unsupported && lastNode.reason)
+                    {
+                        throw lastNode.reason;
+                    }
+                    else
+                    {
+                        throw new UnsupportedNodeError(this, lastNode.source, context);
+                    }
+            }
+        }
+        catch (error)
+        {
+            if (error instanceof OutOfBoundsError)
+            {
+                throw new CustomError(
+                    this,
+                    call.source,
+                    context,
+                    "Unable to find an expression to get the name from.");
+            }
+            else
+            {
+                throw error;
+            }
+        }
+    }
 
     /**
      * Gets the specified portion from the specified {@linkcode path}.
