@@ -1,4 +1,4 @@
-import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, Node as NameofNode, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, Node as NameofNode, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { parse } from "./parse";
@@ -178,6 +178,22 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
             else
             {
                 throw new MissingImportTypeQualifierError(this, item, context);
+            }
+        }
+        else if (this.TypeScript.isPrefixUnaryExpression(item))
+        {
+            if (
+                item.operator === this.TypeScript.SyntaxKind.MinusToken ||
+                item.operator === this.TypeScript.SyntaxKind.PlusToken)
+            {
+                let node = this.ParseNode(item.operand, context);
+
+                if (node.Type === NodeKind.NumericLiteralNode)
+                {
+                    return new NumericLiteralNode(
+                        node.Source,
+                        node.Value * (item.operator === this.TypeScript.SyntaxKind.MinusToken ? -1 : 1));
+                }
             }
         }
         else if (this.TypeScript.isPropertyAccessExpression(item))

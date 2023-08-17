@@ -1,6 +1,6 @@
 // eslint-disable-next-line node/no-unpublished-import
 import { types } from "@babel/core";
-import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, Node, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, Node, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import { ITransformTarget } from "./ITransformTarget";
 import { parse } from "./parse";
 import { transform } from "./transform";
@@ -160,6 +160,22 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
             else
             {
                 throw new MissingImportTypeQualifierError(this, item, context);
+            }
+        }
+        else if (this.Types.isUnaryExpression(item))
+        {
+            if (
+                item.operator === "-" ||
+                item.operator === "+")
+            {
+                let node = this.ParseNode(item.argument, context);
+
+                if (node.Type === NodeKind.NumericLiteralNode)
+                {
+                    return new NumericLiteralNode(
+                        node.Source,
+                        node.Value * (item.operator === "-" ? -1 : 1));
+                }
             }
         }
         else if (this.Types.isMemberExpression(item))

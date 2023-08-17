@@ -15,6 +15,7 @@ export { CallExpressionNode } from "./Serialization/CallExpressionNode";
 export { FunctionNode } from "./Serialization/FunctionNode";
 export { IndexAccessNode } from "./Serialization/IndexAccessNode";
 export { IdentifierNode } from "./Serialization/IdentifierNode";
+export { NodeKind } from "./Serialization/NodeKind";
 export { NumericLiteralNode } from "./Serialization/NumericLiteralNode";
 export { ParsedNode } from "./Serialization/ParsedNode";
 export { PropertyAccessNode } from "./Serialization/PropertyAccessNode";
