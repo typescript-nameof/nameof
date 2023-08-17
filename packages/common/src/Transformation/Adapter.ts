@@ -1,7 +1,11 @@
 import { IAdapter } from "./IAdapter";
 import { TransformerFeatures } from "./TransformerFeatures";
 import { CustomError } from "../Diagnostics/CustomError";
+import { IndexOutOfBoundsError } from "../Diagnostics/IndexOutOfBoundsError";
+import { IndexParsingError } from "../Diagnostics/IndexParsingError";
 import { InvalidArgumentCountError } from "../Diagnostics/InvalidArgumentCountError";
+import { InvalidDefaultCallError } from "../Diagnostics/InvalidDefaultCallError";
+import { InvalidSegmentCallError } from "../Diagnostics/InvalidSegmentCallError";
 import { NameofError } from "../Diagnostics/NameofError";
 import { SegmentNotFoundError } from "../Diagnostics/SegmentNotFoundError";
 import { UnsupportedNodeError } from "../Diagnostics/UnsupportedNodeError";
@@ -14,6 +18,7 @@ import { InterpolationNode } from "../Serialization/InterpolationNode";
 import { NameofCall } from "../Serialization/NameofCall";
 import { NodeKind } from "../Serialization/NodeKind";
 import { NameofCallExpression, Node } from "../Serialization/nodes";
+import { NumericLiteralNode } from "../Serialization/NumericLiteralNode";
 import { ParsedNode } from "../Serialization/ParsedNode";
 import { PathKind } from "../Serialization/PathKind";
 import { PathPart } from "../Serialization/PathPart";
@@ -204,6 +209,90 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
+     * Transforms a segment of the specified {@linkcode call}.
+     *
+     * @param call
+     * The call to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The transformed call.
+     */
+    protected TransformSegment(call: NameofCall<TNode>, context: TContext): Array<PathPart<TNode>>
+    {
+        let index: NumericLiteralNode<TNode> | undefined;
+        let expression: TNode;
+
+        if (call.arguments.length === 0)
+        {
+            if (call.typeArguments.length === 1)
+            {
+                expression = call.typeArguments[0];
+            }
+            else
+            {
+                throw new InvalidSegmentCallError(this, call, context);
+            }
+        }
+        else if (call.arguments.length === 1)
+        {
+            if (call.typeArguments.length === 0)
+            {
+                expression = call.arguments[0];
+            }
+            else if (call.typeArguments.length === 1)
+            {
+                let parsedArgument = this.ParseNode(call.arguments[0], context);
+
+                if (parsedArgument.Type === NodeKind.NumericLiteralNode)
+                {
+                    index = parsedArgument;
+                    expression = call.typeArguments[0];
+                }
+                else
+                {
+                    expression = call.arguments[0];
+                }
+            }
+            else
+            {
+                throw new InvalidSegmentCallError(this, call, context);
+            }
+        }
+        else if (call.arguments.length === 2)
+        {
+            let parsedNode = this.ParseNode(call.arguments[1], context);
+
+            if (parsedNode.Type === NodeKind.NumericLiteralNode)
+            {
+                index = parsedNode;
+                expression = call.arguments[0];
+            }
+            else
+            {
+                throw new IndexParsingError(this, parsedNode.Source, context);
+            }
+        }
+        else
+        {
+            throw new InvalidSegmentCallError(this, call, context);
+        }
+
+        let path = this.TransformSingle(call, expression, context);
+
+        if (index)
+        {
+            return this.GetPath(call, path, index, context);
+        }
+        else
+        {
+            return path;
+        }
+    }
+
+    /**
      * Transforms the specified {@linkcode call}.
      *
      * @param call
@@ -388,6 +477,50 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             {
                 throw error;
             }
+        }
+    }
+
+    /**
+     * Extracts a portion of the specified {@linkcode path} according to the specified {@linkcode index}.
+     *
+     * @param call
+     * The call which is being transformed.
+     *
+     * @param path
+     * The path to extract the portion from.
+     *
+     * @param index
+     * The index of the element to start the extraction from.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * A portion of the specified {@linkcode path} according to the specified {@linkcode index}.
+     */
+    protected GetPath(call: NameofCall<TNode>, path: Array<PathPart<TNode>>, index: NumericLiteralNode<TNode>, context: TContext): Array<PathPart<TNode>>
+    {
+        if (Math.abs(index.Value) > path.length)
+        {
+            throw new IndexOutOfBoundsError(this, index, path.length, context);
+        }
+        else
+        {
+            let startIndex: number;
+            let count: number;
+
+            if (index.Value >= 0)
+            {
+                startIndex = index.Value;
+                count = path.length - startIndex;
+            }
+            else
+            {
+                startIndex = path.length + index.Value;
+                count = -index.Value;
+            }
+
+            return this.GetPathSegments(call, path, startIndex, count, context);
         }
     }
 
