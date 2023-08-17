@@ -100,7 +100,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @param error
      * The error to handle.
      */
-    public HandleError(item: TNode, context: TContext, error: Error): void
+    public ReportError(item: TNode, context: TContext, error: Error): void
     {
         this.Features.ReportError(item, context, error);
     }

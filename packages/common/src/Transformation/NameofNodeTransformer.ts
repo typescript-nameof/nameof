@@ -57,7 +57,7 @@ export class NameofNodeTransformer<TInput, TNode = TInput, TContext = Record<str
         {
             if (error instanceof Error)
             {
-                this.Adapter.HandleError(this.Adapter.Extract(item), context, error);
+                this.Adapter.ReportError(this.Adapter.Extract(item), context, error);
             }
         }
 

@@ -97,6 +97,6 @@ export abstract class AdapterError<TInput, TNode, TContext> extends NameofError
      */
     protected Report(): void
     {
-        this.Adapter.HandleError(this.Node, this.Context, new Error(this.Message));
+        this.Adapter.ReportError(this.Node, this.Context, new Error(this.Message));
     }
 }

@@ -56,7 +56,7 @@ export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
     GetSourceCode(item: TNode, context: TContext): string;
 
     /**
-     * Handles the specified {@linkcode error}.
+     * Reports the specified {@linkcode error}.
      *
      * @param item
      * The item related to the error.
@@ -67,5 +67,5 @@ export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
      * @param error
      * The error to handle.
      */
-    HandleError(item: TNode, context: TContext, error: Error): void;
+    ReportError(item: TNode, context: TContext, error: Error): void;
 }
