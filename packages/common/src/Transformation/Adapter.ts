@@ -1,6 +1,6 @@
 import { IAdapter } from "./IAdapter";
 import { TransformerFeatures } from "./TransformerFeatures";
-import { InvalidInterpolateCallError } from "../Diagnostics/InvalidInterpolateCallError";
+import { InvalidArgumentCountError } from "../Diagnostics/InvalidArgumentCountError";
 import { CallExpressionNode } from "../Serialization/CallExpressionNode";
 import { InterpolationNode } from "../Serialization/InterpolationNode";
 import { NameofCall } from "../Serialization/NameofCall";
@@ -167,13 +167,15 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                 nameofCall &&
                 nameofCall.function === NameofFunction.Interpolate)
             {
-                if (nameofCall.arguments.length === 1)
+                let expectedLength = 1;
+
+                if (nameofCall.arguments.length === expectedLength)
                 {
                     return new InterpolationNode(nameofCall.source, nameofCall.arguments[0]);
                 }
                 else
                 {
-                    throw new InvalidInterpolateCallError(this, nameofCall, context);
+                    throw new InvalidArgumentCountError(this, nameofCall, expectedLength, context);
                 }
             }
         }
