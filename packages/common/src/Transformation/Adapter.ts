@@ -3,7 +3,7 @@ import { TransformerFeatures } from "./TransformerFeatures";
 import { CustomError } from "../Diagnostics/CustomError";
 import { InvalidArgumentCountError } from "../Diagnostics/InvalidArgumentCountError";
 import { NameofError } from "../Diagnostics/NameofError";
-import { OutOfBoundsError } from "../Diagnostics/OutOfBoundsError";
+import { SegmentNotFoundError } from "../Diagnostics/SegmentNotFoundError";
 import { UnsupportedNodeError } from "../Diagnostics/UnsupportedNodeError";
 import { NameofFunction } from "../NameofFunction";
 import { NameofResult } from "../NameofResult";
@@ -441,6 +441,6 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             }
         }
 
-        throw new OutOfBoundsError(this, call, context);
+        throw new SegmentNotFoundError(this, call, context);
     }
 }

@@ -3,9 +3,9 @@ import { NameofCall } from "../Serialization/NameofCall";
 import { IAdapter } from "../Transformation/IAdapter";
 
 /**
- * Represents an error indicating that the number of elements to dump is out of bounds.
+ * Represents an error indicating that the requested segment could not be found.
  */
-export class OutOfBoundsError<TInput, TNode, TContext> extends AdapterError<TInput, TNode, TContext>
+export class SegmentNotFoundError<TInput, TNode, TContext> extends AdapterError<TInput, TNode, TContext>
 {
     /**
      * The `nameof` call which caused the error.
@@ -13,7 +13,7 @@ export class OutOfBoundsError<TInput, TNode, TContext> extends AdapterError<TInp
     private call: NameofCall<TNode>;
 
     /**
-     * Initializes a new instance of the {@linkcode NoSingleArgumentError} class.
+     * Initializes a new instance of the {@linkcode SegmentNotFoundError} class.
      *
      * @param adapter
      * The adapter which caused the error.
