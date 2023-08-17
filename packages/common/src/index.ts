@@ -1,3 +1,4 @@
+export { NameofError } from "./Diagnostics/NameofError";
 export { UnsupportedNodeError } from "./Diagnostics/UnsupportedNodeError";
 export { MissingImportTypeQualifierError } from "./Diagnostics/MissingImportTypeQualifierError";
 export { NoReturnExpressionError } from "./Diagnostics/NoReturnExpressionError";

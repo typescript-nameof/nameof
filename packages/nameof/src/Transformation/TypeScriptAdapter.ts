@@ -193,7 +193,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         {
             return new IndexAccessNode(
                 item,
-                this.ParseInternal(item.expression, context),
+                this.ParseNode(item.expression, context),
                 this.ParseNode(item.argumentExpression, context));
         }
         else if (
