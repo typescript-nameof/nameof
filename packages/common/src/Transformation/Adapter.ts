@@ -1,6 +1,7 @@
 import { IAdapter } from "./IAdapter";
 import { TransformerFeatures } from "./TransformerFeatures";
 import { InvalidArgumentCountError } from "../Diagnostics/InvalidArgumentCountError";
+import { NameofFunction } from "../NameofFunction";
 import { CallExpressionNode } from "../Serialization/CallExpressionNode";
 import { InterpolationNode } from "../Serialization/InterpolationNode";
 import { NameofCall } from "../Serialization/NameofCall";
