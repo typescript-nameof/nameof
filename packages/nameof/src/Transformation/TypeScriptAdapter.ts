@@ -230,7 +230,8 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                 this.TypeScript.SyntaxKind.BooleanKeyword,
                 this.TypeScript.SyntaxKind.NumberKeyword,
                 this.TypeScript.SyntaxKind.BigIntKeyword,
-                this.TypeScript.SyntaxKind.StringKeyword
+                this.TypeScript.SyntaxKind.StringKeyword,
+                this.TypeScript.SyntaxKind.SymbolKeyword
             ].includes(item.kind))
         {
             return new IdentifierNode(item, item.getText(context.file));

@@ -291,7 +291,8 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
             this.Types.isTSBooleanKeyword(item) ||
             this.Types.isTSNumberKeyword(item) ||
             this.Types.isTSBigIntKeyword(item) ||
-            this.Types.isTSStringKeyword(item))
+            this.Types.isTSStringKeyword(item) ||
+            this.Types.isTSSymbolKeyword(item))
         {
             return new IdentifierNode(item, this.GetSourceCode(item, context));
         }
