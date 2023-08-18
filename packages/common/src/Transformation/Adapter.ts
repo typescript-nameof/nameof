@@ -1,4 +1,5 @@
 import { IAdapter } from "./IAdapter";
+import { ITransformationContext } from "./ITransformationContext";
 import { ResultBuilder } from "./ResultBuilder";
 import { TransformerFeatures } from "./TransformerFeatures";
 import { CustomError } from "../Diagnostics/CustomError";
@@ -32,7 +33,7 @@ import { UnsupportedNode } from "../Serialization/UnsupportedNode";
 /**
  * Provides the functionality to parse and dump `nameof` expressions.
  */
-export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TContext>, TInput, TNode = TInput, TContext = Record<string, never>> implements IAdapter<TInput, TNode, TContext>
+export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TContext>, TInput, TNode = TInput, TContext extends ITransformationContext<TNode> = ITransformationContext<TNode>> implements IAdapter<TInput, TNode, TContext>
 {
     /**
      * A symbol for marking visited nodes.
@@ -534,7 +535,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Processes the specified `nameof.interpolate` call.
+     * Processes the specified `nameof.interpolate` {@linkcode call}.
      *
      * @param call
      * The call to transform.
