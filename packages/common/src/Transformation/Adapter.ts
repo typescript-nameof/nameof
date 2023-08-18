@@ -36,9 +36,9 @@ import { UnsupportedNode } from "../Serialization/UnsupportedNode";
 export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TContext>, TInput, TNode = TInput, TContext extends ITransformationContext<TNode> = ITransformationContext<TNode>> implements IAdapter<TInput, TNode, TContext>
 {
     /**
-     * A symbol for marking visited nodes.
+     * A symbol for storing original nodes generated nodes.
      */
-    private markerSymbol = Symbol("nameof-visited-node");
+    private originalSymbol = Symbol("nameof-original-node");
 
     /**
      * The features of the transformer integration.
@@ -65,11 +65,11 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Gets a symbol for marking visited nodes.
+     * Gets a symbol for storing original nodes generated nodes.
      */
-    protected get MarkerSymbol(): symbol
+    protected get OriginalSymbol(): symbol
     {
-        return this.markerSymbol;
+        return this.originalSymbol;
     }
 
     /**
@@ -105,8 +105,14 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      *
      * @param context
      * The context of the operation.
+     *
+     * @returns
+     * A value indicating whether specified {@linkcode item} is mutated.
      */
-    public abstract IsMutated(item: TNode, context: TContext): boolean;
+    public IsMutated(item: TNode, context: TContext): boolean
+    {
+        return (item as any)[this.OriginalSymbol] ?? false;
+    }
 
     /**
      * @inheritdoc
@@ -134,19 +140,19 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
 
                 if (result)
                 {
-                    let node: TNode;
+                    let newNode: TNode;
 
                     if (Array.isArray(result))
                     {
-                        node = this.DumpArray(result);
+                        newNode = this.DumpArray(result);
                     }
                     else
                     {
-                        node = this.Dump(result);
+                        newNode = this.Dump(result);
                     }
 
-                    this.MarkNode(node);
-                    return node;
+                    this.StoreOriginal(node, newNode);
+                    return newNode;
                 }
             }
         }
@@ -267,12 +273,18 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     protected abstract CreateArrayLiteral(elements: TNode[]): TNode;
 
     /**
-     * Marks the specified {@linkcode node} as mutated by `nameof`.
+     * Stores the specified {@linkcode original} node somewhere in the {@linkcode newNode}.
      *
-     * @param node
-     * The node to mark as processed.
+     * @param original
+     * The node to store.
+     *
+     * @param newNode
+     * The newly created node.
      */
-    protected abstract MarkNode(node: TNode): void;
+    protected StoreOriginal(original: TNode, newNode: TNode): void
+    {
+        (newNode as any)[this.OriginalSymbol] = original;
+    }
 
     /**
      * @inheritdoc

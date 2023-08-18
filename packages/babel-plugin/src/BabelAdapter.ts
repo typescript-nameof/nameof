@@ -73,7 +73,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      */
     public IsMutated(item: types.Node, context: BabelContext): boolean
     {
-        return (item.extra as any)?.[this.MarkerSymbol] ?? false;
+        return (item.extra as any)?.[this.OriginalSymbol] ?? false;
     }
 
     /**
@@ -232,13 +232,16 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
     /**
      * @inheritdoc
      *
-     * @param node
-     * The node to mark as processed.
+     * @param original
+     * The node to store.
+     *
+     * @param newNode
+     * The newly created node.
      */
-    protected MarkNode(node: types.Node): void
+    protected StoreOriginal(original: types.Node, newNode: types.Node): void
     {
-        node.extra ??= {};
-        (node.extra as any)[this.MarkerSymbol] = true;
+        newNode.extra ??= {};
+        (newNode.extra as any)[this.OriginalSymbol] = original;
     }
 
     /**

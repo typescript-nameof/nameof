@@ -65,23 +65,6 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
      * @inheritdoc
      *
      * @param item
-     * The item to check.
-     *
-     * @param context
-     * The context of the operation.
-     *
-     * @returns
-     * A value indicating whether the specified {@linkcode item} has been mutated in a previous `nameof` call.
-     */
-    public IsMutated(item: ts.Node, context: ITypeScriptContext): boolean
-    {
-        return (item as any)[this.MarkerSymbol] ?? false;
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param item
      * The item to get the source code from.
      *
      * @param context
@@ -211,17 +194,6 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     protected CreateArrayLiteral(elements: ts.Node[]): ts.Node
     {
         return this.TypeScript.factory.createArrayLiteralExpression(elements as ts.Expression[]);
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param node
-     * The node to mark as processed.
-     */
-    protected MarkNode(node: ts.Node): void
-    {
-        (node as any)[this.MarkerSymbol] = true;
     }
 
     /**
