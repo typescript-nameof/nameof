@@ -34,6 +34,11 @@ import { UnsupportedNode } from "../Serialization/UnsupportedNode";
 export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TContext>, TInput, TNode = TInput, TContext = Record<string, never>> implements IAdapter<TInput, TNode, TContext>
 {
     /**
+     * A symbol for marking visited nodes.
+     */
+    private markerSymbol = Symbol("nameof-visited-node");
+
+    /**
      * The features of the transformer integration.
      */
     private features: TFeatures;
@@ -55,6 +60,14 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     public get Features(): TFeatures
     {
         return this.features;
+    }
+
+    /**
+     * Gets a symbol for marking visited nodes.
+     */
+    protected get MarkerSymbol(): symbol
+    {
+        return this.markerSymbol;
     }
 
     /**
