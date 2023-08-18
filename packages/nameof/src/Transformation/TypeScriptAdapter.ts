@@ -65,6 +65,24 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
      * @inheritdoc
      *
      * @param item
+     * The item to check.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} has been mutated in a previous `nameof` call.
+     */
+    public IsMutated(item: ts.Node, context: ITypeScriptContext): boolean
+    {
+        return item.pos === -1 &&
+            this.GetSourceCode(item, context) === "";
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
      * The item to get the source code from.
      *
      * @param context

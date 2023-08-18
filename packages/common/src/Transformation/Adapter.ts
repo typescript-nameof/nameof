@@ -71,6 +71,17 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     /**
      * @inheritdoc
      *
+     * @param item
+     * The item to check.
+     *
+     * @param context
+     * The context of the operation.
+     */
+    public abstract IsMutated(item: TNode, context: TContext): boolean;
+
+    /**
+     * @inheritdoc
+     *
      * @param input
      * The item to transform.
      *

@@ -17,6 +17,17 @@ export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
     Extract(input: TInput): TNode;
 
     /**
+     * Checks whether the specified {@linkcode item} has been mutated in a previous `nameof` call.
+     *
+     * @param item
+     * The item to check.
+     *
+     * @param context
+     * The context of the operation.
+     */
+    IsMutated(item: TNode, context: TContext): boolean;
+
+    /**
      * Transforms the specified {@linkcode input}.
      *
      * @param input

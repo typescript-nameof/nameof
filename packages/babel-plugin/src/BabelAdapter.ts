@@ -49,6 +49,23 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      * @inheritdoc
      *
      * @param item
+     * The item to check.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} has been mutated in a previous `nameof` call.
+     */
+    public IsMutated(item: types.Node, context: BabelContext): boolean
+    {
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
      * The item to get the source code from.
      *
      * @param context
