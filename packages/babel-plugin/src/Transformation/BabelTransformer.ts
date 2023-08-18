@@ -1,9 +1,8 @@
 import type babel = require("@babel/core");
-import { IErrorHandler, NameofNodeTransformer, throwErrorForSourceFile, TransformerBase } from "@typescript-nameof/common";
+import { IErrorHandler, throwErrorForSourceFile, TransformerBase } from "@typescript-nameof/common";
 import { BabelContext } from "./BabelContext";
 import { BabelFeatures } from "./BabelFeatures";
 import { BabelAdapter } from "../BabelAdapter";
-import { ITransformTarget } from "../ITransformTarget";
 
 /**
  * Provides the functionality to transform babel nodes and files.
@@ -13,7 +12,7 @@ export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, 
     /**
      * A component for transforming `babel` nodes.
      */
-    private transformer: NameofNodeTransformer<ITransformTarget, babel.Node, BabelContext>;
+    private transformer: BabelAdapter;
 
     /**
      * Initializes a new instance of the {@linkcode BabelTransformer} class.
@@ -27,7 +26,7 @@ export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, 
     public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<babel.Node, BabelContext>)
     {
         super(new BabelFeatures(babelAPI, errorHandler));
-        this.transformer = new NameofNodeTransformer(new BabelAdapter(this.Features));
+        this.transformer = new BabelAdapter(this.Features);
     }
 
     /**
@@ -73,7 +72,7 @@ export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, 
     /**
      * Gets a component for transforming `babel` nodes.
      */
-    protected get Transformer(): NameofNodeTransformer<ITransformTarget, babel.Node, BabelContext>
+    protected get Transformer(): BabelAdapter
     {
         return this.transformer;
     }
