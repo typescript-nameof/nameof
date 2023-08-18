@@ -503,10 +503,17 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                     this.IsStringLiteral(expression) ||
                     this.IsTemplateLiteral(expression))
                 {
-                    return {
-                        type: ResultType.Node,
-                        node: expression
-                    };
+                    if (this.IsMutated(expression, context))
+                    {
+                        return {
+                            type: ResultType.Node,
+                            node: expression
+                        };
+                    }
+                    else
+                    {
+                        throw new UnsupportedNodeError(this, expression, context);
+                    }
                 }
                 else
                 {
