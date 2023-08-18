@@ -356,6 +356,12 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                 return this.ProcessSplit(call, context);
             case NameofFunction.Array:
                 return this.ProcessArray(call, context);
+            // Don't transform `interpolate` functions - they will be processed in the `ProcessFull` method.
+            case NameofFunction.Interpolate:
+                return {
+                    type: ResultType.Node,
+                    node: call.source
+                };
             default:
                 throw new UnsupportedFunctionError(this, call, context);
         }
