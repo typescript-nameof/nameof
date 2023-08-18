@@ -629,6 +629,28 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     protected abstract ParseInternal(item: TNode, context: TContext): ParsedNode<TNode>;
 
     /**
+     * Dumps the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to dump.
+     */
+    protected abstract Dump(item: NameofResult<TNode>): TNode;
+
+    /**
+     * Dumps the specified {@linkcode items}.
+     *
+     * @param items
+     * The items to dump-
+     *
+     * @returns
+     * The newly created node.
+     */
+    protected DumpArray(items: Array<NameofResult<TNode>>): TNode
+    {
+        return this.CreateArrayLiteral(items.map((item) => this.Dump(item)));
+    }
+
+    /**
      * Gets the trailing name of the specified {@linkcode path}.
      *
      * @param call

@@ -3,6 +3,8 @@ export { UnsupportedNodeError } from "./Diagnostics/UnsupportedNodeError";
 export { MissingImportTypeQualifierError } from "./Diagnostics/MissingImportTypeQualifierError";
 export { NoReturnExpressionError } from "./Diagnostics/NoReturnExpressionError";
 export * from "./errors";
+export { NameofResult } from "./NameofResult";
+export { ResultType } from "./ResultType";
 export * from "./Serialization/nodes";
 export {
     IdentifierNode as LegacyIdentifierNode,

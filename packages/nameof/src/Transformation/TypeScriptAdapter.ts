@@ -1,4 +1,4 @@
-import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, Node as NameofNode, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, NameofResult, Node as NameofNode, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { parse } from "./parse";
@@ -412,6 +412,36 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         else
         {
             return body;
+        }
+    }
+
+    /**
+     * Dumps the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to dump.
+     *
+     * @returns
+     * The dumped node.
+     */
+    protected Dump(item: NameofResult<ts.Node>): ts.Node
+    {
+        switch (item.type)
+        {
+            case ResultType.Plain:
+                return this.TypeScript.factory.createStringLiteral(item.text);
+            case ResultType.Template:
+                return this.TypeScript.factory.createTemplateExpression(
+                    this.TypeScript.factory.createTemplateHead(item.templateParts[0]),
+                    item.expressions.map(
+                        (expression, index: number) =>
+                        {
+                            return this.TypeScript.factory.createTemplateSpan(
+                                expression as ts.Expression,
+                                this.TypeScript.factory.createTemplateMiddle(item.templateParts[index + 1]));
+                        }));
+            case ResultType.Node:
+                return item.node;
         }
     }
 }
