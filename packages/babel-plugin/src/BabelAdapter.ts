@@ -247,6 +247,20 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
     /**
      * @inheritdoc
      *
+     * @param node
+     * The node to get the original from.
+     *
+     * @returns
+     * The original node of the specified {@linkcode node}.
+     */
+    protected GetOriginal(node: types.Node): types.Node | undefined
+    {
+        return (node.extra as any)[this.OriginalSymbol];
+    }
+
+    /**
+     * @inheritdoc
+     *
      * @param item
      * The item to parse.
      *
