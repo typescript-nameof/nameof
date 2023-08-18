@@ -51,7 +51,7 @@ export abstract class AdapterError<TInput, TNode, TContext> extends InternalErro
     /**
      * @inheritdoc
      */
-    public get Action(): () => void
+    public get ReportAction(): () => void
     {
         return () => this.Report();
     }

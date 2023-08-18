@@ -4,7 +4,7 @@
 export abstract class InternalError extends Error
 {
     /**
-     * Gets an action to execute for handling the error.
+     * Gets an action for reporting the error.
      */
-    public abstract get Action(): () => void;
+    public abstract get ReportAction(): () => void;
 }

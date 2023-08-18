@@ -161,7 +161,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         {
             if (error instanceof InternalError)
             {
-                error.Action();
+                error.ReportAction();
             }
             else
             {
