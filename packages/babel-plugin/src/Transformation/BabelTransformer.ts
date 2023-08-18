@@ -1,5 +1,5 @@
 import type babel = require("@babel/core");
-import { IErrorHandler, throwErrorForSourceFile, TransformerBase } from "@typescript-nameof/common";
+import { IErrorHandler, ITransformationContext, throwErrorForSourceFile, TransformerBase } from "@typescript-nameof/common";
 import { BabelContext } from "./BabelContext";
 import { BabelFeatures } from "./BabelFeatures";
 import { BabelAdapter } from "../BabelAdapter";
@@ -34,6 +34,10 @@ export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, 
      */
     public get Plugin(): babel.PluginObj
     {
+        let context: ITransformationContext<babel.Node> = {
+            interpolationCalls: []
+        };
+
         let visitor: babel.Visitor<babel.PluginPass> = {
             CallExpression: (path, state) =>
             {
@@ -44,6 +48,7 @@ export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, 
                     this.TransformNode(
                         path,
                         {
+                            ...context,
                             state,
                             traverseChildren: () => path.traverse(visitor, state)
                         });

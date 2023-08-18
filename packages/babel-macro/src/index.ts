@@ -1,5 +1,6 @@
 /// <reference path="references.d.ts" />
 import { BabelTransformer } from "@typescript-nameof/babel-plugin";
+import { BabelContext } from "@typescript-nameof/babel-plugin/src/Transformation/BabelContext";
 import { INameOfProvider } from "@typescript-nameof/common-types";
 import { createMacro, MacroError } from "babel-plugin-macros";
 
@@ -18,13 +19,23 @@ function nameofMacro(context: any): void
 {
     let transformer = new BabelTransformer(context.babel);
 
+    let transformerContext: BabelContext = {
+        state: context.state,
+        interpolationCalls: []
+    };
+
     // go over in reverse as if traversing in post order
     const reverseDefault = context.references.default.slice().reverse();
 
     // @ts-ignore
     reverseDefault.forEach(path =>
     {
-        transformer.TransformNode(getPath(), { state: context.state, nameofIdentifierName: path.node.name });
+        transformer.TransformNode(
+            getPath(),
+            {
+                ...transformerContext,
+                nameofIdentifierName: path.node.name
+            });
 
         /**
          * Gets the path to the node to transform.

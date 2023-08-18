@@ -1,4 +1,5 @@
 import * as ts from "typescript";
+import { ITypeScriptContext } from "../Transformation/ITypeScriptContext";
 import { throwIfContextHasInterpolateExpressions, visitNode } from "../Transformation/transformerFactory";
 import { TypeScriptAdapter } from "../Transformation/TypeScriptAdapter";
 import { TypeScriptFeatures } from "../Transformation/TypeScriptFeatures";
@@ -65,6 +66,10 @@ export function replaceInText(fileName: string, fileText: string): ISubstitution
 
     const sourceFile = ts.createSourceFile(fileName, fileText, ts.ScriptTarget.Latest, false);
     const transformations: ITransformation[] = [];
+
+    let transformerContext: ITypeScriptContext = {
+        file: sourceFile
+    };
 
     const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context =>
     {
@@ -136,7 +141,7 @@ export function replaceInText(fileName: string, fileText: string): ISubstitution
 
             node = ts.visitEachChild(node, childNode => visitNodeAndChildren(childNode), context);
 
-            const resultNode = visitNode(adapter, sourceFile, node);
+            const resultNode = visitNode(adapter, node, transformerContext);
             const wasTransformed = resultNode !== node;
 
             if (wasTransformed)
