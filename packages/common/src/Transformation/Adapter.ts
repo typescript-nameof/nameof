@@ -151,6 +151,14 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     protected abstract GetArrayElements(arrayLiteral: TNode): TNode[] | undefined;
 
     /**
+     * Creates an array literal node with the specified {@linkcode elements}.
+     *
+     * @param elements
+     * The elements of the array literal to create.
+     */
+    protected abstract CreateArrayLiteral(elements: TNode[]): TNode;
+
+    /**
      * @inheritdoc
      *
      * @param item

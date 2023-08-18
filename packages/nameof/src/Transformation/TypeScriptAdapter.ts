@@ -183,6 +183,20 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     }
 
     /**
+     * @inheritdoc
+     *
+     * @param elements
+     * The elements of the array literal to create.
+     *
+     * @returns
+     * The newly created array literal.
+     */
+    protected CreateArrayLiteral(elements: ts.Node[]): ts.Node
+    {
+        return this.TypeScript.factory.createArrayLiteralExpression(elements as ts.Expression[]);
+    }
+
+    /**
      * Parses the specified {@linkcode item}.
      *
      * @param item

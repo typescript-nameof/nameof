@@ -169,6 +169,20 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
     /**
      * @inheritdoc
      *
+     * @param elements
+     * The elements of the array literal to create.
+     *
+     * @returns
+     * The newly created array literal.
+     */
+    protected CreateArrayLiteral(elements: types.Node[]): types.Node
+    {
+        return this.Types.arrayExpression(elements as types.Expression[]);
+    }
+
+    /**
+     * @inheritdoc
+     *
      * @param item
      * The item to parse.
      *
