@@ -28,6 +28,6 @@ export class IndexParsingError<TInput, TNode, TContext> extends AdapterError<TIn
      */
     protected get Message(): string
     {
-        return `Unable to parse the number from the specified expression \`${this.SourceCode}\`.`;
+        return `Unable to parse the number from the specified expression \`${this.EscapedCode}\`.`;
     }
 }

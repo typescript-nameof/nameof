@@ -96,6 +96,14 @@ export abstract class AdapterError<TInput, TNode, TContext> extends NameofError
     }
 
     /**
+     * Gets an escaped representation of the {@linkcode SourceCode}.
+     */
+    protected get EscapedCode(): string
+    {
+        return this.SourceCode.replace("\\", "\\\\").replace("`", "\\`");
+    }
+
+    /**
      * The message of the error.
      */
     protected abstract get Message(): string;

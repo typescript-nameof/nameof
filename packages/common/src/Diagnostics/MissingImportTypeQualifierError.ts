@@ -28,6 +28,6 @@ export class MissingImportTypeQualifierError<TInput, TNode, TContext> extends Ad
      */
     protected get Message(): string
     {
-        return `A property of the import type \`${this.SourceCode}\` must be accessed.`;
+        return `A property of the import type \`${this.EscapedCode}\` must be accessed.`;
     }
 }

@@ -28,6 +28,6 @@ export class UnsupportedScenarioError<TInput, TNode, TContext> extends AdapterEr
      */
     protected get Message(): string
     {
-        return `The expression \`${this.SourceCode}\` is not supported in this scenario.`;
+        return `The expression \`${this.EscapedCode}\` is not supported in this scenario.`;
     }
 }
