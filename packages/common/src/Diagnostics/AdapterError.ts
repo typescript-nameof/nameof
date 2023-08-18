@@ -1,4 +1,5 @@
 import { InternalError } from "./InternalError";
+import { NameofError } from "./NameofError";
 import { IAdapter } from "../Transformation/IAdapter";
 
 /**
@@ -113,6 +114,9 @@ export abstract class AdapterError<TInput, TNode, TContext> extends InternalErro
      */
     protected Report(): void
     {
-        this.Adapter.ReportError(this.Node, this.Context, new Error(this.Message));
+        this.Adapter.ReportError(
+            this.Node,
+            this.Context,
+            new NameofError(this.constructor.name, this.Message));
     }
 }
