@@ -97,7 +97,7 @@ describe(
                     async () =>
                     {
                         // because an IDE might auto-format the code, this makes sure that hasn't happened
-                        assert.equal((await readFile(getTestFilePath("GeneralTestFile.txt"))).replace(/\r?\n/g, "\n").length, 1121);
+                        assert.equal((await readFile(getTestFilePath("GeneralTestFile.txt"))).replace(/\r?\n/g, "\n").length, 1105);
                     });
 
                 const expected = `console.log("alert");
