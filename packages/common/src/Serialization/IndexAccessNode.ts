@@ -91,6 +91,7 @@ export class IndexAccessNode<T> extends Node<T>
             default:
                 return {
                     type: PathKind.Unsupported,
+                    isAccessor: true,
                     source
                 };
         }

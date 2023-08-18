@@ -12,6 +12,7 @@ import { InvalidSegmentCallError } from "../Diagnostics/InvalidSegmentCallError"
 import { MissingPropertyAccessError } from "../Diagnostics/MissingPropertyAccessError";
 import { NestedNameofError } from "../Diagnostics/NestedNameofError";
 import { SegmentNotFoundError } from "../Diagnostics/SegmentNotFoundError";
+import { UnsupportedAccessorTypeError } from "../Diagnostics/UnsupportedAccessorTypeError";
 import { UnsupportedFunctionError } from "../Diagnostics/UnsupportedFunctionError";
 import { UnsupportedNodeError } from "../Diagnostics/UnsupportedNodeError";
 import { UnsupportedScenarioError } from "../Diagnostics/UnsupportedScenarioError";
@@ -939,6 +940,10 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                         if (pathPart.reason)
                         {
                             throw pathPart.reason;
+                        }
+                        else if (pathPart.isAccessor)
+                        {
+                            throw new UnsupportedAccessorTypeError(this, pathPart.source, context);
                         }
                         else
                         {
