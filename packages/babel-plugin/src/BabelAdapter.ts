@@ -1,6 +1,6 @@
 // eslint-disable-next-line node/no-unpublished-import
 import { types } from "@babel/core";
-import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, NameofResult, Node, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, NameofResult, Node, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import { ITransformTarget } from "./ITransformTarget";
 import { parse } from "./parse";
 import { transform } from "./transform";
@@ -374,5 +374,29 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
         }
 
         return undefined;
+    }
+
+    /**
+     * Dumps the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to dump.
+     *
+     * @returns
+     * The dumped node.
+     */
+    protected Dump(item: NameofResult<types.Node>): types.Node
+    {
+        switch (item.type)
+        {
+            case ResultType.Plain:
+                return this.Types.stringLiteral(item.text);
+            case ResultType.Template:
+                return this.Types.templateLiteral(
+                    item.templateParts.map((part) => this.Types.templateElement({ raw: part })),
+                    item.expressions as types.Expression[]);
+            case ResultType.Node:
+                return item.node;
+        }
     }
 }
