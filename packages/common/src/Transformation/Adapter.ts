@@ -69,6 +69,66 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     public abstract Extract(input: TInput): TNode;
 
     /**
+     * Transforms the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The transformed node.
+     */
+    public Transform(item: TInput, context: TContext): TNode
+    {
+        let node = this.Extract(item);
+
+        try
+        {
+            let nameofCall = this.GetNameofCall(node, context);
+
+            if (nameofCall)
+            {
+                let result = this.ProcessNameofCall(nameofCall, context);
+
+                if (Array.isArray(result))
+                {
+                    return this.DumpArray(result);
+                }
+                else
+                {
+                    return this.Dump(result);
+                }
+            }
+        }
+        catch (error)
+        {
+            if (error instanceof NameofError)
+            {
+                error.Action();
+            }
+            else
+            {
+                let newError: Error;
+
+                if (error instanceof Error)
+                {
+                    newError = error;
+                }
+                else
+                {
+                    newError = new Error(`${error}`);
+                }
+
+                this.ReportError(node, context, newError);
+            }
+        }
+
+        return node;
+    }
+
+    /**
      * @inheritdoc
      *
      * @param item
