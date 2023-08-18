@@ -434,6 +434,18 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
      */
     protected async Assert(input: string, expected: string): Promise<void>
     {
+        let result = await this.Transform(input);
+
+        if (result.errors.length > 0)
+        {
+            let messages = result.errors.length === 1 ?
+                result.errors[0].message :
+                JSON.stringify(result.errors.map((error) => error.message));
+
+            throw new Error(
+                `Expected \`${input}\` to transform to \`${expected}\`, but got ${result.errors.length === 1 ? "an error" : "errors"}:\n${messages}`);
+        }
+
         strictEqual((await this.Transform(input)).output, expected);
     }
 
