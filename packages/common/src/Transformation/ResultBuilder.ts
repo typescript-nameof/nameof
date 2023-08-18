@@ -161,19 +161,22 @@ export class ResultBuilder<TInput, TNode, TContext extends ITransformationContex
                     this.Context.interpolationCalls?.splice(index, 1);
                 }
 
-                this.Current += "[";
-                this.Push();
-                this.Current += "]";
+                this.Push(pathPart.node);
                 break;
         }
     }
 
     /**
-     * Pushes the current text to the template part stack.
+     * Pushes the specified expression on the expression stack.
+     *
+     * @param expression
+     * The expression to add.
      */
-    protected Push(): void
+    protected Push(expression: TNode): void
     {
         this.TemplateParts.push(this.Current);
-        this.Current = "";
+        this.Current += "[";
+        this.Current = "]";
+        this.Expressions.push(expression);
     }
 }
