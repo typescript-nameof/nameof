@@ -34,7 +34,7 @@ export class UnsupportedNodeError<TInput, TNode, TContext> extends AdapterError<
         }
         else
         {
-            return `The expression \`${this.SourceCode}\` is not supported`;
+            return `The expression \`${this.SourceCode}\` is not supported.`;
         }
     }
 }
