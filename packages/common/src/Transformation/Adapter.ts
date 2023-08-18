@@ -10,6 +10,7 @@ import { InvalidSegmentCallError } from "../Diagnostics/InvalidSegmentCallError"
 import { MissingPropertyAccessError } from "../Diagnostics/MissingPropertyAccessError";
 import { NameofError } from "../Diagnostics/NameofError";
 import { SegmentNotFoundError } from "../Diagnostics/SegmentNotFoundError";
+import { UnsupportedFunctionError } from "../Diagnostics/UnsupportedFunctionError";
 import { UnsupportedNodeError } from "../Diagnostics/UnsupportedNodeError";
 import { NameofFunction } from "../NameofFunction";
 import { NameofResult } from "../NameofResult";
@@ -209,6 +210,35 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         else
         {
             return call.typeArguments;
+        }
+    }
+
+    /**
+     * Transforms the specified `nameof` {@linkcode call}.
+     *
+     * @param call
+     * The call to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The transformed call.
+     */
+    protected ProcessNameofCall(call: NameofCall<TNode>, context: TContext): NameofResult<TNode> | Array<NameofResult<TNode>>
+    {
+        switch (call.function)
+        {
+            case undefined:
+                return this.ProcessDefault(call, context);
+            case NameofFunction.Full:
+                return this.ProcessFull(call, context);
+            case NameofFunction.Split:
+                return this.ProcessSplit(call, context);
+            case NameofFunction.Array:
+                return this.ProcessArray(call, context);
+            default:
+                throw new UnsupportedFunctionError(this, call, context);
         }
     }
 
