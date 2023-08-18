@@ -59,7 +59,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      */
     public IsMutated(item: types.Node, context: BabelContext): boolean
     {
-        return false;
+        return (item.extra as any)?.[this.MarkerSymbol] ?? false;
     }
 
     /**

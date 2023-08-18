@@ -75,8 +75,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
      */
     public IsMutated(item: ts.Node, context: ITypeScriptContext): boolean
     {
-        return item.pos === -1 &&
-            this.GetSourceCode(item, context) === "";
+        return (item as any)[this.MarkerSymbol] ?? false;
     }
 
     /**
