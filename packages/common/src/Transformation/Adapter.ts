@@ -492,25 +492,6 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                     {
                         return this.GetName(call, this.ProcessFunctionBody(functionNode, node, context), context);
                     };
-
-                    return elements.map(
-                        (expression) =>
-                        {
-                            if (
-                                this.IsMutated(expression, context) && (
-                                    this.IsStringLiteral(expression) ||
-                                    this.IsTemplateLiteral(expression)))
-                            {
-                                return {
-                                    type: ResultType.Node,
-                                    node: expression
-                                };
-                            }
-                            else
-                            {
-                                return this.GetName(call, this.ProcessFunctionBody(functionNode, expression, context), context);
-                            }
-                        });
                 }
             }
         }
