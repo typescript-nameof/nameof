@@ -398,7 +398,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
 
         try
         {
-            output = await this.Run(await this.Preprocess(code), errorHandler);
+            output = await this.Format(await this.Run(await this.Preprocess(code), errorHandler));
         }
         catch
         { }
@@ -494,7 +494,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
         }
 
         strictEqual(
-            await this.Format((await this.Transform(input)).output),
+            (await this.Transform(input)).output,
             await this.Format(expected));
     }
 
