@@ -360,9 +360,8 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                 return this.ProcessSplit(call, context);
             case NameofFunction.Array:
                 return this.ProcessArray(call, context);
-            // Don't transform `interpolate` functions - they will be processed in the `ProcessFull` method.
             case NameofFunction.Interpolate:
-                return undefined;
+                return this.ProcessInterpolate(call, context);
             default:
                 throw new UnsupportedFunctionError(this, call, context);
         }
@@ -532,6 +531,24 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                     return processor(expression);
                 }
             });
+    }
+
+    /**
+     * Processes the specified `nameof.interpolate` call.
+     *
+     * @param call
+     * The call to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The transformed call.
+     */
+    protected ProcessInterpolate(call: NameofCall<TNode>, context: TContext): undefined
+    {
+        // Don't transform `interpolate` functions - they will be processed in the `ProcessFull` method.
+        return;
     }
 
     /**
