@@ -212,7 +212,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Transforms the specified `nameof` {@linkcode call}.
+     * Processes the specified `nameof` {@linkcode call}.
      *
      * @param call
      * The call to transform.
@@ -223,13 +223,13 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The parsed representation of the specified {@linkcode call}.
      */
-    protected TransformDefault(call: NameofCall<TNode>, context: TContext): NameofResult<TNode>
+    protected ProcessDefault(call: NameofCall<TNode>, context: TContext): NameofResult<TNode>
     {
         let targets = this.GetTargets(call);
 
         if (targets.length === 1)
         {
-            return this.GetName(call, this.TransformSingle(call, targets[0], context), context);
+            return this.GetName(call, this.ProcessSingle(call, targets[0], context), context);
         }
         else
         {
@@ -238,7 +238,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Transforms the specified `nameof.full` {@linkcode call}.
+     * Processes the specified `nameof.full` {@linkcode call}.
      *
      * @param call
      * The call to transform.
@@ -249,9 +249,9 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The parsed representation of the specified {@linkcode call}.
      */
-    protected TransformFull(call: NameofCall<TNode>, context: TContext): NameofResult<TNode>
+    protected ProcessFull(call: NameofCall<TNode>, context: TContext): NameofResult<TNode>
     {
-        let path = this.TransformSegment(call, context);
+        let path = this.ProcessSegment(call, context);
         let resultBuilder = new ResultBuilder(this, context);
 
         for (let pathPart of path)
@@ -263,7 +263,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Transforms the specified `nameof.split` {@linkcode call}.
+     * Processes the specified `nameof.split` {@linkcode call}.
      *
      * @param call
      * The call to transform.
@@ -274,9 +274,9 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The parsed representation of the specified {@linkcode call}.
      */
-    protected TransformSplit(call: NameofCall<TNode>, context: TContext): Array<NameofResult<TNode>>
+    protected ProcessSplit(call: NameofCall<TNode>, context: TContext): Array<NameofResult<TNode>>
     {
-        let path = this.TransformSegment(call, context);
+        let path = this.ProcessSegment(call, context);
         let result: Array<NameofResult<TNode>> = [];
 
         for (let pathPart of path)
@@ -298,7 +298,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Transforms the specified `nameof.toArray` {@linkcode call}.
+     * Processes the specified `nameof.toArray` {@linkcode call}.
      *
      * @param call
      * The call to transform.
@@ -309,7 +309,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The parsed representation of the specified {@linkcode call}.
      */
-    protected TransformArray(call: NameofCall<TNode>, context: TContext): Array<NameofResult<TNode>>
+    protected ProcessArray(call: NameofCall<TNode>, context: TContext): Array<NameofResult<TNode>>
     {
         let expressions: readonly TNode[] = call.arguments;
 
@@ -333,7 +333,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
 
                     processor = (node) =>
                     {
-                        return this.GetName(call, this.TransformFunctionBody(functionNode, node, context), context);
+                        return this.GetName(call, this.ProcessFunctionBody(functionNode, node, context), context);
                     };
 
                     return elements.map(
@@ -350,7 +350,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                             }
                             else
                             {
-                                return this.GetName(call, this.TransformFunctionBody(functionNode, expression, context), context);
+                                return this.GetName(call, this.ProcessFunctionBody(functionNode, expression, context), context);
                             }
                         });
                 }
@@ -377,7 +377,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Transforms a segment of the specified {@linkcode call}.
+     * Processes a segment of the specified {@linkcode call}.
      *
      * @param call
      * The call to transform.
@@ -388,7 +388,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The transformed call.
      */
-    protected TransformSegment(call: NameofCall<TNode>, context: TContext): Array<PathPart<TNode>>
+    protected ProcessSegment(call: NameofCall<TNode>, context: TContext): Array<PathPart<TNode>>
     {
         let index: NumericLiteralNode<TNode> | undefined;
         let expression: TNode;
@@ -448,7 +448,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             throw new InvalidSegmentCallError(this, call, context);
         }
 
-        let path = this.TransformSingle(call, expression, context);
+        let path = this.ProcessSingle(call, expression, context);
 
         if (index)
         {
@@ -461,7 +461,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Transforms the specified {@linkcode call}.
+     * Processes the specified {@linkcode call}.
      *
      * @param call
      * The call to transform.
@@ -475,13 +475,13 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The transformed call.
      */
-    protected TransformSingle(call: NameofCall<TNode>, node: TNode, context: TContext): Array<PathPartCandidate<TNode>>
+    protected ProcessSingle(call: NameofCall<TNode>, node: TNode, context: TContext): Array<PathPartCandidate<TNode>>
     {
         let result = this.ParseNode(node, context);
 
         if (result.Type === NodeKind.FunctionNode)
         {
-            return this.TransformFunctionBody(result, result.Body, context);
+            return this.ProcessFunctionBody(result, result.Body, context);
         }
         else
         {
@@ -490,7 +490,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Transforms the specified {@linkcode node}.
+     * Processes the specified {@linkcode node}.
      *
      * @param functionNode
      * The function of the node to transform.
@@ -504,7 +504,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The transformed representation of the specified {@linkcode node}.
      */
-    protected TransformFunctionBody(functionNode: FunctionNode<TNode>, node: TNode, context: TContext): Array<PathPartCandidate<TNode>>
+    protected ProcessFunctionBody(functionNode: FunctionNode<TNode>, node: TNode, context: TContext): Array<PathPartCandidate<TNode>>
     {
         let path = this.ParseNode(node, context).Path;
 
