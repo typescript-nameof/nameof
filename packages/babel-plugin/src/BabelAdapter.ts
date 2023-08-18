@@ -88,7 +88,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      * @returns
      * The converted representation of the specified {@linkcode node}.
      */
-    public Dump(node: Node): types.Node
+    public LegacyDump(node: Node): types.Node
     {
         return transform(this.Types, node);
     }

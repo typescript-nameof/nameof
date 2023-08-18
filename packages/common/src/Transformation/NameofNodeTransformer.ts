@@ -50,7 +50,7 @@ export class NameofNodeTransformer<TInput, TNode = TInput, TContext = Record<str
 
             if (node)
             {
-                return this.Adapter.Dump(transformCallExpression(node), context);
+                return this.Adapter.LegacyDump(transformCallExpression(node), context);
             }
         }
         catch (error)

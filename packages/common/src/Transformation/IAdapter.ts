@@ -42,7 +42,7 @@ export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
      * @returns
      * The converted representation of the specified {@linkcode node}.
      */
-    Dump(node: Node, context: TContext): TNode;
+    LegacyDump(node: Node, context: TContext): TNode;
 
     /**
      * Gets the source code of the specified {@linkcode item}.

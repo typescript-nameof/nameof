@@ -96,7 +96,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @param node
      * The node to dump.
      */
-    public abstract Dump(node: Node): TNode;
+    public abstract LegacyDump(node: Node): TNode;
 
     /**
      * @inheritdoc

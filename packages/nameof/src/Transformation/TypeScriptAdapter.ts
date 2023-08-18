@@ -104,7 +104,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
      * @returns
      * The converted representation of the specified {@linkcode node}.
      */
-    public Dump(node: NameofNode): ts.Node
+    public LegacyDump(node: NameofNode): ts.Node
     {
         return transform(node, this.Context);
     }
