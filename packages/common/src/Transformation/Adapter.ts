@@ -441,7 +441,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             switch (pathPart.type)
             {
                 case PathKind.Interpolation:
-                    throw new UnsupportedNodeError(this, pathPart.source, context);
+                    throw new UnsupportedScenarioError(this, pathPart.source, context);
                 default:
                     result.push(
                         {
