@@ -1,4 +1,4 @@
-import { NameofNodeTransformer, TransformerBase } from "@typescript-nameof/common";
+import { TransformerBase } from "@typescript-nameof/common";
 import { Node, SourceFile, TransformationContext, TransformerFactory } from "typescript";
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TypeScriptAdapter } from "./TypeScriptAdapter";
@@ -28,11 +28,12 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      */
     public get Factory(): TransformerFactory<SourceFile>
     {
-        return (context) =>
+        return (tsContext) =>
         {
             return (file) =>
             {
-                return this.VisitSourceFile(file, context);
+                let context: ITypeScriptContext = { file };
+                return this.VisitSourceFile(file, context, tsContext);
             };
         };
     }
@@ -44,18 +45,21 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      * The file to transform.
      *
      * @param context
-     * The context of the transformation.
+     * The context of the operation.
+     *
+     * @param tsContext
+     * The context of the typescript transformation.
      *
      * @returns
      * The transformed representation of the specified {@linkcode file}.
      */
-    public VisitSourceFile(file: SourceFile, context: TransformationContext): SourceFile
+    public VisitSourceFile(file: SourceFile, context: ITypeScriptContext, tsContext: TransformationContext): SourceFile
     {
         return this.VisitNode(
-            new NameofNodeTransformer(new TypeScriptAdapter(this.Features)),
+            new TypeScriptAdapter(this.Features),
             file,
-            file,
-            context);
+            context,
+            tsContext);
     }
 
     /**
@@ -64,28 +68,28 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      * @param transformer
      * A component for performing the transformation.
      *
-     * @param file
-     * The file of the specified {@linkcode node}.
-     *
      * @param node
      * The node to transform.
      *
      * @param context
-     * The context of the transformation.
+     * The context of the operation.
+     *
+     * @param tsContext
+     * The context of the typescript transformation.
      *
      * @returns
      * The transformed representation of the specified {@linkcode node}.
      */
-    protected VisitNode<T extends Node>(transformer: NameofNodeTransformer<Node, Node, ITypeScriptContext>, file: SourceFile, node: T, context: TransformationContext): T
+    protected VisitNode<T extends Node>(transformer: TypeScriptAdapter, node: T, context: ITypeScriptContext, tsContext: TransformationContext): T
     {
         node = this.Features.TypeScript.visitEachChild(
             node,
             (node) =>
             {
-                return this.VisitNode(transformer, file, node, context);
+                return this.VisitNode(transformer, node, context, tsContext);
             },
-            context);
+            tsContext);
 
-        return transformer.Transform(node, { file }) as T ?? node;
+        return transformer.Transform(node, context) as T ?? node;
     }
 }
