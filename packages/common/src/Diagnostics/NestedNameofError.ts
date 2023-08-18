@@ -28,6 +28,6 @@ export class NestedNameofError<TInput, TNode, TContext> extends AdapterError<TIn
      */
     protected get Message(): string
     {
-        return `Nested expressions \`${this.NameofName}\` in \`${this.NameofName}()\` calls are not supported.`;
+        return `Nested \`${this.NameofName}\` expressions in \`${this.NameofName}()\` calls are not supported.`;
     }
 }
