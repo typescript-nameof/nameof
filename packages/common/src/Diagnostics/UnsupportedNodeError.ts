@@ -28,6 +28,13 @@ export class UnsupportedNodeError<TInput, TNode, TContext> extends AdapterError<
      */
     protected get Message(): string
     {
-        return `The expression \`${this.SourceCode}\` is not supported`;
+        if (this.Adapter.IsMutated(this.Node, this.Context))
+        {
+            return "Nested `nameof()` calls are not supported.";
+        }
+        else
+        {
+            return `The expression \`${this.SourceCode}\` is not supported`;
+        }
     }
 }
