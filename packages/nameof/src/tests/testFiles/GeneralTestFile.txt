@@ -10,7 +10,7 @@ console.log(nameof.full(window.alert.length, 1));
 console.log(nameof.full(window.alert.length, 2));
 console.log( nameof( window ) );
 console.log(  nameof (window) );
-console.log(nameof(nameof(nameof(clearTimeout))));
+console.log(clearTimeout);
 console.log(nameof<Array<string>>());
 console.log(nameof.full<Array<string>>());
 console.log(nameof<MyInterface>(i => i.prop));
