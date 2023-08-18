@@ -32,8 +32,7 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
         {
             return (file) =>
             {
-                let context: ITypeScriptContext = { file };
-                return this.VisitSourceFile(file, context, tsContext);
+                return this.VisitSourceFile(file, tsContext);
             };
         };
     }
@@ -44,17 +43,16 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      * @param file
      * The file to transform.
      *
-     * @param context
-     * The context of the operation.
-     *
      * @param tsContext
      * The context of the typescript transformation.
      *
      * @returns
      * The transformed representation of the specified {@linkcode file}.
      */
-    public VisitSourceFile(file: SourceFile, context: ITypeScriptContext, tsContext: TransformationContext): SourceFile
+    public VisitSourceFile(file: SourceFile, tsContext: TransformationContext): SourceFile
     {
+        let context: ITypeScriptContext = { file };
+
         return this.VisitNode(
             new TypeScriptAdapter(this.Features),
             file,
