@@ -100,7 +100,7 @@ export abstract class AdapterError<TInput, TNode, TContext> extends NameofError
      */
     protected get EscapedCode(): string
     {
-        return this.SourceCode.replace(/[\\`]/g, "\\$1");
+        return this.SourceCode.replace(/([\\`])/g, "\\$1");
     }
 
     /**
