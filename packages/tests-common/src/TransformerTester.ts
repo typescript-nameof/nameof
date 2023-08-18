@@ -1,6 +1,7 @@
 import { strictEqual } from "assert";
 import { resolve } from "path";
 import { ErrorHandler, IErrorHandler } from "@typescript-nameof/common";
+import { Project } from "ts-morph";
 import { INameofOutput } from "./INameofOutput";
 import { TestErrorHandler } from "./TestErrorHandler";
 
@@ -12,6 +13,19 @@ import { TestErrorHandler } from "./TestErrorHandler";
  */
 export abstract class TransformerTester<TNode, TContext = Record<string, never>>
 {
+    /**
+     * A project for formatting code.
+     */
+    private project = new Project();
+
+    /**
+     * Gets a project for formatting code.
+     */
+    public get Project(): Project
+    {
+        return this.project;
+    }
+
     /**
      * Registers common tests.
      */
@@ -396,6 +410,39 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
     }
 
     /**
+     * Formats the specified {@linkcode code}.
+     *
+     * @param code
+     * The code to format.
+     *
+     * @returns
+     * The formatted code.
+     */
+    protected async Format(code?: string): Promise<string | undefined>
+    {
+        if (code)
+        {
+            let file = this.Project.createSourceFile(
+                "/file.ts",
+                code,
+                {
+                    overwrite: true
+                });
+
+            file.formatText(
+                {
+                    ensureNewLineAtEndOfFile: true
+                });
+
+            return file.getText();
+        }
+        else
+        {
+            return undefined;
+        }
+    }
+
+    /**
      * Runs the transformation of the specified {@linkcode code}.
      *
      * @param code
@@ -446,7 +493,9 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                 `Expected \`${input}\` to transform to \`${expected}\`, but got ${result.errors.length === 1 ? "an error" : "errors"}:\n${messages}`);
         }
 
-        strictEqual((await this.Transform(input)).output, expected);
+        strictEqual(
+            await this.Format((await this.Transform(input)).output),
+            await this.Format(expected));
     }
 
     /**
