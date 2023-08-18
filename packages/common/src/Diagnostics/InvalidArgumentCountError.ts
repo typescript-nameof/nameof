@@ -46,7 +46,7 @@ export class InvalidArgumentCountError<TInput, TNode, TContext> extends NameofCa
      */
     protected get Message(): string
     {
-        let callExpression = `nameof${this.Call.function ? `.${this.Call.function}` : ""}`;
+        let callExpression = `${this.NameofName}${this.Call.function ? `.${this.Call.function}` : ""}`;
         return `Expected ${this.Expected} argument for the \`${callExpression}\` call, but got ${this.Call.arguments.length}.`;
     }
 }

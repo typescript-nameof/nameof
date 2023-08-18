@@ -296,7 +296,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
 
             if (
                 expression.Type === NodeKind.IdentifierNode &&
-                expression.Name === "nameof")
+                expression.Name === this.GetNameofName(context))
             {
                 return {
                     source: item,

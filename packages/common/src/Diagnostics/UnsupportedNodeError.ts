@@ -30,7 +30,7 @@ export class UnsupportedNodeError<TInput, TNode, TContext> extends AdapterError<
     {
         if (this.Adapter.IsMutated(this.Node, this.Context))
         {
-            return "Nested `nameof()` calls are not supported.";
+            return `Nested \`${this.NameofName}()\` calls are not supported.`;
         }
         else
         {
