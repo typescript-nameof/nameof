@@ -7,6 +7,7 @@ import { IndexParsingError } from "../Diagnostics/IndexParsingError";
 import { InvalidArgumentCountError } from "../Diagnostics/InvalidArgumentCountError";
 import { InvalidDefaultCallError } from "../Diagnostics/InvalidDefaultCallError";
 import { InvalidSegmentCallError } from "../Diagnostics/InvalidSegmentCallError";
+import { MissingPropertyAccessError } from "../Diagnostics/MissingPropertyAccessError";
 import { NameofError } from "../Diagnostics/NameofError";
 import { SegmentNotFoundError } from "../Diagnostics/SegmentNotFoundError";
 import { UnsupportedNodeError } from "../Diagnostics/UnsupportedNodeError";
@@ -516,7 +517,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
 
             if (path.length === 0)
             {
-                throw new Error(); // TODO: Throw error stating that no property was accessed.
+                throw new MissingPropertyAccessError(this, node, context);
             }
         }
 
