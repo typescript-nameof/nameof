@@ -434,7 +434,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                     ensureNewLineAtEndOfFile: true
                 });
 
-            return file.getText();
+            return file.getText().replace(/[\s\S]$/, "");
         }
         else
         {
