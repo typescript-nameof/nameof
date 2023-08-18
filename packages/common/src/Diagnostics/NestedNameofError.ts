@@ -2,12 +2,12 @@ import { AdapterError } from "./AdapterError";
 import { IAdapter } from "../Transformation/IAdapter";
 
 /**
- * Represents an error indicating that an unsupported node was found.
+ * Represents an error indicating that an unsupported nested `nameof` call was found.
  */
-export class UnsupportedNodeError<TInput, TNode, TContext> extends AdapterError<TInput, TNode, TContext>
+export class NestedNameofError<TInput, TNode, TContext> extends AdapterError<TInput, TNode, TContext>
 {
     /**
-     * Initializes a new instance of the {@linkcode UnsupportedNodeError} class.
+     * Initializes a new instance of the {@linkcode NestedNameofError} class.
      *
      * @param adapter
      * The adapter which caused the error.
@@ -28,6 +28,6 @@ export class UnsupportedNodeError<TInput, TNode, TContext> extends AdapterError<
      */
     protected get Message(): string
     {
-        return `The expression \`${this.EscapedCode}\` is not supported.`;
+        return `Nested expressions \`${this.NameofName}\` in \`${this.NameofName}()\` calls are not supported.`;
     }
 }
