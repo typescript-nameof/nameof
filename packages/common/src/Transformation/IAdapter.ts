@@ -17,6 +17,20 @@ export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
     Extract(input: TInput): TNode;
 
     /**
+     * Transforms the specified {@linkcode input}.
+     *
+     * @param input
+     * The item to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The transformed node.
+     */
+    Transform(input: TInput, context: TContext): TNode;
+
+    /**
      * Parses the specified {@linkcode item}.
      *
      * @param item

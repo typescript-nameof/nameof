@@ -69,9 +69,9 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     public abstract Extract(input: TInput): TNode;
 
     /**
-     * Transforms the specified {@linkcode item}.
+     * @inheritdoc
      *
-     * @param item
+     * @param input
      * The item to transform.
      *
      * @param context
@@ -80,9 +80,9 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The transformed node.
      */
-    public Transform(item: TInput, context: TContext): TNode
+    public Transform(input: TInput, context: TContext): TNode
     {
-        let node = this.Extract(item);
+        let node = this.Extract(input);
 
         try
         {
