@@ -479,7 +479,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
             if (!result.errors.some((error) => messages.includes(error.message)))
             {
                 throw new Error(
-                    "Expected one of the following messages:\n" +
+                    `Expected the code ${input} to yield one of the following error messages:\n` +
                     `${JSON.stringify(messages, null, 4)}\n` +
                     "but got\n" +
                     `${JSON.stringify(result.errors.map((error) => error.message), null, 4)}`);
