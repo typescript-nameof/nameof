@@ -198,7 +198,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should not allow only an array",
                             async () =>
                             {
-                                await this.Assert("nameof([0]);", this.GetUnsupportedErrorText("[0]"));
+                                await this.AssertError("nameof([0]);", this.GetUnsupportedErrorText("[0]"));
                             });
 
                         it(
@@ -246,14 +246,14 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should throw when using an element access expression directly on the object and it is not a string",
                             async () =>
                             {
-                                await this.Assert("nameof<MyInterface>(i => i[0]);", this.GetUnsupportedComputationNodeErrorText("(i) => i[0]"));
+                                await this.AssertError("nameof<MyInterface>(i => i[0]);", this.GetUnsupportedComputationNodeErrorText("(i) => i[0]"));
                             });
 
                         it(
                             "should throw when the function doesn't have a period",
                             async () =>
                             {
-                                await this.Assert("nameof<MyInterface>(i => i);", "A property must be accessed on the object: (i) => i");
+                                await this.AssertError("nameof<MyInterface>(i => i);", "A property must be accessed on the object: (i) => i");
                             });
 
                         it(
