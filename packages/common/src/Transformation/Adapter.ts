@@ -5,11 +5,11 @@ import { TransformerFeatures } from "./TransformerFeatures";
 import { CustomError } from "../Diagnostics/CustomError";
 import { IndexOutOfBoundsError } from "../Diagnostics/IndexOutOfBoundsError";
 import { IndexParsingError } from "../Diagnostics/IndexParsingError";
+import { InternalError } from "../Diagnostics/InternalError";
 import { InvalidArgumentCountError } from "../Diagnostics/InvalidArgumentCountError";
 import { InvalidDefaultCallError } from "../Diagnostics/InvalidDefaultCallError";
 import { InvalidSegmentCallError } from "../Diagnostics/InvalidSegmentCallError";
 import { MissingPropertyAccessError } from "../Diagnostics/MissingPropertyAccessError";
-import { NameofError } from "../Diagnostics/NameofError";
 import { NestedNameofError } from "../Diagnostics/NestedNameofError";
 import { SegmentNotFoundError } from "../Diagnostics/SegmentNotFoundError";
 import { UnsupportedFunctionError } from "../Diagnostics/UnsupportedFunctionError";
@@ -159,7 +159,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
         catch (error)
         {
-            if (error instanceof NameofError)
+            if (error instanceof InternalError)
             {
                 error.Action();
             }
@@ -757,7 +757,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
         catch (error)
         {
-            if (error instanceof NameofError)
+            if (error instanceof InternalError)
             {
                 return new UnsupportedNode(item, error);
             }

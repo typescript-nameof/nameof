@@ -2,7 +2,7 @@ import { Node } from "./Node";
 import { NodeKind } from "./NodeKind";
 import { PathKind } from "./PathKind";
 import { PathPartCandidate } from "./PathPartCandidate";
-import { NameofError } from "../Diagnostics/NameofError";
+import { InternalError } from "../Diagnostics/InternalError";
 
 /**
  * Represents an unsupported node.
@@ -17,7 +17,7 @@ export class UnsupportedNode<T> extends Node<T>
     /**
      * The reason for the node being unsupported.
      */
-    private reason?: NameofError;
+    private reason?: InternalError;
 
     /**
      * Initializes a new instance of the {@linkcode UnsupportedNode} class.
@@ -28,7 +28,7 @@ export class UnsupportedNode<T> extends Node<T>
      * @param reason
      * The reason for the node being unsupported.
      */
-    public constructor(source: T, reason?: NameofError)
+    public constructor(source: T, reason?: InternalError)
     {
         super(source);
         this.reason = reason;
@@ -37,7 +37,7 @@ export class UnsupportedNode<T> extends Node<T>
     /**
      * Gets the reason for the node being unsupported.
      */
-    public get Reason(): NameofError | undefined
+    public get Reason(): InternalError | undefined
     {
         return this.reason;
     }

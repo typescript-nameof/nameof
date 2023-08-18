@@ -1,4 +1,4 @@
-import { NameofError } from "./NameofError";
+import { InternalError } from "./InternalError";
 import { IAdapter } from "../Transformation/IAdapter";
 
 /**
@@ -10,7 +10,7 @@ import { IAdapter } from "../Transformation/IAdapter";
  * @template TOutput
  * The type of the output of the adapter.
  */
-export abstract class AdapterError<TInput, TNode, TContext> extends NameofError
+export abstract class AdapterError<TInput, TNode, TContext> extends InternalError
 {
     /**
      * The adapter which caused the error.
