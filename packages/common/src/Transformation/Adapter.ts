@@ -111,7 +111,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      */
     public IsMutated(item: TNode, context: TContext): boolean
     {
-        return (item as any)[this.OriginalSymbol] ?? false;
+        return this.GetOriginal(item) ? true : false;
     }
 
     /**
@@ -284,6 +284,20 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     protected StoreOriginal(original: TNode, newNode: TNode): void
     {
         (newNode as any)[this.OriginalSymbol] = original;
+    }
+
+    /**
+     * Gets the original node which was substituted by the specified {@linkcode node}.
+     *
+     * @param node
+     * The node to get the original from.
+     *
+     * @returns
+     * The original node of the specified {@linkcode node}.
+     */
+    protected GetOriginal(node: TNode): TNode | undefined
+    {
+        return (node as any)[this.OriginalSymbol];
     }
 
     /**
