@@ -12,6 +12,7 @@ import { NameofError } from "../Diagnostics/NameofError";
 import { SegmentNotFoundError } from "../Diagnostics/SegmentNotFoundError";
 import { UnsupportedFunctionError } from "../Diagnostics/UnsupportedFunctionError";
 import { UnsupportedNodeError } from "../Diagnostics/UnsupportedNodeError";
+import { UnsupportedScenarioError } from "../Diagnostics/UnsupportedScenarioError";
 import { NameofFunction } from "../NameofFunction";
 import { NameofResult } from "../NameofResult";
 import { ResultType } from "../ResultType";
@@ -792,8 +793,8 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                         text: `${lastNode.value}`
                     };
 
-                default:
-                    throw new UnsupportedNodeError(this, lastNode.source, context);
+                case PathKind.Interpolation:
+                    throw new UnsupportedScenarioError(this, lastNode.source, context);
             }
         }
         catch (error)
