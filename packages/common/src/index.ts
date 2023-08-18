@@ -1,4 +1,3 @@
-export { InternalError } from "./Diagnostics/InternalError";
 export { UnsupportedNodeError } from "./Diagnostics/UnsupportedNodeError";
 export { MissingImportTypeQualifierError } from "./Diagnostics/MissingImportTypeQualifierError";
 export { NoReturnExpressionError } from "./Diagnostics/NoReturnExpressionError";
