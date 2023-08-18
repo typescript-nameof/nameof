@@ -114,16 +114,20 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
 
             if (nameofCall)
             {
+                let node: TNode;
                 let result = this.ProcessNameofCall(nameofCall, context);
 
                 if (Array.isArray(result))
                 {
-                    return this.DumpArray(result);
+                    node = this.DumpArray(result);
                 }
                 else
                 {
-                    return this.Dump(result);
+                    node = this.Dump(result);
                 }
+
+                this.MarkNode(node);
+                return node;
             }
         }
         catch (error)
@@ -241,6 +245,14 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * The elements of the array literal to create.
      */
     protected abstract CreateArrayLiteral(elements: TNode[]): TNode;
+
+    /**
+     * Marks the specified {@linkcode node} as mutated by `nameof`.
+     *
+     * @param node
+     * The node to mark as processed.
+     */
+    protected abstract MarkNode(node: TNode): void;
 
     /**
      * @inheritdoc

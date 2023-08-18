@@ -215,6 +215,17 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     }
 
     /**
+     * @inheritdoc
+     *
+     * @param node
+     * The node to mark as processed.
+     */
+    protected MarkNode(node: ts.Node): void
+    {
+        (node as any)[this.MarkerSymbol] = true;
+    }
+
+    /**
      * Parses the specified {@linkcode item}.
      *
      * @param item

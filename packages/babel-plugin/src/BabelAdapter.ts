@@ -218,6 +218,18 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
     /**
      * @inheritdoc
      *
+     * @param node
+     * The node to mark as processed.
+     */
+    protected MarkNode(node: types.Node): void
+    {
+        node.extra ??= {};
+        (node.extra as any)[this.MarkerSymbol] = true;
+    }
+
+    /**
+     * @inheritdoc
+     *
      * @param item
      * The item to parse.
      *
