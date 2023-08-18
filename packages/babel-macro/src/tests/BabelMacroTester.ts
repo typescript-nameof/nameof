@@ -37,9 +37,9 @@ export class BabelMacroTester extends TransformerTester<undefined>
 
                 it(
                     "should work when using a different import name",
-                    () =>
+                    async () =>
                     {
-                        this.Assert("other(console.log);other.full(console.log);", '"log";"console.log";');
+                        await this.Assert("other(console.log);other.full(console.log);", '"log";"console.log";');
                     });
             });
 
