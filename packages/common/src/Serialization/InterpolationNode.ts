@@ -1,5 +1,7 @@
 import { Node } from "./Node";
 import { NodeKind } from "./NodeKind";
+import { PathKind } from "./PathKind";
+import { PathPartCandidate } from "./PathPartCandidate";
 
 /**
  * Represents an interpolation node.
@@ -37,5 +39,17 @@ export class InterpolationNode<T> extends Node<T>
     public get Expression(): T
     {
         return this.expression;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public get PathPart(): PathPartCandidate<T>
+    {
+        return {
+            type: PathKind.Interpolation,
+            source: this.Source,
+            node: this.Expression
+        };
     }
 }

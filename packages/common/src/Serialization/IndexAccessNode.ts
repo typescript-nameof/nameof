@@ -87,11 +87,7 @@ export class IndexAccessNode<T> extends Node<T>
                     value
                 };
             case NodeKind.InterpolationNode:
-                return {
-                    type: PathKind.Interpolation,
-                    source,
-                    node: this.Index.Expression
-                };
+                return this.index.PathPart;
             default:
                 return {
                     type: PathKind.Unsupported,
