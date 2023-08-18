@@ -489,8 +489,9 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                         (expression) =>
                         {
                             if (
-                                this.IsStringLiteral(expression) ||
-                                this.IsTemplateLiteral(expression))
+                                this.IsMutated(expression, context) && (
+                                    this.IsStringLiteral(expression) ||
+                                    this.IsTemplateLiteral(expression)))
                             {
                                 return {
                                     type: ResultType.Node,
