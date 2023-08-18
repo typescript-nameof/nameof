@@ -129,20 +129,24 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
 
             if (nameofCall)
             {
-                let node: TNode;
                 let result = this.ProcessNameofCall(nameofCall, context);
 
-                if (Array.isArray(result))
+                if (result)
                 {
-                    node = this.DumpArray(result);
-                }
-                else
-                {
-                    node = this.Dump(result);
-                }
+                    let node: TNode;
 
-                this.MarkNode(node);
-                return node;
+                    if (Array.isArray(result))
+                    {
+                        node = this.DumpArray(result);
+                    }
+                    else
+                    {
+                        node = this.Dump(result);
+                    }
+
+                    this.MarkNode(node);
+                    return node;
+                }
             }
         }
         catch (error)
@@ -344,7 +348,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The transformed call.
      */
-    protected ProcessNameofCall(call: NameofCall<TNode>, context: TContext): NameofResult<TNode> | Array<NameofResult<TNode>>
+    protected ProcessNameofCall(call: NameofCall<TNode>, context: TContext): NameofResult<TNode> | Array<NameofResult<TNode>> | undefined
     {
         switch (call.function)
         {
@@ -358,10 +362,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                 return this.ProcessArray(call, context);
             // Don't transform `interpolate` functions - they will be processed in the `ProcessFull` method.
             case NameofFunction.Interpolate:
-                return {
-                    type: ResultType.Node,
-                    node: call.source
-                };
+                return undefined;
             default:
                 throw new UnsupportedFunctionError(this, call, context);
         }
