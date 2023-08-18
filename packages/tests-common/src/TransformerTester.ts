@@ -1,6 +1,5 @@
 import { strictEqual } from "assert";
-import { resolve } from "path";
-import { ErrorHandler, IErrorHandler } from "@typescript-nameof/common";
+import { ErrorHandler, IErrorHandler, InvalidArgumentCountError, MissingImportTypeQualifierError, MissingPropertyAccessError, NoReturnExpressionError, UnsupportedAccessorTypeError, UnsupportedNodeError, UnsupportedScenarioError } from "@typescript-nameof/common";
 import { Project } from "ts-morph";
 import { INameofOutput } from "./INameofOutput";
 import { TestErrorHandler } from "./TestErrorHandler";
@@ -45,7 +44,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             {
                                 await this.AssertError(
                                     "nameof();",
-                                    "Call expression must have one argument or type argument: nameof()");
+                                    InvalidArgumentCountError);
                             });
                     });
 
@@ -146,14 +145,14 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should throw when someone only uses an import type",
                             async () =>
                             {
-                                await this.AssertError("nameof<import('test')>();", this.GetUnsupportedErrorText('import("test")'));
+                                await this.AssertError("nameof<import('test')>();", MissingImportTypeQualifierError);
                             });
 
                         it(
                             "should throw when someone only uses an import type with typeof",
                             async () =>
                             {
-                                await this.AssertError("nameof<typeof import('test')>();", this.GetUnsupportedErrorText('typeof import("test")'));
+                                await this.AssertError("nameof<typeof import('test')>();", UnsupportedNodeError);
                             });
                     });
 
@@ -165,7 +164,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should not allow a computed property to be at the end with a number",
                             async () =>
                             {
-                                await this.AssertError("nameof(anyProp[0]);", this.GetUnsupportedComputationNodeErrorText("anyProp[0]"));
+                                await this.AssertError("nameof(anyProp[0]);", UnsupportedAccessorTypeError);
                             });
 
                         it(
@@ -193,14 +192,14 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should not allow a computed property to be at the end with a number when using a function",
                             async () =>
                             {
-                                await this.AssertError("nameof<MyInterface>(i => i.prop[0]);", this.GetUnsupportedComputationNodeErrorText("(i) => i.prop[0]"));
+                                await this.AssertError("nameof<MyInterface>(i => i.prop[0]);", UnsupportedAccessorTypeError);
                             });
 
                         it(
                             "should not allow an identifier nested in a computed property",
                             async () =>
                             {
-                                await this.AssertError("nameof<MyInterface>(i => i.prop[prop[0]]);", this.GetUnsupportedComputationNodeErrorText("(i) => i.prop[prop[0]]"));
+                                await this.AssertError("nameof<MyInterface>(i => i.prop[prop[0]]);", UnsupportedNodeError);
                             });
                     });
 
@@ -212,7 +211,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should not allow only an array",
                             async () =>
                             {
-                                await this.AssertError("nameof([0]);", this.GetUnsupportedErrorText("[0]"));
+                                await this.AssertError("nameof([0]);", UnsupportedNodeError);
                             });
 
                         it(
@@ -260,28 +259,21 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should throw when using an element access expression directly on the object and it is not a string",
                             async () =>
                             {
-                                await this.AssertError("nameof<MyInterface>(i => i[0]);", this.GetUnsupportedComputationNodeErrorText("(i) => i[0]"));
+                                await this.AssertError("nameof<MyInterface>(i => i[0]);", UnsupportedAccessorTypeError);
                             });
 
                         it(
                             "should throw when the function doesn't have a period",
                             async () =>
                             {
-                                await this.AssertError("nameof<MyInterface>(i => i);", "A property must be accessed on the object: (i) => i");
+                                await this.AssertError("nameof<MyInterface>(i => i);", MissingPropertyAccessError);
                             });
 
                         it(
                             "should throw when the function doesn't have a return statement",
                             async () =>
                             {
-                                const errorPrefix = "Cound not find return statement with an expression in function expression: ";
-
-                                const possibleMessages = [
-                                    errorPrefix + "{ i; }", // babel
-                                    errorPrefix + "{\n    i;\n}" // typescript
-                                ];
-
-                                await this.AssertError("nameof<MyInterface>(i => { i; });", ...possibleMessages);
+                                await this.AssertError("nameof<MyInterface>(i => { i; });", NoReturnExpressionError);
                             });
                     });
 
@@ -313,11 +305,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should throw when providing nameof.interpolate to nameof",
                             async () =>
                             {
-                                await this.AssertError(
-                                    "nameof(nameof.interpolate(5));",
-                                    this.GetUnsupportedErrorText("nameof.interpolate(5)"),
-                                    // it will be this for babel because it checks the parent nodes
-                                    this.GetUnusedInterpolationErrorText("5"));
+                                await this.AssertError("nameof(nameof.interpolate(5));", UnsupportedScenarioError);
                             });
                     });
 
@@ -364,7 +352,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should throw when a nameof.interpolate is not used",
                             async () =>
                             {
-                                await this.AssertError("nameof(`${nameof.interpolate(other)}`);", this.GetUnusedInterpolationErrorText("other"));
+                                await this.AssertError("nameof(`${nameof.interpolate(other)}`);", UnsupportedScenarioError);
                             });
                     });
 
@@ -504,40 +492,26 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
      * @param input
      * The input of the transformation.
      *
-     * @param potentialMessages
-     * A set of messages of which at least one is expected to occur.
+     * @param errorClass
+     * The class of the expected error.
      */
-    protected async AssertError(input: string, ...potentialMessages: string[]): Promise<void>
+    protected async AssertError(input: string, errorClass: new (...args: any[]) => Error): Promise<void>
     {
         let result = await this.Transform(input);
-        let babelPath = resolve(__dirname, "..", "..", "babel-transformer", "src", "tests", "test.ts");
-
-        let messages = potentialMessages.flatMap(
-            (message) =>
-            {
-                return [
-                    `[ts-nameof]: ${message}`,
-                    `[ts-nameof:/file.ts]: ${message}`,
-                    `${babelPath}: [ts-nameof:${babelPath}]: ${message}`,
-                    `${resolve(__dirname, "..", "..", "babel-macro", "src", "tests", "test.ts")}: ./ts-nameof.macro: [ts-nameof]: ${message}`
-                ];
-            });
 
         if (result.errors.length > 0)
         {
-            if (!result.errors.some((error) => messages.includes(error.message)))
+            if (!result.errors.some((error) => error.name === errorClass.name))
             {
                 throw new Error(
-                    `Expected the code ${input} to yield one of the following error messages:\n` +
-                    `${JSON.stringify(messages, null, 4)}\n` +
-                    "but got\n" +
-                    `${JSON.stringify(result.errors.map((error) => error.message), null, 4)}`);
+                    `Expected the code ${input} to yield an error with the name \`${errorClass.name}\`, but got:\n` +
+                    JSON.stringify(result.errors.map((error) => `${error.name}: ${error.message}`), null, 4));
             }
         }
         else
         {
             throw new Error(
-                `Expected the code ${JSON.stringify(input)} to cause an error, but returned the following result:\n` +
+                `Expected the code ${JSON.stringify(input)} to cause a ${errorClass.name} error, but returned the following result:\n` +
                 `${JSON.stringify(result.output)}`);
         }
     }
