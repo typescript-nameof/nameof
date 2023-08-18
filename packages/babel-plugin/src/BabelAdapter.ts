@@ -255,7 +255,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      */
     protected GetOriginal(node: types.Node): types.Node | undefined
     {
-        return (node.extra as any)[this.OriginalSymbol];
+        return (node.extra as any)?.[this.OriginalSymbol];
     }
 
     /**
