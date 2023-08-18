@@ -49,11 +49,11 @@ export class TypeScriptTester extends TransformerTester<ts.Node, ITypeScriptCont
             {
                 if (path === fileName)
                 {
-                    return undefined;
+                    return ts.createSourceFile(fileName, code, languageVersion, false, ts.ScriptKind.TS);
                 }
                 else
                 {
-                    ts.createSourceFile(fileName, code, languageVersion, false, ts.ScriptKind.TS);
+                    return undefined;
                 }
             },
             getDefaultLibFileName: (options) => ts.getDefaultLibFileName(options),
