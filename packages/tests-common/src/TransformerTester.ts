@@ -146,14 +146,14 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should throw when someone only uses an import type",
                             async () =>
                             {
-                                await this.Assert("nameof<import('test')>();", this.GetUnsupportedErrorText('import("test")'));
+                                await this.AssertError("nameof<import('test')>();", this.GetUnsupportedErrorText('import("test")'));
                             });
 
                         it(
                             "should throw when someone only uses an import type with typeof",
                             async () =>
                             {
-                                await this.Assert("nameof<typeof import('test')>();", this.GetUnsupportedErrorText('typeof import("test")'));
+                                await this.AssertError("nameof<typeof import('test')>();", this.GetUnsupportedErrorText('typeof import("test")'));
                             });
                     });
 
@@ -165,7 +165,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should not allow a computed property to be at the end with a number",
                             async () =>
                             {
-                                await this.Assert("nameof(anyProp[0]);", this.GetUnsupportedComputationNodeErrorText("anyProp[0]"));
+                                await this.AssertError("nameof(anyProp[0]);", this.GetUnsupportedComputationNodeErrorText("anyProp[0]"));
                             });
 
                         it(
@@ -193,14 +193,14 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should not allow a computed property to be at the end with a number when using a function",
                             async () =>
                             {
-                                await this.Assert("nameof<MyInterface>(i => i.prop[0]);", this.GetUnsupportedComputationNodeErrorText("(i) => i.prop[0]"));
+                                await this.AssertError("nameof<MyInterface>(i => i.prop[0]);", this.GetUnsupportedComputationNodeErrorText("(i) => i.prop[0]"));
                             });
 
                         it(
                             "should not allow an identifier nested in a computed property",
                             async () =>
                             {
-                                await this.Assert("nameof<MyInterface>(i => i.prop[prop[0]]);", this.GetUnsupportedComputationNodeErrorText("(i) => i.prop[prop[0]]"));
+                                await this.AssertError("nameof<MyInterface>(i => i.prop[prop[0]]);", this.GetUnsupportedComputationNodeErrorText("(i) => i.prop[prop[0]]"));
                             });
                     });
 
@@ -364,7 +364,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should throw when a nameof.interpolate is not used",
                             async () =>
                             {
-                                await this.Assert("nameof(`${nameof.interpolate(other)}`);", this.GetUnusedInterpolationErrorText("other"));
+                                await this.AssertError("nameof(`${nameof.interpolate(other)}`);", this.GetUnusedInterpolationErrorText("other"));
                             });
                     });
 
