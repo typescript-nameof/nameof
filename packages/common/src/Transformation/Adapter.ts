@@ -549,6 +549,8 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     protected ProcessInterpolate(call: NameofCall<TNode>, context: TContext): undefined
     {
         // Don't transform `interpolate` functions - they will be processed in the `ProcessFull` method.
+        context.interpolationCalls ??= [];
+        context.interpolationCalls.push(call.source);
         return;
     }
 

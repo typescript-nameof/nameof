@@ -1,4 +1,5 @@
 import { IAdapter } from "./IAdapter";
+import { ITransformationContext } from "./ITransformationContext";
 import { NameofResult } from "../NameofResult";
 import { ResultType } from "../ResultType";
 import { PathKind } from "../Serialization/PathKind";
@@ -7,7 +8,7 @@ import { PathPart } from "../Serialization/PathPart";
 /**
  * Provides the functionality to reduce a path to a single result.
  */
-export class ResultBuilder<TInput, TNode, TContext>
+export class ResultBuilder<TInput, TNode, TContext extends ITransformationContext<TNode>>
 {
     /**
      * The adapter of the result builder.
@@ -153,6 +154,13 @@ export class ResultBuilder<TInput, TNode, TContext>
                 this.Current += `[${JSON.stringify(pathPart.value)}]`;
                 break;
             case PathKind.Interpolation:
+                let index = this.Context.interpolationCalls?.indexOf(pathPart.source) ?? -1;
+
+                if (index >= 0)
+                {
+                    this.Context.interpolationCalls?.splice(index, 1);
+                }
+
                 this.Current += "[";
                 this.Push();
                 this.Current += "]";
