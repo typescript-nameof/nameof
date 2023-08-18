@@ -6,6 +6,17 @@ import { NameofCallExpression, Node } from "../Serialization/nodes";
 export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
 {
     /**
+     * Gets the expected name of nameof function calls.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The expected name of function calls.
+     */
+    GetNameofName(context: TContext): string;
+
+    /**
      * Extracts the node from the specified {@linkcode input}.
      *
      * @param input

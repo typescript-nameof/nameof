@@ -80,6 +80,14 @@ export abstract class AdapterError<TInput, TNode, TContext> extends NameofError
     }
 
     /**
+     * Gets the expected name of nameof function calls.
+     */
+    protected get NameofName(): string
+    {
+        return this.Adapter.GetNameofName(this.Context);
+    }
+
+    /**
      * Gets the source code which caused the error.
      */
     protected get SourceCode(): string

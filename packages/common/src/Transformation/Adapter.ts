@@ -71,6 +71,20 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
+     * @inheritdoc
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The expected name of function calls.
+     */
+    public GetNameofName(context: TContext): string
+    {
+        return "nameof";
+    }
+
+    /**
      * Extracts the node from the specified {@linkcode input}.
      *
      * @param input

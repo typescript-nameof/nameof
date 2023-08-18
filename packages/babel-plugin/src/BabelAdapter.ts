@@ -34,6 +34,20 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
     /**
      * @inheritdoc
      *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The expected name of function calls.
+     */
+    public GetNameofName(context: BabelContext): string
+    {
+        return context.nameofIdentifierName ?? super.GetNameofName(context);
+    }
+
+    /**
+     * @inheritdoc
+     *
      * @param input
      * The input to extract the node from.
      *
