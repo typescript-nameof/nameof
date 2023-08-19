@@ -32,42 +32,42 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
             visitor: {
                 Program: (path, state) =>
                 {
-                    let visitor: babel.Visitor<babel.PluginPass> = {
-                        CallExpression: (path, state) =>
-                        {
-                            let filePath = state.file.opts.filename as string;
-
-                            try
-                            {
-                                this.TransformNode(
-                                    path,
-                                    {
-                                        ...context,
-                                        state,
-                                        traverseChildren: () => path.traverse(visitor, state)
-                                    });
-                            }
-                            catch (error)
-                            {
-                                let message: string;
-
-                                if (error instanceof Error)
-                                {
-                                    message = error.message;
-                                }
-                                else
-                                {
-                                    message = `${error}`;
-                                }
-
-                                throwErrorForSourceFile(message, filePath);
-                            }
-                        }
-                    };
-
                     this.MonitorInterpolations(
-                        () =>
+                        (context) =>
                         {
+                            let visitor: babel.Visitor<babel.PluginPass> = {
+                                CallExpression: (path, state) =>
+                                {
+                                    let filePath = state.file.opts.filename as string;
+
+                                    try
+                                    {
+                                        this.TransformNode(
+                                            path,
+                                            {
+                                                ...context,
+                                                state,
+                                                traverseChildren: () => path.traverse(visitor, state)
+                                            });
+                                    }
+                                    catch (error)
+                                    {
+                                        let message: string;
+
+                                        if (error instanceof Error)
+                                        {
+                                            message = error.message;
+                                        }
+                                        else
+                                        {
+                                            message = `${error}`;
+                                        }
+
+                                        throwErrorForSourceFile(message, filePath);
+                                    }
+                                }
+                            };
+
                             path.traverse(visitor, state);
                         });
                 }
