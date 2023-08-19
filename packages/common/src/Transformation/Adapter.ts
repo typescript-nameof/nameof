@@ -24,7 +24,6 @@ import { FunctionNode } from "../Serialization/FunctionNode";
 import { InterpolationNode } from "../Serialization/InterpolationNode";
 import { NameofCall } from "../Serialization/NameofCall";
 import { NodeKind } from "../Serialization/NodeKind";
-import { NameofCallExpression, Node } from "../Serialization/nodes";
 import { NumericLiteralNode } from "../Serialization/NumericLiteralNode";
 import { ParsedNode } from "../Serialization/ParsedNode";
 import { PathKind } from "../Serialization/PathKind";
@@ -188,31 +187,12 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @inheritdoc
      *
      * @param item
-     * The item to parse.
-     *
-     * @param context
-     * The context of the operation.
-     */
-    public abstract LegacyParse(item: TInput, context: TContext): NameofCallExpression | undefined;
-
-    /**
-     * @inheritdoc
-     *
-     * @param item
      * The item to get the source code from.
      *
      * @param context
      * The context of the operation.
      */
     public abstract GetSourceCode(item: TNode, context: TContext): string;
-
-    /**
-     * @inheritdoc
-     *
-     * @param node
-     * The node to dump.
-     */
-    public abstract LegacyDump(node: Node): TNode;
 
     /**
      * @inheritdoc

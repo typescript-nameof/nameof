@@ -4,7 +4,9 @@ import { ProgramPattern, TransformerExtras } from "ts-patch";
 import { Program, SourceFile, TransformationContext, TransformerFactory } from "typescript";
 import { Api } from "./Api";
 import { replaceInFiles, replaceInText } from "./text";
-import { transformerFactory } from "./Transformation/transformerFactory";
+import { TypeScriptTransformer } from "./Transformation/TypeScriptTransformer";
+
+let transformerFactory = new TypeScriptTransformer().Factory;
 
 let transformerFactoryBuilder: ProgramPattern & TransformerFactory<SourceFile> = (...args: [Program, Record<string, unknown>?, TransformerExtras?] | [TransformationContext]) =>
 {

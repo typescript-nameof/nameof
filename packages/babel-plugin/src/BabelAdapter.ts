@@ -1,16 +1,13 @@
 // eslint-disable-next-line node/no-unpublished-import
-import { types } from "@babel/core";
-import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofCallExpression, NameofResult, Node, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
-import { ITransformTarget } from "./ITransformTarget";
-import { parse } from "./parse";
-import { transform } from "./transform";
+import { NodePath, types } from "@babel/core";
+import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import { BabelContext } from "./Transformation/BabelContext";
 import { BabelFeatures } from "./Transformation/BabelFeatures";
 
 /**
  * Provides the functionality to parse and dump `nameof` calls for babel.
  */
-export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types.Node, BabelContext>
+export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, BabelContext>
 {
     /**
      * Initializes a new instance of the {@linkcode BabelAdapter} class.
@@ -54,9 +51,9 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      * @returns
      * The node that was extracted from the specified {@linkcode input}.
      */
-    public Extract(input: ITransformTarget): types.Node
+    public Extract(input: NodePath): types.Node
     {
-        return input.path.node;
+        return input.node;
     }
 
     /**
@@ -88,7 +85,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
      * @returns
      * The transformed node.
      */
-    public Transform(input: ITransformTarget, context: BabelContext): types.Node
+    public Transform(input: NodePath, context: BabelContext): types.Node
     {
         context.traverseChildren?.();
         return super.Transform(input, context);
@@ -109,37 +106,6 @@ export class BabelAdapter extends Adapter<BabelFeatures, ITransformTarget, types
     public GetSourceCode(item: types.Node, context: BabelContext): string
     {
         return context.state.file.code.slice(item.start as number, item.end as number);
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param item
-     * The item to parse.
-     *
-     * @param context
-     * The context of the operation.
-     *
-     * @returns
-     * The parsed `nameof` expression.
-     */
-    public LegacyParse(item: ITransformTarget, context: BabelContext): NameofCallExpression | undefined
-    {
-        return parse(this.Types, item.path, item.options);
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param node
-     * The node to dump.
-     *
-     * @returns
-     * The converted representation of the specified {@linkcode node}.
-     */
-    public LegacyDump(node: Node): types.Node
-    {
-        return transform(this.Types, node);
     }
 
     /**

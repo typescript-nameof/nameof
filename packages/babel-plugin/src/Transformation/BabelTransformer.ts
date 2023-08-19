@@ -107,12 +107,7 @@ export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, 
      */
     public TransformNode(path: babel.NodePath, context: BabelContext): void
     {
-        let transformed = this.Transformer.Transform(
-            {
-                path,
-                options: context
-            },
-            context);
+        let transformed = this.Transformer.Transform(path, context);
 
         if (transformed)
         {

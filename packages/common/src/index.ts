@@ -12,14 +12,6 @@ export { UnusedInterpolationError } from "./Diagnostics/UnusedInterpolationError
 export * from "./errors";
 export { NameofResult } from "./NameofResult";
 export { ResultType } from "./ResultType";
-export * from "./Serialization/nodes";
-export {
-    IdentifierNode as LegacyIdentifierNode,
-    FunctionNode as LegacyFunctionNode,
-    NumericLiteralNode as LegacyNumericLiteralNode,
-    StringLiteralNode as LegacyStringLiteralNode
-} from "./Serialization/nodes";
-export * from "./Serialization/nodeFactories";
 export { CallExpressionNode } from "./Serialization/CallExpressionNode";
 export { FunctionNode } from "./Serialization/FunctionNode";
 export { IndexAccessNode } from "./Serialization/IndexAccessNode";
@@ -35,7 +27,5 @@ export { Adapter } from "./Transformation/Adapter";
 export { ErrorHandler } from "./Transformation/ErrorHandler";
 export { IAdapter } from "./Transformation/IAdapter";
 export { IErrorHandler } from "./Transformation/IErrorHandler";
-export { NameofNodeTransformer } from "./Transformation/NameofNodeTransformer";
 export { TransformerBase } from "./Transformation/TransformerBase";
 export { TransformerFeatures } from "./Transformation/TransformerFeatures";
-export * from "./transformCallExpression";
