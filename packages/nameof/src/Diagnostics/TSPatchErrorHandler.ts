@@ -1,6 +1,6 @@
 import { Diagnostic } from "typescript";
 import { TypeScriptErrorHandler } from "./TypeScriptErrorHandler";
-import { TSPatchFeatures } from "../TSPatchFeatures";
+import { TSPatchFeatures } from "../Transformation/TSPatchFeatures";
 
 /**
  * Provides the functionality to handle errors using `ts-patch` components.

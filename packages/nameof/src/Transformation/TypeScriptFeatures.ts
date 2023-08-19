@@ -1,8 +1,8 @@
 import { TransformerFeatures } from "@typescript-nameof/common";
 import { IErrorHandler } from "@typescript-nameof/common/src/Transformation/IErrorHandler";
 import type ts = require("typescript");
-import { TypeScriptErrorHandler } from "./Diagnostics/TypeScriptErrorHandler";
 import { ITypeScriptContext } from "./ITypeScriptContext";
+import { TypeScriptErrorHandler } from "../Diagnostics/TypeScriptErrorHandler";
 
 /**
  * Provides features for transforming TypeScript code.

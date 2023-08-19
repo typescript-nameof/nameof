@@ -1,7 +1,7 @@
 import { IErrorHandler } from "@typescript-nameof/common";
 import { Diagnostic, Node } from "typescript";
-import { ITypeScriptContext } from "../ITypeScriptContext";
-import { TypeScriptFeatures } from "../TypeScriptFeatures";
+import { ITypeScriptContext } from "../Transformation/ITypeScriptContext";
+import { TypeScriptFeatures } from "../Transformation/TypeScriptFeatures";
 
 /**
  * Provides the functionality to report errors to a TypeScript compiler.

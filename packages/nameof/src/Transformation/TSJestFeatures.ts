@@ -2,9 +2,9 @@ import { IErrorHandler } from "@typescript-nameof/common";
 // eslint-disable-next-line node/no-unpublished-import
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import type ts = require("typescript");
-import { TSJestErrorHandler } from "./Diagnostics/TSJestErrorHandler";
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
+import { TSJestErrorHandler } from "../Diagnostics/TSJestErrorHandler";
 
 /**
  * Provides features for `ts-jest` transformations.

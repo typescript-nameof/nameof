@@ -1,6 +1,6 @@
 import { Diagnostic } from "typescript";
 import { TypeScriptErrorHandler } from "./TypeScriptErrorHandler";
-import { TSJestFeatures } from "../TSJestFeatures";
+import { TSJestFeatures } from "../Transformation/TSJestFeatures";
 
 /**
  * Provides the functionality to handle errors using `ts-jest` components.
