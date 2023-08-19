@@ -2,7 +2,7 @@ import type babel = require("@babel/core");
 import { BabelTransformer } from "@typescript-nameof/babel-plugin";
 import { BabelContext } from "@typescript-nameof/babel-plugin/src/Transformation/BabelContext";
 import { IErrorHandler } from "@typescript-nameof/common";
-import { MacroError } from "babel-plugin-macros";
+import { MacroError, MacroHandler } from "babel-plugin-macros";
 
 /**
  * Provides the functionality to transform files using a babel-macro.
@@ -26,19 +26,19 @@ export class BabelMacroTransformer extends BabelTransformer
     /**
      * Gets a babel-macro for transforming `nameof` calls.
      */
-    public get Macro(): any
+    public get Macro(): MacroHandler
     {
-        return (macroContext: any): void =>
+        return (params): void =>
         {
             this.MonitorInterpolations(
                 (context) =>
                 {
-                    (macroContext.references.default as Array<babel.NodePath<babel.types.Identifier>>).slice().reverse().forEach(
+                    (params.references.default as Array<babel.NodePath<babel.types.Identifier>>).slice().reverse().forEach(
                         (path) =>
                         {
                             let babelContext: BabelContext = {
                                 ...context,
-                                state: macroContext.state,
+                                state: params.state,
                                 nameofIdentifierName: path.node.name
                             };
 
