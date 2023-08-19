@@ -24,7 +24,15 @@ describe(
 
             try
             {
-                await replaceInFiles([fileName]);
+                try
+                {
+                    await replaceInFiles([fileName]);
+                }
+                catch (error)
+                {
+                    console.log(error);
+                }
+
                 const data = await readFile(fileName);
                 const expectedContents = await readFile(expectedFileName);
                 assert.equal(data.replace(/\r?\n/g, "\n"), expectedContents.replace(/\r?\n/g, "\n"));

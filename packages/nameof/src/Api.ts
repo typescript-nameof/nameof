@@ -29,7 +29,7 @@ export type Api = TransformerFactory<SourceFile> & {
      * @param fileNames
      * The names of the files to transform.
      */
-    replaceInFiles(fileNames: readonly string[]): Promise<void[]>;
+    replaceInFiles(fileNames: readonly string[]): Promise<void>;
 
     /**
      * Transforms the file with the specified {@link fileName `fileName`} with the specified {@link fileText `fileText`}.

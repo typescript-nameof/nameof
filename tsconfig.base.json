@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "ES2015",
-        "module": "CommonJS",
+        "module": "Node16",
         "declaration": true,
         "sourceMap": true,
         "strict": true,
