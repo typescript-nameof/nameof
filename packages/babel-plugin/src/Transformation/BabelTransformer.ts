@@ -1,5 +1,5 @@
 import type babel = require("@babel/core");
-import { IErrorHandler, ITransformationContext, throwErrorForSourceFile, TransformerBase, UnusedInterpolationError } from "@typescript-nameof/common";
+import { IAdapter, IErrorHandler, throwErrorForSourceFile, TransformerBase } from "@typescript-nameof/common";
 import { BabelContext } from "./BabelContext";
 import { BabelFeatures } from "./BabelFeatures";
 import { BabelAdapter } from "../BabelAdapter";
@@ -7,13 +7,8 @@ import { BabelAdapter } from "../BabelAdapter";
 /**
  * Provides the functionality to transform babel nodes and files.
  */
-export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, BabelFeatures>
+export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node, BabelContext, BabelFeatures>
 {
-    /**
-     * A component for transforming `babel` nodes.
-     */
-    private transformer: BabelAdapter;
-
     /**
      * Initializes a new instance of the {@linkcode BabelTransformer} class.
      *
@@ -26,15 +21,6 @@ export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, 
     public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<babel.Node, BabelContext>)
     {
         super(new BabelFeatures(babelAPI, errorHandler));
-        this.transformer = new BabelAdapter(this.Features);
-    }
-
-    /**
-     * Gets a component for transforming `babel` nodes.
-     */
-    public get Transformer(): BabelAdapter
-    {
-        return this.transformer;
     }
 
     /**
@@ -46,10 +32,6 @@ export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, 
             visitor: {
                 Program: (path, state) =>
                 {
-                    let context: ITransformationContext<babel.Node> = {
-                        interpolationCalls: []
-                    };
-
                     let visitor: babel.Visitor<babel.PluginPass> = {
                         CallExpression: (path, state) =>
                         {
@@ -83,14 +65,11 @@ export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, 
                         }
                     };
 
-                    path.traverse(visitor, state);
-
-                    let remainingCall = context.interpolationCalls?.[0];
-
-                    if (remainingCall)
-                    {
-                        new UnusedInterpolationError(this.Transformer, remainingCall, context).ReportAction();
-                    }
+                    this.MonitorInterpolations(
+                        () =>
+                        {
+                            path.traverse(visitor, state);
+                        });
                 }
             }
         };
@@ -107,11 +86,22 @@ export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, 
      */
     public TransformNode(path: babel.NodePath, context: BabelContext): void
     {
-        let transformed = this.Transformer.Transform(path, context);
+        let transformed = this.Adapter.Transform(path, context);
 
         if (transformed)
         {
             path.replaceWith(transformed);
         }
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @returns
+     * The newly created adapter.
+     */
+    protected InitializeAdapter(): IAdapter<babel.NodePath, babel.types.Node, BabelContext>
+    {
+        return new BabelAdapter(this.Features);
     }
 }
