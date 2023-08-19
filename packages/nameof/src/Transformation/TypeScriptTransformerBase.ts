@@ -108,6 +108,8 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
             },
             tsContext);
 
-        return this.Adapter.Transform(node, context) as T ?? node;
+        let result = this.Adapter.Transform(node, context) as T ?? node;
+        context.postTransformHook?.(node, result);
+        return result;
     }
 }
