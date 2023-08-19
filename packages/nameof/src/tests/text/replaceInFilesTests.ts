@@ -1,5 +1,6 @@
-import * as assert from "assert";
-import { getTestFilePath, readFile, writeFile } from "./helpers";
+import { strictEqual } from "assert";
+import { readFile, writeFile } from "fs-extra";
+import { getTestFilePath } from "./helpers";
 import { replaceInFiles } from "../../text";
 
 describe(
@@ -38,28 +39,34 @@ describe(
 
             const initialFiles = await Promise.all(
                 expectedFiles.map(
-                    f =>
-                        readFile(f.filePath).then(
-                            data => (
-                                {
-                                    filePath: f.filePath,
-                                    contents: data
-                                } as IFileInfo))
-                ));
+                    (file) =>
+                    {
+                        return (
+                            async () =>
+                            {
+                                return {
+                                    ...file,
+                                    contents: await readFile(file.filePath)
+                                };
+                            })();
+                    }));
 
             try
             {
                 await replaceInFiles(paths);
 
-                const readFilePromises = expectedFiles.map(
-                    f => readFile(f.filePath).then(
-                        data => ({ data, expectedContents: f.contents })));
-
-                for (const promise of readFilePromises)
-                {
-                    const { data, expectedContents } = await promise;
-                    assert.equal(data.replace(/\r?\n/g, "\n"), expectedContents.replace(/\r?\n/g, "\n"));
-                }
+                await Promise.allSettled(
+                    expectedFiles.map(
+                        (file) =>
+                        {
+                            return (
+                                async () =>
+                                {
+                                    strictEqual(
+                                        (await readFile(file.filePath)).toString().replace(/\r?\n/g, "\n"),
+                                        file.contents.replace(/\r?\n/g, "\n"));
+                                })();
+                        }));
             }
             finally
             {
@@ -97,7 +104,9 @@ describe(
                     async () =>
                     {
                         // because an IDE might auto-format the code, this makes sure that hasn't happened
-                        assert.equal((await readFile(getTestFilePath("GeneralTestFile.txt"))).replace(/\r?\n/g, "\n").length, 1105);
+                        strictEqual(
+                            (await readFile(getTestFilePath("GeneralTestFile.txt"))).toString().replace(/\r?\n/g, "\n").length,
+                            1105);
                     });
 
                 const expected = `console.log("alert");

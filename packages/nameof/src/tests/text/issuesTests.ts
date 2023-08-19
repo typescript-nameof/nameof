@@ -1,5 +1,6 @@
 import * as assert from "assert";
-import { getTestFilePath, readFile, writeFile } from "./helpers";
+import { readFile, writeFile } from "fs-extra";
+import { getTestFilePath } from "./helpers";
 import { replaceInFiles } from "../../text";
 
 describe(
@@ -20,7 +21,7 @@ describe(
             fileName = getTestFilePath(fileName);
             expectedFileName = getTestFilePath(expectedFileName);
 
-            const originalFileText = await readFile(expectedFileName);
+            const originalFileText = (await readFile(expectedFileName)).toString();
 
             try
             {
@@ -33,8 +34,8 @@ describe(
                     console.log(error);
                 }
 
-                const data = await readFile(fileName);
-                const expectedContents = await readFile(expectedFileName);
+                const data = (await readFile(fileName)).toString();
+                const expectedContents = (await readFile(expectedFileName)).toString();
                 assert.equal(data.replace(/\r?\n/g, "\n"), expectedContents.replace(/\r?\n/g, "\n"));
             }
             finally
