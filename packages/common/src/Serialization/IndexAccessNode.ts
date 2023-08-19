@@ -17,7 +17,7 @@ export class IndexAccessNode<T> extends Node<T>
     /**
      * The expression of the index access operation.
      */
-    private expression: Node<T>;
+    private expression: ParsedNode<T>;
 
     /**
      * The index to access.
@@ -36,7 +36,7 @@ export class IndexAccessNode<T> extends Node<T>
      * @param index
      * The index to access.
      */
-    public constructor(source: T, expression: Node<T>, index: ParsedNode<T>)
+    public constructor(source: T, expression: ParsedNode<T>, index: ParsedNode<T>)
     {
         super(source);
         this.expression = expression;
@@ -46,7 +46,7 @@ export class IndexAccessNode<T> extends Node<T>
     /**
      * Gets the expression of the index access operation.
      */
-    public get Expression(): Node<T>
+    public get Expression(): ParsedNode<T>
     {
         return this.expression;
     }
