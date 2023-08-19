@@ -1,5 +1,5 @@
 import type babel = require("@babel/core");
-import { IErrorHandler, ITransformationContext, throwErrorForSourceFile, TransformerBase } from "@typescript-nameof/common";
+import { IErrorHandler, ITransformationContext, throwErrorForSourceFile, TransformerBase, UnusedInterpolationError } from "@typescript-nameof/common";
 import { BabelContext } from "./BabelContext";
 import { BabelFeatures } from "./BabelFeatures";
 import { BabelAdapter } from "../BabelAdapter";
@@ -30,56 +30,70 @@ export class BabelTransformer extends TransformerBase<babel.Node, BabelContext, 
     }
 
     /**
+     * Gets a component for transforming `babel` nodes.
+     */
+    public get Transformer(): BabelAdapter
+    {
+        return this.transformer;
+    }
+
+    /**
      * Gets a plugin for the use with `babel`.
      */
     public get Plugin(): babel.PluginObj
     {
-        let context: ITransformationContext<babel.Node> = {
-            interpolationCalls: []
-        };
-
-        let visitor: babel.Visitor<babel.PluginPass> = {
-            CallExpression: (path, state) =>
-            {
-                let filePath = state.file.opts.filename as string;
-
-                try
+        return {
+            visitor: {
+                Program: (path, state) =>
                 {
-                    this.TransformNode(
-                        path,
+                    let context: ITransformationContext<babel.Node> = {
+                        interpolationCalls: []
+                    };
+
+                    let visitor: babel.Visitor<babel.PluginPass> = {
+                        CallExpression: (path, state) =>
                         {
-                            ...context,
-                            state,
-                            traverseChildren: () => path.traverse(visitor, state)
-                        });
-                }
-                catch (error)
-                {
-                    let message: string;
+                            let filePath = state.file.opts.filename as string;
 
-                    if (error instanceof Error)
-                    {
-                        message = error.message;
-                    }
-                    else
-                    {
-                        message = `${error}`;
-                    }
+                            try
+                            {
+                                this.TransformNode(
+                                    path,
+                                    {
+                                        ...context,
+                                        state,
+                                        traverseChildren: () => path.traverse(visitor, state)
+                                    });
+                            }
+                            catch (error)
+                            {
+                                let message: string;
 
-                    throwErrorForSourceFile(message, filePath);
+                                if (error instanceof Error)
+                                {
+                                    message = error.message;
+                                }
+                                else
+                                {
+                                    message = `${error}`;
+                                }
+
+                                throwErrorForSourceFile(message, filePath);
+                            }
+                        }
+                    };
+
+                    path.traverse(visitor, state);
+
+                    let remainingCall = context.interpolationCalls?.[0];
+
+                    if (remainingCall)
+                    {
+                        new UnusedInterpolationError(this.Transformer, remainingCall, context).ReportAction();
+                    }
                 }
             }
         };
-
-        return { visitor };
-    }
-
-    /**
-     * Gets a component for transforming `babel` nodes.
-     */
-    protected get Transformer(): BabelAdapter
-    {
-        return this.transformer;
     }
 
     /**

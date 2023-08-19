@@ -1,6 +1,7 @@
 /// <reference path="references.d.ts" />
 import { BabelTransformer } from "@typescript-nameof/babel-plugin";
 import { BabelContext } from "@typescript-nameof/babel-plugin/src/Transformation/BabelContext";
+import { UnusedInterpolationError } from "@typescript-nameof/common";
 import { INameOfProvider } from "@typescript-nameof/common-types";
 import { createMacro, MacroError } from "babel-plugin-macros";
 
@@ -62,4 +63,11 @@ function nameofMacro(context: any): void
             throw new MacroError(`[ts-nameof]: Could not find a call expression at path: ${grandParentPath.getSource()}`);
         }
     });
+
+    let remainingCall = context.interpolationCalls?.[0];
+
+    if (remainingCall)
+    {
+        throw new UnusedInterpolationError(transformer.Transformer, remainingCall, context);
+    }
 }

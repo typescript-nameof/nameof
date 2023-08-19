@@ -6,6 +6,7 @@ export { NoReturnExpressionError } from "./Diagnostics/NoReturnExpressionError";
 export { UnsupportedAccessorTypeError } from "./Diagnostics/UnsupportedAccessorTypeError";
 export { UnsupportedNodeError } from "./Diagnostics/UnsupportedNodeError";
 export { UnsupportedScenarioError } from "./Diagnostics/UnsupportedScenarioError";
+export { UnusedInterpolationError } from "./Diagnostics/UnusedInterpolationError";
 export * from "./errors";
 export { NameofResult } from "./NameofResult";
 export { ResultType } from "./ResultType";

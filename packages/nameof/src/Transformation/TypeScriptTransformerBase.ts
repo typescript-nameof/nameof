@@ -1,4 +1,4 @@
-import { TransformerBase } from "@typescript-nameof/common";
+import { TransformerBase, UnusedInterpolationError } from "@typescript-nameof/common";
 import { Node, SourceFile, TransformationContext, TransformerFactory } from "typescript";
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TypeScriptAdapter } from "./TypeScriptAdapter";
@@ -52,12 +52,22 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
     public VisitSourceFile(file: SourceFile, tsContext: TransformationContext): SourceFile
     {
         let context: ITypeScriptContext = { file };
+        let adapter = new TypeScriptAdapter(this.Features);
 
-        return this.VisitNode(
+        let result = this.VisitNode(
             new TypeScriptAdapter(this.Features),
             file,
             context,
             tsContext);
+
+        let remainingCall = context.interpolationCalls?.[0];
+
+        if (remainingCall)
+        {
+            new UnusedInterpolationError(adapter, remainingCall, context).ReportAction();
+        }
+
+        return result;
     }
 
     /**
