@@ -1,4 +1,4 @@
-import babel = require("@babel/core");
+import type babel = require("@babel/core");
 import { BabelTransformer } from "@typescript-nameof/babel-plugin";
 import { BabelContext } from "@typescript-nameof/babel-plugin/src/Transformation/BabelContext";
 import { IErrorHandler } from "@typescript-nameof/common";
@@ -20,7 +20,7 @@ export class BabelMacroTransformer extends BabelTransformer
      */
     public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<babel.Node, BabelContext>)
     {
-        super(babel, errorHandler);
+        super(babelAPI, errorHandler);
     }
 
     /**
