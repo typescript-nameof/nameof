@@ -1,5 +1,5 @@
 import { strictEqual } from "assert";
-import { ErrorHandler, IErrorHandler, InvalidArgumentCountError, MissingImportTypeQualifierError, MissingPropertyAccessError, NoReturnExpressionError, UnsupportedAccessorTypeError, UnsupportedNodeError, UnsupportedScenarioError } from "@typescript-nameof/common";
+import { ErrorHandler, IErrorHandler, InvalidDefaultCallError, MissingImportTypeQualifierError, MissingPropertyAccessError, NestedNameofError, NoReturnExpressionError, UnsupportedAccessorTypeError, UnsupportedNodeError, UnsupportedScenarioError } from "@typescript-nameof/common";
 import { Project } from "ts-morph";
 import { INameofOutput } from "./INameofOutput";
 import { TestErrorHandler } from "./TestErrorHandler";
@@ -44,7 +44,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             {
                                 await this.AssertError(
                                     "nameof();",
-                                    InvalidArgumentCountError);
+                                    InvalidDefaultCallError);
                             });
                     });
 
@@ -102,10 +102,10 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
 
                         it(
-                            "should resolve to string when nesting nameofs",
+                            "should throw if nameof calls are nested inside of nameof() calls",
                             async () =>
                             {
-                                await this.Assert("nameof(nameof(testing));", '"testing";');
+                                await this.AssertError("nameof(nameof(testing));", NestedNameofError);
                             });
                     });
 
@@ -152,7 +152,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             "should throw when someone only uses an import type with typeof",
                             async () =>
                             {
-                                await this.AssertError("nameof<typeof import('test')>();", UnsupportedNodeError);
+                                await this.AssertError("nameof<typeof import('test')>();", UnsupportedNodeError, MissingImportTypeQualifierError);
                             });
                     });
 
@@ -161,10 +161,10 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                     () =>
                     {
                         it(
-                            "should not allow a computed property to be at the end with a number",
+                            "should allow numeric computed properties",
                             async () =>
                             {
-                                await this.AssertError("nameof(anyProp[0]);", UnsupportedAccessorTypeError);
+                                await this.Assert("nameof(anyProp[0]);", '"0";');
                             });
 
                         it(
@@ -189,17 +189,17 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
 
                         it(
-                            "should not allow a computed property to be at the end with a number when using a function",
+                            "should not allow numeric computed properties using a function",
                             async () =>
                             {
-                                await this.AssertError("nameof<MyInterface>(i => i.prop[0]);", UnsupportedAccessorTypeError);
+                                await this.Assert("nameof<MyInterface>(i => i.prop[0]);", '"0";');
                             });
 
                         it(
                             "should not allow an identifier nested in a computed property",
                             async () =>
                             {
-                                await this.AssertError("nameof<MyInterface>(i => i.prop[prop[0]]);", UnsupportedNodeError);
+                                await this.AssertError("nameof<MyInterface>(i => i.prop[prop[0]]);", UnsupportedAccessorTypeError);
                             });
                     });
 
@@ -256,10 +256,10 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
 
                         it(
-                            "should throw when using an element access expression directly on the object and it is not a string",
+                            "should allow numeric computed properties",
                             async () =>
                             {
-                                await this.AssertError("nameof<MyInterface>(i => i[0]);", UnsupportedAccessorTypeError);
+                                await this.Assert("nameof<MyInterface>(i => i[0]);", '"0";');
                             });
 
                         it(
@@ -282,18 +282,17 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                     () =>
                     {
                         it(
-                            "should leave the string literal as-is",
+                            "should throw if trying to parse a string literal",
                             async () =>
                             {
-                                // this allows for nested nameofs
-                                await this.Assert('nameof("test");', '"test";');
+                                await this.AssertError('nameof("test");', UnsupportedNodeError);
                             });
 
                         it(
-                            "should transform a numeric literal as a string",
+                            "should throw if trying to parse a numeric literal",
                             async () =>
                             {
-                                await this.Assert("nameof(5);", '"5";');
+                                await this.AssertError("nameof(5);", UnsupportedNodeError);
                             });
                     });
 
@@ -314,45 +313,10 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                     () =>
                     {
                         it(
-                            "should return a no substitution template literal",
+                            "should throw when trying to parse a template literal",
                             async () =>
                             {
-                                await this.Assert("nameof(`testing`);", "`testing`;");
-                            });
-
-                        it(
-                            "should return the template expression when it has only a template tail",
-                            async () =>
-                            {
-                                await this.Assert("nameof(`testing${test}final`);", "`testing${test}final`;");
-                            });
-
-                        it(
-                            "should return the template expression when it has a template middle",
-                            async () =>
-                            {
-                                await this.Assert("nameof(`testing${other}asdf${test}${asdf}final`);", "`testing${other}asdf${test}${asdf}final`;");
-                            });
-
-                        it(
-                            "should return the template expression when it starts and ends with one",
-                            async () =>
-                            {
-                                await this.Assert("nameof(`${other}`);", "`${other}`;");
-                            });
-
-                        it(
-                            "should return the template expression when it starts and ends with multiple",
-                            async () =>
-                            {
-                                await this.Assert("nameof(`${other}${asdf}${test}`);", "`${other}${asdf}${test}`;");
-                            });
-
-                        it(
-                            "should throw when a nameof.interpolate is not used",
-                            async () =>
-                            {
-                                await this.AssertError("nameof(`${nameof.interpolate(other)}`);", UnsupportedScenarioError);
+                                await this.AssertError("nameof(`testing`);", UnsupportedNodeError);
                             });
                     });
 
@@ -361,10 +325,10 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                     () =>
                     {
                         it(
-                            "should ignore spread syntax",
+                            "should throw if passing a spread operator",
                             async () =>
                             {
-                                await this.Assert("nameof(...test);", '"test";');
+                                await this.AssertError("nameof(...test);", UnsupportedNodeError);
                             });
                     });
             });

@@ -1,7 +1,9 @@
 export { NameofError } from "./Diagnostics/NameofError";
 export { InvalidArgumentCountError } from "./Diagnostics/InvalidArgumentCountError";
+export { InvalidDefaultCallError } from "./Diagnostics/InvalidDefaultCallError";
 export { MissingImportTypeQualifierError } from "./Diagnostics/MissingImportTypeQualifierError";
 export { MissingPropertyAccessError } from "./Diagnostics/MissingPropertyAccessError";
+export { NestedNameofError } from "./Diagnostics/NestedNameofError";
 export { NoReturnExpressionError } from "./Diagnostics/NoReturnExpressionError";
 export { UnsupportedAccessorTypeError } from "./Diagnostics/UnsupportedAccessorTypeError";
 export { UnsupportedNodeError } from "./Diagnostics/UnsupportedNodeError";
