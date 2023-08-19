@@ -492,26 +492,47 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
      * @param input
      * The input of the transformation.
      *
-     * @param errorClass
-     * The class of the expected error.
+     * @param errorClasses
+     * The classes of the expected error.
      */
-    protected async AssertError(input: string, errorClass: new (...args: any[]) => Error): Promise<void>
+    protected async AssertError(input: string, ...errorClasses: Array<new (...args: any[]) => Error>): Promise<void>
     {
         let result = await this.Transform(input);
+        let errorNames: string | undefined;
+
+        if (errorClasses.length > 0)
+        {
+            if (errorClasses.length === 1)
+            {
+                errorNames = `${errorClasses[0].name}`;
+            }
+            else
+            {
+                let classes = errorClasses.map((errorClass) => `\`${errorClass.name}\``);
+                let lastClass = classes.pop();
+                errorNames = `${classes.join(", ")} or ${lastClass}`;
+            }
+        }
 
         if (result.errors.length > 0)
         {
-            if (!result.errors.some((error) => error.name === errorClass.name))
+            if (errorClasses.length > 0)
             {
-                throw new Error(
-                    `Expected the code ${input} to yield an error with the name \`${errorClass.name}\`, but got:\n` +
-                    JSON.stringify(result.errors.map((error) => `${error.name}: ${error.message}`), null, 4));
+                if (
+                    !result.errors.some((error) => errorClasses.some((errorClass) => error.name === errorClass.name)))
+                {
+                    throw new Error(
+                        `Expected the code ${input} to yield an error with the name ${errorNames}, but got:\n` +
+                        JSON.stringify(result.errors.map((error) => `${error.name}: ${error.message}`), null, 4));
+                }
             }
         }
         else
         {
+            let errorDescriptor = errorNames ? `a ${errorNames}` : "an";
+
             throw new Error(
-                `Expected the code ${JSON.stringify(input)} to cause a ${errorClass.name} error, but returned the following result:\n` +
+                `Expected the code ${JSON.stringify(input)} to cause ${errorDescriptor} error, but returned the following result:\n` +
                 `${JSON.stringify(result.output)}`);
         }
     }
