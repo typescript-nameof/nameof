@@ -1,6 +1,7 @@
 import { TransformerBase, UnusedInterpolationError } from "@typescript-nameof/common";
 import { Node, SourceFile, TransformationContext, TransformerFactory } from "typescript";
 import { ITypeScriptContext } from "./ITypeScriptContext";
+import { TransformHook } from "./TransformHook";
 import { TypeScriptAdapter } from "./TypeScriptAdapter";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
 
@@ -54,19 +55,19 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
     /**
      * Gets a factory with a pre-defined {@linkcode context}.
      *
-     * @param context
-     * The pre-defined context to pass to the factory.
+     * @param postTransformHook
+     * A hook to execute after transforming a node.
      *
      * @returns
      * A newly created factory with a pre-defined {@linkcode context}.
      */
-    public GetFactory(context?: Partial<ITypeScriptContext>): TransformerFactory<SourceFile>
+    public GetFactory(postTransformHook: TransformHook): TransformerFactory<SourceFile>
     {
         return (tsContext) =>
         {
             return (file) =>
             {
-                return this.VisitSourceFile(file, tsContext, context);
+                return this.VisitSourceFile(file, tsContext, postTransformHook);
             };
         };
     }
@@ -80,29 +81,29 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      * @param tsContext
      * The context of the typescript transformation.
      *
-     * @param context
-     * The context of the operation.
+     * @param postTransformHook
+     * A hook to execute after transforming a node.
      *
      * @returns
      * The transformed representation of the specified {@linkcode file}.
      */
-    public VisitSourceFile(file: SourceFile, tsContext: TransformationContext, context?: Partial<ITypeScriptContext>): SourceFile
+    public VisitSourceFile(file: SourceFile, tsContext: TransformationContext, postTransformHook?: TransformHook): SourceFile
     {
-        let realContext = (context ?? { }) as ITypeScriptContext;
-        realContext.file = file;
+        let context: ITypeScriptContext = { file };
+        context.postTransformHook = postTransformHook;
 
         let adapter = new TypeScriptAdapter(this.Features);
 
         let result = this.VisitNode(
             file,
-            realContext,
+            context,
             tsContext);
 
-        let remainingCall = realContext.interpolationCalls?.[0];
+        let remainingCall = context.interpolationCalls?.[0];
 
         if (remainingCall)
         {
-            new UnusedInterpolationError(adapter, remainingCall, realContext).ReportAction();
+            new UnusedInterpolationError(adapter, remainingCall, context).ReportAction();
         }
 
         return result;

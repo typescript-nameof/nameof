@@ -1,5 +1,4 @@
 import * as ts from "typescript";
-import { ITypeScriptContext } from "../Transformation/ITypeScriptContext";
 import { TypeScriptTransformer } from "../Transformation/TypeScriptTransformer";
 
 const printer = ts.createPrinter();
@@ -64,35 +63,34 @@ export function replaceInText(fileName: string, fileText: string): ISubstitution
 
     let sourceFile = ts.createSourceFile(fileName, fileText, ts.ScriptTarget.Latest, false);
     let transformations: ITransformation[] = [];
-
-    let transformerContext: ITypeScriptContext = {
-        file: sourceFile,
-        postTransformHook:
-            (oldNode, newNode) =>
-            {
-                if (oldNode !== newNode)
-                {
-                    let nodeStart = oldNode.getStart(sourceFile);
-                    let lastTransformation = transformations[transformations.length - 1];
-
-                    // remove the last transformation if it's nested within this transformation
-                    if (lastTransformation !== undefined && lastTransformation.start > nodeStart)
-                    {
-                        transformations.pop();
-                    }
-
-                    transformations.push(
-                        {
-                            start: nodeStart,
-                            end: oldNode.end,
-                            text: printer.printNode(ts.EmitHint.Unspecified, newNode, sourceFile)
-                        });
-                }
-            }
-    };
-
     let transformer = new TypeScriptTransformer();
-    ts.transform(sourceFile, [transformer.GetFactory(transformerContext)]);
+
+    ts.transform(
+        sourceFile,
+        [
+            transformer.GetFactory(
+                (oldNode, newNode) =>
+                {
+                    if (oldNode !== newNode)
+                    {
+                        let nodeStart = oldNode.getStart(sourceFile);
+                        let lastTransformation = transformations[transformations.length - 1];
+
+                        // remove the last transformation if it's nested within this transformation
+                        if (lastTransformation !== undefined && lastTransformation.start > nodeStart)
+                        {
+                            transformations.pop();
+                        }
+
+                        transformations.push(
+                            {
+                                start: nodeStart,
+                                end: oldNode.end,
+                                text: printer.printNode(ts.EmitHint.Unspecified, newNode, sourceFile)
+                            });
+                    }
+                })
+        ]);
 
     if (transformations.length === 0)
     {
