@@ -59,6 +59,17 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
     }
 
     /**
+     * @inheritdoc
+     *
+     * @returns
+     * The newly created adapter.
+     */
+    protected InitializeAdapter(): IAdapter<Node, Node, ITypeScriptContext>
+    {
+        return new TypeScriptAdapter(this.Features);
+    }
+
+    /**
      * Transforms the specified {@linkcode file}.
      *
      * @param file
@@ -73,7 +84,7 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      * @returns
      * The transformed representation of the specified {@linkcode file}.
      */
-    public VisitSourceFile(file: SourceFile, tsContext: TransformationContext, postTransformHook?: TransformHook): SourceFile
+    protected VisitSourceFile(file: SourceFile, tsContext: TransformationContext, postTransformHook?: TransformHook): SourceFile
     {
         return this.MonitorInterpolations(
             (context) =>
@@ -100,7 +111,7 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      * @returns
      * The transformed representation of the specified {@linkcode node}.
      */
-    public VisitNode<T extends Node>(node: T, context: ITypeScriptContext, tsContext: TransformationContext): T
+    protected VisitNode<T extends Node>(node: T, context: ITypeScriptContext, tsContext: TransformationContext): T
     {
         node = this.Features.TypeScript.visitEachChild(
             node,
@@ -113,16 +124,5 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
         let result = this.Adapter.Transform(node, context) as T ?? node;
         context.postTransformHook?.(node, result);
         return result;
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @returns
-     * The newly created adapter.
-     */
-    protected InitializeAdapter(): IAdapter<Node, Node, ITypeScriptContext>
-    {
-        return new TypeScriptAdapter(this.Features);
     }
 }
