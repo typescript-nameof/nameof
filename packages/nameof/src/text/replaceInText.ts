@@ -62,36 +62,43 @@ export function replaceInText(fileName: string, fileText: string): ISubstitution
         fileName = "/file.tsx"; // assume tsx
     }
 
-    const sourceFile = ts.createSourceFile(fileName, fileText, ts.ScriptTarget.Latest, false);
-    const transformations: ITransformation[] = [];
+    let sourceFile = ts.createSourceFile(fileName, fileText, ts.ScriptTarget.Latest, false);
+    let transformations: ITransformation[] = [];
 
     let transformerContext: ITypeScriptContext = {
-        file: sourceFile
-    };
+        file: sourceFile,
+        postTransformHook:
+            (oldNode, newNode) =>
+            {
+                if (oldNode !== newNode)
+                {
+                    let nodeStart = oldNode.getStart(sourceFile);
+                    let lastTransformation = transformations[transformations.length - 1];
 
-    const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context =>
-    {
-        // this will always use the source file above
-        return _ => visitSourceFile(context);
+                    // remove the last transformation if it's nested within this transformation
+                    if (lastTransformation !== undefined && lastTransformation.start > nodeStart)
+                    {
+                        transformations.pop();
+                    }
+
+                    transformations.push(
+                        {
+                            start: nodeStart,
+                            end: oldNode.end,
+                            text: printer.printNode(ts.EmitHint.Unspecified, newNode, sourceFile)
+                        });
+                }
+            }
     };
 
     let transformer = new TypeScriptTransformer();
-    ts.transform(sourceFile, [transformerFactory]);
+    ts.transform(sourceFile, [transformer.GetFactory(transformerContext)]);
 
     if (transformations.length === 0)
     {
         return { replaced: false };
     }
-
-    return { fileText: getTransformedText(), replaced: true };
-
-    /**
-     * Performs the transformation.
-     *
-     * @returns
-     * The transformed text.
-     */
-    function getTransformedText(): string
+    else
     {
         let finalText = "";
         let lastPos = 0;
@@ -104,71 +111,6 @@ export function replaceInText(fileName: string, fileText: string): ISubstitution
         }
 
         finalText += fileText.substring(lastPos);
-        return finalText;
-    }
-
-    /**
-     * Transforms the {@link sourceFile `sourceFile`}.
-     *
-     * @param context
-     * The context of the transformation.
-     *
-     * @returns
-     * The transformed source file.
-     */
-    function visitSourceFile(context: ts.TransformationContext): ts.SourceFile
-    {
-        return visitNodeAndChildren(sourceFile) as ts.SourceFile;
-
-        /**
-         * Transforms the specified {@link node `node`} and its children.
-         *
-         * @param node
-         * The node to transform.
-         *
-         * @returns
-         * The transformed node.
-         */
-        function visitNodeAndChildren(node: ts.Node): ts.Node
-        {
-            if (node === undefined)
-            {
-                return node;
-            }
-
-            node = ts.visitEachChild(node, childNode => visitNodeAndChildren(childNode), context);
-
-            const resultNode = transformer.VisitNode(node, transformerContext, context);
-            const wasTransformed = resultNode !== node;
-
-            if (wasTransformed)
-            {
-                storeTransformation();
-            }
-
-            return resultNode;
-
-            /**
-             * Stores the transformation.
-             */
-            function storeTransformation(): void
-            {
-                const nodeStart = node.getStart(sourceFile);
-                const lastTransformation = transformations[transformations.length - 1];
-
-                // remove the last transformation if it's nested within this transformation
-                if (lastTransformation !== undefined && lastTransformation.start > nodeStart)
-                {
-                    transformations.pop();
-                }
-
-                transformations.push(
-                    {
-                        start: nodeStart,
-                        end: node.end,
-                        text: printer.printNode(ts.EmitHint.Unspecified, resultNode, sourceFile)
-                    });
-            }
-        }
+        return { fileText: finalText, replaced: true };
     }
 }
