@@ -1,4 +1,4 @@
-import { TransformerBase, UnusedInterpolationError } from "@typescript-nameof/common";
+import { IAdapter, TransformerBase } from "@typescript-nameof/common";
 import { Node, SourceFile, TransformationContext, TransformerFactory } from "typescript";
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TransformHook } from "./TransformHook";
@@ -11,13 +11,8 @@ import { TypeScriptFeatures } from "./TypeScriptFeatures";
  * @template TFeatures
  * The type of the features for the transformer.
  */
-export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeatures> extends TransformerBase<Node, ITypeScriptContext, TFeatures>
+export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeatures> extends TransformerBase<Node, Node, ITypeScriptContext, TFeatures>
 {
-    /**
-     * An adapter for parsing and dumping nodes.
-     */
-    private adapter: TypeScriptAdapter;
-
     /**
      * Initializes a new instance of the {@linkcode TypeScriptTransformerBase} class.
      *
@@ -27,7 +22,6 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
     public constructor(features: TFeatures)
     {
         super(features);
-        this.adapter = new TypeScriptAdapter(this.Features);
     }
 
     /**
@@ -45,14 +39,6 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
     }
 
     /**
-     * Gets a component for parsing and dumping nodes.
-     */
-    protected get Adapter(): TypeScriptAdapter
-    {
-        return this.adapter;
-    }
-
-    /**
      * Gets a factory with a pre-defined {@linkcode context}.
      *
      * @param postTransformHook
@@ -61,7 +47,7 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      * @returns
      * A newly created factory with a pre-defined {@linkcode context}.
      */
-    public GetFactory(postTransformHook: TransformHook): TransformerFactory<SourceFile>
+    public GetFactory(postTransformHook?: TransformHook): TransformerFactory<SourceFile>
     {
         return (tsContext) =>
         {
@@ -89,24 +75,14 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      */
     public VisitSourceFile(file: SourceFile, tsContext: TransformationContext, postTransformHook?: TransformHook): SourceFile
     {
-        let context: ITypeScriptContext = { file };
-        context.postTransformHook = postTransformHook;
+        return this.MonitorInterpolations(
+            (context) =>
+            {
+                let typeScriptContext: ITypeScriptContext = { ...context, file };
+                typeScriptContext.postTransformHook = postTransformHook;
 
-        let adapter = new TypeScriptAdapter(this.Features);
-
-        let result = this.VisitNode(
-            file,
-            context,
-            tsContext);
-
-        let remainingCall = context.interpolationCalls?.[0];
-
-        if (remainingCall)
-        {
-            new UnusedInterpolationError(adapter, remainingCall, context).ReportAction();
-        }
-
-        return result;
+                return this.VisitNode(file, typeScriptContext, tsContext);
+            });
     }
 
     /**
@@ -137,5 +113,16 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
         let result = this.Adapter.Transform(node, context) as T ?? node;
         context.postTransformHook?.(node, result);
         return result;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @returns
+     * The newly created adapter.
+     */
+    protected InitializeAdapter(): IAdapter<Node, Node, ITypeScriptContext>
+    {
+        return new TypeScriptAdapter(this.Features);
     }
 }
