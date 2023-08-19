@@ -52,6 +52,26 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
     }
 
     /**
+     * Gets a factory with a pre-defined {@linkcode context}.
+     *
+     * @param context
+     * The pre-defined context to pass to the factory.
+     *
+     * @returns
+     * A newly created factory with a pre-defined {@linkcode context}.
+     */
+    public GetFactory(context?: Partial<ITypeScriptContext>): TransformerFactory<SourceFile>
+    {
+        return (tsContext) =>
+        {
+            return (file) =>
+            {
+                return this.VisitSourceFile(file, tsContext, context);
+            };
+        };
+    }
+
+    /**
      * Transforms the specified {@linkcode file}.
      *
      * @param file
@@ -60,24 +80,29 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      * @param tsContext
      * The context of the typescript transformation.
      *
+     * @param context
+     * The context of the operation.
+     *
      * @returns
      * The transformed representation of the specified {@linkcode file}.
      */
-    public VisitSourceFile(file: SourceFile, tsContext: TransformationContext): SourceFile
+    public VisitSourceFile(file: SourceFile, tsContext: TransformationContext, context?: Partial<ITypeScriptContext>): SourceFile
     {
-        let context: ITypeScriptContext = { file };
+        let realContext = (context ?? { }) as ITypeScriptContext;
+        realContext.file = file;
+
         let adapter = new TypeScriptAdapter(this.Features);
 
         let result = this.VisitNode(
             file,
-            context,
+            realContext,
             tsContext);
 
-        let remainingCall = context.interpolationCalls?.[0];
+        let remainingCall = realContext.interpolationCalls?.[0];
 
         if (remainingCall)
         {
-            new UnusedInterpolationError(adapter, remainingCall, context).ReportAction();
+            new UnusedInterpolationError(adapter, remainingCall, realContext).ReportAction();
         }
 
         return result;
