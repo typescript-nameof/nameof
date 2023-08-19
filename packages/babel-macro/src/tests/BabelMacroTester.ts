@@ -2,7 +2,7 @@ import { join } from "path";
 import babel = require("@babel/core");
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
-import macroPlugin from "babel-plugin-macros";
+import babelPluginMacros from "babel-plugin-macros";
 
 /**
  * Provides the functionality to test the babel macro.
@@ -72,7 +72,14 @@ export class BabelMacroTester extends TransformerTester<undefined>
                             "@babel/preset-typescript"
                         ],
                         plugins: [
-                            macroPlugin
+                            [
+                                babelPluginMacros,
+                                {
+                                    nameof: {
+                                        errorHandler
+                                    }
+                                }
+                            ]
                         ],
                         filename: join(__dirname, "test.ts"),
                         ast: false,
@@ -82,12 +89,7 @@ export class BabelMacroTester extends TransformerTester<undefined>
                     }))?.code;
         }
         catch (exception)
-        {
-            if (exception instanceof Error)
-            {
-                errorHandler?.Report(undefined, {}, exception);
-            }
-        }
+        { }
 
         return result ?? "";
     }
