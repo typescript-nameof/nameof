@@ -24,6 +24,9 @@
         },
         {
             "path": "./packages/tests-common"
+        },
+        {
+            "path": "./packages/test"
         }
     ],
     "launch": {

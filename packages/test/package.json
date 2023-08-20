@@ -1,0 +1,61 @@
+{
+  "name": "@typescript-nameof/test",
+  "private": true,
+  "type": "module",
+  "description": "A project for testing the functionality of the `nameof` plugin.",
+  "author": "Manuel Thalmann <m@nuth.ch>",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git",
+    "directory": "packages/test"
+  },
+  "bugs": {
+    "url": "https://github.com/typescript-nameof/nameof/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build:ts-patch": "tsc -b .",
+    "patch": "ts-patch i",
+    "lint": "eslint --max-warnings 0 ./scripts ./src .eslintrc.cjs",
+    "lint-ide": "npm run lint || exit 0",
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "@manuth/eslint-plugin-typescript": "^4.1.0",
+    "@manuth/package-json-editor": "^3.1.1",
+    "@manuth/tsconfig": "^4.0.1",
+    "@types/fs-extra": "^11.0.1",
+    "@types/git-branch": "^2.0.2",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.5.1",
+    "@types/npm-which": "^3.0.1",
+    "eslint": "^8.41.0",
+    "fs-extra": "^11.1.1",
+    "git-branch": "^2.0.1",
+    "globby": "^13.1.4",
+    "mocha": "^10.2.0",
+    "npm-which": "^3.0.1",
+    "rimraf": "^5.0.1",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.1",
+    "ts-patch": "3.0.2",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@types/nameof": "file:../types"
+  }
+}
