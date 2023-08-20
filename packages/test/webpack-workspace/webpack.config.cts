@@ -3,13 +3,13 @@ import { Configuration } from "webpack";
 
 module.exports = {
     mode: "development",
-    entry: "./src/index.ts",
+    entry: "../src/test/index.ts",
     devtool: "inline-source-map",
     experiments: {
         outputModule: true
     },
     output: {
-        path: resolve(__dirname, "webpack"),
+        path: resolve(__dirname, "..", "webpack"),
         libraryTarget: "module",
     },
     resolve: {
@@ -33,7 +33,7 @@ module.exports = {
                     {
                         return {
                             before: [
-                                require("../nameof")
+                                require("../../nameof")
                             ]
                         };
                     },

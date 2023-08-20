@@ -64,6 +64,63 @@
                     "run",
                     "test:debug"
                 ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `ts-patch` Plugin",
+                "cwd": "${workspaceFolder:test}",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare",
+                "program": "${workspaceFolder:test}/node_modules/typescript/bin/tsc",
+                "args": [
+                    "--build",
+                    "--force",
+                    "--watch",
+                    "${workspaceFolder:test}/tsconfig.test.json"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "!**/node_modules/**"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `ttsc` Plugin",
+                "cwd": "${workspaceFolder:test}/ttypescript-workspace",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare",
+                "program": "${workspaceFolder:test}/ttypescript-workspace/node_modules/ttypescript/bin/tsc",
+                "args": [
+                    "--build",
+                    "--force",
+                    "--watch",
+                    "."
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "!**/node_modules/**"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `webpack` Plugin",
+                "cwd": "${workspaceFolder:test}/webpack-workspace",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare",
+                "program": "${workspaceFolder:test}/webpack-workspace/node_modules/webpack/bin/webpack.js",
+                "args": [
+                    "--watch"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "!**/node_modules/**"
+                ]
             }
         ],
         "compounds": []
@@ -75,5 +132,23 @@
         "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
         "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
         "typescript.format.placeOpenBraceOnNewLineForFunctions": true
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Prepare",
+                "type": "shell",
+                "command": "npm",
+                "args": [
+                    "run",
+                    "pretest"
+                ],
+                "options": {
+                    "cwd": "${workspaceFolder:test}"
+                },
+                "problemMatcher": []
+            }
+        ]
     }
 }

@@ -3,8 +3,8 @@
     "compilerOptions": {
         "noEmit": true
     },
-    "include": [
+    "files": [
         "./jest.config.cjs",
-        "./webpack.config.cjs"
+        "./webpack-workspace/webpack.config.cts"
     ]
 }
