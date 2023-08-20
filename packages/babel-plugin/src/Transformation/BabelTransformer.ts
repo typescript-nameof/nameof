@@ -1,5 +1,5 @@
 import type babel = require("@babel/core");
-import { IAdapter, IErrorHandler, throwErrorForSourceFile, TransformerBase } from "@typescript-nameof/common";
+import { IAdapter, IErrorHandler, TransformerBase } from "@typescript-nameof/common";
 import { BabelContext } from "./BabelContext";
 import { BabelFeatures } from "./BabelFeatures";
 import { BabelAdapter } from "../BabelAdapter";
@@ -38,33 +38,13 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
                             let visitor: babel.Visitor<babel.PluginPass> = {
                                 CallExpression: (path, state) =>
                                 {
-                                    let filePath = state.file.opts.filename as string;
-
-                                    try
-                                    {
-                                        this.TransformNode(
-                                            path,
-                                            {
-                                                ...context,
-                                                state,
-                                                traverseChildren: () => path.traverse(visitor, state)
-                                            });
-                                    }
-                                    catch (error)
-                                    {
-                                        let message: string;
-
-                                        if (error instanceof Error)
+                                    this.TransformNode(
+                                        path,
                                         {
-                                            message = error.message;
-                                        }
-                                        else
-                                        {
-                                            message = `${error}`;
-                                        }
-
-                                        throwErrorForSourceFile(message, filePath);
-                                    }
+                                            ...context,
+                                            state,
+                                            traverseChildren: () => path.traverse(visitor, state)
+                                        });
                                 }
                             };
 

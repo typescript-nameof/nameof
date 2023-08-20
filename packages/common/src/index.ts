@@ -9,7 +9,6 @@ export { UnsupportedAccessorTypeError } from "./Diagnostics/UnsupportedAccessorT
 export { UnsupportedNodeError } from "./Diagnostics/UnsupportedNodeError";
 export { UnsupportedScenarioError } from "./Diagnostics/UnsupportedScenarioError";
 export { UnusedInterpolationError } from "./Diagnostics/UnusedInterpolationError";
-export * from "./errors";
 export { NameofResult } from "./NameofResult";
 export { ResultType } from "./ResultType";
 export { CallExpressionNode } from "./Serialization/CallExpressionNode";
