@@ -76,7 +76,7 @@ describe(
                         {
                             if (error instanceof Error)
                             {
-                                errorHandler?.Report(undefined, {}, error);
+                                errorHandler?.Report({}, undefined, {}, error);
                             }
                         }
 

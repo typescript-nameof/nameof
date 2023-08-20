@@ -1,4 +1,5 @@
 import { IAdapter } from "./IAdapter";
+import { INodeLocation } from "./INodeLocation";
 import { ITransformationContext } from "./ITransformationContext";
 import { ResultBuilder } from "./ResultBuilder";
 import { TransformerFeatures } from "./TransformerFeatures";
@@ -187,6 +188,17 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @inheritdoc
      *
      * @param item
+     * The item whose location to get.
+     *
+     * @param context
+     * The context of the operation.
+     */
+    public abstract GetLocation(item: TNode, context: TContext): INodeLocation;
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
      * The item to get the source code from.
      *
      * @param context
@@ -208,7 +220,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      */
     public ReportError(item: TNode, context: TContext, error: Error): void
     {
-        this.Features.ReportError(item, context, error);
+        this.Features.ReportError(this.GetLocation(item, context), item, context, error);
     }
 
     /**

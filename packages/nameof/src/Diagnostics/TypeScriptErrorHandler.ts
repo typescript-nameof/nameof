@@ -1,4 +1,4 @@
-import { IErrorHandler } from "@typescript-nameof/common";
+import { ErrorHandler, INodeLocation } from "@typescript-nameof/common";
 import { Diagnostic, Node } from "typescript";
 import { ITypeScriptContext } from "../Transformation/ITypeScriptContext";
 import { TypeScriptFeatures } from "../Transformation/TypeScriptFeatures";
@@ -9,7 +9,7 @@ import { TypeScriptFeatures } from "../Transformation/TypeScriptFeatures";
  * @template TFeatures
  * The type of the features for the error handler.
  */
-export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeScriptFeatures> implements IErrorHandler<Node, ITypeScriptContext>
+export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeScriptFeatures> extends ErrorHandler<Node, ITypeScriptContext>
 {
     /**
      * A set of features for the error handler.
@@ -24,6 +24,7 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
      */
     public constructor(features: TFeatures)
     {
+        super();
         this.features = features;
     }
 
@@ -38,6 +39,9 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
     /**
      * Reports the specified {@linkcode error}.
      *
+     * @param location
+     * The location of the specified {@linkcode node}.
+     *
      * @param item
      * The item related to the specified {@linkcode error}.
      *
@@ -47,9 +51,9 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
      * @param error
      * The error to report.
      */
-    public Report(item: Node, context: ITypeScriptContext, error: Error): void
+    public Report(location: INodeLocation, item: Node, context: ITypeScriptContext, error: Error): void
     {
-        this.ReportDiagnostic(error, this.GetDiagnostic(item, context, error));
+        this.ReportDiagnostic(location, item, context, this.GetDiagnostic(item, context, error), error);
     }
 
     /**
@@ -91,14 +95,23 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
     /**
      * Reports the specified {@linkcode diagnostic}.
      *
-     * @param error
-     * The original error.
+     * @param location
+     * The location of the specified {@linkcode node}.
+     *
+     * @param item
+     * The node related to the error.
+     *
+     * @param context
+     * The context of the operation.
      *
      * @param diagnostic
      * The diagnostic to report.
+     *
+     * @param error
+     * The original error.
      */
-    protected ReportDiagnostic(error: Error, diagnostic: Diagnostic): void
+    protected ReportDiagnostic(location: INodeLocation, item: Node, context: ITypeScriptContext, diagnostic: Diagnostic, error: Error): void
     {
-        throw error;
+        super.Report(location, item, context, error);
     }
 }

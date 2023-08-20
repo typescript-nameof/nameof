@@ -1,3 +1,5 @@
+import { INodeLocation } from "./INodeLocation";
+
 /**
  * Represents a component for reporting errors.
  *
@@ -9,6 +11,9 @@ export interface IErrorHandler<TNode, TContext = Record<string, never>>
     /**
      * Reports the specified {@linkcode error}.
      *
+     * @param location
+     * The location of the specified {@linkcode node}.
+     *
      * @param item
      * The item related to the specified {@linkcode error}.
      *
@@ -18,5 +23,5 @@ export interface IErrorHandler<TNode, TContext = Record<string, never>>
      * @param error
      * The error to report.
      */
-    Report(item: TNode, context: TContext, error: Error): void;
+    Report(location: INodeLocation, item: TNode, context: TContext, error: Error): void;
 }

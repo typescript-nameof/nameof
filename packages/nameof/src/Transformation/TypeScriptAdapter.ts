@@ -1,4 +1,4 @@
-import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
+import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, INodeLocation, MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
@@ -39,6 +39,29 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     public Extract(input: ts.Node): ts.Node
     {
         return input;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item whose location to get.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The location of the specified {@linkcode item}.
+     */
+    public GetLocation(item: ts.Node, context: ITypeScriptContext): INodeLocation
+    {
+        let location = context.file.getLineAndCharacterOfPosition(item.pos);
+
+        return {
+            filePath: context.file.fileName,
+            line: location.line,
+            column: location.character
+        };
     }
 
     /**

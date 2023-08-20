@@ -1,5 +1,6 @@
 import { ErrorHandler } from "./ErrorHandler";
 import { IErrorHandler } from "./IErrorHandler";
+import { INodeLocation } from "./INodeLocation";
 
 /**
  * Provides features for performing `nameof` transformations.
@@ -38,6 +39,9 @@ export class TransformerFeatures<TNode, TContext = Record<string, never>>
     /**
      * Reports the specified {@linkcode error}.
      *
+     * @param location
+     * The location of the specified {@linkcode node}.
+     *
      * @param item
      * The item the specified {@linkcode error} is related to.
      *
@@ -47,9 +51,9 @@ export class TransformerFeatures<TNode, TContext = Record<string, never>>
      * @param error
      * The error to report.
      */
-    public ReportError(item: TNode, context: TContext, error: Error): void
+    public ReportError(location: INodeLocation, item: TNode, context: TContext, error: Error): void
     {
-        this.ErrorHandler?.Report(item, context, error);
+        this.ErrorHandler?.Report(location, item, context, error);
     }
 
     /**

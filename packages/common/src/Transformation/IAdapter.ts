@@ -1,3 +1,5 @@
+import { INodeLocation } from "./INodeLocation";
+
 /**
  * Represents a component for parsing and dumping `nameof` expressions.
  */
@@ -49,6 +51,17 @@ export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
      * The transformed node.
      */
     Transform(input: TInput, context: TContext): TNode;
+
+    /**
+     * Gets the location of the specified {@linkcode item}.
+     *
+     * @param item
+     * The item whose location to get.
+     *
+     * @param context
+     * The context of the operation.
+     */
+    GetLocation(item: TNode, context: TContext): INodeLocation;
 
     /**
      * Gets the source code of the specified {@linkcode item}.

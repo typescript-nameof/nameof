@@ -1,4 +1,4 @@
-import { IErrorHandler } from "@typescript-nameof/common";
+import { IErrorHandler, INodeLocation } from "@typescript-nameof/common";
 
 /**
  * Provides the functionality to collect errors.
@@ -45,6 +45,9 @@ export class TestErrorHandler<TNode, TContext> implements IErrorHandler<TNode, T
     /**
      * @inheritdoc
      *
+     * @param location
+     * The location of the specified {@linkcode node}.
+     *
      * @param item
      * The item related to the specified {@linkcode error}.
      *
@@ -54,9 +57,9 @@ export class TestErrorHandler<TNode, TContext> implements IErrorHandler<TNode, T
      * @param error
      * The error to report.
      */
-    public Report(item: TNode, context: TContext, error: Error): void
+    public Report(location: INodeLocation, item: TNode, context: TContext, error: Error): void
     {
         this.errors.push(error);
-        this.ErrorHandler?.Report(item, context, error);
+        this.ErrorHandler?.Report(location, item, context, error);
     }
 }

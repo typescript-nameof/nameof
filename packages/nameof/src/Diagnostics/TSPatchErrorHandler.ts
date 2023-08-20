@@ -1,5 +1,7 @@
-import { Diagnostic } from "typescript";
+import { INodeLocation } from "@typescript-nameof/common";
+import { Diagnostic, Node } from "typescript";
 import { TypeScriptErrorHandler } from "./TypeScriptErrorHandler";
+import { ITypeScriptContext } from "../Transformation/ITypeScriptContext";
 import { TSPatchFeatures } from "../Transformation/TSPatchFeatures";
 
 /**
@@ -21,13 +23,22 @@ export class TSPatchErrorHandler extends TypeScriptErrorHandler<TSPatchFeatures>
     /**
      * @inheritdoc
      *
-     * @param error
-     * The original error.
+     * @param location
+     * The location of the specified {@linkcode node}.
+     *
+     * @param item
+     * The node related to the error.
+     *
+     * @param context
+     * The context of the operation.
      *
      * @param diagnostic
      * The diagnostic to report.
+     *
+     * @param error
+     * The original error.
      */
-    public ReportDiagnostic(error: Error, diagnostic: Diagnostic): void
+    protected ReportDiagnostic(location: INodeLocation, item: Node, context: ITypeScriptContext, diagnostic: Diagnostic, error: Error): void
     {
         this.Features.Extras.addDiagnostic(diagnostic);
     }

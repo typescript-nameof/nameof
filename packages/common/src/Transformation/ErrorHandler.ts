@@ -1,4 +1,5 @@
 import { IErrorHandler } from "./IErrorHandler";
+import { INodeLocation } from "./INodeLocation";
 
 /**
  * Provides the functionality to report errors.
@@ -14,6 +15,9 @@ export class ErrorHandler<TNode, TContext> implements IErrorHandler<TNode, TCont
     /**
      * @inheritdoc
      *
+     * @param location
+     * The location of the specified {@linkcode node}.
+     *
      * @param item
      * The item related to the specified {@linkcode error}.
      *
@@ -23,8 +27,48 @@ export class ErrorHandler<TNode, TContext> implements IErrorHandler<TNode, TCont
      * @param error
      * The error to report.
      */
-    public Report(item: TNode, context: TContext, error: Error): void
+    public Report(location: INodeLocation, item: TNode, context: TContext, error: Error): void
     {
-        throw error;
+        let message = "";
+        let locationText = this.DumpLocation(location);
+
+        if (locationText)
+        {
+            message += `${locationText}: `;
+        }
+
+        message += `[nameof]: ${error.message}`;
+        throw new Error(message);
+    }
+
+    /**
+     * Dumps the specified {@linkcode location} as a string.
+     *
+     * @param location
+     * The location to convert.
+     *
+     * @returns
+     * A text describing the specified {@linkcode location}.
+     */
+    public DumpLocation(location: INodeLocation): string | undefined
+    {
+        let result = "";
+
+        if (location.filePath)
+        {
+            result += `${location.filePath}:`;
+        }
+
+        if (location.line)
+        {
+            result += `${location.line + 1}`;
+
+            if (location.column)
+            {
+                result += `:${location.column + 1}`;
+            }
+        }
+
+        return result === "" ? undefined : result;
     }
 }

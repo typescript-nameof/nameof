@@ -27,6 +27,7 @@ export { Adapter } from "./Transformation/Adapter";
 export { ErrorHandler } from "./Transformation/ErrorHandler";
 export { IAdapter } from "./Transformation/IAdapter";
 export { IErrorHandler } from "./Transformation/IErrorHandler";
+export { INodeLocation } from "./Transformation/INodeLocation";
 export { TransformAction } from "./Transformation/TransformAction";
 export { TransformerBase } from "./Transformation/TransformerBase";
 export { TransformerFeatures } from "./Transformation/TransformerFeatures";

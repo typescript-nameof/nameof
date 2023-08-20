@@ -1,4 +1,4 @@
-import { TransformerFeatures } from "@typescript-nameof/common";
+import { INodeLocation, TransformerFeatures } from "@typescript-nameof/common";
 import { IErrorHandler } from "@typescript-nameof/common/src/Transformation/IErrorHandler";
 import type ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext";
@@ -31,6 +31,9 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScript
     /**
      * Reports the specified {@linkcode error}.
      *
+     * @param location
+     * The location of the specified {@linkcode node}.
+     *
      * @param node
      * The node related to the error.
      *
@@ -40,9 +43,9 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScript
      * @param error
      * The error to process.
      */
-    public ReportError(node: ts.Node, context: ITypeScriptContext, error: Error): void
+    public ReportError(location: INodeLocation, node: ts.Node, context: ITypeScriptContext, error: Error): void
     {
-        this.ErrorHandler?.Report(node, context, error);
+        this.ErrorHandler?.Report(location, node, context, error);
     }
 
     /**
