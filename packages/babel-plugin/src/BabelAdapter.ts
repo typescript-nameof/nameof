@@ -106,7 +106,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
     public GetLocation(item: types.Node, context: BabelContext): INodeLocation
     {
         return {
-            filePath: item.loc?.filename,
+            filePath: context.state.filename,
             line: item.loc?.start.line,
             column: item.loc?.start.column
         };
