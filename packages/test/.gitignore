@@ -1,4 +1,5 @@
 # Build results
+src/test/
 ts-patch/
 ttypescript/
 webpack/

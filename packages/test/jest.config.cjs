@@ -1,8 +1,9 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
+  testRegex: "/test/[^/]*\\.(test|spec)\\.ts",
   transform: {
-    ".ts$": [
+    "\\.ts$": [
       "ts-jest",
       {
         astTransformers: {
