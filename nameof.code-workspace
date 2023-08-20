@@ -121,6 +121,23 @@
                     "${workspaceFolder:common}/**",
                     "!**/node_modules/**"
                 ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `ts-jest` Plugin",
+                "cwd": "${workspaceFolder:test}",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare",
+                "program": "${workspaceFolder:Solution Items}/node_modules/jest/bin/jest.js",
+                "args": [
+                    "--watchAll"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "!**/node_modules/**"
+                ]
             }
         ],
         "compounds": []
