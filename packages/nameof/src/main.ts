@@ -45,4 +45,7 @@ api.factory =
         return new TSJestTransformer(compiler).Factory;
     };
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+(api as any).version = require("../package.json")["version"];
+
 export = api;
