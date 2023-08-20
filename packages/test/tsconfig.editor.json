@@ -4,6 +4,7 @@
         "noEmit": true
     },
     "include": [
-        "./jest.config.cjs"
+        "./jest.config.cjs",
+        "./webpack.config.cjs"
     ]
 }
