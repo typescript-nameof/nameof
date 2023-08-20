@@ -24,7 +24,8 @@
     "pretest": "copyfiles -u 1 ./src/{index.ts,jest.test.ts} ./src/test",
     "test:ts-patch": "npm run pretest && tsc -b tsconfig.test.json --watch",
     "test:ttsc": "npm run pretest && cd ./ttypescript-workspace && npx ttsc -b . --watch",
-    "test:webpack": "npm run pretest && cross-env NODE_OPTIONS=\"--loader ts-node/esm\" webpack --watch"
+    "test:webpack": "npm run pretest && cross-env NODE_OPTIONS=\"--loader ts-node/esm\" webpack --watch",
+    "test:ts-jest": "npm run pretest && jest --watch"
   },
   "devDependencies": {
     "@manuth/eslint-plugin-typescript": "^4.1.0",
