@@ -14,8 +14,7 @@ module.exports = {
         project: [
             join(__dirname, "tsconfig.app.json"),
             join(__dirname, "tsconfig.editor.json"),
-            join(__dirname, "tsconfig.eslint.json"),
-            join(__dirname, "src", "tests", "tsconfig.json")
+            join(__dirname, "tsconfig.eslint.json")
         ]
     },
     rules: {
