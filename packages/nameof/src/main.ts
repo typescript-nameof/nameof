@@ -12,7 +12,10 @@ let transformerFactoryBuilder: ProgramPattern & TransformerFactory<SourceFile> =
 {
     let factory: TransformerFactory<SourceFile>;
 
-    if (args[2]?.addDiagnostic)
+    if (
+        args[2]?.addDiagnostic &&
+        // Detecting `ts-patch` (ttypescript's `addDiagnostic` implementation doesn't do anything)
+        args[2].diagnostics)
     {
         factory = new TSPatchTransformer(args[2]).Factory;
     }
