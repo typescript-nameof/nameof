@@ -1,8 +1,5 @@
 {
-    "extends": [
-        "@manuth/tsconfig/recommended",
-        "../../tsconfig.base.json"
-    ],
+    "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "declaration": true,
         "module": "Node16",

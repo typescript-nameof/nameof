@@ -10,5 +10,10 @@
     ],
     "exclude": [
         "./src/tests/**/*"
+    ],
+    "plugins": [
+        {
+            "transform": "../nameof"
+        }
     ]
 }

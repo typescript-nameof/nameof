@@ -28,7 +28,9 @@
     "access": "public"
   },
   "scripts": {
+    "prepare": "npm --prefix ./ttypescript-workspace install",
     "build:ts-patch": "tsc -b .",
+    "build:ttsc": "cd ./ttypescript-workspace && ttsc -b .",
     "patch": "ts-patch i",
     "lint": "eslint --max-warnings 0 ./scripts ./src .eslintrc.cjs",
     "lint-ide": "npm run lint || exit 0",
