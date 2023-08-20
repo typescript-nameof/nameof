@@ -10,7 +10,7 @@ module.exports = {
     },
     output: {
         path: resolve(__dirname, "..", "webpack"),
-        libraryTarget: "module",
+        libraryTarget: "module"
     },
     resolve: {
         // Add `.ts` and `.tsx` as a resolvable extension.
@@ -33,10 +33,11 @@ module.exports = {
                     {
                         return {
                             before: [
+                                // eslint-disable-next-line node/no-unpublished-require
                                 require("../../nameof")
                             ]
                         };
-                    },
+                    }
                 }
             }
         ]
