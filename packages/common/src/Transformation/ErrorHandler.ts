@@ -38,7 +38,10 @@ export class ErrorHandler<TNode, TContext> implements IErrorHandler<TNode, TCont
         }
 
         message += `[nameof]: ${error.message}`;
-        throw new Error(message);
+
+        let customError = new Error(message);
+        customError.stack = undefined;
+        throw customError;
     }
 
     /**
