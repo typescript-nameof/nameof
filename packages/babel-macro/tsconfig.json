@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "composite": true,
         "allowJs": true,
         "rootDir": "./src",
         "outDir": "./dist"

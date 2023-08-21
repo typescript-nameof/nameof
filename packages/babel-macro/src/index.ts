@@ -9,5 +9,4 @@ let nameofMacro: MacroHandler =
     };
 
 const nameof: INameOfProvider = createMacro(nameofMacro, { configName: "nameof" });
-// eslint-disable-next-line import/no-default-export
-export default nameof;
+export = nameof;

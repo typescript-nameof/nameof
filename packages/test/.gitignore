@@ -4,6 +4,7 @@ ts-patch/
 ttypescript/
 webpack/
 babel/
+macro/
 
 # Logs
 logs

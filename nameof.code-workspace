@@ -161,6 +161,32 @@
                     "${workspaceFolder:babel-plugin}/**",
                     "!**/node_modules/**"
                 ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `babel` Macro",
+                "cwd": "${workspaceFolder:test}",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare",
+                "program": "${workspaceFolder:Solution Items}/node_modules/@babel/cli/bin/babel.js",
+                "args": [
+                    "./src/test",
+                    "--config-file",
+                    "./babel.macro.cts",
+                    "--extensions",
+                    ".ts,.cts",
+                    "--out-dir",
+                    "./macro",
+                    "--watch"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "${workspaceFolder:babel-plugin}/**",
+                    "${workspaceFolder:babel-macro}/**",
+                    "!**/node_modules/**"
+                ]
             }
         ],
         "compounds": []

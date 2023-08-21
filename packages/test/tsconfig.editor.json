@@ -5,6 +5,7 @@
     },
     "files": [
         "./babel.config.cts",
+        "./babel.macro.cts",
         "./jest.config.cjs",
         "./webpack-workspace/webpack.config.cts"
     ]
