@@ -77,7 +77,7 @@
                     "--build",
                     "--force",
                     "--watch",
-                    "${workspaceFolder:test}/tsconfig.test.json"
+                    "${workspaceFolder:test}/tsconfig.app.json"
                 ],
                 "resolveSourceMapLocations": [
                     "${workspaceFolder:nameof}/**",

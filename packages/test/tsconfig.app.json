@@ -15,7 +15,7 @@
     ],
     "references": [
         {
-            "path": "../babel-macro/tsconfig.json"
+            "path": "../babel-macro"
         }
     ]
 }
