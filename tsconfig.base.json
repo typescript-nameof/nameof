@@ -1,21 +1,3 @@
 {
-    "compilerOptions": {
-        "target": "ES2015",
-        "module": "Node16",
-        "declaration": true,
-        "sourceMap": true,
-        "strict": true,
-        "experimentalDecorators": true,
-        "forceConsistentCasingInFileNames": true,
-        "noFallthroughCasesInSwitch": true,
-        "lib": [
-            "ES2015"
-        ],
-        "esModuleInterop": true,
-        "paths": {
-            "@typescript-nameof/*": [
-                "./packages/*/src"
-            ]
-        }
-    }
+    "extends": "./packages/nameof/tsconfig.json"
 }

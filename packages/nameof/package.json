@@ -40,6 +40,7 @@
     "ts-patch": "^2.1.0"
   },
   "devDependencies": {
+    "@manuth/tsconfig": "^4.0.1",
     "@tsd/typescript": "npm:nop@^1.0.0",
     "@types/fs-extra": "^11.0.1",
     "@types/mocha": "^10.0.1",
