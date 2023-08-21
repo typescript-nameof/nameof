@@ -82,6 +82,20 @@ describe(
 
                         return result ?? "";
                     }
+
+                    /**
+                     * @inheritdoc
+                     *
+                     * @param input
+                     * The input of the transformation.
+                     *
+                     * @param errorClasses
+                     * The classes of the expected error.
+                     */
+                    protected AssertError(input: string, ...errorClasses: Array<new (...args: any[]) => Error>): Promise<void>
+                    {
+                        return super.AssertError(input);
+                    }
                 }().RegisterCommon();
             });
     });
