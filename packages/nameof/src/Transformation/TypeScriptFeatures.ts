@@ -40,7 +40,7 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScript
         {
             if (typeof this.Config.tsLibrary === "string")
             {
-                return require(this.Config.tsLibrary);
+                return createRequire(process.cwd())(this.Config.tsLibrary);
             }
             else
             {
