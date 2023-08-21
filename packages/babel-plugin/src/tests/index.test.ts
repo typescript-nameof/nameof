@@ -1,4 +1,4 @@
-import { BabelPluginTester } from "./BabelPluginTester";
+import { BabelPluginTester } from "./BabelPluginTester.js";
 
 let tester = new BabelPluginTester();
 

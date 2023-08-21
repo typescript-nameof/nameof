@@ -1,6 +1,7 @@
 {
   "name": "@typescript-nameof/types",
   "version": "0.0.1",
+  "type": "module",
   "description": "TypeScript definitions for @typescript-nameof packages",
   "exports": {
     ".": {

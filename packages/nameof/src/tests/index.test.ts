@@ -1,4 +1,4 @@
-import { TypeScriptTester } from "./TypeScriptTester";
+import { TypeScriptTester } from "./TypeScriptTester.js";
 
 let tester = new TypeScriptTester();
 

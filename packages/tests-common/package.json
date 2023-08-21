@@ -1,5 +1,6 @@
 {
   "name": "@typescript-nameof/tests-common",
+  "type": "module",
   "private": true,
   "description": "Common tests for ts-nameof packages.",
   "license": "MIT",

@@ -1,1 +1,1 @@
-export * from "./getTestFilePath";
+export * from "./getTestFilePath.js";

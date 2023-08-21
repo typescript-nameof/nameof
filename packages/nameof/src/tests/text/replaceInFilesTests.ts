@@ -1,7 +1,9 @@
 import { strictEqual } from "assert";
-import { readFile, writeFile } from "fs-extra";
-import { getTestFilePath } from "./helpers";
+import fs from "fs-extra";
+import { getTestFilePath } from "./helpers/index.js";
 import { replaceInFiles } from "../../text/index.cjs";
+
+const { readFile, writeFile } = fs;
 
 suite(
     "replaceInFiles()",

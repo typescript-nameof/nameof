@@ -1,6 +1,7 @@
 {
   "name": "@typescript-nameof/babel-plugin",
   "version": "0.0.1",
+  "type": "module",
   "description": "nameof in TypeScript for babel.",
   "license": "MIT",
   "keywords": [

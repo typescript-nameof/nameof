@@ -1,1 +1,1 @@
-export { TransformerTester } from "./TransformerTester";
+export { TransformerTester } from "./TransformerTester.js";

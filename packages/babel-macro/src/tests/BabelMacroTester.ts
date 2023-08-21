@@ -1,5 +1,5 @@
-import { join } from "path";
-import babel = require("@babel/core");
+import { fileURLToPath } from "url";
+import babel from "@babel/core";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
 import babelPluginMacros from "babel-plugin-macros";
@@ -81,14 +81,14 @@ export class BabelMacroTester extends TransformerTester<undefined>
                                 }
                             ]
                         ],
-                        filename: join(__dirname, "test.ts"),
+                        filename: fileURLToPath(new URL("test.ts", import.meta.url)),
                         ast: false,
                         generatorOpts: {
                             retainLines: true
                         }
                     }))?.code;
         }
-        catch (exception)
+        catch
         { }
 
         return result ?? "";

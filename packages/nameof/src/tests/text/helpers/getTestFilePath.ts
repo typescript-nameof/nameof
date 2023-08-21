@@ -1,4 +1,6 @@
-import { join } from "upath";
+import path from "upath";
+
+const { join } = path;
 
 /**
  * Joins the specified {@link paths `paths`} relative to the test directory.

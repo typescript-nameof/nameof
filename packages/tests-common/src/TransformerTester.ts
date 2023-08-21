@@ -1,8 +1,8 @@
 import { strictEqual } from "assert";
 import { ErrorHandler, IErrorHandler, InvalidDefaultCallError, MissingImportTypeQualifierError, MissingPropertyAccessError, NestedNameofError, NoReturnExpressionError, UnsupportedAccessorTypeError, UnsupportedNodeError, UnsupportedScenarioError } from "@typescript-nameof/common";
 import { Project } from "ts-morph";
-import { INameofOutput } from "./INameofOutput";
-import { TestErrorHandler } from "./TestErrorHandler";
+import { INameofOutput } from "./INameofOutput.js";
+import { TestErrorHandler } from "./TestErrorHandler.js";
 
 /**
  * Provides the functionality to transform source code.

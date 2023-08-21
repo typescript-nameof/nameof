@@ -1,6 +1,7 @@
 {
   "name": "@typescript-nameof/common-types",
   "version": "0.0.1",
+  "type": "module",
   "description": "Provides Common Types for @typescript-nameof Packages",
   "exports": {
     ".": {

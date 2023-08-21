@@ -1,6 +1,7 @@
 {
   "name": "@typescript-nameof/nameof",
   "version": "0.0.1",
+  "type": "module",
   "description": "Allows the Use of nameof in TypeScript",
   "license": "MIT",
   "keywords": [

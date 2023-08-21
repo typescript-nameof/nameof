@@ -1,6 +1,7 @@
 {
   "name": "@typescript-nameof/babel-macro",
   "version": "0.0.1",
+  "type": "module",
   "description": "Allows the Use of nameof in TypeScript Using a Babel Macro",
   "license": "MIT",
   "keywords": [

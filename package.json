@@ -1,5 +1,6 @@
 {
   "name": "typescript-nameof",
+  "type": "module",
   "private": true,
   "scripts": {
     "prepare": "ts-patch install && npm run --workspace @typescript-nameof/playground patch",
