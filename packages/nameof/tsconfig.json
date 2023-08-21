@@ -14,12 +14,7 @@
             "@typescript-nameof/*": [
                 "../*/src"
             ]
-        },
-        "plugins": [
-            {
-                "transform": "../nameof/src/main.ts"
-            }
-        ]
+        }
     },
     "include": [
         "./src"
