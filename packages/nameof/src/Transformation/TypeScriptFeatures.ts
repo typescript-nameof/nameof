@@ -43,7 +43,7 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScript
      * @param error
      * The error to process.
      */
-    public ReportError(location: INodeLocation, node: ts.Node, context: ITypeScriptContext, error: Error): void
+    public override ReportError(location: INodeLocation, node: ts.Node, context: ITypeScriptContext, error: Error): void
     {
         this.ErrorHandler?.Report(location, node, context, error);
     }
@@ -54,7 +54,7 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScript
      * @returns
      * The newly created error handler.
      */
-    protected InitializeErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
+    protected override InitializeErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
     {
         return new TypeScriptErrorHandler(this);
     }

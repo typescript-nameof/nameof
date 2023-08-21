@@ -45,7 +45,7 @@ export class UnsupportedNode<T> extends Node<T>
     /**
      * @inheritdoc
      */
-    public get PathPart(): PathPartCandidate<T>
+    public override get PathPart(): PathPartCandidate<T>
     {
         return {
             type: PathKind.Unsupported,

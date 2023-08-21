@@ -38,7 +38,7 @@ export class TSJestErrorHandler extends TypeScriptErrorHandler<TSJestFeatures>
      * @param error
      * The original error.
      */
-    protected ReportDiagnostic(location: INodeLocation, item: Node, context: ITypeScriptContext, diagnostic: Diagnostic, error: Error): void
+    protected override ReportDiagnostic(location: INodeLocation, item: Node, context: ITypeScriptContext, diagnostic: Diagnostic, error: Error): void
     {
         this.Features.Compiler.configSet.raiseDiagnostics([diagnostic], diagnostic.file?.fileName);
     }

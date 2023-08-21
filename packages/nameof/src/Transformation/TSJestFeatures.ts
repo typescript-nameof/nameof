@@ -34,7 +34,7 @@ export class TSJestFeatures extends TypeScriptFeatures
     /**
      * @inheritdoc
      */
-    public get TypeScript(): typeof ts
+    public override get TypeScript(): typeof ts
     {
         return this.Compiler.configSet.compilerModule;
     }
@@ -53,7 +53,7 @@ export class TSJestFeatures extends TypeScriptFeatures
      * @returns
      * The newly created error handler
      */
-    protected InitializeErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
+    protected override InitializeErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
     {
         return new TSJestErrorHandler(this);
     }

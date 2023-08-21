@@ -17,7 +17,7 @@ export class BabelMacroTester extends TransformerTester<undefined>
     /**
      * @inheritdoc
      */
-    public RegisterCommon(): void
+    public override RegisterCommon(): void
     {
         teardown(
             () =>
@@ -103,7 +103,7 @@ export class BabelMacroTester extends TransformerTester<undefined>
      * @returns
      * The pre-processed code.
      */
-    protected async Preprocess(code: string): Promise<string>
+    protected override async Preprocess(code: string): Promise<string>
     {
         return `import ${this.componentName ?? "nameof"} from './ts-nameof.macro';${code}`;
     }

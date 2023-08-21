@@ -92,7 +92,7 @@ suite(
                      * @param errorClasses
                      * The classes of the expected error.
                      */
-                    protected AssertError(input: string, ...errorClasses: Array<new (...args: any[]) => Error>): Promise<void>
+                    protected override AssertError(input: string, ...errorClasses: Array<new (...args: any[]) => Error>): Promise<void>
                     {
                         return super.AssertError(input);
                     }

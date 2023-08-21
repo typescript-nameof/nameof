@@ -51,7 +51,7 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
      * @param error
      * The error to report.
      */
-    public Report(location: INodeLocation, item: Node, context: ITypeScriptContext, error: Error): void
+    public override Report(location: INodeLocation, item: Node, context: ITypeScriptContext, error: Error): void
     {
         this.ReportDiagnostic(location, item, context, this.GetDiagnostic(item, context, error), error);
     }

@@ -37,7 +37,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * The expected name of function calls.
      */
-    public GetNameofName(context: BabelContext): string
+    public override GetNameofName(context: BabelContext): string
     {
         return context.nameofIdentifierName ?? super.GetNameofName(context);
     }
@@ -68,7 +68,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * A value indicating whether the specified {@linkcode item} has been mutated in a previous `nameof` call.
      */
-    public IsMutated(item: types.Node, context: BabelContext): boolean
+    public override IsMutated(item: types.Node, context: BabelContext): boolean
     {
         return (item.extra as any)?.[this.OriginalSymbol] ?? false;
     }
@@ -85,7 +85,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * The transformed node.
      */
-    public Transform(input: NodePath, context: BabelContext): types.Node
+    public override Transform(input: NodePath, context: BabelContext): types.Node
     {
         context.traverseChildren?.();
         return super.Transform(input, context);
@@ -231,7 +231,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @param newNode
      * The newly created node.
      */
-    protected StoreOriginal(original: types.Node, newNode: types.Node): void
+    protected override StoreOriginal(original: types.Node, newNode: types.Node): void
     {
         newNode.extra ??= {};
         (newNode.extra as any)[this.OriginalSymbol] = original;
@@ -246,7 +246,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * The original node of the specified {@linkcode node}.
      */
-    protected GetOriginal(node: types.Node): types.Node | undefined
+    protected override GetOriginal(node: types.Node): types.Node | undefined
     {
         return (node.extra as any)?.[this.OriginalSymbol];
     }

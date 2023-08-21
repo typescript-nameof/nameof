@@ -38,7 +38,7 @@ export class TSPatchErrorHandler extends TypeScriptErrorHandler<TSPatchFeatures>
      * @param error
      * The original error.
      */
-    protected ReportDiagnostic(location: INodeLocation, item: Node, context: ITypeScriptContext, diagnostic: Diagnostic, error: Error): void
+    protected override ReportDiagnostic(location: INodeLocation, item: Node, context: ITypeScriptContext, diagnostic: Diagnostic, error: Error): void
     {
         this.Features.Extras.addDiagnostic(diagnostic);
     }

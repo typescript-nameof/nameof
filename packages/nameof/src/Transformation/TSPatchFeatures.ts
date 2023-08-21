@@ -33,7 +33,7 @@ export class TSPatchFeatures extends TypeScriptFeatures
     /**
      * @inheritdoc
      */
-    public get TypeScript(): typeof ts
+    public override get TypeScript(): typeof ts
     {
         return this.Extras.ts;
     }
@@ -52,7 +52,7 @@ export class TSPatchFeatures extends TypeScriptFeatures
      * @returns
      * The newly created error handler.
      */
-    protected InitializeErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
+    protected override InitializeErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
     {
         return new TSPatchErrorHandler(this);
     }
