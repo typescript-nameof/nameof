@@ -87,7 +87,7 @@ export class TypeScriptTester extends TransformerTester<ts.Node, ITypeScriptCont
             false,
             {
                 before: [
-                    new TypeScriptTransformer(errorHandler).Factory
+                    new TypeScriptTransformer(undefined, errorHandler).Factory
                 ]
             });
 

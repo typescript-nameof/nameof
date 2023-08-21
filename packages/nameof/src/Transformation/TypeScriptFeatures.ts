@@ -1,6 +1,8 @@
+import { createRequire } from "module";
 import { INodeLocation, TransformerFeatures } from "@typescript-nameof/common";
 import { IErrorHandler } from "@typescript-nameof/common/src/Transformation/IErrorHandler";
 import type ts = require("typescript");
+import { IPluginConfig } from "./IPluginConfig";
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TypeScriptErrorHandler } from "../Diagnostics/TypeScriptErrorHandler";
 
@@ -10,14 +12,23 @@ import { TypeScriptErrorHandler } from "../Diagnostics/TypeScriptErrorHandler";
 export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScriptContext>
 {
     /**
+     * The configuration of the transformer.
+     */
+    private config?: IPluginConfig;
+
+    /**
      * Initializes a new instance of the {@linkcode TransformerFeatures TypeScriptFeatures<T>} class.
+     *
+     * @param config
+     * The configuration of the plugin.
      *
      * @param errorHandler
      * A component for reporting errors.
      */
-    public constructor(errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext>)
+    public constructor(config?: IPluginConfig, errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext>)
     {
         super(errorHandler);
+        this.config = config;
     }
 
     /**
@@ -25,7 +36,37 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScript
      */
     public get TypeScript(): typeof ts
     {
-        return require("typescript");
+        if (this.Config?.tsLibrary)
+        {
+            if (typeof this.Config.tsLibrary === "string")
+            {
+                return require(this.Config.tsLibrary);
+            }
+            else
+            {
+                return this.Config.tsLibrary;
+            }
+        }
+        else
+        {
+            return this.TypeScriptFallback;
+        }
+    }
+
+    /**
+     * Gets a fallback instance of typescript in case no `typescript` instance was found in the configuration.
+     */
+    protected get TypeScriptFallback(): typeof ts
+    {
+        return createRequire(process.cwd())("typescript");
+    }
+
+    /**
+     * Gets the configuration of the transformer.
+     */
+    protected get Config(): IPluginConfig | undefined
+    {
+        return this.config;
     }
 
     /**

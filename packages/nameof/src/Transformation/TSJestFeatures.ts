@@ -2,6 +2,7 @@ import { IErrorHandler } from "@typescript-nameof/common";
 // eslint-disable-next-line node/no-unpublished-import
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import type ts = require("typescript");
+import { IPluginConfig } from "./IPluginConfig";
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
 import { TSJestErrorHandler } from "../Diagnostics/TSJestErrorHandler";
@@ -22,19 +23,22 @@ export class TSJestFeatures extends TypeScriptFeatures
      * @param compiler
      * The compiler of the plugin.
      *
+     * @param config
+     * The configuration of the plugin.
+     *
      * @param errorHandler
      * A component for reporting errors.
      */
-    public constructor(compiler: TsCompilerInstance, errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext>)
+    public constructor(compiler: TsCompilerInstance, config?: IPluginConfig, errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext>)
     {
-        super(errorHandler);
+        super(config, errorHandler);
         this.compiler = compiler;
     }
 
     /**
      * @inheritdoc
      */
-    public override get TypeScript(): typeof ts
+    public override get TypeScriptFallback(): typeof ts
     {
         return this.Compiler.configSet.compilerModule;
     }

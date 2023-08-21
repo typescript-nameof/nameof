@@ -1,5 +1,6 @@
 import { IErrorHandler } from "@typescript-nameof/common";
 import { Node } from "typescript";
+import { IPluginConfig } from "./IPluginConfig";
 import { ITypeScriptContext } from "./ITypeScriptContext";
 import { TypeScriptFeatures } from "./TypeScriptFeatures";
 import { TypeScriptTransformerBase } from "./TypeScriptTransformerBase";
@@ -15,11 +16,14 @@ export class TypeScriptTransformer extends TypeScriptTransformerBase<TypeScriptF
     /**
      * Initializes a new instance of the {@linkcode TypeScriptTransformerBase} class.
      *
+     * @param config
+     * The configuration of the plugin.
+     *
      * @param errorHandler
      * A component for reporting errors.
      */
-    public constructor(errorHandler?: IErrorHandler<Node, ITypeScriptContext>)
+    public constructor(config?: IPluginConfig, errorHandler?: IErrorHandler<Node, ITypeScriptContext>)
     {
-        super(new TypeScriptFeatures(errorHandler));
+        super(new TypeScriptFeatures(config, errorHandler));
     }
 }
