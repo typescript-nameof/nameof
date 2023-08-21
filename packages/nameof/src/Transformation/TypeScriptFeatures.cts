@@ -1,4 +1,5 @@
 import { createRequire } from "module";
+import { join } from "path";
 import { IErrorHandler, INodeLocation, TransformerFeatures } from "@typescript-nameof/common";
 import type ts = require("typescript");
 import { IPluginConfig } from "./IPluginConfig.cjs";
@@ -39,7 +40,7 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScript
         {
             if (typeof this.Config.tsLibrary === "string")
             {
-                return createRequire(process.cwd())(this.Config.tsLibrary);
+                return this.Require(this.Config.tsLibrary);
             }
             else
             {
@@ -57,7 +58,7 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScript
      */
     protected get TypeScriptFallback(): typeof ts
     {
-        return createRequire(process.cwd())("typescript");
+        return this.Require("typescript");
     }
 
     /**
@@ -97,5 +98,19 @@ export class TypeScriptFeatures extends TransformerFeatures<ts.Node, ITypeScript
     protected override InitializeErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
     {
         return new TypeScriptErrorHandler(this);
+    }
+
+    /**
+     * Imports the module identified by the specified {@linkcode moduleSpecifier} using a {@linkcode require} call.
+     *
+     * @param moduleSpecifier
+     * The specifier of the module to import.
+     *
+     * @returns
+     * The content of the imported module.
+     */
+    private Require(moduleSpecifier: string): any
+    {
+        return createRequire(join(process.cwd(), ".cjs"))(moduleSpecifier);
     }
 }
