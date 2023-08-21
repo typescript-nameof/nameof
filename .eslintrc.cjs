@@ -82,7 +82,10 @@ module.exports = {
             join(projectRoot("babel-macro"), "tsconfig.config.json"),
             projectPath("babel-plugin"),
             projectPath("common"),
-            projectPath("tests-common")
+            projectPath("tests-common"),
+            projectPath("test"),
+            join(projectRoot("test"), "tsconfig.editor.json"),
+            join(projectRoot("test"), "tsconfig.app.json")
         ]
     },
     ignorePatterns: [
