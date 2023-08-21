@@ -2,9 +2,9 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "composite": true,
-        "declaration": true,
         "rootDir": "./src",
-        "outDir": "./lib"
+        "outDir": "./lib",
+        "emitDeclarationOnly": true
     },
     "include": [
         "./src/**/*.ts"

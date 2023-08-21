@@ -2,11 +2,27 @@ const { join } = require("node:path");
 
 module.exports = {
     extends: [
-        join(__dirname, "..", "..", ".eslintrc.cjs"),
-        "plugin:expect-type/recommended"
+        join(__dirname, "..", "..", ".eslintrc.cjs")
     ],
     root: true,
-    plugins: [
-        "expect-type"
+    parserOptions: {
+        project: [
+            join(__dirname, "tsconfig.json"),
+            join(__dirname, "tsconfig.eslint.json"),
+            join(__dirname, "type-tests", "tsconfig.json")
+        ]
+    },
+    overrides: [
+        {
+            files: [
+                "*.test-d.ts"
+            ],
+            rules: {
+                "jsdoc/require-jsdoc": "off",
+                "@delagen/deprecation/deprecation": "off",
+                "@typescript-eslint/naming-convention": "off",
+                "@typescript-eslint/no-namespace": "off"
+            }
+        }
     ]
 };

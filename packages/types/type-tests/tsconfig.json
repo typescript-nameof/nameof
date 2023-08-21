@@ -1,0 +1,14 @@
+{
+    "extends": "../tsconfig.json",
+    "references": [
+        {
+            "path": "../tsconfig.json"
+        },
+        {
+            "path": "../../common-types/tsconfig.json"
+        }
+    ],
+    "include": [
+        "./**/*.test-d.ts"
+    ]
+}

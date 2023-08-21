@@ -8,6 +8,7 @@
         },
         "./package.json": "./package.json"
     },
+    "types": "./lib/index.d.ts",
     "scripts": {
         "build": "tsc --build",
         "clean": "npm run build -- --clean"
