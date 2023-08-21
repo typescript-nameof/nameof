@@ -11,6 +11,9 @@
     ],
     "references": [
         {
+            "path": "../common/tsconfig.app.json"
+        },
+        {
             "path": "../babel-plugin"
         },
         {
