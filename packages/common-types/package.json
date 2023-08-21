@@ -1,31 +1,31 @@
 {
-    "name": "@typescript-nameof/common-types",
-    "version": "0.0.1",
-    "description": "Provides Common Types for @typescript-nameof Packages",
-    "exports": {
-        ".": {
-            "types": "./lib/index.d.cts"
-        },
-        "./package.json": "./package.json"
+  "name": "@typescript-nameof/common-types",
+  "version": "0.0.1",
+  "description": "Provides Common Types for @typescript-nameof Packages",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.cts"
     },
-    "types": "./lib/index.d.cts",
-    "scripts": {
-        "build": "tsc --build",
-        "clean": "npm run build -- --clean",
-        "test": "tsd"
-    },
-    "devDependencies": {
-        "tsd": "^0.28.1"
-    },
-    "tsd": {
-        "directory": "./type-tests",
-        "compilerOptions": {
-            "paths": {
-                "@typescript-nameof/*": [
-                    "../../*/dist",
-                    "../../*/lib"
-                ]
-            }
-        }
+    "./package.json": "./package.json"
+  },
+  "types": "./lib/index.d.cts",
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "npm run build -- --clean",
+    "test": "tsd"
+  },
+  "devDependencies": {
+    "tsd": "^0.28.1"
+  },
+  "tsd": {
+    "directory": "./type-tests",
+    "compilerOptions": {
+      "paths": {
+        "@typescript-nameof/*": [
+          "../../*/dist",
+          "../../*/lib"
+        ]
+      }
     }
+  }
 }

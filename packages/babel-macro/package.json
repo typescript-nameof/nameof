@@ -2,15 +2,7 @@
   "name": "@typescript-nameof/babel-macro",
   "version": "0.0.1",
   "description": "Allows the Use of nameof in TypeScript Using a Babel Macro",
-  "main": "dist/index.cjs",
-  "types": "dist/index.d.cts",
-  "scripts": {
-    "clean": "rimraf dist && tsc --b --clean",
-    "build": "tsc --b",
-    "test": "tsc --build && mocha",
-    "test:debug": "npm run build && mocha",
-    "dopublish": "npm run install && npm run build && echo \"Run: npm publish --otp\""
-  },
+  "license": "MIT",
   "keywords": [
     "nameof",
     "typescript",
@@ -18,15 +10,19 @@
     "babel",
     "babel-plugin-macros"
   ],
+  "main": "dist/index.cjs",
+  "types": "dist/index.d.cts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/typescript-nameof/nameof.git",
     "directory": "packages/babel-macro"
   },
-  "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
-  "license": "MIT",
-  "peerDependencies": {
-    "babel-plugin-macros": "^3.1.0"
+  "scripts": {
+    "clean": "rimraf dist && tsc --b --clean",
+    "build": "tsc --b",
+    "test": "tsc --build && mocha",
+    "test:debug": "npm run build && mocha",
+    "dopublish": "npm run install && npm run build && echo \"Run: npm publish --otp\""
   },
   "dependencies": {
     "@typescript-nameof/babel-plugin": "^0.0.1",
@@ -50,5 +46,8 @@
     "ts-morph": "^17.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
+  },
+  "peerDependencies": {
+    "babel-plugin-macros": "^3.1.0"
   }
 }

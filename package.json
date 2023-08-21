@@ -1,9 +1,6 @@
 {
   "name": "typescript-nameof",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "prepare": "ts-patch install && npm run --workspace @typescript-nameof/test patch",
     "clean": "npm run --workspaces --if-present clean",
@@ -29,5 +26,8 @@
     "eslint-plugin-node": "^11.1.0",
     "ts-patch": "^2.1.0",
     "typescript": "^4.9.5"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

@@ -2,26 +2,25 @@
   "name": "@typescript-nameof/babel-plugin",
   "version": "0.0.1",
   "description": "nameof in TypeScript for babel.",
-  "main": "dist/index.cjs",
-  "scripts": {
-    "clean": "rimraf dist &&  tsc --b --clean",
-    "build": "tsc --b",
-    "test": "npm run build && mocha",
-    "dopublish": "npm run install && npm run build && echo \"Run: npm publish --otp\""
-  },
+  "license": "MIT",
   "keywords": [
     "nameof",
     "typescript",
     "transforms",
     "babel"
   ],
+  "main": "dist/index.cjs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/typescript-nameof/nameof.git",
     "directory": "packages/babel-plugin"
   },
-  "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
-  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf dist &&  tsc --b --clean",
+    "build": "tsc --b",
+    "test": "npm run build && mocha",
+    "dopublish": "npm run install && npm run build && echo \"Run: npm publish --otp\""
+  },
   "dependencies": {
     "@types/babel__core": "^7.20.0",
     "@types/babel__traverse": "^7.18.3",

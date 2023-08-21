@@ -2,8 +2,24 @@
   "name": "@typescript-nameof/nameof",
   "version": "0.0.1",
   "description": "Allows the Use of nameof in TypeScript",
+  "license": "MIT",
+  "keywords": [
+    "nameof",
+    "typescript",
+    "transformer",
+    "custom-transformer"
+  ],
   "main": "dist/main.cjs",
   "types": "dist/main.d.cts",
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git",
+    "directory": "packages/nameof"
+  },
+  "bugs": {
+    "url": "https://github.com/typescript-nameof/nameof/issues"
+  },
   "scripts": {
     "clean": "rimraf dist && tsc --b --clean",
     "build": "tsc --b",
@@ -12,26 +28,6 @@
     "test:debug": "npm run build-test && tsd && mocha",
     "copy-test-files": "rimraf temp && copyfiles -u 2 \"./src/tests/testFiles/**/*{.js,.txt}\" \"./temp\"",
     "dopublish": "npm run test && npm run build && echo \"run: npm publish --otp\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/typescript-nameof/nameof.git",
-    "directory": "packages/nameof"
-  },
-  "keywords": [
-    "nameof",
-    "typescript",
-    "transformer",
-    "custom-transformer"
-  ],
-  "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/typescript-nameof/nameof/issues"
-  },
-  "homepage": "https://github.com/typescript-nameof/nameof#readme",
-  "peerDependencies": {
-    "typescript": "*"
   },
   "dependencies": {
     "@typescript-nameof/common": "^0.0.1",
@@ -56,6 +52,9 @@
     "tsd": "^0.28.1",
     "typescript": "^4.9.5",
     "upath": "^2.0.1"
+  },
+  "peerDependencies": {
+    "typescript": "*"
   },
   "tsd": {
     "directory": "./src/tests/type-tests"

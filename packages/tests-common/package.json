@@ -2,9 +2,8 @@
   "name": "@typescript-nameof/tests-common",
   "private": true,
   "description": "Common tests for ts-nameof packages.",
-  "main": "./dist/index.js",
-  "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
   "license": "MIT",
+  "main": "./dist/index.js",
   "publishConfig": {
     "access": "public"
   },

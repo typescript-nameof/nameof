@@ -2,9 +2,8 @@
   "name": "@typescript-nameof/common",
   "version": "0.0.1",
   "description": "Provides Core Functionalities for @typescript-nameof Packages",
-  "main": "./dist/index.cjs",
-  "author": "The typescript-nameof Team (https://github.com/typescript-nameof",
   "license": "MIT",
+  "main": "./dist/index.cjs",
   "publishConfig": {
     "access": "public"
   },
