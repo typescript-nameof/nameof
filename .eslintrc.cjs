@@ -75,6 +75,7 @@ module.exports = {
             join(projectRoot("nameof"), "tsconfig.config.json"),
             join(projectRoot("nameof"), "src", "tests", "type-tests", "tsconfig.json"),
             projectPath("common-types"),
+            join(projectRoot("common-types"), "type-tests", "tsconfig.json"),
             projectPath("types"),
             join(projectRoot("types"), "tsconfig.eslint.json"),
             projectPath("babel-macro"),
@@ -97,5 +98,18 @@ module.exports = {
                 convertPath: pathConverter
             }
         ]
-    }
+    },
+    overrides: [
+        {
+            files: [
+                "*.test-d.ts"
+            ],
+            rules: {
+                "jsdoc/require-jsdoc": "off",
+                "@delagen/deprecation/deprecation": "off",
+                "@typescript-eslint/naming-convention": "off",
+                "@typescript-eslint/no-namespace": "off"
+            }
+        }
+    ]
 };

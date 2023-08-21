@@ -12,12 +12,12 @@
   "scripts": {
     "test": "tsd"
   },
+  "dependencies": {
+    "@typescript-nameof/common-types": "^0.0.1"
+  },
   "devDependencies": {
     "eslint-plugin-expect-type": "^0.2.2",
     "tsd": "^0.28.1"
-  },
-  "dependencies": {
-    "@typescript-nameof/common-types": "^0.0.1"
   },
   "tsd": {
     "directory": "./type-tests",

@@ -12,5 +12,19 @@
     "scripts": {
         "build": "tsc --build",
         "clean": "npm run build -- --clean"
+    },
+    "devDependencies": {
+        "tsd": "^0.28.1"
+    },
+    "tsd": {
+        "directory": "./type-tests",
+        "compilerOptions": {
+            "paths": {
+                "@typescript-nameof/*": [
+                    "../../*/dist",
+                    "../../*/lib"
+                ]
+            }
+        }
     }
 }

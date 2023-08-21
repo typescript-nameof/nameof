@@ -1,0 +1,16 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "rootDir": ".",
+        "emitDeclarationOnly": false,
+        "noEmit": true
+    },
+    "references": [
+        {
+            "path": "../tsconfig.json"
+        }
+    ],
+    "include": [
+        "./**/*.test-d.ts"
+    ]
+}
