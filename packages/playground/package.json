@@ -1,5 +1,5 @@
 {
-  "name": "@typescript-nameof/test",
+  "name": "@typescript-nameof/playground",
   "type": "module",
   "private": true,
   "description": "A project for testing the functionality of the `nameof` plugin.",
@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/typescript-nameof/nameof.git",
-    "directory": "packages/test"
+    "directory": "packages/playground"
   },
   "bugs": {
     "url": "https://github.com/typescript-nameof/nameof/issues"

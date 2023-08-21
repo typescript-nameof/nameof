@@ -2,7 +2,7 @@
   "name": "typescript-nameof",
   "private": true,
   "scripts": {
-    "prepare": "ts-patch install && npm run --workspace @typescript-nameof/test patch",
+    "prepare": "ts-patch install && npm run --workspace @typescript-nameof/playground patch",
     "clean": "npm run --workspaces --if-present clean",
     "build": "npm run --workspaces --if-present build",
     "test": "npm run --workspaces --if-present test",

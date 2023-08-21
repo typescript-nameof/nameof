@@ -26,7 +26,7 @@
             "path": "./packages/tests-common"
         },
         {
-            "path": "./packages/test"
+            "path": "./packages/playground"
         }
     ],
     "launch": {
@@ -69,15 +69,15 @@
                 "type": "node",
                 "request": "launch",
                 "name": "Test `ts-patch` Plugin",
-                "cwd": "${workspaceFolder:test}",
+                "cwd": "${workspaceFolder:playground}",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare",
-                "program": "${workspaceFolder:test}/node_modules/typescript/bin/tsc",
+                "program": "${workspaceFolder:playground}/node_modules/typescript/bin/tsc",
                 "args": [
                     "--build",
                     "--force",
                     "--watch",
-                    "${workspaceFolder:test}/tsconfig.app.json"
+                    "${workspaceFolder:playground}/tsconfig.app.json"
                 ],
                 "resolveSourceMapLocations": [
                     "${workspaceFolder:nameof}/**",
@@ -89,10 +89,10 @@
                 "type": "node",
                 "request": "launch",
                 "name": "Test `ttsc` Plugin",
-                "cwd": "${workspaceFolder:test}/ttypescript-workspace",
+                "cwd": "${workspaceFolder:playground}/ttypescript-workspace",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare",
-                "program": "${workspaceFolder:test}/ttypescript-workspace/node_modules/ttypescript/bin/tsc",
+                "program": "${workspaceFolder:playground}/ttypescript-workspace/node_modules/ttypescript/bin/tsc",
                 "args": [
                     "--build",
                     "--force",
@@ -109,10 +109,10 @@
                 "type": "node",
                 "request": "launch",
                 "name": "Test `webpack` Plugin",
-                "cwd": "${workspaceFolder:test}/webpack-workspace",
+                "cwd": "${workspaceFolder:playground}/webpack-workspace",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare",
-                "program": "${workspaceFolder:test}/webpack-workspace/node_modules/webpack/bin/webpack.js",
+                "program": "${workspaceFolder:playground}/webpack-workspace/node_modules/webpack/bin/webpack.js",
                 "args": [
                     "--watch"
                 ],
@@ -126,7 +126,7 @@
                 "type": "node",
                 "request": "launch",
                 "name": "Test `ts-jest` Plugin",
-                "cwd": "${workspaceFolder:test}",
+                "cwd": "${workspaceFolder:playground}",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare",
                 "program": "${workspaceFolder:Solution Items}/node_modules/jest/bin/jest.js",
@@ -143,7 +143,7 @@
                 "type": "node",
                 "request": "launch",
                 "name": "Test `babel` Plugin",
-                "cwd": "${workspaceFolder:test}",
+                "cwd": "${workspaceFolder:playground}",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare",
                 "program": "${workspaceFolder:Solution Items}/node_modules/@babel/cli/bin/babel.js",
@@ -166,7 +166,7 @@
                 "type": "node",
                 "request": "launch",
                 "name": "Test `babel` Macro",
-                "cwd": "${workspaceFolder:test}",
+                "cwd": "${workspaceFolder:playground}",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare",
                 "program": "${workspaceFolder:Solution Items}/node_modules/@babel/cli/bin/babel.js",
@@ -211,7 +211,7 @@
                     "pretest"
                 ],
                 "options": {
-                    "cwd": "${workspaceFolder:test}"
+                    "cwd": "${workspaceFolder:playground}"
                 },
                 "problemMatcher": []
             }
