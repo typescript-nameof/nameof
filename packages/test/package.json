@@ -21,7 +21,7 @@
     "patch": "ts-patch i",
     "lint": "eslint --max-warnings 0 ./scripts ./src .eslintrc.cjs",
     "lint-ide": "npm run lint || exit 0",
-    "pretest": "copyfiles -u 1 ./src/{index.ts,jest.test.ts,macro.ts} ./src/test",
+    "pretest": "copyfiles -u 1 ./src/{index.ts,jest.test.ts,macro.cts} ./src/test",
     "test:ts-patch": "npm run pretest && tsc -b tsconfig.test.json --watch",
     "test:ttsc": "npm run pretest && cd ./ttypescript-workspace && npx ttsc -b . --watch",
     "test:webpack": "npm run pretest && cross-env NODE_OPTIONS=\"--loader ts-node/esm\" webpack --watch",
