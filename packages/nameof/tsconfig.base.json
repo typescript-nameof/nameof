@@ -1,0 +1,17 @@
+{
+    "extends": "@manuth/tsconfig/recommended",
+    "compilerOptions": {
+        "composite": true,
+        "declarationMap": true,
+        "module": "Node16",
+        "lib": [
+            "ES2022"
+        ],
+        "target": "ES2015",
+        "paths": {
+            "@typescript-nameof/*": [
+                "../*/src"
+            ]
+        }
+    }
+}

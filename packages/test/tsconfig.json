@@ -7,9 +7,6 @@
         },
         {
             "path": "./tsconfig.editor.json"
-        },
-        {
-            "path": "./tsconfig.eslint.json"
         }
     ]
 }
