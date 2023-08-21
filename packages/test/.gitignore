@@ -1,10 +1,6 @@
 # Build results
 src/test/
-ts-patch/
-ttypescript/
-webpack/
-babel/
-macro/
+out/
 
 # Logs
 logs

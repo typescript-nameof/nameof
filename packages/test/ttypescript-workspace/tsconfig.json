@@ -1,7 +1,7 @@
 {
     "extends": "../tsconfig.app.json",
     "compilerOptions": {
-        "outDir": "../ttypescript",
+        "outDir": "../out/ttypescript",
         "plugins": [
             {
                 "transform": "../../nameof"

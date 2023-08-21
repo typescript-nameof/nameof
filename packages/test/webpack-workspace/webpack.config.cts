@@ -9,7 +9,7 @@ module.exports = {
         outputModule: true
     },
     output: {
-        path: resolve(__dirname, "..", "webpack"),
+        path: resolve(__dirname, "..", "out", "webpack"),
         libraryTarget: "module"
     },
     resolve: {

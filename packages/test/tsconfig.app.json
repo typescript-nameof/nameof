@@ -3,7 +3,7 @@
     "compilerOptions": {
         "composite": true,
         "rootDir": "./src",
-        "outDir": "./ts-patch"
+        "outDir": "./out/ts-patch"
     },
     "include": [
         "./src/**/*"

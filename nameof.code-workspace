@@ -152,7 +152,7 @@
                     "--extensions",
                     ".ts",
                     "--out-dir",
-                    "babel",
+                    "./out/babel",
                     "--watch"
                 ],
                 "resolveSourceMapLocations": [
@@ -177,7 +177,7 @@
                     "--extensions",
                     ".ts,.cts",
                     "--out-dir",
-                    "./macro",
+                    "./out/macro",
                     "--watch"
                 ],
                 "resolveSourceMapLocations": [

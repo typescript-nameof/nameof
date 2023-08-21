@@ -26,8 +26,8 @@
     "test:ttsc": "npm run pretest && cd ./ttypescript-workspace && npx ttsc -b . --watch",
     "test:webpack": "npm run pretest && cross-env NODE_OPTIONS=\"--loader ts-node/esm\" webpack --watch",
     "test:ts-jest": "npm run pretest && jest --watch",
-    "test:babel-plugin": "npm run pretest && babel ./src/test --extensions \".ts\" --out-dir ./babel --watch",
-    "test:babel-macro": "npm run pretest && babel ./src/test --config-file ./babel.macro.cts --extensions \".ts,.cts\" --out-dir ./macro --watch"
+    "test:babel-plugin": "npm run pretest && babel ./src/test --extensions \".ts\" --out-dir ./out/babel --watch",
+    "test:babel-macro": "npm run pretest && babel ./src/test --config-file ./babel.macro.cts --extensions \".ts,.cts\" --out-dir ./out/macro --watch"
   },
   "devDependencies": {
     "@manuth/eslint-plugin-typescript": "^4.1.0",
