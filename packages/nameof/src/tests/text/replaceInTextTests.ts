@@ -3,22 +3,22 @@ import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
 import { replaceInText } from "../../text";
 
-describe(
+suite(
     "replaceInText",
     () =>
     {
-        describe(
+        suite(
             "Specific",
             () =>
             {
-                it(
+                test(
                     "should unofficially maintain backwards compatibility when providing one argument",
                     () =>
                     {
                         assert.equal((replaceInText as any)("nameof(window);").fileText, '"window";');
                     });
 
-                it(
+                test(
                     "should not replace when no nameof",
                     () =>
                     {
@@ -27,16 +27,16 @@ describe(
                         assert.equal(result.fileText, undefined);
                     });
 
-                it(
+                test(
                     "should replace when there was a nameof",
                     () =>
                     {
-                        const result = replaceInText("file.ts", "describe(nameof(myTest), () => {});");
+                        const result = replaceInText("file.ts", "suite(nameof(myTest), () => {});");
                         assert.equal(result.replaced, true);
-                        assert.equal(result.fileText, 'describe("myTest", () => {});');
+                        assert.equal(result.fileText, 'suite("myTest", () => {});');
                     });
 
-                it(
+                test(
                     "should replace when there was a nameof in tsx file",
                     () =>
                     {
@@ -46,7 +46,7 @@ describe(
                     });
             });
 
-        describe(
+        suite(
             "Common",
             () =>
             {

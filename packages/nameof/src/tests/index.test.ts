@@ -2,7 +2,7 @@ import { TypeScriptTester } from "./TypeScriptTester";
 
 let tester = new TypeScriptTester();
 
-describe(
+suite(
     "nameof",
     () =>
      {

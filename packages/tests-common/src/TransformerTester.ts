@@ -30,15 +30,15 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
      */
     public RegisterCommon(): void
     {
-        describe(
+        suite(
             "nameof",
             () =>
             {
-                describe(
+                suite(
                     "bad call expressions",
                     () =>
                     {
-                        it(
+                        test(
                             "should throw if someone does not provide arguments or type arguments",
                             async () =>
                             {
@@ -48,60 +48,60 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
                     });
 
-                describe(
+                suite(
                     "argument",
                     () =>
                     {
-                        it(
+                        test(
                             "should get the result of an identifier",
                             async () =>
                             {
                                 await this.Assert("nameof(myObj);", '"myObj";');
                             });
 
-                        it(
+                        test(
                             "should get the result of the this keyword",
                             async () =>
                             {
                                 await this.Assert("nameof(this);", '"this";');
                             });
 
-                        it(
+                        test(
                             "should get the result of a property access expression",
                             async () =>
                             {
                                 await this.Assert("nameof(myObj.prop);", '"prop";');
                             });
 
-                        it(
+                        test(
                             "should get the result of an expression with a parenthesized expression",
                             async () =>
                             {
                                 await this.Assert("nameof((myObj).prop);", '"prop";');
                             });
 
-                        it(
+                        test(
                             "should get the result of an expression with a type assertion",
                             async () =>
                             {
                                 await this.Assert("nameof((myObj as any).prop);", '"prop";');
                             });
 
-                        it(
+                        test(
                             "should get the result of a property access expression with null assertion operators",
                             async () =>
                             {
                                 await this.Assert("nameof(myObj!.prop!);", '"prop";');
                             });
 
-                        it(
+                        test(
                             "should get the result of an identifier with a dollar sign",
                             async () =>
                             {
                                 await this.Assert("nameof(myObj.$prop);", '"$prop";');
                             });
 
-                        it(
+                        test(
                             "should throw if nameof calls are nested inside of nameof() calls",
                             async () =>
                             {
@@ -109,46 +109,46 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
                     });
 
-                describe(
+                suite(
                     "type parameter",
                     () =>
                     {
-                        it(
+                        test(
                             "should get the result of an identifier",
                             async () =>
                             {
                                 await this.Assert("nameof<Test>();", '"Test";');
                             });
 
-                        it(
+                        test(
                             "should get the result of a fully qualified name",
                             async () =>
                             {
                                 await this.Assert("nameof<This.Is.A.Test>();", '"Test";');
                             });
 
-                        it(
+                        test(
                             "should get an identifier with a dollar sign",
                             async () =>
                             {
                                 await this.Assert("nameof<Test$>();", '"Test$";');
                             });
 
-                        it(
+                        test(
                             "should handle when someone uses an import type as not the last node",
                             async () =>
                             {
                                 await this.Assert("nameof<import('test').prop>();", '"prop";');
                             });
 
-                        it(
+                        test(
                             "should throw when someone only uses an import type",
                             async () =>
                             {
                                 await this.AssertError("nameof<import('test')>();", MissingImportTypeQualifierError);
                             });
 
-                        it(
+                        test(
                             "should throw when someone only uses an import type with typeof",
                             async () =>
                             {
@@ -156,46 +156,46 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
                     });
 
-                describe(
+                suite(
                     "computed properties",
                     () =>
                     {
-                        it(
+                        test(
                             "should allow numeric computed properties",
                             async () =>
                             {
                                 await this.Assert("nameof(anyProp[0]);", '"0";');
                             });
 
-                        it(
+                        test(
                             "should get after the period",
                             async () =>
                             {
                                 await this.Assert("nameof(anyProp[0].prop);", '"prop";');
                             });
 
-                        it(
+                        test(
                             "should get the string inside the computed property",
                             async () =>
                             {
                                 await this.Assert('nameof(obj["prop"]);', '"prop";');
                             });
 
-                        it(
+                        test(
                             "should get the string inside the computed property for a function",
                             async () =>
                             {
                                 await this.Assert('nameof<MyInterface>(i => i["prop"]);', '"prop";');
                             });
 
-                        it(
+                        test(
                             "should not allow numeric computed properties using a function",
                             async () =>
                             {
                                 await this.Assert("nameof<MyInterface>(i => i.prop[0]);", '"0";');
                             });
 
-                        it(
+                        test(
                             "should not allow an identifier nested in a computed property",
                             async () =>
                             {
@@ -203,18 +203,18 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
                     });
 
-                describe(
+                suite(
                     "array",
                     () =>
                     {
-                        it(
+                        test(
                             "should not allow only an array",
                             async () =>
                             {
                                 await this.AssertError("nameof([0]);", UnsupportedNodeError);
                             });
 
-                        it(
+                        test(
                             "should allow getting an array's property",
                             async () =>
                             {
@@ -222,18 +222,18 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
                     });
 
-                describe(
+                suite(
                     "with function",
                     () =>
                     {
-                        it(
+                        test(
                             "should get the last string",
                             async () =>
                             {
                                 await this.Assert("nameof<MyInterface>(i => i.prop1.prop2);", '"prop2";');
                             });
 
-                        it(
+                        test(
                             "should get from the return statement",
                             async () =>
                             {
@@ -241,35 +241,35 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                                 await this.Assert("nameof<MyInterface>(i => { console.log('test'); return i.prop1.prop2; });", '"prop2";');
                             });
 
-                        it(
+                        test(
                             "should handle when someone uses an import type",
                             async () =>
                             {
                                 await this.Assert("nameof<import('test')>(x => x.Foo);", '"Foo";');
                             });
 
-                        it(
+                        test(
                             "should get when using an element access expression directly on the object",
                             async () =>
                             {
                                 await this.Assert('nameof<MyInterface>(i => i["prop1"]);', '"prop1";');
                             });
 
-                        it(
+                        test(
                             "should allow numeric computed properties",
                             async () =>
                             {
                                 await this.Assert("nameof<MyInterface>(i => i[0]);", '"0";');
                             });
 
-                        it(
+                        test(
                             "should throw when the function doesn't have a period",
                             async () =>
                             {
                                 await this.AssertError("nameof<MyInterface>(i => i);", MissingPropertyAccessError);
                             });
 
-                        it(
+                        test(
                             "should throw when the function doesn't have a return statement",
                             async () =>
                             {
@@ -277,18 +277,18 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
                     });
 
-                describe(
+                suite(
                     "literals",
                     () =>
                     {
-                        it(
+                        test(
                             "should throw if trying to parse a string literal",
                             async () =>
                             {
                                 await this.AssertError('nameof("test");', UnsupportedNodeError);
                             });
 
-                        it(
+                        test(
                             "should throw if trying to parse a numeric literal",
                             async () =>
                             {
@@ -296,11 +296,11 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
                     });
 
-                describe(
+                suite(
                     "interpolate",
                     () =>
                     {
-                        it(
+                        test(
                             "should throw when providing nameof.interpolate to nameof",
                             async () =>
                             {
@@ -308,11 +308,11 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
                     });
 
-                describe(
+                suite(
                     "template expression",
                     () =>
                     {
-                        it(
+                        test(
                             "should throw when trying to parse a template literal",
                             async () =>
                             {
@@ -320,11 +320,11 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             });
                     });
 
-                describe(
+                suite(
                     "other",
                     () =>
                     {
-                        it(
+                        test(
                             "should throw if passing a spread operator",
                             async () =>
                             {

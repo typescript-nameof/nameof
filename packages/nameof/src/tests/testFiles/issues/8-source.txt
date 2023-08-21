@@ -5,7 +5,7 @@ import { FunctionBodyWriter } from "./../../writers";
 import { WriteFlags } from "./../../WriteFlags";
 import * as mocks from "./mocks";
 
-describe(
+suite(
     nameof(FunctionBodyWriter),
     () =>
     {
@@ -16,12 +16,12 @@ describe(
             return { writer, defWriter };
         }
 
-        describe(
+        suite(
             nameof<FunctionBodyWriter>(w => w.write),
             () =>
             {
 
-                it(
+                test(
                     `should not write out the function body if ${nameof(WriteFlags.HideFunctionBodies)} is set`,
                     () =>
                     {
@@ -31,7 +31,7 @@ describe(
                         expect(writer.toString()).to.equal(";");
                     });
 
-                it(
+                test(
                     `should not write out the function body if it's an ${nameof(InterfaceMethodDefinition)}`,
                     () =>
                     {

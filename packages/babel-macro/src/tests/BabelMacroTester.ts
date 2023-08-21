@@ -19,23 +19,23 @@ export class BabelMacroTester extends TransformerTester<undefined>
      */
     public RegisterCommon(): void
     {
-        afterEach(
+        teardown(
             () =>
             {
                 this.componentName = undefined;
             });
 
-        describe(
+        suite(
             "using a name other than nameof",
             () =>
             {
-                beforeEach(
+                setup(
                     () =>
                     {
                         this.componentName = "other";
                     });
 
-                it(
+                test(
                     "should work when using a different import name",
                     async () =>
                     {

@@ -2,7 +2,12 @@
     "compilerOptions": {
         "rootDir": "./src",
         "outDir": "./dist",
-        "composite": true
+        "composite": true,
+        "plugins": [
+            {
+                "transform": "../nameof"
+            }
+        ]
     },
     "extends": "../../tsconfig.base.json",
     "include": [

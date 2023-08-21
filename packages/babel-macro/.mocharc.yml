@@ -4,3 +4,4 @@ reporter: progress
 watch-extensions: ts
 timeout: 10000
 spec: src/tests/**/*.ts
+ui: tdd

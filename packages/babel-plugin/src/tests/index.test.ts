@@ -2,7 +2,7 @@ import { BabelPluginTester } from "./BabelPluginTester";
 
 let tester = new BabelPluginTester();
 
-describe(
+suite(
     "nameof",
     () =>
     {

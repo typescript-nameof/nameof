@@ -3,7 +3,7 @@ import { readFile, writeFile } from "fs-extra";
 import { getTestFilePath } from "./helpers";
 import { replaceInFiles } from "../../text";
 
-describe(
+suite(
     "replaceInFiles()",
     () =>
     {
@@ -52,11 +52,11 @@ describe(
          */
         function runIssueTest(issueNumber: number): void
         {
-            describe(
+            suite(
                 `issue ${issueNumber}`,
                 () =>
                 {
-                    it(
+                    test(
                         "should replace",
                         async () =>
                         {

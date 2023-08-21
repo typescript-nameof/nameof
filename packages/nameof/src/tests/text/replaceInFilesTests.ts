@@ -3,7 +3,7 @@ import { readFile, writeFile } from "fs-extra";
 import { getTestFilePath } from "./helpers";
 import { replaceInFiles } from "../../text";
 
-describe(
+suite(
     "replaceInFiles()",
     () =>
     {
@@ -74,11 +74,11 @@ describe(
             }
         }
 
-        describe(
+        suite(
             "glob support",
             () =>
             {
-                it(
+                test(
                     "should replace in MyGlobTestFile.txt",
                     async () =>
                     {
@@ -95,11 +95,11 @@ describe(
                     });
             });
 
-        describe(
+        suite(
             "general file",
             () =>
             {
-                it(
+                test(
                     "should have the correct number of characters",
                     async () =>
                     {
@@ -134,11 +134,11 @@ console.log("MyNamespace.MyInnerInterface");
 console.log("MyInnerInterface");
 `;
 
-                describe(
+                suite(
                     "file modifying test",
                     () =>
                     {
-                        it(
+                        test(
                             "should modify the file",
                             async () =>
                             {
