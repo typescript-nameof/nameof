@@ -72,7 +72,6 @@ module.exports = {
         project: [
             join(__dirname, "tsconfig.eslint.json"),
             projectPath("nameof"),
-            join(projectRoot("nameof"), "tsconfig.config.json"),
             join(projectRoot("nameof"), "src", "tests", "type-tests", "tsconfig.json"),
             projectPath("common-types"),
             join(projectRoot("common-types"), "type-tests", "tsconfig.json"),
