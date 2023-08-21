@@ -17,7 +17,7 @@
         },
         "plugins": [
             {
-                "transform": "../nameof"
+                "transform": "../nameof/src/main.ts"
             }
         ]
     },
