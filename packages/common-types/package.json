@@ -11,7 +11,8 @@
     "types": "./lib/index.d.ts",
     "scripts": {
         "build": "tsc --build",
-        "clean": "npm run build -- --clean"
+        "clean": "npm run build -- --clean",
+        "test": "tsd"
     },
     "devDependencies": {
         "tsd": "^0.28.1"
