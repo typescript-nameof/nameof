@@ -2,7 +2,7 @@
   "name": "@typescript-nameof/babel-plugin",
   "version": "0.0.1",
   "description": "nameof in TypeScript for babel.",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "scripts": {
     "clean": "rimraf dist &&  tsc --b --clean",
     "build": "tsc --b",

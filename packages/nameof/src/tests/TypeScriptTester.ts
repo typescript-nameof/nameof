@@ -1,8 +1,8 @@
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
 import ts = require("typescript");
-import { ITypeScriptContext } from "../Transformation/ITypeScriptContext";
-import { TypeScriptTransformer } from "../Transformation/TypeScriptTransformer";
+import { ITypeScriptContext } from "../Transformation/ITypeScriptContext.cjs";
+import { TypeScriptTransformer } from "../Transformation/TypeScriptTransformer.cjs";
 
 /**
  * Provides the functionality to test typescript transformers.

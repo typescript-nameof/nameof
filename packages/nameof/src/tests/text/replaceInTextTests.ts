@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
-import { replaceInText } from "../../text";
+import { replaceInText } from "../../text/index.cjs";
 
 suite(
     "replaceInText",

@@ -2,8 +2,8 @@ import { resolve } from "path";
 import babel = require("@babel/core");
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
-import { BabelContext } from "../Transformation/BabelContext";
-import { BabelTransformer } from "../Transformation/BabelTransformer";
+import { BabelContext } from "../Transformation/BabelContext.cjs";
+import { BabelTransformer } from "../Transformation/BabelTransformer.cjs";
 
 /**
  * Provides the functionality to test the babel plugin.

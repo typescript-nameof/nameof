@@ -1,12 +1,18 @@
 {
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
+        "declarationMap": true,
+        "module": "Node16",
+        "lib": [
+            "ES2022"
+        ],
+        "target": "ES2015",
         "composite": true,
         "rootDir": "./src",
         "outDir": "./lib",
         "emitDeclarationOnly": true
     },
     "include": [
-        "./src/**/*.ts"
+        "./src/**/*"
     ]
 }

@@ -4,11 +4,11 @@
     "description": "Provides Common Types for @typescript-nameof Packages",
     "exports": {
         ".": {
-            "types": "./lib/index.d.ts"
+            "types": "./lib/index.d.cts"
         },
         "./package.json": "./package.json"
     },
-    "types": "./lib/index.d.ts",
+    "types": "./lib/index.d.cts",
     "scripts": {
         "build": "tsc --build",
         "clean": "npm run build -- --clean",
