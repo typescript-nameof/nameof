@@ -11,7 +11,7 @@
         ],
         "target": "ES2015",
         "paths": {
-            "@typescript-eslint/*": [
+            "@typescript-nameof/*": [
                 "../*/src"
             ]
         },
