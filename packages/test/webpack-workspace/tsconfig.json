@@ -6,5 +6,10 @@
                 "transform": "../../nameof"
             }
         ]
-    }
+    },
+    "references": [
+        {
+            "path": "../../babel-macro"
+        }
+    ]
 }
