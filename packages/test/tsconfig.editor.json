@@ -4,6 +4,7 @@
         "noEmit": true
     },
     "files": [
+        "./babel.config.cts",
         "./jest.config.cjs",
         "./webpack-workspace/webpack.config.cts"
     ]

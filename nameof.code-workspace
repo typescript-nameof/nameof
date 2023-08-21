@@ -138,6 +138,29 @@
                     "${workspaceFolder:common}/**",
                     "!**/node_modules/**"
                 ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `babel` Plugin",
+                "cwd": "${workspaceFolder:test}",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare",
+                "program": "${workspaceFolder:Solution Items}/node_modules/@babel/cli/bin/babel.js",
+                "args": [
+                    "./src/test",
+                    "--extensions",
+                    ".ts",
+                    "--out-dir",
+                    "babel",
+                    "--watch"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "${workspaceFolder:babel-plugin}/**",
+                    "!**/node_modules/**"
+                ]
             }
         ],
         "compounds": []

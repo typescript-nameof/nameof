@@ -25,7 +25,8 @@
     "test:ts-patch": "npm run pretest && tsc -b tsconfig.test.json --watch",
     "test:ttsc": "npm run pretest && cd ./ttypescript-workspace && npx ttsc -b . --watch",
     "test:webpack": "npm run pretest && cross-env NODE_OPTIONS=\"--loader ts-node/esm\" webpack --watch",
-    "test:ts-jest": "npm run pretest && jest --watch"
+    "test:ts-jest": "npm run pretest && jest --watch",
+    "test:babel-plugin": "npm run pretest && babel ./src/test --extensions \".ts\" --out-dir ./babel --watch"
   },
   "devDependencies": {
     "@manuth/eslint-plugin-typescript": "^4.1.0",
@@ -49,6 +50,11 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@babel/cli": "^7.22.10",
+    "@babel/core": "^7.22.10",
+    "@babel/preset-env": "^7.22.10",
+    "@babel/preset-typescript": "^7.22.5",
+    "@types/babel__core": "^7.20.1",
     "@types/jest": "^29.5.3",
     "@types/nameof": "file:../types",
     "cross-env": "^7.0.3",

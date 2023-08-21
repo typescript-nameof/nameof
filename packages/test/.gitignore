@@ -3,6 +3,7 @@ src/test/
 ts-patch/
 ttypescript/
 webpack/
+babel/
 
 # Logs
 logs
