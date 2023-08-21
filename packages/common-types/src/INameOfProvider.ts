@@ -77,6 +77,27 @@ export interface INameOfProvider
      *
      * @param func A function returning an array of expressions to be parsed, excluding the parameter's identifier.
      */
+    array<T>(func: (obj: T) => any[]): string[];
+
+    /**
+     * Gets an array containing the string representation of each expression in the arguments.
+     *
+     * @example nameof.toArray(myObject, otherObject) -> ["myObject", "otherObject"]
+     * @example nameof.toArray(obj.firstProp, obj.secondProp, otherObject, nameof.full(obj.other)) -> ["firstProp", "secondProp", "otherObject", "obj.other"]
+     *
+     * @param args An array of expressions to be parsed.
+     */
+    array(...args: any[]): string[];
+
+    /**
+     * Gets an array containing the string representation of the final identifier of each expression in the array returned by the provided function.
+     *
+     * @example nameof.toArray<MyType>(o => [o.firstProp, o.otherProp.secondProp, o.other]) -> ["firstProp", "secondProp", "other"]
+     * @example nameof.toArray<MyType>(o => [o.prop, nameof.full(o.myProp.otherProp, 1)]) -> ["prop", "myProp.otherProp"]
+     *
+     * @param func A function returning an array of expressions to be parsed, excluding the parameter's identifier.
+     * @deprecated
+     */
     toArray<T>(func: (obj: T) => any[]): string[];
 
     /**
@@ -86,6 +107,7 @@ export interface INameOfProvider
      * @example nameof.toArray(obj.firstProp, obj.secondProp, otherObject, nameof.full(obj.other)) -> ["firstProp", "secondProp", "otherObject", "obj.other"]
      *
      * @param args An array of expressions to be parsed.
+     * @deprecated
      */
     toArray(...args: any[]): string[];
 

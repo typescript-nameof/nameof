@@ -9,9 +9,14 @@ export const enum NameofFunction
     Full = "full",
 
     /**
+     * Indicates the `array` function.
+     */
+    Array = "array",
+
+    /**
      * Indicates the `toArray` function.
      */
-    Array = "toArray",
+    LegacyArray = "toArray",
 
     /**
      * Indicates the `interpolate` function.

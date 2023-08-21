@@ -387,6 +387,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             case NameofFunction.Split:
                 return this.ProcessSplit(call, context);
             case NameofFunction.Array:
+            case NameofFunction.LegacyArray:
                 return this.ProcessArray(call, context);
             case NameofFunction.Interpolate:
                 return this.ProcessInterpolate(call, context);
