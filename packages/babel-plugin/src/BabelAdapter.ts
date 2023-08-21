@@ -105,11 +105,17 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      */
     public GetLocation(item: types.Node, context: BabelContext): INodeLocation
     {
-        return {
+        let result: INodeLocation = {
             filePath: context.state.filename,
-            line: item.loc?.start.line,
             column: item.loc?.start.column
         };
+
+        if (item.loc?.start.line)
+        {
+            result.line = item.loc.start.line - 1;
+        }
+
+        return result;
     }
 
     /**
