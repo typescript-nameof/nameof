@@ -1,5 +1,8 @@
 /// <reference path="../index.d.ts" />
+import { INameOfProvider } from "@typescript-nameof/common-types";
 import { expectAssignable, expectDeprecated, expectNotDeprecated, expectType } from "tsd";
+
+expectType<INameOfProvider>(nameof);
 
 namespace TestNamespace {
     export interface TestType {
