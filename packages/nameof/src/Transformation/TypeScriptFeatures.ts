@@ -1,6 +1,5 @@
 import { createRequire } from "module";
-import { INodeLocation, TransformerFeatures } from "@typescript-nameof/common";
-import { IErrorHandler } from "@typescript-nameof/common/src/Transformation/IErrorHandler";
+import { IErrorHandler, INodeLocation, TransformerFeatures } from "@typescript-nameof/common";
 import type ts = require("typescript");
 import { IPluginConfig } from "./IPluginConfig";
 import { ITypeScriptContext } from "./ITypeScriptContext";
