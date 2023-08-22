@@ -89,10 +89,10 @@
                 "type": "node",
                 "request": "launch",
                 "name": "Test `ttsc` Plugin",
-                "cwd": "${workspaceFolder:playground}/ttypescript-workspace",
+                "cwd": "${workspaceFolder:Solution Items}/packages/ttypescript-workspace",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare Playground",
-                "program": "${workspaceFolder:playground}/ttypescript-workspace/node_modules/ttypescript/bin/tsc",
+                "program": "${workspaceFolder:Solution Items}/node_modules/ttypescript/bin/tsc",
                 "args": [
                     "--build",
                     "--force",
@@ -109,10 +109,10 @@
                 "type": "node",
                 "request": "launch",
                 "name": "Test `webpack` Plugin",
-                "cwd": "${workspaceFolder:playground}/webpack-workspace",
+                "cwd": "${workspaceFolder:Solution Items}/packages/webpack-workspace",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare Playground",
-                "program": "${workspaceFolder:playground}/webpack-workspace/node_modules/webpack/bin/webpack.js",
+                "program": "${workspaceFolder:Solution Items}/node_modules/webpack/bin/webpack.js",
                 "args": [
                     "--watch"
                 ],

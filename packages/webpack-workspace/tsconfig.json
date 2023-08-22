@@ -1,0 +1,16 @@
+{
+    "extends": "../playground/tsconfig.app.json",
+    "compilerOptions": {
+        "rootDir": "../playground",
+        "plugins": [
+            {
+                "transform": "../nameof"
+            }
+        ]
+    },
+    "references": [
+        {
+            "path": "../babel-macro"
+        }
+    ]
+}

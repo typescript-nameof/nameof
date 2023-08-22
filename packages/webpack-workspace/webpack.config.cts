@@ -3,13 +3,13 @@ import { Configuration } from "webpack";
 
 module.exports = {
     mode: "development",
-    entry: "../src/test/index.ts",
+    entry: "../playground/src/test/index.ts",
     devtool: "inline-source-map",
     experiments: {
         outputModule: true
     },
     output: {
-        path: resolve(__dirname, "..", "out", "webpack"),
+        path: resolve(__dirname, "..", "playground", "out", "webpack"),
         libraryTarget: "module"
     },
     resolve: {
@@ -34,7 +34,7 @@ module.exports = {
                         return {
                             before: [
                                 // eslint-disable-next-line node/no-unpublished-require
-                                require("../../nameof")
+                                require("../nameof")
                             ]
                         };
                     }

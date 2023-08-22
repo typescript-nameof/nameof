@@ -1,6 +1,8 @@
 {
     "private": true,
     "dependencies": {
+        "@types/jest": "^29.5.4",
+        "@types/nameof": "file:../types",
         "ttypescript": "^1.5.15",
         "typescript": "^4.9.5"
     }

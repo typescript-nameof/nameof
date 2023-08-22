@@ -39,7 +39,7 @@
     "@types/babel__traverse": "^7.18.3",
     "@types/babel-plugin-macros": "^3.1.0",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^20.5.1",
+    "@types/node": "^20.5.3",
     "@typescript-nameof/tests-common": "*",
     "babel-plugin-macros": "^3.1.0",
     "mocha": "^10.2.0",

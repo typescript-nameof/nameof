@@ -7,6 +7,6 @@
         "./babel.config.cts",
         "./babel.macro.cts",
         "./jest.config.cjs",
-        "./webpack-workspace/webpack.config.cts"
+        "../webpack-workspace/webpack.config.cts"
     ]
 }
