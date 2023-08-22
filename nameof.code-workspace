@@ -71,7 +71,7 @@
                 "name": "Test `ts-patch` Plugin",
                 "cwd": "${workspaceFolder:playground}",
                 "console": "integratedTerminal",
-                "preLaunchTask": "Prepare",
+                "preLaunchTask": "Prepare Playground",
                 "program": "${workspaceFolder:playground}/node_modules/typescript/bin/tsc",
                 "args": [
                     "--build",
@@ -91,7 +91,7 @@
                 "name": "Test `ttsc` Plugin",
                 "cwd": "${workspaceFolder:playground}/ttypescript-workspace",
                 "console": "integratedTerminal",
-                "preLaunchTask": "Prepare",
+                "preLaunchTask": "Prepare Playground",
                 "program": "${workspaceFolder:playground}/ttypescript-workspace/node_modules/ttypescript/bin/tsc",
                 "args": [
                     "--build",
@@ -111,7 +111,7 @@
                 "name": "Test `webpack` Plugin",
                 "cwd": "${workspaceFolder:playground}/webpack-workspace",
                 "console": "integratedTerminal",
-                "preLaunchTask": "Prepare",
+                "preLaunchTask": "Prepare Playground",
                 "program": "${workspaceFolder:playground}/webpack-workspace/node_modules/webpack/bin/webpack.js",
                 "args": [
                     "--watch"
@@ -128,7 +128,7 @@
                 "name": "Test `ts-jest` Plugin",
                 "cwd": "${workspaceFolder:playground}",
                 "console": "integratedTerminal",
-                "preLaunchTask": "Prepare",
+                "preLaunchTask": "Prepare Playground",
                 "program": "${workspaceFolder:Solution Items}/node_modules/jest/bin/jest.js",
                 "args": [
                     "--watchAll"
@@ -145,7 +145,7 @@
                 "name": "Test `babel` Plugin",
                 "cwd": "${workspaceFolder:playground}",
                 "console": "integratedTerminal",
-                "preLaunchTask": "Prepare",
+                "preLaunchTask": "Prepare Playground",
                 "program": "${workspaceFolder:Solution Items}/node_modules/@babel/cli/bin/babel.js",
                 "args": [
                     "./src/test",
@@ -168,7 +168,7 @@
                 "name": "Test `babel` Macro",
                 "cwd": "${workspaceFolder:playground}",
                 "console": "integratedTerminal",
-                "preLaunchTask": "Prepare",
+                "preLaunchTask": "Prepare Playground",
                 "program": "${workspaceFolder:Solution Items}/node_modules/@babel/cli/bin/babel.js",
                 "args": [
                     "./src/test",
@@ -203,7 +203,7 @@
         "version": "2.0.0",
         "tasks": [
             {
-                "label": "Prepare",
+                "label": "Prepare Playground",
                 "type": "shell",
                 "command": "npm",
                 "args": [
