@@ -1,7 +1,0 @@
-require: source-map-support/register
-recursive: true
-reporter: progress
-watch-extensions: ts
-timeout: 10000
-spec: dist/tests/**/*.js
-ui: tdd

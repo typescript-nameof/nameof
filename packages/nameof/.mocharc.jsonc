@@ -1,0 +1,9 @@
+{
+    "spec": [
+        "./dist/tests/**/*.js"
+    ],
+    "recursive": true,
+    "ui": "tdd",
+    "colors": true,
+    "require": "source-map-support/register"
+}
