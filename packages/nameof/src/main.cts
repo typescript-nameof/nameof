@@ -5,6 +5,8 @@ import { Program, SourceFile, TransformationContext, Transformer, TransformerFac
 import * as text from "./text/index.cjs";
 import { TSJestTransformer } from "./Transformation/TSJestTransformer.cjs";
 import { TSPatchTransformer } from "./Transformation/TSPatchTransformer.cjs";
+import * as adapter from "./Transformation/TypeScriptAdapter.cjs";
+import * as vanillaFeatures from "./Transformation/TypeScriptFeatures.cjs";
 import { TypeScriptTransformer } from "./Transformation/TypeScriptTransformer.cjs";
 
 import * as meta from "./version.cjs";
@@ -93,6 +95,11 @@ namespace nameof
     {
         return new TSJestTransformer(compiler).Factory;
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    export import TypeScriptAdapter = adapter.TypeScriptAdapter;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    export import TypeScriptFeatures = vanillaFeatures.TypeScriptFeatures;
 }
 
 export = nameof;

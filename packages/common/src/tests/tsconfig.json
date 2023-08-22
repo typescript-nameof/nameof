@@ -11,6 +11,12 @@
     "references": [
         {
             "path": "../../tsconfig.app.json"
+        },
+        {
+            "path": "../../../nameof"
+        },
+        {
+            "path": "../../../tests-common"
         }
     ]
 }
