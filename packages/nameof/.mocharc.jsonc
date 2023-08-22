@@ -1,6 +1,6 @@
 {
     "spec": [
-        "./dist/tests/**/*.js"
+        "./dist/tests/main.test.js"
     ],
     "recursive": true,
     "ui": "tdd",
