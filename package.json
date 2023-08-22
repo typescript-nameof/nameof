@@ -29,6 +29,8 @@
     "typescript": "^4.9.5"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "packages/playground/ttypescript-workspace",
+    "packages/playground/webpack-workspace"
   ]
 }
