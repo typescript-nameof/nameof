@@ -1,3 +1,4 @@
+import { ErrorHandler } from "@typescript-nameof/common";
 // eslint-disable-next-line node/no-unpublished-import
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import { TransformerExtras } from "ts-patch";
@@ -8,7 +9,6 @@ import { TSPatchTransformer } from "./Transformation/TSPatchTransformer.cjs";
 import * as adapter from "./Transformation/TypeScriptAdapter.cjs";
 import * as vanillaFeatures from "./Transformation/TypeScriptFeatures.cjs";
 import { TypeScriptTransformer } from "./Transformation/TypeScriptTransformer.cjs";
-
 import * as meta from "./version.cjs";
 
 /**
@@ -47,11 +47,17 @@ function nameof(...args: [Program, Record<string, unknown>?, TransformerExtras?]
     let factory: TransformerFactory<SourceFile>;
 
     if (
-        args[2]?.addDiagnostic &&
-        // Detecting `ts-patch` (ttypescript's `addDiagnostic` implementation doesn't do anything)
-        args[2].diagnostics)
+        args[2]?.addDiagnostic)
     {
-        factory = new TSPatchTransformer(args[2]).Factory;
+        // Detecting `ts-patch` (ttypescript's `addDiagnostic` implementation doesn't do anything)
+        if (args[2].diagnostics)
+        {
+            factory = new TSPatchTransformer(args[2]).Factory;
+        }
+        else
+        {
+            factory = new TSPatchTransformer(args[2], undefined, new ErrorHandler()).Factory;
+        }
     }
     else
     {
