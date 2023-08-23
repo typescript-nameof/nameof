@@ -1,4 +1,10 @@
-pipeline:
+when:
+  event:
+    - push
+    - pull_request
+    - tag
+
+steps:
   install:
     image: node
     commands:
@@ -15,9 +21,3 @@ pipeline:
     image: node
     commands:
       - npm run verify
-
-when:
-  event:
-    - push
-    - pull_request
-    - tag
