@@ -15,9 +15,11 @@ steps:
       - npm run build
   lint:
     image: node
+    group: test
     commands:
       - npm run lint
   test:
     image: node
+    group: test
     commands:
       - npm run verify
