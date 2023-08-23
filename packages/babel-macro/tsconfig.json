@@ -14,7 +14,7 @@
             "path": "../common/tsconfig.app.json"
         },
         {
-            "path": "../babel-plugin"
+            "path": "../babel"
         },
         {
             "path": "../common-types"

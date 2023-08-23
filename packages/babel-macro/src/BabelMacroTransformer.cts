@@ -1,5 +1,5 @@
 import type babel = require("@babel/core");
-import { BabelContext, BabelTransformer } from "@typescript-nameof/babel-plugin";
+import { BabelContext, BabelTransformer } from "@typescript-nameof/babel";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { MacroError, MacroHandler } from "babel-plugin-macros";
 

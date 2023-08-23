@@ -48,10 +48,10 @@ This section provides a brief explanation as to what functionalities are covered
     Contains the type declaration of the global `nameof` function
   - [`@typescript-nameof/common`](./packages/common):  
     Holds core components which are used for both the Babel.js and the TypeScript integrations. Components for detecting, interpreting and transforming `nameof` calls can be found here.
-  - [`@typescript-nameof/babel-plugin`](./packages/babel-plugin):  
+  - [`@typescript-nameof/babel`](./packages/babel):  
     Provides a plugin to use with the Babel.js compiler. This package contains the logic for parsing and manipulating Babel.js AST.
   - [`@typescript-nameof/babel-macro`](./packages/babel-macro):  
-    This package provides a macro for the use with the `babel-plugin-macros` plugin. Under the hood, this package mostly harnesses the components provided by `@typescript-nameof/babel-plugin`.
+    This package provides a macro for the use with the `babel-plugin-macros` plugin. Under the hood, this package mostly harnesses the components provided by `@typescript-nameof/babel`.
   - [`@typescript-nameof/common-types`](./packages/common-types):  
     Exposes common type declarations which are used by all packages
   - [`@typescript-nameof/tests-common`](./packages/tests-common):  
@@ -278,7 +278,7 @@ Please run the following to install the integration in your project:
     ```
   - For `babel` (using a plugin):
     ```sh
-    npm install --save-dev @typescript-nameof/babel-plugin
+    npm install --save-dev @typescript-nameof/babel
     ```
   - For `babel` (using a macro and `babel-plugin-macros`):
     ```sh
@@ -363,7 +363,7 @@ In order to use TypeScript `nameof`'s Babel.js plugin, add the following to your
 module.exports = {
     // [...]
     plugins: [
-        "@typescript-nameof/babel-plugin"
+        "@typescript-nameof/babel"
     ]
 };
 ```

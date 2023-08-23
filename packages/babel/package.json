@@ -1,5 +1,5 @@
 {
-  "name": "@typescript-nameof/babel-plugin",
+  "name": "@typescript-nameof/babel",
   "version": "0.0.1",
   "type": "module",
   "description": "nameof in TypeScript for babel.",
@@ -14,7 +14,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/typescript-nameof/nameof.git",
-    "directory": "packages/babel-plugin"
+    "directory": "packages/babel"
   },
   "scripts": {
     "clean": "rimraf dist &&  tsc --b --clean",

@@ -81,7 +81,7 @@ module.exports = {
             join(projectRoot("types"), "tsconfig.eslint.json"),
             projectPath("babel-macro"),
             join(projectRoot("babel-macro"), "tsconfig.config.json"),
-            projectPath("babel-plugin"),
+            projectPath("babel"),
             projectPath("tests-common"),
             projectPath("playground"),
             join(projectRoot("playground"), "tsconfig.editor.json"),

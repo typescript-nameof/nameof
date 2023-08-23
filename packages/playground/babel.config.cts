@@ -14,6 +14,6 @@ module.exports = {
     ],
     plugins: [
         // eslint-disable-next-line node/no-unpublished-require
-        require.resolve("../babel-plugin")
+        require.resolve("../babel")
     ]
 } as TransformOptions;

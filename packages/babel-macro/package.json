@@ -26,7 +26,7 @@
     "dopublish": "npm run install && npm run build && echo \"Run: npm publish --otp\""
   },
   "dependencies": {
-    "@typescript-nameof/babel-plugin": "^0.0.1",
+    "@typescript-nameof/babel": "^0.0.1",
     "@typescript-nameof/common": "^0.0.1",
     "@typescript-nameof/common-types": "^0.0.1"
   },

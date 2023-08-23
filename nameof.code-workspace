@@ -11,10 +11,10 @@
             "path": "./packages/types"
         },
         {
-            "path": "./packages/babel-macro"
+            "path": "./packages/babel"
         },
         {
-            "path": "./packages/babel-plugin"
+            "path": "./packages/babel-macro"
         },
         {
             "path": "./packages/common"
@@ -158,7 +158,7 @@
                 "resolveSourceMapLocations": [
                     "${workspaceFolder:nameof}/**",
                     "${workspaceFolder:common}/**",
-                    "${workspaceFolder:babel-plugin}/**",
+                    "${workspaceFolder:babel}/**",
                     "!**/node_modules/**"
                 ]
             },
