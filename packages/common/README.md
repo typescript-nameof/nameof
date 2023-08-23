@@ -1,6 +1,6 @@
-# @typescript-nameof/common
-Provides Core Functionalities for @typescript-nameof Packages
+# TypeScript `nameof` Common
+[![Build Status](https://ci.nuth.ch/api/badges/typescript-nameof/nameof/status.svg)](https://ci.nuth.ch/typescript-nameof/nameof)
 
-This package is used by a variety of `@typescript-nameof` packages internally.
+Provides core functionalities for @typescript-nameof packages.
 
-You might want to have a look at [`@typescript-nameof`](https://github.com/typescript-nameof/nameof) for more information.
+This project is part of the TypeScript `nameof` project. Head to the [repository of the project](https://github.com/typescript-nameof/nameof) if you would like to find out more about it.

@@ -1,31 +1,20 @@
-﻿# @typescript-nameof/babel
+# TypeScript `nameof` Babel.js
+![npm version](https://img.shields.io/npm/v/@typescript-nameof/babel-plugin)
 
-![npm version](https://img.shields.io/npm/v/@typescript-nameof/babel)
-[![Build Status](https://ci.nuth.ch/api/badges/typescript-nameof/nameof/status.svg)](https://ci.nuth.ch/typescript-nameof/nameof)
+Allows the use of `nameof()` calls in babel projects.
 
-[`nameof`](https://msdn.microsoft.com/en-us/library/dn986596.aspx) in TypeScript.
+Using this Babel.js plugin, you are able to use `nameof()` calls for finding out the name of variables, properties and types:
 
-## Setup
-
-1. Run:
-
-```
-npm install @typescript-nameof/babel @types/ts-nameof --save-dev
+```ts
+console.log(nameof(console));   // Prints `console`
 ```
 
-1. Add an entry to `.babelrc` for `@typescript-nameof/babel`:
+Furthermore, this package provides an integration for the `babel-plugin-macros` package:
 
+```ts
+import myNameof from "@typescript-nameof/babel/macro";
+
+console.log(myNameof(console)); // Prints `console`
 ```
-{
-  "plugins": ["@typescript-nameof/babel"]
-}
-```
 
-## Transforms
-
-[Read here](https://github.com/typescript-nameof/nameof/blob/master/README.md)
-
-## Other
-
-- [Contributing](https://github.com/typescript-nameof/nameof/blob/master/CONTRIBUTING.md)
-- [Development](https://github.com/typescript-nameof/nameof/blob/master/DEVELOPMENT.md)
+If you would like to find out more about this project or how to set up TypeScript `nameof` in your Babel.js project, check out the [repository of the project](https://github.com/typescript-nameof/nameof).
