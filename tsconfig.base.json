@@ -9,7 +9,7 @@
         "target": "ES6",
         "paths": {
             "@typescript-nameof/*": [
-                "./packages/*/src"
+                "./packages/*"
             ]
         }
     }
