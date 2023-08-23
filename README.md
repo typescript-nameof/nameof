@@ -1,5 +1,4 @@
 # TypeScript `nameof`
-
 [![Build Status](https://ci.nuth.ch/api/badges/typescript-nameof/nameof/status.svg)](https://ci.nuth.ch/typescript-nameof/nameof)
 
 A set of tools for allowing the use of `nameof()` calls in various ecosystems.
@@ -58,27 +57,29 @@ This section provides a brief explanation as to what functionalities are covered
     Contains a few example projects for trying out `nameof`-integrations
 
 ## Table of Contents
-- [Supported Ecosystems](#supported-ecosystems)
-- [Features](#features)
-- [Packages](#packages)
-- [Syntax](#syntax)
-  - [`nameof`](#nameof)
-  - [`nameof.full`](#nameoffull)
-  - [`nameof.interpolate`](#nameofinterpolate)
-  - [`nameof.array`](#nameofarray)
-  - [`nameof.split`](#nameofsplit)
-- [Supported Expressions](#supported-expressions)
-- [Compiler Setup](#compiler-setup)
-  - [Set Up a Project](#set-up-a-project)
-  - [Install Type Declarations](#install-type-declarations)
-  - [Install TypeScript `nameof` Integration](#install-typescript-nameof-integration)
-  - [Configure Compiler to Use TypeScript `nameof`](#configure-compiler-to-use-typescript-nameof)
-    - [`ts-patch` and `ttypescript`](#ts-patch-and-ttypescript)
-    - [`webpack` (using `ts-loader`)](#webpack-using-ts-loader)
-    - [`ts-jest`](#ts-jest)
-  - [`babel` Using a Plugin](#babel-using-a-plugin)
-  - [`babel` Using a Macro](#babel-using-a-macro)
-- [Thank You!](#thank-you)
+- [TypeScript `nameof`](#typescript-nameof)
+  - [Supported Ecosystems](#supported-ecosystems)
+  - [Features](#features)
+  - [Packages](#packages)
+  - [Table of Contents](#table-of-contents)
+  - [Syntax](#syntax)
+    - [`nameof`](#nameof)
+    - [`nameof.full`](#nameoffull)
+    - [`nameof.interpolate`](#nameofinterpolate)
+    - [`nameof.array`](#nameofarray)
+    - [`nameof.split`](#nameofsplit)
+  - [Supported Expressions](#supported-expressions)
+  - [Compiler Setup](#compiler-setup)
+    - [Set Up a Project](#set-up-a-project)
+    - [Install Type Declarations](#install-type-declarations)
+    - [Install TypeScript `nameof` Integration](#install-typescript-nameof-integration)
+    - [Configure Compiler to Use TypeScript `nameof`](#configure-compiler-to-use-typescript-nameof)
+      - [`ts-patch` and `ttypescript`](#ts-patch-and-ttypescript)
+      - [`webpack` (using `ts-loader`)](#webpack-using-ts-loader)
+      - [`ts-jest`](#ts-jest)
+    - [`babel` Using a Plugin](#babel-using-a-plugin)
+    - [`babel` Using a Macro](#babel-using-a-macro)
+  - [Thank You!](#thank-you)
 
 ## Syntax
 TypeScript `nameof` provides a wide variety of functions. The core concept is that the user passes an expression (such as a parameter, a type parameter or a lambda) and gets the expression's name in the desired format as a result.
