@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "type": "module",
   "description": "nameof in TypeScript for babel.",
+  "author": "Manuel Thalmann <m@nuth.ch>",
   "license": "MIT",
   "keywords": [
     "nameof",
@@ -13,26 +14,32 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.cts",
-      "default": "./dist/index.cjs"
+      "types": "./lib/index.d.cts",
+      "default": "./lib/index.cjs"
     },
     "./macro": {
       "types": "./macro/index.d.cts",
       "default": "./macro/index.cjs"
-    }
+    },
+    "./package.json": "./package.json"
   },
-  "main": "dist/index.cjs",
-  "types": "dist/index.d.cts",
+  "main": "./lib/index.cjs",
+  "types": "./lib/index.d.cts",
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/typescript-nameof/nameof.git",
     "directory": "packages/babel"
   },
+  "bugs": {
+    "url": "https://github.com/typescript-nameof/nameof/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "clean": "rimraf dist &&  tsc --b --clean",
-    "build": "tsc --b",
-    "test": "npm run build && mocha",
-    "dopublish": "npm run install && npm run build && echo \"Run: npm publish --otp\""
+    "prepack": "npm run --prefix ../.. build",
+    "test": "mocha"
   },
   "dependencies": {
     "@types/babel__core": "^7.20.0",

@@ -1,8 +1,16 @@
 import { DiagnosticTests } from "./Diagnostics/index.test.js";
 
-suite(
-    "common",
-    () =>
-    {
-        DiagnosticTests();
-    });
+/**
+ * Registers the tests.
+ */
+function Tests(): void
+{
+    suite(
+        "common",
+        () =>
+        {
+            DiagnosticTests();
+        });
+}
+
+Tests();

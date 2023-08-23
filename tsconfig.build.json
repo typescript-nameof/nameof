@@ -1,0 +1,21 @@
+{
+    "extends": "./tsconfig.base.json",
+    "files": [],
+    "references": [
+        {
+            "path": "./packages/nameof/tsconfig.build.json"
+        },
+        {
+            "path": "./packages/babel/tsconfig.build.json"
+        },
+        {
+            "path": "./packages/common/tsconfig.build.json"
+        },
+        {
+            "path": "./packages/common-types/tsconfig.build.json"
+        },
+        {
+            "path": "./packages/tests-common/tsconfig.build.json"
+        }
+    ]
+}

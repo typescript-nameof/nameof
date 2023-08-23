@@ -1,17 +1,15 @@
 {
-    "compilerOptions": {
-        "composite": true,
-        "declaration": true,
-        "rootDir": "./src",
-        "outDir": "./dist"
-    },
-    "extends": "../../tsconfig.base.json",
+    "extends": "./tsconfig.base.json",
+    "files": [],
     "references": [
         {
-            "path": "../common/tsconfig.app.json"
+            "path": "./tsconfig.app.json"
+        },
+        {
+            "path": "./tsconfig.build.json"
+        },
+        {
+            "path": "./tsconfig.eslint.json"
         }
-    ],
-    "include": [
-        "./src/**/*.ts"
     ]
 }

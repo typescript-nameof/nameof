@@ -1,21 +1,15 @@
 {
     "extends": "./tsconfig.base.json",
-    "compilerOptions": {
-        "rootDir": "./src",
-        "outDir": "./dist"
-    },
-    "include": [
-        "./src"
-    ],
-    "exclude": [
-        "./src/tests/type-tests"
-    ],
+    "files": [],
     "references": [
         {
-            "path": "../tests-common"
+            "path": "./tsconfig.app.json"
         },
         {
-            "path": "../common/tsconfig.app.json"
+            "path": "./tsconfig.build.json"
+        },
+        {
+            "path": "./tsconfig.eslint.json"
         }
     ]
 }

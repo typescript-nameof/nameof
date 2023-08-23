@@ -22,4 +22,4 @@ steps:
     image: node
     group: test
     commands:
-      - npm run verify
+      - npm run test

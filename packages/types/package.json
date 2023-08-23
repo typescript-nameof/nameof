@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "type": "module",
   "description": "TypeScript definitions for @typescript-nameof packages",
+  "author": "Manuel Thalmann <m@nuth.ch>",
   "exports": {
     ".": {
       "types": "./index.d.cts"
@@ -10,7 +11,20 @@
     "./package.json": "./package.json"
   },
   "types": "./index.d.cts",
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git",
+    "directory": "packages/types"
+  },
+  "bugs": {
+    "url": "https://github.com/typescript-nameof/nameof/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
+    "prepack": "npm run --prefix ../.. build",
     "test": "tsd"
   },
   "dependencies": {
@@ -21,14 +35,6 @@
     "tsd": "^0.28.1"
   },
   "tsd": {
-    "directory": "./type-tests",
-    "compilerOptions": {
-      "paths": {
-        "@typescript-nameof/*": [
-          "../../*/dist",
-          "../../*/lib"
-        ]
-      }
-    }
+    "directory": "./type-tests"
   }
 }

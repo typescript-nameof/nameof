@@ -3,15 +3,31 @@
   "version": "0.0.1",
   "type": "module",
   "description": "Provides Core Functionalities for @typescript-nameof Packages",
-  "license": "MIT",
-  "main": "./dist/index.cjs",
+  "author": "Manuel Thalmann <m@nuth.ch>",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.cts",
+      "default": "./lib/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/index.cjs",
+  "types": "./lib/index.d.cts",
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git",
+    "directory": "packages/common"
+  },
+  "bugs": {
+    "url": "https://github.com/typescript-nameof/nameof/issues"
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "clean": "rimraf dist && tsc --b --clean",
-    "build": "tsc --build tsconfig.build.json",
-    "test": "echo 'ignore'"
+    "prepack": "npm run --prefix ../.. build",
+    "test": "mocha"
   },
   "dependencies": {
     "@types/mocha": "^10.0.1",

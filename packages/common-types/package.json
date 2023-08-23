@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "type": "module",
   "description": "Provides Common Types for @typescript-nameof Packages",
+  "author": "Manuel Thalmann <m@nuth.ch>",
   "exports": {
     ".": {
       "types": "./lib/index.d.cts"
@@ -10,23 +11,26 @@
     "./package.json": "./package.json"
   },
   "types": "./lib/index.d.cts",
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git",
+    "directory": "packages/common-types"
+  },
+  "bugs": {
+    "url": "https://github.com/typescript-nameof/nameof/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsc --build",
-    "clean": "npm run build -- --clean",
+    "prepack": "npm run --prefix ../.. build",
     "test": "tsd"
   },
   "devDependencies": {
     "tsd": "^0.28.1"
   },
   "tsd": {
-    "directory": "./type-tests",
-    "compilerOptions": {
-      "paths": {
-        "@typescript-nameof/*": [
-          "../../*/dist",
-          "../../*/lib"
-        ]
-      }
-    }
+    "directory": "./type-tests"
   }
 }

@@ -3,15 +3,32 @@
   "type": "module",
   "private": true,
   "description": "Common tests for ts-nameof packages.",
+  "author": "Manuel Thalmann <m@nuth.ch>",
   "license": "MIT",
-  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git",
+    "directory": "packages/tests-common"
+  },
+  "bugs": {
+    "url": "https://github.com/typescript-nameof/nameof/issues"
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "clean": "rimraf dist && tsc --b --clean",
-    "build": "tsc --b",
-    "test": "echo 'ignore'"
+    "prepack": "npm run --prefix ../.. build",
+    "test": "mocha"
   },
   "dependencies": {
     "@typescript-nameof/common": "^0.0.1",

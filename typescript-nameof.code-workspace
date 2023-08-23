@@ -1,0 +1,381 @@
+{
+    "folders": [
+        {
+            "name": "Solution Items",
+            "path": "."
+        },
+        {
+            "path": "./packages/nameof"
+        },
+        {
+            "path": "./packages/types"
+        },
+        {
+            "path": "./packages/babel"
+        },
+        {
+            "path": "./packages/common"
+        },
+        {
+            "path": "./packages/common-types"
+        },
+        {
+            "path": "./packages/tests-common"
+        },
+        {
+            "path": "./packages/playground"
+        }
+    ],
+    "extensions": {
+        "recommendations": [
+            "dbaeumer.vscode-eslint",
+            "hbenl.test-adapter-converter",
+            "hbenl.vscode-mocha-test-adapter",
+            "hbenl.vscode-test-explorer"
+        ]
+    },
+    "launch": {
+        // Use IntelliSense to learn about possible attributes.
+        // Hover to view descriptions of existing attributes.
+        // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Launch `nameof` Tests",
+                "program": "${workspaceFolder:Solution Items}/node_modules/mocha/bin/mocha",
+                "args": [
+                    "--timeout",
+                    "0"
+                ],
+                "cwd": "${workspaceFolder:nameof}",
+                "internalConsoleOptions": "openOnSessionStart",
+                "preLaunchTask": "Build",
+                "sourceMaps": true,
+                "outFiles": [
+                    "${workspaceFolder:nameof}/**/*.js",
+                    "${workspaceFolder:common}/**/*.js",
+                    "!**/node_modules/**"
+                ],
+                "presentation": {
+                    "order": 2
+                }
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Launch `babel` Tests",
+                "program": "${workspaceFolder:Solution Items}/node_modules/mocha/bin/mocha",
+                "args": [
+                    "--timeout",
+                    "0"
+                ],
+                "cwd": "${workspaceFolder:babel}",
+                "internalConsoleOptions": "openOnSessionStart",
+                "preLaunchTask": "Build",
+                "sourceMaps": true,
+                "outFiles": [
+                    "${workspaceFolder:babel}/**/*.js",
+                    "${workspaceFolder:common}/**/*.js",
+                    "!**/node_modules/**"
+                ],
+                "presentation": {
+                    "order": 4
+                }
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Launch `common` Tests",
+                "program": "${workspaceFolder:Solution Items}/node_modules/mocha/bin/mocha",
+                "args": [
+                    "--timeout",
+                    "0"
+                ],
+                "cwd": "${workspaceFolder:TypeScript `nameof` Common}",
+                "internalConsoleOptions": "openOnSessionStart",
+                "preLaunchTask": "Build",
+                "sourceMaps": true,
+                "outFiles": [
+                    "${workspaceFolder:common}/**/*.js",
+                    "!**/node_modules/**"
+                ],
+                "presentation": {
+                    "order": 5
+                }
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Launch `common-tests` Tests",
+                "program": "${workspaceFolder:Solution Items}/node_modules/mocha/bin/mocha",
+                "args": [
+                    "--timeout",
+                    "0"
+                ],
+                "cwd": "${workspaceFolder:TypeScript `nameof` Tests}",
+                "internalConsoleOptions": "openOnSessionStart",
+                "preLaunchTask": "Build",
+                "sourceMaps": true,
+                "outFiles": [
+                    "${workspaceFolder:common-tests}/**/*.js",
+                    "!**/node_modules/**"
+                ],
+                "presentation": {
+                    "order": 7
+                }
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Launch Version Script",
+                "cwd": "${workspaceFolder:Solution Items}",
+                "runtimeArgs": [
+                    "--no-warnings=ExperimentalWarning",
+                    "--loader",
+                    "ts-node/esm/transpile-only"
+                ],
+                "program": "${workspaceFolder:Solution Items}/scripts/bumpVersion.mts"
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `ts-patch` Plugin",
+                "cwd": "${workspaceFolder:playground}",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare Playground",
+                "program": "${workspaceFolder:playground}/node_modules/typescript/bin/tsc",
+                "args": [
+                    "--build",
+                    "--force",
+                    "--watch",
+                    "${workspaceFolder:playground}/tsconfig.app.json"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "!**/node_modules/**"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `ttsc` Plugin",
+                "cwd": "${workspaceFolder:Solution Items}/packages/ttypescript-workspace",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare Playground",
+                "program": "${workspaceFolder:Solution Items}/node_modules/ttypescript/bin/tsc",
+                "args": [
+                    "--build",
+                    "--force",
+                    "--watch",
+                    "."
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "!**/node_modules/**"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `webpack` Plugin",
+                "cwd": "${workspaceFolder:Solution Items}/packages/webpack-workspace",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare Playground",
+                "program": "${workspaceFolder:Solution Items}/node_modules/webpack/bin/webpack.js",
+                "args": [
+                    "--watch"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "!**/node_modules/**"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `ts-jest` Plugin",
+                "cwd": "${workspaceFolder:playground}",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare Playground",
+                "program": "${workspaceFolder:Solution Items}/node_modules/jest/bin/jest.js",
+                "args": [
+                    "--watchAll"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "!**/node_modules/**"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `babel` Plugin",
+                "cwd": "${workspaceFolder:playground}",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare Playground",
+                "program": "${workspaceFolder:Solution Items}/node_modules/@babel/cli/bin/babel.js",
+                "args": [
+                    "./src/test",
+                    "--extensions",
+                    ".ts",
+                    "--out-dir",
+                    "./out/babel",
+                    "--watch"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "${workspaceFolder:babel}/**",
+                    "!**/node_modules/**"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `babel` Macro",
+                "cwd": "${workspaceFolder:playground}",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare Playground",
+                "program": "${workspaceFolder:Solution Items}/node_modules/@babel/cli/bin/babel.js",
+                "args": [
+                    "./src/test",
+                    "--config-file",
+                    "./babel.macro.cts",
+                    "--extensions",
+                    ".ts,.cts",
+                    "--out-dir",
+                    "./out/macro",
+                    "--watch"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder:nameof}/**",
+                    "${workspaceFolder:common}/**",
+                    "${workspaceFolder:babel}/**",
+                    "!**/node_modules/**"
+                ]
+            }
+        ],
+        "compounds": [
+            {
+                "name": "Launch Tests",
+                "configurations": [
+                    "Launch `nameof` Tests",
+                    "Launch `babel` Tests",
+                    "Launch `common` Tests",
+                    "Launch `common-tests` Tests"
+                ],
+                "presentation": {
+                    "order": 1
+                }
+            }
+        ]
+    },
+    "settings": {
+        "javascript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+        "javascript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+        "javascript.format.placeOpenBraceOnNewLineForFunctions": true,
+        "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+        "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+        "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
+        "mochaExplorer.timeout": 0,
+        "terminal.integrated.cwd": "${workspaceFolder:Solution Items}"
+    },
+    "tasks": {
+        // See https://go.microsoft.com/fwlink/?LinkId=733558
+        // for the documentation about the tasks.json format
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Build",
+                "type": "shell",
+                "command": "npm",
+                "args": [
+                    "run",
+                    "watch"
+                ],
+                "options": {
+                    "cwd": "${workspaceFolder:Solution Items}"
+                },
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                },
+                "problemMatcher": "$tsc-watch",
+                "isBackground": true,
+                "presentation": {
+                    "reveal": "never"
+                }
+            },
+            {
+                "label": "Rebuild",
+                "type": "shell",
+                "command": "npm",
+                "args": [
+                    "run",
+                    "rebuild"
+                ],
+                "options": {
+                    "cwd": "${workspaceFolder:Solution Items}"
+                },
+                "problemMatcher": {
+                    "base": "$tsc",
+                    "fileLocation": [
+                        "relative",
+                        "${workspaceFolder:Solution Items}"
+                    ]
+                },
+                "presentation": {
+                    "reveal": "never"
+                }
+            },
+            {
+                "label": "Lint",
+                "type": "shell",
+                "command": "npm",
+                "args": [
+                    "run",
+                    "lint-ide"
+                ],
+                "options": {
+                    "cwd": "${workspaceFolder:Solution Items}"
+                },
+                "problemMatcher": "$eslint-stylish",
+                "presentation": {
+                    "reveal": "never"
+                }
+            },
+            {
+                "label": "Prepare Playground",
+                "type": "shell",
+                "command": "npm",
+                "args": [
+                    "run",
+                    "pretest"
+                ],
+                "options": {
+                    "cwd": "${workspaceFolder:playground}"
+                },
+                "problemMatcher": []
+            },
+            {
+                "label": "Bump Version",
+                "type": "shell",
+                "command": "npm",
+                "args": [
+                    "run",
+                    "bump-version"
+                ],
+                "options": {
+                    "cwd": "${workspaceFolder:Solution Items}"
+                },
+                "problemMatcher": []
+            }
+        ]
+    }
+}

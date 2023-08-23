@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "type": "module",
   "description": "Allows the Use of nameof in TypeScript",
+  "author": "Manuel Thalmann <m@nuth.ch>",
   "license": "MIT",
   "keywords": [
     "nameof",
@@ -10,8 +11,15 @@
     "transformer",
     "custom-transformer"
   ],
-  "main": "dist/main.cjs",
-  "types": "dist/main.d.cts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.cts",
+      "default": "./lib/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/index.cjs",
+  "types": "./lib/index.d.cts",
   "homepage": "https://github.com/typescript-nameof/nameof#readme",
   "repository": {
     "type": "git",
@@ -21,13 +29,12 @@
   "bugs": {
     "url": "https://github.com/typescript-nameof/nameof/issues"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "clean": "rimraf dist && tsc --b --clean",
-    "build": "tsc --b",
-    "build-test": "tsc --build",
-    "test": "npm run build-test && tsd && mocha",
-    "test:debug": "npm run build-test && tsd && mocha",
-    "dopublish": "npm run test && npm run build && echo \"run: npm publish --otp\""
+    "prepack": "npm run --prefix ../.. build",
+    "test": "tsd && mocha"
   },
   "dependencies": {
     "@typescript-nameof/common": "^0.0.1",
@@ -57,6 +64,6 @@
     "typescript": "*"
   },
   "tsd": {
-    "directory": "./src/tests/type-tests"
+    "directory": "./type-tests"
   }
 }

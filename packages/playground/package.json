@@ -17,10 +17,7 @@
     "access": "public"
   },
   "scripts": {
-    "prepare": "npm run patch",
-    "patch": "ts-patch i",
-    "lint": "eslint --max-warnings 0 ./scripts ./src .eslintrc.cjs",
-    "lint-ide": "npm run lint || exit 0",
+    "prepare": "ts-patch install",
     "pretest": "copyfiles -u 1 ./src/{index.ts,jest.test.ts,macro.cts} ./src/test",
     "test:ts-patch": "npm run pretest && tsc -b tsconfig.app.json --watch",
     "test:ttsc": "npm run pretest && cd ../ttypescript-workspace && npx ttsc -b . --watch",

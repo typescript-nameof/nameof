@@ -1,13 +1,9 @@
 const { join } = require("node:path");
 
 module.exports = {
-    extends: [
-        join(__dirname, "..", "..", ".eslintrc.cjs")
-    ],
-    root: true,
     parserOptions: {
         project: [
-            join(__dirname, "tsconfig.json"),
+            join(__dirname, "tsconfig.app.json"),
             join(__dirname, "tsconfig.eslint.json"),
             join(__dirname, "type-tests", "tsconfig.json")
         ]

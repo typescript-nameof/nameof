@@ -1,0 +1,19 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "composite": true,
+        "rootDir": "..",
+        "outDir": "../../lib"
+    },
+    "include": [
+        "./**/*"
+    ],
+    "references": [
+        {
+            "path": "../../tsconfig.app.json"
+        },
+        {
+            "path": "../../../tests-common/tsconfig.app.json"
+        }
+    ]
+}
