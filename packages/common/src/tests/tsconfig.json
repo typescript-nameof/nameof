@@ -13,9 +13,6 @@
             "path": "../../tsconfig.app.json"
         },
         {
-            "path": "../../../nameof/tsconfig.app.json"
-        },
-        {
             "path": "../../../tests-common/tsconfig.app.json"
         }
     ]
