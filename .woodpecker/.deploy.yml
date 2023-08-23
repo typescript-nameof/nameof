@@ -1,6 +1,7 @@
 when:
-  event: tag
-  ref: refs/tags/v[0-9]*.[0-9]*.[0-9]*
+  event:
+    - tag
+    - deployment
 
 depends_on:
   - check
@@ -10,7 +11,7 @@ steps:
     image: node
     commands:
       - npm install @stdlib/utils-escape-regexp-string --no-save
-      - node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${CI_COMMIT_TAG}'))" > .tagName.txt
+      - node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${CI_COMMIT_REF##refs/tags/}'))" > .tagName.txt
       - export TagName=$$(cat .tagName.txt)
       - echo "/^## \(.* \($${TagName}\|\[$${TagName}\]\)\)\$/" > .tagHeading.txt
   check release prerequisites:
@@ -56,6 +57,8 @@ steps:
     commands:
       - echo "//registry.npmjs.org/:_authToken=$${NPM_TOKEN}" > ~/.npmrc
       - npm publish --workspaces
+    when:
+      event: deployment
   publish package to github:
     image: node
     secrets:
@@ -64,6 +67,8 @@ steps:
       - echo "//npm.pkg.github.com/:_authToken=$${GITHUB_PACKAGES_TOKEN}" > ~/.npmrc
       - echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
       - npm publish --workspaces
+    when:
+      event: deployment
   publish release:
     image: plugins/github-release
     settings:
@@ -75,4 +80,3 @@ steps:
       note: .releaseNotes.md
     when:
       event: tag
-      ref: refs/tags/v[0-9]*.[0-9]*.[0-9]*
