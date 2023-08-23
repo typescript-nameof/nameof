@@ -2,7 +2,7 @@
   "name": "@typescript-nameof/common",
   "version": "0.0.1",
   "type": "module",
-  "description": "Provides Core Functionalities for @typescript-nameof Packages",
+  "description": "Provides Core Functionalities for TypeScript `nameof` Packages.",
   "author": "Manuel Thalmann <m@nuth.ch>",
   "exports": {
     ".": {

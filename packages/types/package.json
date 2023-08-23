@@ -2,7 +2,7 @@
   "name": "@typescript-nameof/types",
   "version": "0.0.1",
   "type": "module",
-  "description": "TypeScript definitions for @typescript-nameof packages",
+  "description": "Provides type declarations for the use of the TypeScript `nameof` project.",
   "author": "Manuel Thalmann <m@nuth.ch>",
   "exports": {
     ".": {

@@ -2,7 +2,7 @@
   "name": "@typescript-nameof/tests-common",
   "type": "module",
   "private": true,
-  "description": "Common tests for ts-nameof packages.",
+  "description": "Provides common components for testing `nameof` transformers and plugins.",
   "author": "Manuel Thalmann <m@nuth.ch>",
   "license": "MIT",
   "exports": {

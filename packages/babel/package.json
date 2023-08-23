@@ -2,7 +2,7 @@
   "name": "@typescript-nameof/babel",
   "version": "0.0.1",
   "type": "module",
-  "description": "nameof in TypeScript for babel.",
+  "description": "Allows the use of `nameof()` calls in babel projects.",
   "author": "Manuel Thalmann <m@nuth.ch>",
   "license": "MIT",
   "keywords": [
