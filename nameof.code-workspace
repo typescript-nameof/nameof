@@ -183,7 +183,7 @@
                 "resolveSourceMapLocations": [
                     "${workspaceFolder:nameof}/**",
                     "${workspaceFolder:common}/**",
-                    "${workspaceFolder:babel-plugin}/**",
+                    "${workspaceFolder:babel}/**",
                     "${workspaceFolder:babel-macro}/**",
                     "!**/node_modules/**"
                 ]
