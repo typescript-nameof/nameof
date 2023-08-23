@@ -30,7 +30,7 @@ steps:
     image: node
     secrets:
       - npm_token
-      - github_packages_token
+      - github_package_token
       - github_publish_token
     commands:
       - npm i --no-save @octokit/rest
@@ -46,7 +46,7 @@ steps:
       - export TagHeading=$$(cat .tagHeading.txt)
       - '[ ! -z "$$(sed "$${TagHeading}p;d" CHANGELOG.md)" ] || { echo "No Changelog Entries Found!" && false; }'
       - testNPM $NPM_TOKEN || { echo "The NPM Access Token is invalid!" && false; }
-      - testGitHub $GITHUB_PACKAGES_TOKEN || { echo "The GitHub Package Token is invalid!" && false; }
+      - testGitHub $GITHUB_PACKAGE_TOKEN || { echo "The GitHub Package Token is invalid!" && false; }
       - testGitHub $GITHUB_PUBLISH_TOKEN || { echo "The GitHub Publish Token is invalid!" && false; }
     when:
       event:
@@ -86,9 +86,9 @@ steps:
   publish package to github:
     image: node
     secrets:
-      - github_packages_token
+      - github_package_token
     commands:
-      - echo "//npm.pkg.github.com/:_authToken=$${GITHUB_PACKAGES_TOKEN}" > ~/.npmrc
+      - echo "//npm.pkg.github.com/:_authToken=$${GITHUB_PACKAGE_TOKEN}" > ~/.npmrc
       - echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
       - npm publish --workspaces
     when:
