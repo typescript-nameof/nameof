@@ -72,7 +72,7 @@ steps:
       files:
         - "*.tgz"
       title: .releaseTitle.md
-      note: releaseNotes.md
+      note: .releaseNotes.md
     when:
       event: tag
       ref: refs/tags/v[0-9]*.[0-9]*.[0-9]*
