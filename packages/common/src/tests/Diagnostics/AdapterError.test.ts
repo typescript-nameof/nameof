@@ -1,6 +1,6 @@
-import { ok } from "assert";
+import { ok, strictEqual } from "assert";
 import { TestErrorHandler } from "@typescript-nameof/tests-common";
-import { createSandbox, SinonSandbox } from "sinon";
+import { createSandbox, SinonSandbox, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";
 import { AdapterError } from "../../Diagnostics/AdapterError.cjs";
 import { Adapter } from "../../Transformation/Adapter.cjs";
@@ -24,6 +24,38 @@ export function AdapterErrorTests(): void
         {
             return message;
         }
+
+        /**
+         * @inheritdoc
+         */
+        public override get NameofName(): string
+        {
+            return super.NameofName;
+        }
+
+        /**
+         * @inheritdoc
+         */
+        public override get SourceCode(): string
+        {
+            return super.SourceCode;
+        }
+
+        /**
+         * @inheritdoc
+         */
+        public override get EscapedCode(): string
+        {
+            return super.EscapedCode;
+        }
+
+        /**
+         * @inheritdoc
+         */
+        public override Report(): void
+        {
+            super.Report();
+        }
     }
 
     suite(
@@ -31,6 +63,7 @@ export function AdapterErrorTests(): void
         () =>
         {
             let sandbox: SinonSandbox;
+            let adapter: SinonStubbedInstance<Adapter<any, any, any>>;
             let error: TestAdapterError;
             let errorHandler: TestErrorHandler<any, any>;
 
@@ -46,13 +79,16 @@ export function AdapterErrorTests(): void
                     message = "Custom error message for testing";
                     errorHandler = new TestErrorHandler();
 
-                    let adapter = sandbox.createStubInstance(Adapter);
+                    adapter = sandbox.createStubInstance(Adapter);
 
                     adapter.ReportError.callsFake(
                         (item, context, error) =>
                         {
                             errorHandler.Report({}, item, context, error);
                         });
+
+                    adapter.GetSourceCode = sandbox.stub();
+                    adapter.GetSourceCode.returns("");
 
                     error = new TestAdapterError(adapter, undefined, undefined);
                 });
@@ -63,17 +99,86 @@ export function AdapterErrorTests(): void
                     sandbox.restore();
                 });
 
+            /**
+             * Checks whether an error with the specified {@linkcode message} has been reported.
+             *
+             * @returns
+             * A value indicating whether an error with the specified {@linkcode message} has been reported.
+             */
+            function wasReported(): boolean
+            {
+                return errorHandler.Errors.some((error) => error.message === message);
+            }
+
             suite(
-                nameOf<TestAdapterError>((e) => e.ReportAction),
+                nameOf<TestAdapterError>((error) => error.ReportAction),
                 () =>
                 {
                     test(
                         "Checking whether the exposed action reports the error…",
                         () =>
                         {
-                            ok(!errorHandler.Errors.includes(error));
+                            ok(!wasReported());
                             error.ReportAction();
-                            ok(errorHandler.Errors.some((error) => error.message === message));
+                            ok(wasReported());
+                        });
+                });
+
+            suite(
+                nameOf<TestAdapterError>((error) => error.NameofName),
+                () =>
+                {
+                    test(
+                        "Checking whether the `nameof` name is determined using the adapter…",
+                        () =>
+                        {
+                            ok(!adapter.GetNameofName.called);
+                            error.NameofName.toString();
+                            ok(adapter.GetNameofName.calledOnce);
+                        });
+                });
+
+            suite(
+                nameOf<TestAdapterError>((error) => error.SourceCode),
+                () =>
+                {
+                    test(
+                        "Checking whether the source code is determined using the adapter…",
+                        () =>
+                        {
+                            ok(!adapter.GetSourceCode.called);
+                            error.SourceCode.toString();
+                            ok(adapter.GetSourceCode.calledOnce);
+                        });
+                });
+
+            suite(
+                nameOf<TestAdapterError>((error) => error.EscapedCode),
+                () =>
+                {
+                    test(
+                        "Checking whether the source code is escaped properly…",
+                        () =>
+                        {
+                            for (let symbol of ["`", "\\"])
+                            {
+                                adapter.GetSourceCode.returns(symbol);
+                                strictEqual(error.EscapedCode, `\\${symbol}`);
+                            }
+                        });
+                });
+
+            suite(
+                nameOf<TestAdapterError>((error) => error.Report),
+                () =>
+                {
+                    test(
+                        "Checking whether the error is reported…",
+                        () =>
+                        {
+                            ok(!wasReported());
+                            error.Report();
+                            ok(wasReported());
                         });
                 });
         });
