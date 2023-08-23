@@ -14,9 +14,6 @@
             "path": "./packages/babel"
         },
         {
-            "path": "./packages/babel-macro"
-        },
-        {
             "path": "./packages/common"
         },
         {
@@ -37,17 +34,6 @@
                 "request": "launch",
                 "name": "Run transformer-core tests",
                 "cwd": "${workspaceFolder:transformer-core}",
-                "runtimeExecutable": "npm",
-                "runtimeArgs": [
-                    "run",
-                    "test:debug"
-                ]
-            },
-            {
-                "type": "node",
-                "request": "launch",
-                "name": "Run babel-macro tests",
-                "cwd": "${workspaceFolder:babel-macro}",
                 "runtimeExecutable": "npm",
                 "runtimeArgs": [
                     "run",
@@ -184,7 +170,6 @@
                     "${workspaceFolder:nameof}/**",
                     "${workspaceFolder:common}/**",
                     "${workspaceFolder:babel}/**",
-                    "${workspaceFolder:babel-macro}/**",
                     "!**/node_modules/**"
                 ]
             }

@@ -49,9 +49,7 @@ This section provides a brief explanation as to what functionalities are covered
   - [`@typescript-nameof/common`](./packages/common):  
     Holds core components which are used for both the Babel.js and the TypeScript integrations. Components for detecting, interpreting and transforming `nameof` calls can be found here.
   - [`@typescript-nameof/babel`](./packages/babel):  
-    Provides a plugin to use with the Babel.js compiler. This package contains the logic for parsing and manipulating Babel.js AST.
-  - [`@typescript-nameof/babel-macro`](./packages/babel-macro):  
-    This package provides a macro for the use with the `babel-plugin-macros` plugin. Under the hood, this package mostly harnesses the components provided by `@typescript-nameof/babel`.
+    Provides a plugin to use with the Babel.js compiler. This package contains the logic for parsing and manipulating Babel.js AST. This package also provides a macro for the use with `babel-plugin-macros`.
   - [`@typescript-nameof/common-types`](./packages/common-types):  
     Exposes common type declarations which are used by all packages
   - [`@typescript-nameof/tests-common`](./packages/tests-common):  
@@ -282,7 +280,7 @@ Please run the following to install the integration in your project:
     ```
   - For `babel` (using a macro and `babel-plugin-macros`):
     ```sh
-    npm install --save-dev babel-plugin-macros @typescript-nameof/babel-macro
+    npm install --save-dev babel-plugin-macros @typescript-nameof/babel
     ```
 
 ### Configure Compiler to Use TypeScript `nameof`
@@ -374,10 +372,10 @@ Please head to the project page to find out how to do so:
 
 https://github.com/kentcdodds/babel-plugin-macros#readme
 
-After doing so, you can access `nameof` by importing the `@typescript-nameof/babel-macro` module:
+After doing so, you can access `nameof` by importing the `@typescript-nameof/babel/macro` module:
 
 ```ts
-import nameof from "@typescript-nameof/babel-macro";
+import nameof from "@typescript-nameof/babel/macro";
 
 nameof(console.log);
 ```

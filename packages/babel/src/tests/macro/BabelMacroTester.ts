@@ -105,6 +105,6 @@ export class BabelMacroTester extends TransformerTester<undefined>
      */
     protected override async Preprocess(code: string): Promise<string>
     {
-        return `import ${this.componentName ?? "nameof"} from './ts-nameof.macro';${code}`;
+        return `import ${this.componentName ?? "nameof"} from '../../../macro';${code}`;
     }
 }

@@ -1,9 +1,8 @@
 {
     "compilerOptions": {
-        "composite": true,
-        "allowJs": true,
         "rootDir": "./src",
-        "outDir": "./dist"
+        "outDir": "./dist",
+        "composite": true
     },
     "extends": "../../tsconfig.base.json",
     "include": [
@@ -12,12 +11,6 @@
     "references": [
         {
             "path": "../common/tsconfig.app.json"
-        },
-        {
-            "path": "../babel"
-        },
-        {
-            "path": "../common-types"
         },
         {
             "path": "../tests-common"

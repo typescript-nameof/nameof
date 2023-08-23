@@ -10,7 +10,7 @@
     },
     "references": [
         {
-            "path": "../babel-macro"
+            "path": "../babel"
         }
     ]
 }

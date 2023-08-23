@@ -79,9 +79,8 @@ module.exports = {
             join(projectRoot("common-types"), "type-tests", "tsconfig.json"),
             projectPath("types"),
             join(projectRoot("types"), "tsconfig.eslint.json"),
-            projectPath("babel-macro"),
-            join(projectRoot("babel-macro"), "tsconfig.config.json"),
             projectPath("babel"),
+            join(projectRoot("babel"), "tsconfig.macro.json"),
             projectPath("tests-common"),
             projectPath("playground"),
             join(projectRoot("playground"), "tsconfig.editor.json"),
@@ -91,8 +90,7 @@ module.exports = {
     ignorePatterns: [
         "packages/*/dist/**/*.*",
         "packages/*/lib/**/*.*",
-        "packages/nameof/ts-nameof.d.ts",
-        "packages/babel-macro/ts-nameof.macro.d.ts"
+        "packages/nameof/ts-nameof.d.ts"
     ],
     rules: {
         "node/no-unpublished-import": [
