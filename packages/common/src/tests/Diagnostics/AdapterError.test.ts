@@ -88,6 +88,7 @@ export function AdapterErrorTests(): void
                         });
 
                     adapter.GetSourceCode = sandbox.stub();
+                    adapter.GetNameofName.returns("");
                     adapter.GetSourceCode.returns("");
 
                     error = new TestAdapterError(adapter, undefined, undefined);

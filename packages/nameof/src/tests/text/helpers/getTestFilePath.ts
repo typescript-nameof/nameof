@@ -1,3 +1,4 @@
+import { fileURLToPath } from "url";
 import path from "upath";
 
 const { join } = path;
@@ -13,5 +14,5 @@ const { join } = path;
  */
 export function getTestFilePath(...paths: string[]): string
 {
-    return join("./temp/testFiles", ...paths);
+    return join(fileURLToPath(new URL(".", import.meta.url)), "..", "..", "..", "..", "test", ...paths);
 }

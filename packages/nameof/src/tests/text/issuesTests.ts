@@ -1,9 +1,10 @@
 import * as assert from "assert";
+import { TempFile } from "@manuth/temp-files";
 import fs from "fs-extra";
 import { getTestFilePath } from "./helpers/index.js";
 import { replaceInFiles } from "../../text/index.cjs";
 
-const { readFile, writeFile } = fs;
+const { copy, readFile } = fs;
 
 /**
  * Registers tests related to issues.
@@ -29,30 +30,15 @@ export function IssueTests(): void
                      */
                     async function runTest(fileName: string, expectedFileName: string): Promise<void>
                     {
+                        let file = new TempFile();
                         fileName = getTestFilePath(fileName);
                         expectedFileName = getTestFilePath(expectedFileName);
 
-                        const originalFileText = (await readFile(expectedFileName)).toString();
-
-                        try
-                        {
-                            try
-                            {
-                                await replaceInFiles([fileName]);
-                            }
-                            catch (error)
-                            {
-                                console.log(error);
-                            }
-
-                            const data = (await readFile(fileName)).toString();
-                            const expectedContents = (await readFile(expectedFileName)).toString();
-                            assert.equal(data.replace(/\r?\n/g, "\n"), expectedContents.replace(/\r?\n/g, "\n"));
-                        }
-                        finally
-                        {
-                            await writeFile(expectedFileName, originalFileText);
-                        }
+                        await copy(fileName, file.FullName);
+                        await replaceInFiles([file.FullName]);
+                        const data = (await readFile(file.FullName)).toString();
+                        const expectedContents = (await readFile(expectedFileName)).toString();
+                        assert.equal(data.replace(/\r?\n/g, "\n"), expectedContents.replace(/\r?\n/g, "\n"));
                     }
 
                     /**
