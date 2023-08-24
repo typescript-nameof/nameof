@@ -1,4 +1,5 @@
 import { AdapterError } from "./AdapterError.cjs";
+import { NameofFunction } from "../NameofFunction.cjs";
 import { IAdapter } from "../Transformation/IAdapter.cjs";
 
 /**
@@ -28,6 +29,6 @@ export class UnusedInterpolationError<TInput, TNode, TContext> extends AdapterEr
      */
     protected get Message(): string
     {
-        return `The interpolation call \`${this.EscapedCode}\` is unused. Expected interpolation calls to be used inside a \`${this.NameofName}.full\` call.`;
+        return `The interpolation call \`${this.EscapedCode}\` is unused. Expected interpolation calls to be used inside a \`${this.NameofName}.${NameofFunction.Full}\` call.`;
     }
 }
