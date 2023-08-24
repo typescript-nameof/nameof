@@ -276,6 +276,25 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                 this.ParseNode(item.expression, context),
                 this.ParseNode(item.argumentExpression, context));
         }
+        // Index access paths in type references
+        else if (this.TypeScript.isIndexedAccessTypeNode(item))
+        {
+            let indexer: ts.Node;
+
+            if (this.TypeScript.isLiteralTypeNode(item.indexType))
+            {
+                indexer = item.indexType.literal;
+            }
+            else
+            {
+                indexer = item.indexType;
+            }
+
+            return new IndexAccessNode(
+                item,
+                this.ParseNode(item.objectType, context),
+                this.ParseNode(indexer, context));
+        }
         else if (
             this.TypeScript.isArrowFunction(item) ||
             this.TypeScript.isFunctionExpression(item))

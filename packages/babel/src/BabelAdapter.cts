@@ -351,9 +351,29 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
                 return this.ParsePropertyAccessExpression(item, item.object, item.property, context);
             }
         }
+        // Dotted paths in type references
         else if (this.Types.isTSQualifiedName(item))
         {
             return this.ParsePropertyAccessExpression(item, item.left, item.right, context);
+        }
+        // Index access paths in type references
+        else if (this.Types.isTSIndexedAccessType(item))
+        {
+            let indexer: types.Node;
+
+            if (this.Types.isTSLiteralType(item.indexType))
+            {
+                indexer = item.indexType.literal;
+            }
+            else
+            {
+                indexer = item.indexType;
+            }
+
+            return new IndexAccessNode(
+                item,
+                this.ParseNode(item.objectType, context),
+                this.ParseNode(indexer, context));
         }
         else if (
             this.Types.isFunctionExpression(item) ||
