@@ -29,6 +29,6 @@ export class UnsupportedFunctionError<TInput, TNode, TContext> extends NameofCal
      */
     protected get Message(): string
     {
-        return `The requested function \`${this.Call.function}\` does not exist.`;
+        return `The requested function \`${this.FunctionName}\` does not exist.`;
     }
 }
