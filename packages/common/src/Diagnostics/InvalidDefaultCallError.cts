@@ -29,6 +29,6 @@ export class InvalidDefaultCallError<TInput, TNode, TContext> extends NameofCall
      */
     protected get Message(): string
     {
-        return `Expected 1 argument or 1 type argument, but got ${this.Call.arguments.length} arguments and ${this.Call.typeArguments.length} type arguments.`;
+        return `Expected 1 argument or 1 type argument, but got ${this.ArgumentCountText} and ${this.TypeArgumentCountText}.`;
     }
 }
