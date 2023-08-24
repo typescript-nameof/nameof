@@ -1,6 +1,6 @@
 import { ok, strictEqual } from "assert";
 import { TestErrorHandler } from "@typescript-nameof/tests-common";
-import { createSandbox, SinonSandbox, SinonStubbedInstance } from "sinon";
+import { createSandbox, match, SinonSandbox, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";
 import { AdapterError } from "../../Diagnostics/AdapterError.cjs";
 import { Adapter } from "../../Transformation/Adapter.cjs";
@@ -64,6 +64,7 @@ export function AdapterErrorTests(): void
         {
             let sandbox: SinonSandbox;
             let adapter: SinonStubbedInstance<Adapter<any, any, any>>;
+            let node: any;
             let error: TestAdapterError;
             let errorHandler: TestErrorHandler<any, any>;
 
@@ -91,7 +92,7 @@ export function AdapterErrorTests(): void
                     adapter.GetNameofName.returns("");
                     adapter.GetSourceCode.returns("");
 
-                    error = new TestAdapterError(adapter, undefined, undefined);
+                    error = new TestAdapterError(adapter, node, undefined);
                 });
 
             teardown(
@@ -147,9 +148,12 @@ export function AdapterErrorTests(): void
                         "Checking whether the source code is determined using the adapter…",
                         () =>
                         {
+                            let stub = adapter.GetSourceCode.withArgs(node, match.any);
+                            stub.returns("Test");
                             ok(!adapter.GetSourceCode.called);
                             error.SourceCode.toString();
                             ok(adapter.GetSourceCode.calledOnce);
+                            ok(stub.calledOnce);
                         });
                 });
 
