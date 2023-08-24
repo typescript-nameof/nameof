@@ -29,6 +29,6 @@ export class InvalidSegmentCallError<TInput, TNode, TContext> extends NameofCall
      */
     protected get Message(): string
     {
-        return `This \`${this.Call.function}\` call is invalid. Got ${this.ArgumentCountText} and ${this.TypeArgumentCountText}. Please make sure to pass 1 argument or 1 type argument to transform.`;
+        return `This \`${this.FunctionName}\` call is invalid. Got ${this.ArgumentCountText} and ${this.TypeArgumentCountText}. Please make sure to pass 1 argument or 1 type argument to transform.`;
     }
 }

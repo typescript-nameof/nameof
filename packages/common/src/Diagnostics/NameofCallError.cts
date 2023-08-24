@@ -39,6 +39,21 @@ export abstract class NameofCallError<TInput, TNode, TContext> extends AdapterEr
     }
 
     /**
+     * Gets the full name of the function which has been called.
+     */
+    protected get FunctionName(): string
+    {
+        let result = this.NameofName;
+
+        if (this.Call.function)
+        {
+            result += `.${this.Call.function}`;
+        }
+
+        return result;
+    }
+
+    /**
      * Gets the arguments of the function call.
      */
     protected get Arguments(): readonly TNode[]
