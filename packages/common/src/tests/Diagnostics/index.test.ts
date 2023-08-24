@@ -11,5 +11,6 @@ export function DiagnosticTests(): void
         () =>
         {
             AdapterErrorTests();
+            CustomErrorTests();
         });
 }
