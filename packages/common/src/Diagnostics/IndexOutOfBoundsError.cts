@@ -36,7 +36,7 @@ export class IndexOutOfBoundsError<TInput, TNode, TContext> extends AdapterError
     {
         super(adapter, indexNode.Source, context);
         this.indexNode = indexNode;
-        this.segmentCount = segmentCount;
+        this.segmentCount = Math.abs(segmentCount);
     }
 
     /**
