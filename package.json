@@ -51,5 +51,10 @@
     "packages": [
       "./packages/*"
     ]
+  },
+  "overrides": {
+    "@delagen/eslint-plugin-deprecation": {
+      "typescript": "$typescript"
+    }
   }
 }
