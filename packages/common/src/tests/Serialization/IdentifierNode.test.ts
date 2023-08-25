@@ -30,7 +30,7 @@ export function IdentifierNodeTests(): void
                         {
                             let pathPart = node.PathPart;
                             strictEqual(pathPart.type, PathKind.Identifier);
-                            strictEqual(pathPart.source, node);
+                            strictEqual(pathPart.source, node.Source);
                             strictEqual(pathPart.value, node.Name);
                         });
                 });
