@@ -3,15 +3,15 @@
     "compilerOptions": {
         "composite": true,
         "rootDir": "./src",
-        "outDir": "./out/ts-patch"
+        "outDir": "./out/ts-patch",
+        "plugins": [
+            {
+                "transform": "../nameof"
+            }
+        ]
     },
     "include": [
         "./src/**/*"
-    ],
-    "plugins": [
-        {
-            "transform": "../nameof"
-        }
     ],
     "references": [
         {
