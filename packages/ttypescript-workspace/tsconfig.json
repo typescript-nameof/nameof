@@ -1,5 +1,5 @@
 {
-    "extends": "../playground/tsconfig.app.json",
+    "extends": "../playground/tsconfig.test.json",
     "compilerOptions": {
         "outDir": "../playground/out/ttypescript",
         "plugins": [
