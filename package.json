@@ -44,7 +44,8 @@
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.1",
     "ts-patch": "^3.0.2",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "webpack-playground-typescript": "npm:nop@^1.0.0"
   },
   "workspaces": {
     "packages": [

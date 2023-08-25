@@ -29,7 +29,6 @@ module.exports = {
                 loader: "ts-loader",
                 options: {
                     transpileOnly: true,
-                    compiler: "webpack-playground-typescript",
                     getCustomTransformers: () =>
                     {
                         return {
