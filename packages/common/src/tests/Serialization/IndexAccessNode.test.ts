@@ -39,11 +39,11 @@ export function IndexAccessNodeTests(): void
                             let stringPart = new IndexAccessNode({}, expression, stringLiteral).PathPart;
 
                             strictEqual(numericPart.type, PathKind.IndexAccess);
-                            strictEqual(numericPart.source, number);
+                            strictEqual(numericPart.source, number.Source);
                             strictEqual(numericPart.value, number.Value);
 
                             strictEqual(stringPart.type, PathKind.IndexAccess);
-                            strictEqual(stringPart.source, stringLiteral);
+                            strictEqual(stringPart.source, stringLiteral.Source);
                             strictEqual(stringPart.value, stringLiteral.Text);
                         });
 
