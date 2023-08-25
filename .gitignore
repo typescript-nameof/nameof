@@ -4,6 +4,10 @@ packages/babel/macro/*.cjs
 packages/babel/macro/*.map
 packages/babel/macro/*.d.cts
 
+# Playground files
+packages/playground/src/test
+packages/playground/out
+
 # Logs
 logs
 *.log
