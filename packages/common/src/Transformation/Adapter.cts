@@ -295,7 +295,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * @inheritdoc
+     * Gets the {@linkcode NameofCall} represented by the specified {@linkcode item}.
      *
      * @param item
      * The item to parse.
@@ -304,7 +304,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * The context of the operation.
      *
      * @returns
-     * The parsed {@linkcode NameofCall} or `code` if no `nameof` call was found.
+     * The parsed {@linkcode NameofCall} or `undefined` if no `nameof` call was found.
      */
     protected GetNameofCall(item: TNode, context: TContext): NameofCall<TNode> | undefined
     {
