@@ -29,6 +29,6 @@ export class SegmentNotFoundError<TInput, TNode, TContext> extends NameofCallErr
      */
     protected get Message(): string
     {
-        return "The specified index is out of bounds.";
+        return "There is no segment left at the specified index.";
     }
 }
