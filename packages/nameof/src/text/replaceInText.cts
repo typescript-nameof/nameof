@@ -41,6 +41,14 @@ interface ITransformation
 }
 
 /**
+ * Transforms the specified {@linkcode text}.
+ *
+ * @param text
+ * The text to transform.
+ */
+export function replaceInText(text: string): ISubstitutionResult;
+
+/**
  * Transforms the file with the specified {@link fileName `fileName`}.
  *
  * @param fileName
@@ -52,10 +60,24 @@ interface ITransformation
  * @returns
  * The result of the substitution.
  */
-export function replaceInText(fileName: string, fileText: string): ISubstitutionResult
+export function replaceInText(fileName: string, fileText: string): ISubstitutionResult;
+
+/**
+ * Transforms the file with the specified {@link fileName `fileName`}.
+ *
+ * @param fileName
+ * The name of the file to transform.
+ *
+ * @param fileText
+ * The text of the file to transform.
+ *
+ * @returns
+ * The result of the substitution.
+ */
+export function replaceInText(fileName: string, fileText?: string): ISubstitutionResult
 {
     // unofficial pre-2.0 backwards compatibility for this method
-    if (arguments.length === 1)
+    if (!fileText)
     {
         fileText = fileName;
         fileName = "/file.tsx"; // assume tsx
