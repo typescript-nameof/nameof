@@ -174,8 +174,8 @@ export class ResultBuilder<TInput, TNode, TContext extends ITransformationContex
      */
     protected Push(expression: TNode): void
     {
-        this.TemplateParts.push(this.Current);
         this.Current += "[";
+        this.TemplateParts.push(this.Current);
         this.Current = "]";
         this.Expressions.push(expression);
     }
