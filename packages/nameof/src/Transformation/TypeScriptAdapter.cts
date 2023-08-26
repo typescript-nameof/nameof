@@ -55,7 +55,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
      */
     public GetLocation(item: ts.Node, context: ITypeScriptContext): INodeLocation
     {
-        let location = context.file.getLineAndCharacterOfPosition(item.pos);
+        let location = context.file.getLineAndCharacterOfPosition(item.getStart(context.file));
 
         return {
             filePath: context.file.fileName,
