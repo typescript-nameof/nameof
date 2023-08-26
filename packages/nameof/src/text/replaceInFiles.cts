@@ -19,7 +19,12 @@ export async function replaceInFiles(fileNames: readonly string[]): Promise<void
                     async () =>
                     {
                         let text = await readFile(fileName, { encoding: "utf-8" });
-                        await writeFile(fileName, replaceInText(fileName, text).fileText ?? "");
+                        let result = replaceInText(fileName, text);
+
+                        if (result.replaced)
+                        {
+                            await writeFile(fileName, result.fileText ?? "");
+                        }
                     })();
             }));
 }
