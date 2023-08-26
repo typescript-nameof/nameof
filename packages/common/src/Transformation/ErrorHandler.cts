@@ -59,7 +59,12 @@ export class ErrorHandler<TNode, TContext> implements IErrorHandler<TNode, TCont
 
         if (location.filePath)
         {
-            result += `${location.filePath}:`;
+            result += `${location.filePath}`;
+
+            if (location.line)
+            {
+                result += ":";
+            }
         }
 
         if (location.line)
