@@ -1,5 +1,5 @@
 import { DiagnosticTests } from "./Diagnostics/index.test.js";
-import { TextTests } from "./text/index.test.js";
+import { EndToEndTests } from "./e2e/index.test.js";
 import { TypeScriptTester } from "./TypeScriptTester.js";
 
 /**
@@ -14,7 +14,7 @@ function Tests(): void
         () =>
         {
             DiagnosticTests();
-            TextTests();
+            EndToEndTests();
             tester.RegisterCommon();
         });
 }

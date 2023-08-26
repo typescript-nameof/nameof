@@ -2,7 +2,7 @@ import * as assert from "assert";
 import { TempFile } from "@manuth/temp-files";
 import fs from "fs-extra";
 import { getTestFilePath } from "./helpers/index.js";
-import { replaceInFiles } from "../../text/index.cjs";
+import { replaceInFiles } from "../../../text/index.cjs";
 
 const { copy, readFile } = fs;
 

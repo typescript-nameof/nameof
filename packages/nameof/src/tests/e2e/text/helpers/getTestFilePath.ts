@@ -14,5 +14,5 @@ const { join } = path;
  */
 export function getTestFilePath(...paths: string[]): string
 {
-    return join(fileURLToPath(new URL(".", import.meta.url)), "..", "..", "..", "..", "test", ...paths);
+    return join(fileURLToPath(new URL(".", import.meta.url)), "..", "..", "..", "..", "..", "test", ...paths);
 }

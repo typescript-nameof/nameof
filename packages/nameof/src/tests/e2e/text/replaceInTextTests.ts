@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
-import { replaceInText } from "../../text/index.cjs";
+import { replaceInText } from "../../../text/index.cjs";
 
 /**
  * Registers tests for the {@linkcode replaceInText} function.
