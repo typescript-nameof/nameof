@@ -34,9 +34,11 @@
     "ts-nameof-proxy": "^0.1.14514"
   },
   "devDependencies": {
+    "@types/lodash.clonedeep": "^4.5.7",
     "@types/sinon": "^10.0.16",
     "@typescript-nameof/nameof": "^0.0.1",
     "@typescript-nameof/tests-common": "*",
+    "lodash.clonedeep": "^4.5.0",
     "rimraf": "^4.3.1",
     "sinon": "^15.2.0",
     "typescript": "^5.2.2"

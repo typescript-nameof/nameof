@@ -829,8 +829,8 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             switch (lastNode.type)
             {
                 case PathKind.Identifier:
-                case PathKind.IndexAccess:
                 case PathKind.PropertyAccess:
+                case PathKind.IndexAccess:
                     return {
                         type: ResultType.Plain,
                         text: `${lastNode.value}`
