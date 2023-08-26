@@ -82,7 +82,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     }
 
     /**
-     * Checks whether the specified {@linkcode item} is a function.
+     * @inheritdoc
      *
      * @param item
      * The item to check.
@@ -428,9 +428,22 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                     item.expressions.map(
                         (expression, index: number) =>
                         {
+                            let spanIndex = index + 1;
+                            let text = item.templateParts[spanIndex];
+                            let templatePart: ts.TemplateMiddle | ts.TemplateTail;
+
+                            if (spanIndex === item.expressions.length)
+                            {
+                                templatePart = this.TypeScript.factory.createTemplateTail(text);
+                            }
+                            else
+                            {
+                                templatePart = this.TypeScript.factory.createTemplateMiddle(text);
+                            }
+
                             return this.TypeScript.factory.createTemplateSpan(
                                 expression as ts.Expression,
-                                this.TypeScript.factory.createTemplateMiddle(item.templateParts[index + 1]));
+                                templatePart);
                         }));
             case ResultType.Node:
                 return item.node;
