@@ -502,48 +502,6 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
     }
 
     /**
-     * Gets the error message which is expected for unsupported nodes.
-     *
-     * @param nodeText
-     * The text of the incorrect node.
-     *
-     * @returns
-     * The expected error message.
-     */
-    protected GetUnsupportedErrorText(nodeText: string): string
-    {
-        return `The node \`${nodeText}\` is not supported in this scenario.`;
-    }
-
-    /**
-     * Gets the error message which is expected for unsupported computation nodes.
-     *
-     * @param nodeText
-     * The text of the incorrect node.
-     *
-     * @returns
-     * The expected error message.
-     */
-    protected GetUnsupportedComputationNodeErrorText(nodeText: string): string
-    {
-        return `First accessed property must not be computed except if providing a string: ${nodeText}`;
-    }
-
-    /**
-     * Gets the error message which is expected for unused interpolation calls.
-     *
-     * @param nodeText
-     * The text of the incorrect node.
-     *
-     * @returns
-     * The expected error message.
-     */
-    protected GetUnusedInterpolationErrorText(nodeText: string): string
-    {
-        return `Found a nameof.interpolate that did not exist within a nameof.full call expression: nameof.interpolate(${nodeText})`;
-    }
-
-    /**
      * Gets the default error handler of the transformer under test.
      */
     protected get DefaultErrorHandler(): IErrorHandler<TNode, TContext>
