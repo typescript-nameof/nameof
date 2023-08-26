@@ -1,5 +1,6 @@
 import { basename } from "path";
 import { TypeScriptAdapterTests } from "./TypeScriptAdapter.test.js";
+import { TypeScriptFeatureTests } from "./TypeScriptFeatures.test.js";
 
 /**
  * Registers tests for transformation components.
@@ -10,6 +11,7 @@ export function TransformationTests(): void
         basename(new URL(".", import.meta.url).pathname),
         () =>
         {
+            TypeScriptFeatureTests();
             TypeScriptAdapterTests();
         });
 }

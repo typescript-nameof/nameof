@@ -43,6 +43,7 @@
     "ts-patch": "^3.0.2"
   },
   "devDependencies": {
+    "@manuth/package-json-editor": "^3.1.1",
     "@manuth/temp-files": "^3.0.2",
     "@manuth/tsconfig": "^4.0.1",
     "@tsd/typescript": "npm:nop@^1.0.0",
