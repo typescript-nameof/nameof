@@ -153,6 +153,23 @@ export abstract class TesterBase<TNode, TContext>
     protected async AssertError(input: string, ...errorClasses: Array<new (...args: any[]) => Error>): Promise<void>
     {
         let result = await this.Transform(input);
+        this.HasError(input, result, ...errorClasses);
+    }
+
+    /**
+     * Checks whether the specified {@linkcode action} causes one of the specified {@linkcode errorClasses}.
+     *
+     * @param input
+     * The input of the transformation.
+     *
+     * @param result
+     * The output of the transformation.
+     *
+     * @param errorClasses
+     * The expected errors.
+     */
+    protected async HasError(input: string, result: INameofOutput, ...errorClasses: Array<new (...args: any[]) => Error>): Promise<void>
+    {
         let errorNames: string | undefined;
 
         if (errorClasses.length > 0)
