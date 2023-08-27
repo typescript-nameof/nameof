@@ -77,7 +77,7 @@ export abstract class TesterBase<TNode, TContext>
                     ensureNewLineAtEndOfFile: true
                 });
 
-            return file.getText().replace(/[\s\S]$/, "");
+            return file.getText().replace(/(\r?\n)+$/, "");
         }
         else
         {
