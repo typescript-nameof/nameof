@@ -1,7 +1,7 @@
-import { notStrictEqual, strictEqual } from "assert";
-import { spawnSync } from "child_process";
-import { createRequire } from "module";
-import { join } from "path";
+import { notStrictEqual, strictEqual } from "node:assert";
+import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
+import { join } from "node:path";
 import { Package } from "@manuth/package-json-editor";
 import { TempDirectory } from "@manuth/temp-files";
 import fs from "fs-extra";

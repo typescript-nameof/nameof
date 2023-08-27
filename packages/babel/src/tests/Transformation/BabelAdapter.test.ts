@@ -1,4 +1,4 @@
-import { deepStrictEqual, ok, strictEqual, throws } from "assert";
+import { deepStrictEqual, ok, strictEqual, throws } from "node:assert";
 import babel, { Node, NodePath, PluginPass } from "@babel/core";
 import parser from "@babel/parser";
 import { TempFile } from "@manuth/temp-files";

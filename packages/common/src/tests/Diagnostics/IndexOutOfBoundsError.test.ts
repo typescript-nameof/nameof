@@ -1,4 +1,4 @@
-import { ok, strictEqual } from "assert";
+import { ok, strictEqual } from "node:assert";
 import { createSandbox, SinonSandbox, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";
 import { IndexOutOfBoundsError } from "../../Diagnostics/IndexOutOfBoundsError.cjs";

@@ -1,4 +1,4 @@
-import { basename } from "path";
+import { basename } from "node:path";
 import { AdapterTests } from "./Adapter.test.js";
 import { ErrorHandlerTests } from "./ErrorHandler.test.js";
 import { ResultBuilderTests } from "./ResultBuilder.test.js";

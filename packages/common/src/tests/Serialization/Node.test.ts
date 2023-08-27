@@ -1,4 +1,4 @@
-import { deepStrictEqual, strictEqual } from "assert";
+import { deepStrictEqual, strictEqual } from "node:assert";
 import { nameOf } from "ts-nameof-proxy";
 import { Node } from "../../Serialization/Node.cjs";
 import { NodeKind } from "../../Serialization/NodeKind.cjs";

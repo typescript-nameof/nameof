@@ -1,4 +1,4 @@
-import { deepStrictEqual, doesNotThrow, notDeepStrictEqual, ok, strictEqual, throws } from "assert";
+import { deepStrictEqual, doesNotThrow, notDeepStrictEqual, ok, strictEqual, throws } from "node:assert";
 import cloneDeep from "lodash.clonedeep";
 import { createSandbox, match, SinonMatcher, SinonSandbox, SinonStub, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";

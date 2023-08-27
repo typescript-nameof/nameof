@@ -1,4 +1,4 @@
-import { basename } from "path";
+import { basename } from "node:path";
 import { IdentifierNodeTests } from "./IdentifierNode.test.js";
 import { IndexAccessNodeTests } from "./IndexAccessNode.test.js";
 import { InterpolationNodeTests } from "./InterpolationNode.test.js";

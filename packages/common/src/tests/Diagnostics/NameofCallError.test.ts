@@ -1,4 +1,4 @@
-import { strictEqual } from "assert";
+import { strictEqual } from "node:assert";
 import { createSandbox, SinonSandbox, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";
 import { NameofCallError } from "../../Diagnostics/NameofCallError.cjs";

@@ -1,4 +1,4 @@
-import { deepStrictEqual, ok, strictEqual } from "assert";
+import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createSandbox, SinonSandbox } from "sinon";
 import { nameOf } from "ts-nameof-proxy";
 import { Identifier, State } from "./State.js";

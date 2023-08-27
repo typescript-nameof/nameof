@@ -1,4 +1,4 @@
-import { ok, strictEqual } from "assert";
+import { ok, strictEqual } from "node:assert";
 import { Project } from "ts-morph";
 import { nameOf } from "ts-nameof-proxy";
 import { Diagnostic, Node, SourceFile } from "typescript";

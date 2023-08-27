@@ -1,4 +1,4 @@
-import { basename } from "path";
+import { basename } from "node:path";
 import { TypeScriptAdapterTests } from "./TypeScriptAdapter.test.js";
 import { TypeScriptFeatureTests } from "./TypeScriptFeatures.test.js";
 import { TypeScriptTransformerBaseTests } from "./TypeScriptTransformerBase.test.js";

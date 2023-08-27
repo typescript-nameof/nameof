@@ -1,4 +1,4 @@
-import { AssertionError, strictEqual } from "assert";
+import { AssertionError, strictEqual } from "node:assert";
 import { ErrorHandler, IErrorHandler } from "@typescript-nameof/common";
 import { Project, ts } from "ts-morph";
 import { INameofOutput } from "./INameofOutput.js";

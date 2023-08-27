@@ -1,4 +1,4 @@
-import { ok, strictEqual } from "assert";
+import { ok, strictEqual } from "node:assert";
 import { IAdapter } from "@typescript-nameof/common";
 import { nameOf } from "ts-nameof-proxy";
 import ts from "typescript";

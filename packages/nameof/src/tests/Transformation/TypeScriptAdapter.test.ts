@@ -1,4 +1,4 @@
-import { deepStrictEqual, ok, strictEqual, throws } from "assert";
+import { deepStrictEqual, ok, strictEqual, throws } from "node:assert";
 import { MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, ParsedNode, ResultType, UnsupportedNodeError } from "@typescript-nameof/common";
 import { printNode, Project, SourceFile, SyntaxKind, ts as tsMorph } from "ts-morph";
 import { nameOf } from "ts-nameof-proxy";

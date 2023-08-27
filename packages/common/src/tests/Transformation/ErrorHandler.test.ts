@@ -1,6 +1,6 @@
-import { ok, strictEqual } from "assert";
-import { join } from "path";
-import { fileURLToPath } from "url";
+import { ok, strictEqual } from "node:assert";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { nameOf } from "ts-nameof-proxy";
 import { State } from "./State.js";
 import { ErrorHandler } from "../../Transformation/ErrorHandler.cjs";

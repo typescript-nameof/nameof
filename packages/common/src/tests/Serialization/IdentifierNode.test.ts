@@ -1,4 +1,4 @@
-import { strictEqual } from "assert";
+import { strictEqual } from "node:assert";
 import { nameOf } from "ts-nameof-proxy";
 import { IdentifierNode } from "../../Serialization/IdentifierNode.cjs";
 import { PathKind } from "../../Serialization/PathKind.cjs";

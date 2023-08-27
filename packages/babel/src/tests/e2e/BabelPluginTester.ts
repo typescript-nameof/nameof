@@ -1,5 +1,5 @@
-import { resolve } from "path";
-import { fileURLToPath } from "url";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import babel = require("@babel/core");
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/test";

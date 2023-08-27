@@ -1,4 +1,4 @@
-import { basename } from "path";
+import { basename } from "node:path";
 import { ReplaceInFilesTests } from "./ReplaceInFiles.test.js";
 import { ReplaceInTextTests } from "./ReplaceInText.test.js";
 

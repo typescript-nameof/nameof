@@ -1,4 +1,4 @@
-import { ok, strictEqual } from "assert";
+import { ok, strictEqual } from "node:assert";
 import { replaceInText } from "../../text/replaceInText.cjs";
 
 /**

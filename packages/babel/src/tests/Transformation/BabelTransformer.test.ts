@@ -1,4 +1,4 @@
-import { strictEqual } from "assert";
+import { strictEqual } from "node:assert";
 import babel from "@babel/core";
 import generator from "@babel/generator";
 import parser from "@babel/parser";

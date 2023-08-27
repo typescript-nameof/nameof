@@ -1,4 +1,4 @@
-import { doesNotReject, ok, rejects } from "assert";
+import { doesNotReject, ok, rejects } from "node:assert";
 import { Adapter, IErrorHandler, MissingPropertyAccessError, NameofError, UnsupportedNodeError } from "@typescript-nameof/common";
 import { createSandbox, match, SinonSandbox, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";

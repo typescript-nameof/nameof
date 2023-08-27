@@ -1,4 +1,4 @@
-import { basename } from "path";
+import { basename } from "node:path";
 import { BabelAdapterTests } from "./BabelAdapter.test.js";
 import { BabelTransformerTests } from "./BabelTransformer.test.js";
 

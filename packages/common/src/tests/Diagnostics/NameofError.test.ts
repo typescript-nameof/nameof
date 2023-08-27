@@ -1,4 +1,4 @@
-import { strictEqual } from "assert";
+import { strictEqual } from "node:assert";
 import { nameOf } from "ts-nameof-proxy";
 import { NameofError } from "../../Diagnostics/NameofError.cjs";
 

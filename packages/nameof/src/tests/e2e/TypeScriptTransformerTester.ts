@@ -1,6 +1,6 @@
-import { ok } from "assert";
-import { resolve } from "path";
-import { fileURLToPath } from "url";
+import { ok } from "node:assert";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { INameofOutput, TransformerTester } from "@typescript-nameof/test";
 import ts = require("typescript");

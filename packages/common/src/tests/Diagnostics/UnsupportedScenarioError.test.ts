@@ -1,4 +1,4 @@
-import { ok } from "assert";
+import { ok } from "node:assert";
 import { createSandbox, SinonSandbox, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";
 import { UnsupportedScenarioError } from "../../Diagnostics/UnsupportedScenarioError.cjs";

@@ -1,4 +1,4 @@
-import { strictEqual } from "assert";
+import { strictEqual } from "node:assert";
 import { TempDirectory } from "@manuth/temp-files";
 import fs from "fs-extra";
 import { replaceInFiles } from "../../text/replaceInFiles.cjs";
