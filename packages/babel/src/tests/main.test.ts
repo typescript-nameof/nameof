@@ -1,12 +1,10 @@
-import { BabelPluginTester } from "./BabelPluginTester.js";
+import { EndToEndTests } from "./e2e/index.test.js";
 import { TransformationTests } from "./Transformation/index.test.js";
 
-let tester = new BabelPluginTester();
-
 suite(
-    "nameof",
+    "babel",
     () =>
     {
         TransformationTests();
-        tester.RegisterCommon();
+        EndToEndTests();
     });

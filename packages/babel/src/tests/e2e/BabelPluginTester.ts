@@ -3,14 +3,22 @@ import { fileURLToPath } from "url";
 import babel = require("@babel/core");
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
-import { BabelTransformer } from "../Transformation/BabelTransformer.cjs";
-import { IBabelContext } from "../Transformation/IBabelContext.cjs";
+import { BabelTransformer } from "../../Transformation/BabelTransformer.cjs";
+import { IBabelContext } from "../../Transformation/IBabelContext.cjs";
 
 /**
  * Provides the functionality to test the babel plugin.
  */
 export class BabelPluginTester extends TransformerTester<babel.Node, IBabelContext>
 {
+    /**
+     * @inheritdoc
+     */
+    protected override get Title(): string
+    {
+        return "plugin";
+    }
+
     /**
      * @inheritdoc
      *

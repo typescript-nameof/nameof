@@ -17,9 +17,17 @@ export class BabelMacroTester extends TransformerTester<undefined>
     /**
      * @inheritdoc
      */
-    public override RegisterCommon(): void
+    protected override get Title(): string
     {
-        teardown(
+        return "macro";
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public override RegisterTests(): void
+    {
+        setup(
             () =>
             {
                 this.componentName = undefined;
@@ -43,7 +51,7 @@ export class BabelMacroTester extends TransformerTester<undefined>
                     });
             });
 
-        super.RegisterCommon();
+        super.RegisterTests();
     }
 
     /**
