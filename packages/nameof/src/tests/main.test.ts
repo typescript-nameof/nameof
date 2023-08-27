@@ -9,8 +9,6 @@ import { TypeScriptTester } from "./TypeScriptTester.js";
  */
 function Tests(): void
 {
-    let tester = new TypeScriptTester();
-
     suite(
         "nameof",
         () =>
@@ -19,7 +17,6 @@ function Tests(): void
             TransformationTests();
             TextTests();
             EndToEndTests();
-            tester.RegisterCommon();
         });
 }
 

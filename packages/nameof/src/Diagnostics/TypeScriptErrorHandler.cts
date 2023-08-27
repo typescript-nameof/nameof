@@ -75,6 +75,7 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
     {
         return {
             category: this.Features.TypeScript.DiagnosticCategory.Error,
+            source: "typescript-nameof",
             messageText: error.message,
             code: 1337,
             ...(

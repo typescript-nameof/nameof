@@ -13,7 +13,7 @@ export class TestErrorHandler<TNode, TContext> implements IErrorHandler<TNode, T
     /**
      * The error handler under test.
      */
-    private errorHandler?: IErrorHandler<TNode, TContext>;
+    private errorHandlers: Array<IErrorHandler<TNode, TContext>>;
 
     /**
      * Initialize a new instance of the {@linkcode TestErrorHandler} class.
@@ -21,9 +21,9 @@ export class TestErrorHandler<TNode, TContext> implements IErrorHandler<TNode, T
      * @param errorHandler
      * The error handler under test.
      */
-    public constructor(errorHandler?: IErrorHandler<TNode, TContext>)
+    public constructor(...errorHandler: Array<IErrorHandler<TNode, TContext>>)
     {
-        this.errorHandler = errorHandler;
+        this.errorHandlers = [...errorHandler];
     }
 
     /**
@@ -37,9 +37,9 @@ export class TestErrorHandler<TNode, TContext> implements IErrorHandler<TNode, T
     /**
      * Gets the error handler under test.
      */
-    protected get ErrorHandler(): IErrorHandler<TNode, TContext> | undefined
+    protected get ErrorHandlers(): Array<IErrorHandler<TNode, TContext>>
     {
-        return this.errorHandler;
+        return this.errorHandlers;
     }
 
     /**
@@ -60,6 +60,10 @@ export class TestErrorHandler<TNode, TContext> implements IErrorHandler<TNode, T
     public Report(location: INodeLocation, item: TNode, context: TContext, error: Error): void
     {
         this.errors.push(error);
-        this.ErrorHandler?.Report(location, item, context, error);
+
+        for (let errorHandler of this.ErrorHandlers)
+        {
+            errorHandler.Report(location, item, context, error);
+        }
     }
 }
