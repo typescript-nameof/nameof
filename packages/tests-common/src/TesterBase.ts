@@ -237,7 +237,7 @@ export abstract class TesterBase<TNode, TContext>
      * @returns
      * The error of one of the specified types.
      */
-    protected FindError(result: INameofOutput, ...errorClasses: Array<new (...args: any[]) => Error>): Error | undefined
+    protected FindError(result: INameofOutput, ...errorClasses: Array<new (...args: any[]) => Error>): Error | boolean | undefined
     {
         return result.errors.find((error) => errorClasses.some((errorClass) => error.name === errorClass.name));
     }
