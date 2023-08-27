@@ -406,7 +406,7 @@ export function TypeScriptAdapterTests(): void
                                 let result = adapter.ParseInternal(node, context);
                                 strictEqual(result.Type, NodeKind.IdentifierNode);
                                 strictEqual(result.Source, node);
-                                strictEqual(result.Name, node.getText(file.compilerNode as any));
+                                strictEqual(result.Name, printNode(node as any));
                             }
                         });
 
