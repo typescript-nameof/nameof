@@ -1,4 +1,4 @@
-import { strictEqual } from "assert";
+import { AssertionError, strictEqual } from "assert";
 import { ErrorHandler, IErrorHandler } from "@typescript-nameof/common";
 import { Project, ts } from "ts-morph";
 import { INameofOutput } from "./INameofOutput.js";
@@ -138,7 +138,22 @@ export abstract class TesterBase<TNode, TContext>
         }
         else
         {
-            await this.CodeEquals(result.output, expected);
+            try
+            {
+                await this.CodeEquals(result.output, expected);
+            }
+            catch (error)
+            {
+                let suffix = "";
+
+                if (error instanceof AssertionError)
+                {
+                    suffix = `:\n${error.message}`;
+                }
+
+                throw new Error(
+                    `Expected \`${input}\` to transform to \`${expected}\`, but got \`${result.output}\`${suffix}`);
+            }
         }
     }
 
