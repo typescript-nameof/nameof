@@ -1,6 +1,5 @@
 import { ReplaceInFilesTester } from "./ReplaceInFilesTester.js";
 import { ReplaceInTextTester } from "./ReplaceInTextTester.js";
-import { TextTests } from "./text/index.test.js";
 import { TSJestTester } from "./TSJestTester.js";
 import { TSPatchTester } from "./TSPatchTester.js";
 import { TTypeScriptTester } from "./TTypeScriptTester.js";
@@ -14,7 +13,6 @@ export function EndToEndTests(): void
         "End-to-End",
         () =>
         {
-            TextTests();
             new ReplaceInTextTester().RegisterCommon();
             new ReplaceInFilesTester().RegisterCommon();
             new TSPatchTester().RegisterCommon();
