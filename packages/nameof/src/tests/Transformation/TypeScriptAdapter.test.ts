@@ -1,5 +1,5 @@
 import { deepStrictEqual, ok, strictEqual, throws } from "assert";
-import { MissingImportTypeQualifierError, NameofResult, NodeKind, ParsedNode, ResultType } from "@typescript-nameof/common";
+import { MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, ParsedNode, ResultType, UnsupportedNodeError } from "@typescript-nameof/common";
 import { printNode, Project, SourceFile, SyntaxKind, ts as tsMorph } from "ts-morph";
 import { nameOf } from "ts-nameof-proxy";
 // eslint-disable-next-line @typescript-eslint/tslint/config
@@ -674,6 +674,95 @@ export function TypeScriptAdapterTests(): void
                             deepStrictEqual(result.Parameters, []);
                             strictEqual(result.Body, numericNode);
                         });
+
+                    for (let arrowFunction of [false, true])
+                    {
+                        let type = "function";
+
+                        if (arrowFunction)
+                        {
+                            type = `an arrow ${type}`;
+                        }
+                        else
+                        {
+                            type = `a ${type}`;
+                        }
+
+                        test(
+                            `Checking whether passing ${type} with unsupported parameter types throws an error…`,
+                            () =>
+                            {
+                                let node: typescript.Node;
+                                let returnedNode = ts.factory.createStringLiteral("yeet!");
+                                let unsupportedParameter = ts.factory.createParameterDeclaration(
+                                    [],
+                                    undefined,
+                                    ts.factory.createObjectBindingPattern([]));
+
+                                if (arrowFunction)
+                                {
+                                    node = ts.factory.createArrowFunction(
+                                        [],
+                                        [],
+                                        [unsupportedParameter],
+                                        undefined,
+                                        undefined,
+                                        returnedNode);
+                                }
+                                else
+                                {
+                                    node = ts.factory.createFunctionExpression(
+                                        [],
+                                        undefined,
+                                        undefined,
+                                        [],
+                                        [unsupportedParameter],
+                                        undefined,
+                                        ts.factory.createBlock(
+                                            [
+                                                ts.factory.createReturnStatement(returnedNode)
+                                            ]));
+                                }
+
+                                throws(
+                                    () => adapter.ParseInternal(node, context),
+                                    UnsupportedNodeError);
+                            });
+
+                        test(
+                            `Checking whether passing ${type} with no returned expression throws an error…`,
+                            () =>
+                            {
+                                let node: typescript.Node;
+                                let empty = ts.factory.createBlock([]);
+
+                                if (arrowFunction)
+                                {
+                                    node = ts.factory.createArrowFunction(
+                                        undefined,
+                                        undefined,
+                                        [],
+                                        undefined,
+                                        undefined,
+                                        empty);
+                                }
+                                else
+                                {
+                                    node = ts.factory.createFunctionExpression(
+                                        undefined,
+                                        undefined,
+                                        undefined,
+                                        undefined,
+                                        [],
+                                        undefined,
+                                        empty);
+                                }
+
+                                throws(
+                                    () => adapter.ParseInternal(node, context),
+                                    NoReturnExpressionError);
+                            });
+                    }
 
                     test(
                         "Checking whether other nodes return an unsupported node…",
