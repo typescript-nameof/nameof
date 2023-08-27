@@ -135,10 +135,12 @@ export abstract class TesterBase<TNode, TContext>
             throw new Error(
                 `Expected \`${input}\` to transform to \`${expected}\`, but got ${result.errors.length === 1 ? "an error" : "errors"}:\n${messages}`);
         }
-
-        await this.CodeEquals(
-            (await this.Transform(input)).output,
-            await this.Format(expected));
+        else
+        {
+            await this.CodeEquals(
+                result.output,
+                await this.Format(expected));
+        }
     }
 
     /**
