@@ -626,12 +626,21 @@ export function TypeScriptAdapterTests(): void
                         {
                             let numericNode = ts.factory.createNumericLiteral(10);
 
+                            let paramNames = ["a", "b", "x", "y"];
+
                             let node = ts.factory.createFunctionExpression(
                                 [],
                                 undefined,
                                 undefined,
                                 [],
-                                [],
+                                paramNames.map(
+                                    (paramName) =>
+                                    {
+                                        return ts.factory.createParameterDeclaration(
+                                            undefined,
+                                            undefined,
+                                            paramName);
+                                    }),
                                 undefined,
                                 ts.factory.createBlock(
                                     [
@@ -641,7 +650,7 @@ export function TypeScriptAdapterTests(): void
                             let result = adapter.ParseInternal(node, context);
                             strictEqual(result.Type, NodeKind.FunctionNode);
                             strictEqual(result.Source, node);
-                            deepStrictEqual(result.Parameters, []);
+                            deepStrictEqual(result.Parameters, paramNames);
                             strictEqual(result.Body, numericNode);
                         });
 
