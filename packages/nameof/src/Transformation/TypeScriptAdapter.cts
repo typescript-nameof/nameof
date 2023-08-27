@@ -1,4 +1,23 @@
-import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, INodeLocation, MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
+import
+    {
+        Adapter,
+        CallExpressionNode,
+        FunctionNode,
+        IdentifierNode,
+        IndexAccessNode,
+        INodeLocation,
+        MissingImportTypeQualifierError,
+        NameofResult,
+        NodeKind,
+        NoReturnExpressionError,
+        NumericLiteralNode,
+        ParsedNode,
+        PropertyAccessNode,
+        ResultType,
+        StringLiteralNode,
+        UnsupportedNode,
+        UnsupportedNodeError
+    } from "@typescript-nameof/common";
 import ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext.cjs";
 import { TypeScriptFeatures } from "./TypeScriptFeatures.cjs";
