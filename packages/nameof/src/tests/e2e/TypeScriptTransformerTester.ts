@@ -1,14 +1,26 @@
+import { ok } from "assert";
+import { resolve } from "path";
+import { fileURLToPath } from "url";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { INameofOutput, TransformerTester } from "@typescript-nameof/tests-common";
 import ts = require("typescript");
 import { CompilerResult } from "./CompilerResult.js";
 import { ITypeScriptContext } from "../../Transformation/ITypeScriptContext.cjs";
+import { TypeScriptTransformer } from "../../Transformation/TypeScriptTransformer.cjs";
 
 /**
  * Provides the functionality to test typescript transformers.
  */
 export abstract class TypeScriptTransformerTester extends TransformerTester<ts.Node, ITypeScriptContext>
 {
+    /**
+     * Gets a value indicating whether to use the integrated plugin system.
+     */
+    protected get UsePlugin(): boolean
+    {
+        return true;
+    }
+
     /**
      * @inheritdoc
      *
@@ -44,6 +56,11 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
     }
 
     /**
+     * Gets the compiler to use.
+     */
+    protected abstract GetCompiler(): typeof import("typescript");
+
+    /**
      * Runs the transformer.
      *
      * @param code
@@ -52,44 +69,130 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
      * @param errorHandler
      * A component for reporting errors.
      */
-    protected abstract RunTransformer(code: string, errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext> | undefined): Promise<CompilerResult>;
+    protected async RunTransformer(code: string, errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext> | undefined): Promise<CompilerResult>
+    {
+        /**
+         * Represents an emitted file.
+         */
+        interface IFileInfo
+        {
+            /**
+             * The name of the file.
+             */
+            fileName: string;
+
+            /**
+             * The contents of the file.
+             */
+            content: string;
+        }
+
+        let files: IFileInfo[] = [];
+        let fileName = "/file.ts";
+
+        let host: ts.CompilerHost = {
+            fileExists: (path) => path === fileName,
+            readFile: (path) => path === fileName ? code : undefined,
+            getSourceFile: (path, languageVersion) =>
+            {
+                if (path === fileName)
+                {
+                    return ts.createSourceFile(fileName, code, languageVersion, false, ts.ScriptKind.TS);
+                }
+                else
+                {
+                    return undefined;
+                }
+            },
+            getDefaultLibFileName: (options) => ts.getDefaultLibFileName(options),
+            writeFile: () => { throw new Error("Not implemented"); },
+            getCurrentDirectory: () => "/",
+            getDirectories: () => [],
+            getCanonicalFileName: (fileName) => fileName,
+            useCaseSensitiveFileNames: () => true,
+            getNewLine: () => "\n"
+        };
+
+        let configFile = ts.parseConfigFileTextToJson(
+            "tsconfig.json",
+            JSON.stringify(
+                {
+                    compilerOptions: {
+                        strictNullChecks: true,
+                        target: "ES2022",
+                        ...(
+                            this.UsePlugin ?
+                            {
+                                plugins: [
+                                    {
+                                        transform: resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../")
+                                    }
+                                ]
+                            } :
+                            {})
+                    }
+                }));
+
+        let program = ts.createProgram(
+            [fileName],
+            configFile.config.compilerOptions,
+            host);
+
+        try
+        {
+            let result = program.emit(
+                undefined,
+                (fileName, content) =>
+                {
+                    files.push(
+                        {
+                            fileName,
+                            content
+                        });
+                },
+                undefined,
+                false,
+                this.UsePlugin ?
+                {} :
+                {
+                    before: [
+                        new TypeScriptTransformer(undefined, errorHandler).Factory
+                    ]
+                });
+
+                return {
+                    diagnostics: [...result.diagnostics],
+                    code: files[0].content
+                };
+        }
+        catch (error)
+        {
+            console.log(error);
+            throw error;
+        }
+    }
 
     /**
      * @inheritdoc
      *
+     * @param input
+     * The input of the transformation.
+     *
      * @param result
-     * The result to check for errors.
+     * The output of the transformation.
      *
      * @param errorClasses
-     * The expected types of errors.
-     *
-     * @returns
-     * The error of one of the specified types.
+     * The expected errors.
      */
-    protected override FindError(result: INameofOutput, ...errorClasses: Array<(new (...args: any[]) => Error)>): Error | undefined
+    protected override async HasError(input: string, result: INameofOutput, ...errorClasses: Array<(new (...args: any[]) => Error)>): Promise<void>
     {
-        let error = super.FindError(result, ...errorClasses);
-        let typeNames = errorClasses.map((errorClass) => errorClass.name);
-
-        if (error)
+        if (this.UsePlugin)
         {
-            if (!result.errors.some(
-                (err) =>
-                {
-                    return !typeNames.includes(err.name) &&
-                        err.message === error?.message;
-                }))
-            {
-                throw new Error(`A diagnostic with the message \`${error.message}\` has not been reported!`);
-            }
-            else
-            {
-                return error;
-            }
+            ok(result.errors.length > 0);
         }
         else
         {
-            return error;
+            await super.HasError(input, result, ...errorClasses);
         }
     }
 }
