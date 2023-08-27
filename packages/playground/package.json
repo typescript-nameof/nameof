@@ -45,6 +45,7 @@
     "@types/git-branch": "^2.0.2",
     "@types/node": "^20.5.3",
     "@types/npm-which": "^3.0.1",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.41.0",
     "fs-extra": "^11.1.1",
     "git-branch": "^2.0.1",

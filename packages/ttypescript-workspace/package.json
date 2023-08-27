@@ -5,5 +5,8 @@
         "@types/nameof": "file:../types",
         "ttypescript": "^1.5.15",
         "typescript": "^4.9.5"
+    },
+    "devDependencies": {
+        "copyfiles": "^2.4.1"
     }
 }

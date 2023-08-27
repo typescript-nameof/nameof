@@ -8,6 +8,10 @@ packages/babel/macro/*.d.cts
 packages/playground/src/test
 packages/playground/out
 
+# Copied files
+packages/*/CHANGELOG.md
+packages/*/LICENSE
+
 # Logs
 logs
 *.log

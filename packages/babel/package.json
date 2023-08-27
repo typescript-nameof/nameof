@@ -38,7 +38,7 @@
     "access": "public"
   },
   "scripts": {
-    "prepack": "npm run --prefix ../.. build",
+    "prepack": "copyfiles ../../{CHANGELOG.md,LICENSE} -u 2 . && npm run --prefix ../.. build",
     "test": "mocha"
   },
   "dependencies": {
@@ -63,6 +63,7 @@
     "@types/node": "^20.5.3",
     "@typescript-nameof/test": "*",
     "babel-plugin-macros": "^3.1.0",
+    "copyfiles": "^2.4.1",
     "fs-extra": "^11.1.1",
     "mocha": "^10.2.0",
     "rimraf": "^4.3.1",
