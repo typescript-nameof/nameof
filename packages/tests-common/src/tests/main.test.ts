@@ -1,4 +1,4 @@
-import { strictEqual } from "node:assert";
+import { TesterBaseTests } from "./TesterBase.test.js";
 
 /**
  * Registers the tests.
@@ -9,12 +9,7 @@ function Tests(): void
         "tests-common",
         () =>
         {
-            test(
-                "Example…",
-                () =>
-                {
-                    strictEqual(1, 1);
-                });
+            TesterBaseTests();
         });
 }
 

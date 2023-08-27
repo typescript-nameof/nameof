@@ -32,12 +32,15 @@
   },
   "dependencies": {
     "@typescript-nameof/common": "^0.0.1",
+    "sinon": "^15.2.0",
     "ts-morph": "^17.0.1"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.5.3",
+    "@types/sinon": "^10.0.16",
     "rimraf": "^4.3.1",
+    "ts-nameof-proxy": "^0.1.14514",
     "typescript": "^5.2.2"
   }
 }
