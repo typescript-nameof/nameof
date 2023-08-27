@@ -1,5 +1,5 @@
 import { doesNotReject, ok, rejects } from "node:assert";
-import { Adapter, IErrorHandler, MissingPropertyAccessError, NameofError, UnsupportedNodeError } from "@typescript-nameof/common";
+import { IErrorHandler, MissingPropertyAccessError, NameofError, UnsupportedNodeError } from "@typescript-nameof/common";
 import { createSandbox, match, SinonSandbox, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";
 import { INameofOutput } from "../INameofOutput.js";
@@ -109,7 +109,6 @@ export function TesterBaseTests(): void
 
             let sandbox: SinonSandbox;
             let tester: SinonStubbedInstance<TestTester>;
-            let adapter: SinonStubbedInstance<Adapter<any, any, any>>;
 
             suiteSetup(
                 () =>
@@ -121,7 +120,6 @@ export function TesterBaseTests(): void
                 () =>
                 {
                     tester = new TestTester() as SinonStubbedInstance<TestTester>;
-                    adapter = sandbox.createStubInstance(Adapter);
                 });
 
             teardown(
