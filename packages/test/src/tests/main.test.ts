@@ -6,7 +6,7 @@ import { TesterBaseTests } from "./TesterBase.test.js";
 function Tests(): void
 {
     suite(
-        "tests-common",
+        "test",
         () =>
         {
             TesterBaseTests();

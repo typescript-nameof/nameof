@@ -2,7 +2,7 @@ import { ok } from "assert";
 import { resolve } from "path";
 import { fileURLToPath } from "url";
 import { IErrorHandler } from "@typescript-nameof/common";
-import { INameofOutput, TransformerTester } from "@typescript-nameof/tests-common";
+import { INameofOutput, TransformerTester } from "@typescript-nameof/test";
 import ts = require("typescript");
 import { CompilerResult } from "./CompilerResult.js";
 import { ITypeScriptContext } from "../../Transformation/ITypeScriptContext.cjs";

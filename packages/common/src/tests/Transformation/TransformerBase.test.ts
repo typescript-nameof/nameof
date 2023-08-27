@@ -1,5 +1,5 @@
 import { ok, strictEqual } from "assert";
-import { TestErrorHandler } from "@typescript-nameof/tests-common";
+import { TestErrorHandler } from "@typescript-nameof/test";
 import { createSandbox, SinonSandbox, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";
 import { State } from "./State.js";

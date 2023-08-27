@@ -1,5 +1,5 @@
 import { IErrorHandler } from "@typescript-nameof/common";
-import { INameofOutput, TransformerTester } from "@typescript-nameof/tests-common";
+import { INameofOutput, TransformerTester } from "@typescript-nameof/test";
 import { Node } from "typescript";
 import { replaceInText } from "../../text/replaceInText.cjs";
 import { ITypeScriptContext } from "../../Transformation/ITypeScriptContext.cjs";

@@ -1,7 +1,7 @@
 import { fileURLToPath } from "url";
 import babel from "@babel/core";
 import { IErrorHandler } from "@typescript-nameof/common";
-import { TransformerTester } from "@typescript-nameof/tests-common";
+import { TransformerTester } from "@typescript-nameof/test";
 import babelPluginMacros from "babel-plugin-macros";
 
 /**

@@ -1,6 +1,6 @@
 import { TempFile } from "@manuth/temp-files";
 import { IErrorHandler } from "@typescript-nameof/common";
-import { INameofOutput, TransformerTester } from "@typescript-nameof/tests-common";
+import { INameofOutput, TransformerTester } from "@typescript-nameof/test";
 import fs from "fs-extra";
 import { replaceInFiles } from "../../text/replaceInFiles.cjs";
 

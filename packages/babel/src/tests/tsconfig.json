@@ -13,7 +13,7 @@
             "path": "../../tsconfig.app.json"
         },
         {
-            "path": "../../../tests-common/tsconfig.app.json"
+            "path": "../../../test/tsconfig.app.json"
         }
     ]
 }

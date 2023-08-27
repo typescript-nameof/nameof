@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import { IErrorHandler } from "@typescript-nameof/common";
-import { TransformerTester } from "@typescript-nameof/tests-common";
+import { TransformerTester } from "@typescript-nameof/test";
 import { replaceInText } from "../../../text/index.cjs";
 
 /**

@@ -15,7 +15,7 @@
             "path": "./packages/common-types/tsconfig.build.json"
         },
         {
-            "path": "./packages/tests-common/tsconfig.build.json"
+            "path": "./packages/test/tsconfig.build.json"
         }
     ]
 }

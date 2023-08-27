@@ -2,7 +2,7 @@ import { resolve } from "path";
 import { fileURLToPath } from "url";
 import babel = require("@babel/core");
 import { IErrorHandler } from "@typescript-nameof/common";
-import { TransformerTester } from "@typescript-nameof/tests-common";
+import { TransformerTester } from "@typescript-nameof/test";
 import { BabelTransformer } from "../../Transformation/BabelTransformer.cjs";
 import { IBabelContext } from "../../Transformation/IBabelContext.cjs";
 

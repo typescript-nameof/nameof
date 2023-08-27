@@ -1,5 +1,5 @@
 import { IErrorHandler } from "@typescript-nameof/common";
-import { TestErrorHandler } from "@typescript-nameof/tests-common";
+import { TestErrorHandler } from "@typescript-nameof/test";
 import ts = require("typescript");
 import { TypeScriptTransformerTester } from "./TypeScriptTransformerTester.js";
 import { ITypeScriptContext } from "../../Transformation/ITypeScriptContext.cjs";

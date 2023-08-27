@@ -51,8 +51,8 @@ This section provides a brief explanation as to what functionalities are covered
     Provides a plugin to use with the Babel.js compiler. This package contains the logic for parsing and manipulating Babel.js AST. This package also provides a macro for the use with `babel-plugin-macros`.
   - [`@typescript-nameof/common-types`](./packages/common-types):  
     Exposes common type declarations which are used by all packages
-  - [`@typescript-nameof/tests-common`](./packages/tests-common):  
-    Holds unit tests which are used for testing whether the `nameof` integrations work properly.
+  - [`@typescript-nameof/test`](./packages/test):  
+    Holds unit components which are used for testing whether the `nameof` integrations work properly.
   - [`@typescript-nameof/playground`](./packages/playground):  
     Contains a few example projects for trying out `nameof`-integrations
 

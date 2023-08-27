@@ -20,7 +20,7 @@
             "path": "./packages/common-types"
         },
         {
-            "path": "./packages/tests-common"
+            "path": "./packages/test"
         },
         {
             "path": "./packages/playground"

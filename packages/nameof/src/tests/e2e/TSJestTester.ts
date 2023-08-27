@@ -1,5 +1,5 @@
 import { IErrorHandler } from "@typescript-nameof/common";
-import { TestErrorHandler, TransformerTester } from "@typescript-nameof/tests-common";
+import { TestErrorHandler, TransformerTester } from "@typescript-nameof/test";
 import { TsCompiler } from "ts-jest/dist/legacy/compiler/ts-compiler.js";
 import { ConfigSet } from "ts-jest/dist/legacy/config/config-set.js";
 import { TSJestErrorHandler } from "../../Diagnostics/TSJestErrorHandler.cjs";
