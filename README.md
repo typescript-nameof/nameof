@@ -153,6 +153,9 @@ To this:
 ```
 
 ### `nameof.array`
+
+Originally contributed by [@cecilyth](https://github/cecilyth)
+
 `nameof.array` accepts an array of expressions or a lambda which returns an array of expressions and returns the expression names as a `string[]` array.
 
 > ***Note:***  
