@@ -55,7 +55,7 @@ steps:
   create package:
     image: node
     commands:
-      - npm pack --workspaces
+      - npm pack -w @typescript-nameof/nameof -w @typescript-nameof/types -w @typescript-nameof/babel -w @typescript-nameof/common -w @typescript-nameof/common-types
     when:
       event:
         - tag
