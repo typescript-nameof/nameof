@@ -1,4 +1,5 @@
 import { basename } from "path";
+import { BabelAdapterTests } from "./BabelAdapter.test.js";
 import { BabelTransformerTests } from "./BabelTransformer.test.js";
 
 /**
@@ -10,6 +11,7 @@ export function TransformationTests(): void
         basename(new URL(".", import.meta.url).pathname),
         () =>
         {
+            BabelAdapterTests();
             BabelTransformerTests();
         });
 }

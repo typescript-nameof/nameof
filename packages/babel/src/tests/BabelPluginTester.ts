@@ -3,8 +3,8 @@ import { fileURLToPath } from "url";
 import babel = require("@babel/core");
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
-import { IBabelContext } from "../Transformation/IBabelContext.cjs";
 import { BabelTransformer } from "../Transformation/BabelTransformer.cjs";
+import { IBabelContext } from "../Transformation/IBabelContext.cjs";
 
 /**
  * Provides the functionality to test the babel plugin.
