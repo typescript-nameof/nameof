@@ -1,10 +1,14 @@
 export { NameofError } from "./Diagnostics/NameofError.cjs";
+export { IndexOutOfBoundsError } from "./Diagnostics/IndexOutOfBoundsError.cjs";
+export { IndexParsingError } from "./Diagnostics/IndexParsingError.cjs";
 export { InvalidArgumentCountError } from "./Diagnostics/InvalidArgumentCountError.cjs";
 export { InvalidDefaultCallError } from "./Diagnostics/InvalidDefaultCallError.cjs";
+export { InvalidSegmentCallError } from "./Diagnostics/InvalidSegmentCallError.cjs";
 export { MissingImportTypeQualifierError } from "./Diagnostics/MissingImportTypeQualifierError.cjs";
 export { MissingPropertyAccessError } from "./Diagnostics/MissingPropertyAccessError.cjs";
 export { NestedNameofError } from "./Diagnostics/NestedNameofError.cjs";
 export { NoReturnExpressionError } from "./Diagnostics/NoReturnExpressionError.cjs";
+export { SegmentNotFoundError } from "./Diagnostics/SegmentNotFoundError.cjs";
 export { UnsupportedAccessorTypeError } from "./Diagnostics/UnsupportedAccessorTypeError.cjs";
 export { UnsupportedNodeError } from "./Diagnostics/UnsupportedNodeError.cjs";
 export { UnsupportedScenarioError } from "./Diagnostics/UnsupportedScenarioError.cjs";
