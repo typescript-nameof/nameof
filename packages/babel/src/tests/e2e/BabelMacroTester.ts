@@ -34,24 +34,31 @@ export class BabelMacroTester extends TransformerTester<undefined>
             });
 
         suite(
-            "using a name other than nameof",
+            "Features",
             () =>
             {
                 setup(
                     () =>
                     {
-                        this.componentName = "other";
+                        this.componentName = "myCustomNameof";
                     });
 
                 test(
-                    "should work when using a different import name",
+                    "Checking whether custom `nameof` names are respected…",
                     async () =>
                     {
-                        await this.Assert("other(console.log);other.full(console.log);", '"log";"console.log";');
+                        await this.Assert(
+                            "myCustomNameof(console.log);myCustomNameof.full(console.log);",
+                            '"log";"console.log";');
                     });
             });
 
-        super.RegisterTests();
+        suite(
+            "General",
+            () =>
+            {
+                super.RegisterTests();
+            });
     }
 
     /**
