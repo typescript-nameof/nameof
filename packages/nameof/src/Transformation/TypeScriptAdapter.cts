@@ -9,6 +9,11 @@ import { TypeScriptFeatures } from "./TypeScriptFeatures.cjs";
 export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.Node, ITypeScriptContext>
 {
     /**
+     * A component for printing TypeScript nodes.
+     */
+    private printer: ts.Printer | undefined;
+
+    /**
      * Initializes a new instance of the {@linkcode TypeScriptAdapter} class.
      *
      * @param features
@@ -25,6 +30,19 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     public get TypeScript(): typeof ts
     {
         return this.Features.TypeScript;
+    }
+
+    /**
+     * Gets a component for printing TypeScript nodes.
+     */
+    public get Printer(): ts.Printer
+    {
+        if (this.printer === undefined)
+        {
+            this.printer = this.TypeScript.createPrinter();
+        }
+
+        return this.printer;
     }
 
     /**
@@ -79,6 +97,26 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     public GetSourceCode(item: ts.Node, context: ITypeScriptContext): string
     {
         return item.getText(context.file);
+    }
+
+    /**
+     * Prints the code of the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to print.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The generated code of the specified {@linkcode item}.
+     */
+    public PrintSourceCode(item: ts.Node, context: ITypeScriptContext): string
+    {
+        return this.Printer.printNode(
+            this.TypeScript.EmitHint.Unspecified,
+            item,
+            this.TypeScript.createSourceFile("typescript-nameof.ts", "", this.TypeScript.ScriptTarget.ES2022));
     }
 
     /**
@@ -206,7 +244,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                 this.TypeScript.SyntaxKind.SymbolKeyword
             ].includes(item.kind))
         {
-            return new IdentifierNode(item, item.getText(context.file));
+            return new IdentifierNode(item, this.PrintSourceCode(item, context));
         }
         else if (this.TypeScript.isNumericLiteral(item))
         {
@@ -218,7 +256,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         }
         else if (this.TypeScript.isIdentifier(item))
         {
-            return new IdentifierNode(item, item.getText(context.file));
+            return new IdentifierNode(item, this.PrintSourceCode(item, context));
         }
         else if (this.TypeScript.isTypeReferenceNode(item))
         {
@@ -328,7 +366,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         return new PropertyAccessNode(
             source,
             this.ParseNode(expression, context),
-            property.getText(context.file));
+            this.PrintSourceCode(property, context));
     }
 
     /**
@@ -356,7 +394,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                     {
                         if (this.TypeScript.isIdentifier(parameter.name))
                         {
-                            return parameter.name.getText(context.file);
+                            return this.PrintSourceCode(parameter.name, context);
                         }
                         else
                         {

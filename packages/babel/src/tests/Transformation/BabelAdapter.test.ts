@@ -230,9 +230,25 @@ export function BabelAdapterTests(): void
                         "Checking whether the source code of the expression is extracted properly…",
                         async () =>
                         {
-                            let expression = "'use strict'";
-                            let { state, node } = await wrapNode(expression, "StringLiteral");
-                            strictEqual(adapter.GetSourceCode(node, { state }), expression);
+                            for (let expression of ['"use strict"', "'use strict'"])
+                            {
+                                let { state, node } = await wrapNode(expression, "StringLiteral");
+                                strictEqual(adapter.GetSourceCode(node, { state }), expression);
+                            }
+                        });
+                });
+
+            suite(
+                nameOf<TestAdapter>((adapter) => adapter.PrintSourceCode),
+                () =>
+                {
+                    test(
+                        "Checking whether the code of nodes can be generated…",
+                        () =>
+                        {
+                            strictEqual(
+                                adapter.PrintSourceCode(babel.types.tsAnyKeyword(), { } as any),
+                                "any");
                         });
                 });
 

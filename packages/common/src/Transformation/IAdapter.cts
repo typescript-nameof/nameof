@@ -66,13 +66,24 @@ export interface IAdapter<TInput, TNode, TContext = Record<string, never>>
     /**
      * Gets the source code of the specified {@linkcode item}.
      *
-     * @param context
-     * The context of the operation.
-     *
      * @param item
      * The item to get the source code from.
+     *
+     * @param context
+     * The context of the operation.
      */
     GetSourceCode(item: TNode, context: TContext): string;
+
+    /**
+     * Generates the source code representing the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to generate the source code for.
+     *
+     * @param context
+     * The context of the operation.
+     */
+    PrintSourceCode(item: TNode, context: TContext): string;
 
     /**
      * Reports the specified {@linkcode error}.

@@ -210,6 +210,17 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @inheritdoc
      *
      * @param item
+     * The item to generate the source code for.
+     *
+     * @param context
+     * The context of the operation.
+     */
+    public abstract PrintSourceCode(item: TNode, context: TContext): string;
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
      * The item related to the error.
      *
      * @param context

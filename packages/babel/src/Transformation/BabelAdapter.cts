@@ -1,5 +1,6 @@
 // eslint-disable-next-line node/no-unpublished-import
 import { NodePath, types } from "@babel/core";
+import generate from "@babel/generator";
 import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, INodeLocation, MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import { BabelFeatures } from "./BabelFeatures.cjs";
 import { IBabelContext } from "./IBabelContext.cjs";
@@ -133,6 +134,23 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
     public GetSourceCode(item: types.Node, context: IBabelContext): string
     {
         return context.state.file.code.slice(item.start as number, item.end as number);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to generate the source code for.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The code of the specified {@linkcode item}.
+     */
+    public PrintSourceCode(item: types.Node, context: IBabelContext): string
+    {
+        return generate(item, { compact: true }).code;
     }
 
     /**
@@ -287,7 +305,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
             this.Types.isTSStringKeyword(item) ||
             this.Types.isTSSymbolKeyword(item))
         {
-            return new IdentifierNode(item, this.GetSourceCode(item, context));
+            return new IdentifierNode(item, this.PrintSourceCode(item, context));
         }
         else if (this.Types.isNumericLiteral(item))
         {

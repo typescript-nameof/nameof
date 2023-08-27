@@ -85,6 +85,23 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
      * @inheritdoc
      *
      * @param item
+     * The item to generate the source code for.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The generated code for the specified {@linkcode item}.
+     */
+    public override PrintSourceCode(item: State, context: ITransformationContext<State>): string
+    {
+        return "";
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
      * The item to check.
      *
      * @returns

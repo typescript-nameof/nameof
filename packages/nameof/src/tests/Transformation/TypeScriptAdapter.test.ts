@@ -245,6 +245,19 @@ export function TypeScriptAdapterTests(): void
                 });
 
             suite(
+                nameOf<TestAdapter>((adapter) => adapter.PrintSourceCode),
+                () =>
+                {
+                    test(
+                        "Checking whether code for nodes which do not belong to a file can be printed…",
+                        () =>
+                        {
+                            let node = ts.factory.createThis();
+                            strictEqual(adapter.PrintSourceCode(node, context), "this");
+                        });
+                });
+
+            suite(
                 nameOf<TestAdapter>((adapter) => adapter.IsCallExpression),
                 () =>
                 {
