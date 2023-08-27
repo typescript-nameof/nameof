@@ -36,16 +36,14 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
                     this.MonitorInterpolations(
                         (context) =>
                         {
+                            let babelContext: IBabelContext = context as IBabelContext;
+
                             let visitor: babel.Visitor<babel.PluginPass> = {
                                 CallExpression: (path, state) =>
                                 {
-                                    this.TransformNode(
-                                        path,
-                                        {
-                                            ...context,
-                                            state,
-                                            traverseChildren: () => path.traverse(visitor, state)
-                                        });
+                                    babelContext.state = state;
+                                    babelContext.traverseChildren = () => path.traverse(visitor, state);
+                                    this.TransformNode(path, babelContext);
                                 }
                             };
 
@@ -66,15 +64,13 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
             this.MonitorInterpolations(
                 (context) =>
                 {
+                    let babelContext: IBabelContext = context as IBabelContext;
+                    babelContext.state = params.state;
+
                     (params.references.default as Array<babel.NodePath<babel.types.Identifier>>).slice().reverse().forEach(
                         (path) =>
                         {
-                            let babelContext: IBabelContext = {
-                                ...context,
-                                state: params.state,
-                                nameofName: path.node.name
-                            };
-
+                            babelContext.nameofName = path.node.name;
                             this.TransformNode(getPath(), babelContext);
 
                             /**
