@@ -70,7 +70,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
      */
     public override IsMutated(item: types.Node, context: IBabelContext): boolean
     {
-        return (item.extra as any)?.[this.OriginalSymbol] ?? false;
+        return this.OriginalSymbol in item.extra;
     }
 
     /**
