@@ -1,8 +1,8 @@
 import type babel = require("@babel/core");
 import { IAdapter, IErrorHandler, TransformerBase } from "@typescript-nameof/common";
 import { MacroError, MacroHandler } from "babel-plugin-macros";
-import { IBabelContext } from "./IBabelContext.cjs";
 import { BabelFeatures } from "./BabelFeatures.cjs";
+import { IBabelContext } from "./IBabelContext.cjs";
 import { BabelAdapter } from "../BabelAdapter.cjs";
 
 /**
