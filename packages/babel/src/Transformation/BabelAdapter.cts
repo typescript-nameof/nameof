@@ -350,7 +350,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
                 if (node.Type === NodeKind.NumericLiteralNode)
                 {
                     return new NumericLiteralNode(
-                        node.Source,
+                        item,
                         node.Value * (item.operator === "-" ? -1 : 1));
                 }
             }

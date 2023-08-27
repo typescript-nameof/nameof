@@ -293,7 +293,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                 if (node.Type === NodeKind.NumericLiteralNode)
                 {
                     return new NumericLiteralNode(
-                        node.Source,
+                        item,
                         node.Value * (item.operator === this.TypeScript.SyntaxKind.MinusToken ? -1 : 1));
                 }
             }

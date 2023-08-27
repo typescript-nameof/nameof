@@ -437,7 +437,7 @@ export function TypeScriptAdapterTests(): void
 
                                 let result = adapter.ParseInternal(node, context);
                                 strictEqual(result.Type, NodeKind.NumericLiteralNode);
-                                strictEqual(result.Source, numberNode);
+                                strictEqual(result.Source, node);
                                 strictEqual(result.Value, value * (positive ? 1 : -1));
                             }
                         });
