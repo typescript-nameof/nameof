@@ -89,7 +89,8 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
         return this.MonitorInterpolations(
             (context) =>
             {
-                let typeScriptContext: ITypeScriptContext = { ...context, file };
+                let typeScriptContext: ITypeScriptContext = context as any;
+                typeScriptContext.file = file;
                 typeScriptContext.postTransformHook = postTransformHook;
 
                 return this.VisitNode(file, typeScriptContext, tsContext);
