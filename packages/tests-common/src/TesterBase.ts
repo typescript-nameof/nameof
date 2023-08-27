@@ -220,7 +220,7 @@ export abstract class TesterBase<TNode, TContext>
             let errorDescriptor = errorNames ? `a ${errorNames}` : "an";
 
             throw new Error(
-                `Expected the code ${JSON.stringify(input)} to cause ${errorDescriptor} error, but returned the following result:\n` +
+                `Expected the code \`${JSON.stringify(input)}\` to cause ${errorDescriptor} error, but returned the following result:\n` +
                 `${JSON.stringify(result.output)}`);
         }
     }
