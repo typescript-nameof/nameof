@@ -39,7 +39,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
      */
     public override GetNameofName(context: IBabelContext): string
     {
-        return context.nameofIdentifierName ?? super.GetNameofName(context);
+        return context.nameofName ?? super.GetNameofName(context);
     }
 
     /**

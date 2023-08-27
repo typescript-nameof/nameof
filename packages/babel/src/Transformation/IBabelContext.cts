@@ -22,5 +22,5 @@ export interface IBabelContext extends ITransformationContext<Node>
      *
      * @default "nameof"
      */
-    nameofIdentifierName?: string;
+    nameofName?: string;
 }

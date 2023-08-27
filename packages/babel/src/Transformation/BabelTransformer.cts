@@ -1,9 +1,9 @@
 import type babel = require("@babel/core");
 import { IAdapter, IErrorHandler, TransformerBase } from "@typescript-nameof/common";
 import { MacroError, MacroHandler } from "babel-plugin-macros";
+import { BabelAdapter } from "./BabelAdapter.cjs";
 import { BabelFeatures } from "./BabelFeatures.cjs";
 import { IBabelContext } from "./IBabelContext.cjs";
-import { BabelAdapter } from "./BabelAdapter.cjs";
 
 /**
  * Provides the functionality to transform babel nodes and files.
@@ -72,7 +72,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
                             let babelContext: IBabelContext = {
                                 ...context,
                                 state: params.state,
-                                nameofIdentifierName: path.node.name
+                                nameofName: path.node.name
                             };
 
                             this.TransformNode(getPath(), babelContext);
