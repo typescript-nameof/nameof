@@ -41,7 +41,7 @@ export abstract class TesterBase<TNode, TContext>
 
         try
         {
-            output = await this.Format(await this.Run(await this.Preprocess(code), errorHandler));
+            output = await this.Run(await this.Preprocess(code), errorHandler);
         }
         catch
         { }
@@ -137,9 +137,7 @@ export abstract class TesterBase<TNode, TContext>
         }
         else
         {
-            await this.CodeEquals(
-                result.output,
-                await this.Format(expected));
+            await this.CodeEquals(result.output, expected);
         }
     }
 
@@ -154,7 +152,9 @@ export abstract class TesterBase<TNode, TContext>
      */
     protected async CodeEquals(output: string | undefined, expected: string | undefined): Promise<void>
     {
-        strictEqual(output, expected);
+        strictEqual(
+            await this.Format(output),
+            await this.Format(expected));
     }
 
     /**
