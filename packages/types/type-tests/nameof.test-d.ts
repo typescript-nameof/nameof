@@ -1,4 +1,4 @@
-/// <reference path="../index.d.ts" />
+/// <reference path="../index.d.cts" />
 import { INameOfProvider } from "@typescript-nameof/common-types";
 import { expectType } from "tsd";
 
