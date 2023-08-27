@@ -1,13 +1,13 @@
 // eslint-disable-next-line node/no-unpublished-import
 import { NodePath, types } from "@babel/core";
 import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, INodeLocation, MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
-import { BabelContext } from "./Transformation/BabelContext.cjs";
 import { BabelFeatures } from "./Transformation/BabelFeatures.cjs";
+import { IBabelContext } from "./Transformation/IBabelContext.cjs";
 
 /**
  * Provides the functionality to parse and dump `nameof` calls for babel.
  */
-export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, BabelContext>
+export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, IBabelContext>
 {
     /**
      * Initializes a new instance of the {@linkcode BabelAdapter} class.
@@ -37,7 +37,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * The expected name of function calls.
      */
-    public override GetNameofName(context: BabelContext): string
+    public override GetNameofName(context: IBabelContext): string
     {
         return context.nameofIdentifierName ?? super.GetNameofName(context);
     }
@@ -68,7 +68,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * A value indicating whether the specified {@linkcode item} has been mutated in a previous `nameof` call.
      */
-    public override IsMutated(item: types.Node, context: BabelContext): boolean
+    public override IsMutated(item: types.Node, context: IBabelContext): boolean
     {
         return (item.extra as any)?.[this.OriginalSymbol] ?? false;
     }
@@ -85,7 +85,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * The transformed node.
      */
-    public override Transform(input: NodePath, context: BabelContext): types.Node
+    public override Transform(input: NodePath, context: IBabelContext): types.Node
     {
         context.traverseChildren?.();
         return super.Transform(input, context);
@@ -103,7 +103,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * The location of the specified {@linkcode item}.
      */
-    public GetLocation(item: types.Node, context: BabelContext): INodeLocation
+    public GetLocation(item: types.Node, context: IBabelContext): INodeLocation
     {
         let result: INodeLocation = {
             filePath: context.state.filename,
@@ -130,7 +130,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * The code of the specified {@linkcode item}.
      */
-    public GetSourceCode(item: types.Node, context: BabelContext): string
+    public GetSourceCode(item: types.Node, context: IBabelContext): string
     {
         return context.state.file.code.slice(item.start as number, item.end as number);
     }
@@ -263,7 +263,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * The parsed representation of the specified {@linkcode item}.
      */
-    protected ParseInternal(item: types.Node, context: BabelContext): ParsedNode<types.Node>
+    protected ParseInternal(item: types.Node, context: IBabelContext): ParsedNode<types.Node>
     {
         if (this.IsCallExpression(item))
         {
@@ -428,7 +428,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * The parsed representation of the specified {@linkcode source}.
      */
-    protected ParsePropertyAccessExpression(source: types.Node, expression: types.Node, property: types.Identifier, context: BabelContext): PropertyAccessNode<types.Node>
+    protected ParsePropertyAccessExpression(source: types.Node, expression: types.Node, property: types.Identifier, context: IBabelContext): PropertyAccessNode<types.Node>
     {
         return new PropertyAccessNode(
             source,
@@ -448,7 +448,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, B
      * @returns
      * The return expression of the specified {@linkcode block}.
      */
-    protected GetReturnExpression(block: types.Block, context: BabelContext): types.Node | undefined
+    protected GetReturnExpression(block: types.Block, context: IBabelContext): types.Node | undefined
     {
         for (let statement of block.body)
         {

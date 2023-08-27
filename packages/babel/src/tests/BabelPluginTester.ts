@@ -3,13 +3,13 @@ import { fileURLToPath } from "url";
 import babel = require("@babel/core");
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/tests-common";
-import { BabelContext } from "../Transformation/BabelContext.cjs";
+import { IBabelContext } from "../Transformation/IBabelContext.cjs";
 import { BabelTransformer } from "../Transformation/BabelTransformer.cjs";
 
 /**
  * Provides the functionality to test the babel plugin.
  */
-export class BabelPluginTester extends TransformerTester<babel.Node, BabelContext>
+export class BabelPluginTester extends TransformerTester<babel.Node, IBabelContext>
 {
     /**
      * @inheritdoc
@@ -23,7 +23,7 @@ export class BabelPluginTester extends TransformerTester<babel.Node, BabelContex
      * @returns
      * The transformed representation of the specified {@linkcode code}.
      */
-    protected async Run(code: string, errorHandler?: IErrorHandler<babel.Node, BabelContext>): Promise<string>
+    protected async Run(code: string, errorHandler?: IErrorHandler<babel.Node, IBabelContext>): Promise<string>
     {
         let plugin = (babelAPI: typeof babel): babel.PluginObj =>
         {

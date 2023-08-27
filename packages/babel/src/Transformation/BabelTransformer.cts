@@ -1,14 +1,14 @@
 import type babel = require("@babel/core");
 import { IAdapter, IErrorHandler, TransformerBase } from "@typescript-nameof/common";
 import { MacroError, MacroHandler } from "babel-plugin-macros";
-import { BabelContext } from "./BabelContext.cjs";
+import { IBabelContext } from "./IBabelContext.cjs";
 import { BabelFeatures } from "./BabelFeatures.cjs";
 import { BabelAdapter } from "../BabelAdapter.cjs";
 
 /**
  * Provides the functionality to transform babel nodes and files.
  */
-export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node, BabelContext, BabelFeatures>
+export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node, IBabelContext, BabelFeatures>
 {
     /**
      * Initializes a new instance of the {@linkcode BabelTransformer} class.
@@ -19,7 +19,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
      * @param errorHandler
      * A component for handling errors.
      */
-    public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<babel.Node, BabelContext>)
+    public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<babel.Node, IBabelContext>)
     {
         super(new BabelFeatures(babelAPI, errorHandler));
     }
@@ -69,7 +69,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
                     (params.references.default as Array<babel.NodePath<babel.types.Identifier>>).slice().reverse().forEach(
                         (path) =>
                         {
-                            let babelContext: BabelContext = {
+                            let babelContext: IBabelContext = {
                                 ...context,
                                 state: params.state,
                                 nameofIdentifierName: path.node.name
@@ -115,7 +115,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
      * @param context
      * The context of the operation.
      */
-    public TransformNode(path: babel.NodePath, context: BabelContext): void
+    public TransformNode(path: babel.NodePath, context: IBabelContext): void
     {
         let transformed = this.Adapter.Transform(path, context);
 
@@ -131,7 +131,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
      * @returns
      * The newly created adapter.
      */
-    protected InitializeAdapter(): IAdapter<babel.NodePath, babel.types.Node, BabelContext>
+    protected InitializeAdapter(): IAdapter<babel.NodePath, babel.types.Node, IBabelContext>
     {
         return new BabelAdapter(this.Features);
     }

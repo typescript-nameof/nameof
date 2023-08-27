@@ -1,7 +1,6 @@
 import babel = require("@babel/core");
 import { BabelTransformer } from "./Transformation/BabelTransformer.cjs";
 
-export { BabelContext } from "./Transformation/BabelContext.cjs";
 export { BabelTransformer };
 
 /**

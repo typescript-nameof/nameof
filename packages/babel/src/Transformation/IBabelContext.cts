@@ -5,7 +5,8 @@ import { ITransformationContext } from "@typescript-nameof/common";
 /**
  * Represents the context of a `babel` transformation.
  */
-export type BabelContext = ITransformationContext<Node> & {
+export interface IBabelContext extends ITransformationContext<Node>
+{
     /**
      * The state of the plugin.
      */
@@ -22,4 +23,4 @@ export type BabelContext = ITransformationContext<Node> & {
      * @default "nameof"
      */
     nameofIdentifierName?: string;
-};
+}
