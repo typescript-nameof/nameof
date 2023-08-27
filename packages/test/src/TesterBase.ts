@@ -1,6 +1,6 @@
 import { strictEqual } from "assert";
 import { ErrorHandler, IErrorHandler } from "@typescript-nameof/common";
-import { Project } from "ts-morph";
+import { Project, ts } from "ts-morph";
 import { INameofOutput } from "./INameofOutput.js";
 import { TestErrorHandler } from "./TestErrorHandler.js";
 
@@ -74,7 +74,8 @@ export abstract class TesterBase<TNode, TContext>
 
             file.formatText(
                 {
-                    ensureNewLineAtEndOfFile: true
+                    ensureNewLineAtEndOfFile: true,
+                    semicolons: ts.SemicolonPreference.Insert
                 });
 
             return file.getText().replace(/(\r?\n)+$/, "");
