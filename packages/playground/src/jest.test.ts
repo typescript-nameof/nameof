@@ -1,5 +1,5 @@
 test(
-    "adds 1 + 2 to equal 3",
+    "The name of `nameof` should equal `nameof`",
     () =>
     {
         expect(nameof(nameof)).toBe("nameof");
