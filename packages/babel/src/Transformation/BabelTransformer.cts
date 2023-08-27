@@ -3,7 +3,7 @@ import { IAdapter, IErrorHandler, TransformerBase } from "@typescript-nameof/com
 import { MacroError, MacroHandler } from "babel-plugin-macros";
 import { BabelFeatures } from "./BabelFeatures.cjs";
 import { IBabelContext } from "./IBabelContext.cjs";
-import { BabelAdapter } from "../BabelAdapter.cjs";
+import { BabelAdapter } from "./BabelAdapter.cjs";
 
 /**
  * Provides the functionality to transform babel nodes and files.

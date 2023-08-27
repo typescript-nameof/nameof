@@ -1,8 +1,8 @@
 // eslint-disable-next-line node/no-unpublished-import
 import { NodePath, types } from "@babel/core";
 import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, INodeLocation, MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
-import { BabelFeatures } from "./Transformation/BabelFeatures.cjs";
-import { IBabelContext } from "./Transformation/IBabelContext.cjs";
+import { BabelFeatures } from "./BabelFeatures.cjs";
+import { IBabelContext } from "./IBabelContext.cjs";
 
 /**
  * Provides the functionality to parse and dump `nameof` calls for babel.
