@@ -459,7 +459,7 @@ export function TypeScriptAdapterTests(): void
                         () =>
                         {
                             let name = "process";
-                            let { node, context } = wrapNode(`${name};`, SyntaxKind.Identifier);
+                            let node = ts.factory.createIdentifier(name);
                             let result = adapter.ParseInternal(node, context);
                             strictEqual(result.Type, NodeKind.IdentifierNode);
                             strictEqual(result.Source, node);
@@ -471,9 +471,8 @@ export function TypeScriptAdapterTests(): void
                         () =>
                         {
                             let name = "Console";
-                            let { node, context } = wrapNode(`let x: ${name}`, SyntaxKind.TypeReference);
+                            let node = ts.factory.createTypeReferenceNode(name);
                             let result = adapter.ParseInternal(node, context);
-                            ok(ts.isTypeReferenceNode(node));
                             strictEqual(result.Type, NodeKind.IdentifierNode);
                             strictEqual(result.Source, node.typeName);
                             strictEqual(result.Name, name);
@@ -484,9 +483,14 @@ export function TypeScriptAdapterTests(): void
                         () =>
                         {
                             let name = "Generator";
-                            let { node, context } = wrapNode(`let x: import("yeoman-generator").${name}`, SyntaxKind.ImportType);
+
+                            let node = ts.factory.createImportTypeNode(
+                                ts.factory.createLiteralTypeNode(
+                                    ts.factory.createStringLiteral("yeoman-generator")),
+                                undefined,
+                                ts.factory.createIdentifier(name));
+
                             let result = adapter.ParseInternal(node, context);
-                            ok(ts.isImportTypeNode(node));
                             strictEqual(result.Type, NodeKind.IdentifierNode);
                             strictEqual(result.Source, node.qualifier);
                             strictEqual(result.Name, name);
@@ -530,9 +534,12 @@ export function TypeScriptAdapterTests(): void
                         {
                             let objectName = "process";
                             let accessor = "chdir";
-                            let { node, context } = wrapNode(`${objectName}.${accessor}`, SyntaxKind.PropertyAccessExpression);
+
+                            let node = ts.factory.createPropertyAccessExpression(
+                                ts.factory.createIdentifier(objectName),
+                                accessor);
+
                             let result = adapter.ParseInternal(node, context);
-                            ok(ts.isPropertyAccessExpression(node));
                             strictEqual(result.Type, NodeKind.PropertyAccessNode);
                             strictEqual(result.Source, node);
                             deepStrictEqual(result.Expression, adapter.ParseInternal(node.expression, context));
@@ -543,15 +550,18 @@ export function TypeScriptAdapterTests(): void
                         "Checking whether qualified names are parsed properly…",
                         () =>
                         {
-                            let inner = "Inquirer";
-                            let outer = "Question";
-                            let { node, context } = wrapNode(`let x: ${inner}.${outer}`, SyntaxKind.QualifiedName);
+                            let outer = "Inquirer";
+                            let inner = "Question";
+
+                            let node = ts.factory.createQualifiedName(
+                                ts.factory.createIdentifier(outer),
+                                ts.factory.createIdentifier(inner));
+
                             let result = adapter.ParseInternal(node, context);
-                            ok(ts.isQualifiedName(node));
                             strictEqual(result.Type, NodeKind.PropertyAccessNode);
                             strictEqual(result.Source, node);
                             deepStrictEqual(result.Expression, adapter.ParseInternal(node.left, context));
-                            strictEqual(result.PropertyName, outer);
+                            strictEqual(result.PropertyName, inner);
                         });
 
                     test(
@@ -559,14 +569,37 @@ export function TypeScriptAdapterTests(): void
                         () =>
                         {
                             let objectName = "files";
-                            let index = 0;
-                            let { node, context } = wrapNode(`${objectName}[${index}]`, SyntaxKind.ElementAccessExpression);
-                            let result = adapter.ParseInternal(node, context);
-                            ok(ts.isElementAccessExpression(node));
-                            strictEqual(result.Type, NodeKind.IndexAccessNode);
-                            strictEqual(result.Source, node);
-                            deepStrictEqual(result.Expression, adapter.ParseInternal(node.expression, context));
-                            deepStrictEqual(result.Index, adapter.ParseInternal(node.argumentExpression, context));
+
+                            let indexers = [
+                                0,
+                                ts.factory.createStringLiteral("You shall pass!")
+                            ];
+
+                            for (let index of indexers)
+                            {
+                                let node = ts.factory.createElementAccessExpression(
+                                    ts.factory.createIdentifier(objectName),
+                                    index);
+
+                                let result = adapter.ParseInternal(node, context);
+                                strictEqual(result.Type, NodeKind.IndexAccessNode);
+                                strictEqual(result.Source, node);
+                                deepStrictEqual(result.Expression, adapter.ParseInternal(node.expression, context));
+                                deepStrictEqual(result.Index, adapter.ParseInternal(node.argumentExpression, context));
+
+                                if (typeof index === "number")
+                                {
+                                    strictEqual(result.Index.Type, NodeKind.NumericLiteralNode);
+                                    strictEqual(result.Index.Source, node.argumentExpression);
+                                    strictEqual(result.Index.Value, index);
+                                }
+                                else
+                                {
+                                    strictEqual(result.Index.Type, NodeKind.StringLiteralNode);
+                                    strictEqual(result.Index.Source, index);
+                                    strictEqual(result.Index.Text, index.text);
+                                }
+                            }
                         });
 
                     test(
@@ -575,9 +608,12 @@ export function TypeScriptAdapterTests(): void
                         {
                             let typeName = "NodeSet";
                             let index = "TKey";
-                            let { node, context } = wrapNode(`let x: ${typeName}[${index}]`, SyntaxKind.IndexedAccessType);
+
+                            let node = ts.factory.createIndexedAccessTypeNode(
+                                ts.factory.createTypeReferenceNode(typeName),
+                                ts.factory.createTypeReferenceNode(index));
+
                             let result = adapter.ParseInternal(node, context);
-                            ok(ts.isIndexedAccessTypeNode(node));
                             strictEqual(result.Type, NodeKind.IndexAccessNode);
                             strictEqual(result.Source, node);
                             deepStrictEqual(result.Expression, adapter.ParseInternal(node.objectType, context));
