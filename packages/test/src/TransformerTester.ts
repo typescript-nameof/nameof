@@ -20,7 +20,7 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
     /**
      * Registers common tests.
      */
-    public RegisterCommon(): void
+    public Register(): void
     {
         suite(
             this.Title,

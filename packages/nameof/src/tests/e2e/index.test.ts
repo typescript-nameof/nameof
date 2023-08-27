@@ -13,10 +13,10 @@ export function EndToEndTests(): void
         "End-to-End",
         () =>
         {
-            new ReplaceInTextTester().RegisterCommon();
-            new ReplaceInFilesTester().RegisterCommon();
-            new TSPatchTester().RegisterCommon();
-            new TTypeScriptTester().RegisterCommon();
-            new TSJestTester().RegisterCommon();
+            new ReplaceInTextTester().Register();
+            new ReplaceInFilesTester().Register();
+            new TSPatchTester().Register();
+            new TTypeScriptTester().Register();
+            new TSJestTester().Register();
         });
 }

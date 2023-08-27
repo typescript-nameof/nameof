@@ -10,7 +10,7 @@ export function EndToEndTests(): void
         "End-to-End",
         () =>
         {
-            new BabelPluginTester().RegisterCommon();
-            new BabelMacroTester().RegisterCommon();
+            new BabelPluginTester().Register();
+            new BabelMacroTester().Register();
         });
 }
