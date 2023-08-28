@@ -120,6 +120,15 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                     });
 
                 test(
+                    "Checking whether unsupported nodes are ignored if irrelevant…",
+                    async () =>
+                    {
+                        await transforms(
+                            "nameof(/this-is-unsupported-garbage/g.flags.length)",
+                            '"length"');
+                    });
+
+                test(
                     "Checking whether type references are parsed properly…",
                     async () =>
                     {
