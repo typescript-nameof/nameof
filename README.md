@@ -30,7 +30,7 @@ Following ecosystems have been tested and are proven to work:
 
 The `@typescript-nameof/nameof` package also exposes functions for programmatically replacing `nameof` calls both in code snippets and in files.
 
-To find out more on how to set up TypeScript `nameof`, please head to the [Setup](#setup) section.
+To find out more on how to set up TypeScript `nameof`, please head to the [Setup](#compiler-setup) section.
 
 ## Features
   - **Easy Compiler Integration:** The `@typescript-nameof/nameof` package provides support for a wide variety of ecosystems out of the box.
