@@ -6,8 +6,5 @@
         "webpack": "^5.88.2",
         "webpack-cli": "^5.1.4",
         "webpack-playground-typescript": "npm:typescript@^5.2.2"
-    },
-    "devDependencies": {
-        "copyfiles": "^2.4.1"
     }
 }

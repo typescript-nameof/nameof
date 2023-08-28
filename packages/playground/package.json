@@ -41,21 +41,7 @@
   },
   "devDependencies": {
     "@manuth/package-json-editor": "^3.1.1",
-    "@types/fs-extra": "^11.0.1",
-    "@types/git-branch": "^2.0.2",
-    "@types/node": "^20.5.3",
-    "@types/npm-which": "^3.0.1",
     "copyfiles": "^2.4.1",
-    "eslint": "^8.41.0",
-    "fs-extra": "^11.1.1",
-    "git-branch": "^2.0.1",
-    "globby": "^13.1.4",
-    "mocha": "^10.2.0",
-    "npm-which": "^3.0.1",
-    "rimraf": "^5.0.1",
-    "source-map-support": "^0.5.21",
-    "ts-node": "^10.9.1",
-    "ts-patch": "3.0.2",
     "typescript": "^5.2.2"
   }
 }

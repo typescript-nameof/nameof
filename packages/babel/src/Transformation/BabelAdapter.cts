@@ -1,5 +1,5 @@
 // eslint-disable-next-line node/no-unpublished-import
-import { NodePath, types } from "@babel/core";
+import type { NodePath, types } from "@babel/core";
 import generate from "@babel/generator";
 import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, INodeLocation, MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import { BabelFeatures } from "./BabelFeatures.cjs";

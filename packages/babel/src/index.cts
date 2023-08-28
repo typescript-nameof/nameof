@@ -1,4 +1,4 @@
-import babel = require("@babel/core");
+import type babel = require("@babel/core");
 import { BabelTransformer } from "./Transformation/BabelTransformer.cjs";
 
 export { BabelTransformer };
