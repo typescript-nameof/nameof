@@ -242,6 +242,13 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                     });
 
                 test(
+                    "Checking whether the function can be accessed using an element accessor…",
+                    async () =>
+                    {
+                        await transforms('nameof["full"](console.log)', '"console.log"');
+                    });
+
+                test(
                     "Checking whether calls with function expressions work properly…",
                     async () =>
                     {
