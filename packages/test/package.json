@@ -1,5 +1,6 @@
 {
   "name": "@typescript-nameof/test",
+  "version": "0.0.1",
   "type": "module",
   "private": true,
   "description": "Provides common components for testing `nameof` transformers and plugins.",

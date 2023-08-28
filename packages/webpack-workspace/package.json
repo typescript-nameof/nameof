@@ -1,10 +1,12 @@
 {
-    "private": true,
-    "dependencies": {
-        "ts-loader": "^9.4.4",
-        "typescript": "file:node_modules/webpack-playground-typescript",
-        "webpack": "^5.88.2",
-        "webpack-cli": "^5.1.4",
-        "webpack-playground-typescript": "npm:typescript@^5.2.2"
-    }
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "ts-loader": "^9.4.4",
+    "typescript": "file:node_modules/webpack-playground-typescript",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-playground-typescript": "npm:typescript@^5.2.2"
+  }
 }

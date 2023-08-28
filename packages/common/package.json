@@ -37,7 +37,7 @@
     "@types/lodash.clonedeep": "^4.5.7",
     "@types/sinon": "^10.0.16",
     "@typescript-nameof/nameof": "^0.0.1",
-    "@typescript-nameof/test": "*",
+    "@typescript-nameof/test": "^0.0.1",
     "copyfiles": "^2.4.1",
     "lodash.clonedeep": "^4.5.0",
     "sinon": "^15.2.0"
