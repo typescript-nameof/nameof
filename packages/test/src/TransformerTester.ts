@@ -3,6 +3,7 @@ import
 {
     IndexOutOfBoundsError,
     IndexParsingError,
+    InvalidArgumentCountError,
     InvalidDefaultCallError,
     InvalidSegmentCallError,
     MissingImportTypeQualifierError,
@@ -365,6 +366,23 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                         for (let snippet of snippets)
                         {
                             await reports(snippet, UnusedInterpolationError);
+                        }
+                    });
+
+                test(
+                    "Checking whether calling the method with an invalid number of arguments throws an error…",
+                    async () =>
+                    {
+                        let snippets = [
+                            "nameof.interpolate()",
+                            "nameof.interpolate(i, j)"
+                        ];
+
+                        for (let snippet of snippets)
+                        {
+                            await reports(
+                                `nameof.full(files[${snippet}])`,
+                                InvalidArgumentCountError);
                         }
                     });
             });
