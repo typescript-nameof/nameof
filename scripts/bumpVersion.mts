@@ -144,6 +144,8 @@ interface ICandidateDescriptor
                             dependency.Name
                         ]);
                 }
+
+                await writeJSON(workspacePackage.FileName as string, new Package(workspacePackage.FileName as string).ToJSON(), { spaces: 2 });
             }
 
             spawnSync(
