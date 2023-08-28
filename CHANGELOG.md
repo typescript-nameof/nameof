@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## TypeScript `nameof` [Unreleased]
+
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.1...dev)
+
+## TypeScript `nameof` v0.0.1
 This is it! Words cannot describe how happy I am to be finally done rewriting the infamous, great `ts-nameof` project!
 Not only does this release bring TypeScript v5 support but there are also tons of more features waiting for you.
 
@@ -104,3 +108,5 @@ I'll sure have to make up my mind on some of these questions.
 
 ### Misc
   - Initial release
+
+[Show differences](https://github.com/typescript-nameof/nameof/compare/5e817b83998d5e3735c2d4dc991c86a9dcffdecd...v0.0.1)
