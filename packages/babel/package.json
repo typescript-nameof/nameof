@@ -49,9 +49,9 @@
     "@typescript-nameof/common-types": "^0.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.0",
+    "@babel/core": "^7.22.11",
     "@babel/parser": "^7.22.11",
-    "@babel/preset-typescript": "^7.21.0",
+    "@babel/preset-typescript": "^7.22.11",
     "@manuth/temp-files": "^3.0.2",
     "@types/babel__generator": "^7.6.4",
     "@types/fs-extra": "^11.0.1",

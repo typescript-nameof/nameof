@@ -32,7 +32,7 @@
   "dependencies": {
     "@typescript-nameof/common": "^0.0.1",
     "sinon": "^15.2.0",
-    "ts-morph": "^17.0.1"
+    "ts-morph": "^19.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
