@@ -3,7 +3,7 @@
 
 Allows the use of `nameof()` calls in TypeScript projects.
 
-This package provides support or `nameof()` calls for `ts-patch`, `ts-jest`, `ts-loader`, `ttypescript` and every ecosystem which supports TypeScript `TransformerFactory`s.
+This package provides support for `nameof()` calls for `ts-patch`, `ts-jest`, `ts-loader`, `ttypescript` and every ecosystem which supports TypeScript `TransformerFactory`s.
 
 `nameof()` calls enable you to access the names of variables, properties and types:
 
