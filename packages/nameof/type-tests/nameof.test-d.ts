@@ -1,6 +1,5 @@
 /* istanbul ignore next */
 import tsNameOf = require("@typescript-nameof/nameof");
-// eslint-disable-next-line import/no-extraneous-dependencies
 import * as tsNameOfEs6 from "@typescript-nameof/nameof";
 import { expectType } from "tsd";
 
