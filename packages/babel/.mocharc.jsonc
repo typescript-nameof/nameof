@@ -1,0 +1,9 @@
+{
+    "spec": [
+        "./lib/tests/main.test.js"
+    ],
+    "ui": "tdd",
+    "colors": true,
+    "recursive": true,
+    "require": "source-map-support/register"
+}

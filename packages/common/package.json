@@ -1,22 +1,45 @@
 {
-  "name": "@ts-nameof/common",
-  "version": "4.2.1",
-  "description": "ts-nameof - Common code across packages.",
-  "main": "./dist/index.js",
-  "author": "David Sherret",
-  "license": "MIT",
+  "name": "@typescript-nameof/common",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Provides Core Functionalities for TypeScript `nameof` Packages.",
+  "author": "Manuel Thalmann <m@nuth.ch>",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.cts",
+      "default": "./lib/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/index.cjs",
+  "types": "./lib/index.d.cts",
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git",
+    "directory": "packages/common"
+  },
+  "bugs": {
+    "url": "https://github.com/typescript-nameof/nameof/issues"
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "clean": "rimraf dist && tsc --b --clean",
-    "build": "tsc --b",
-    "test": "echo 'ignore'"
+    "prepack": "copyfiles ../../{CHANGELOG.md,LICENSE} -u 2 . && npm run --prefix ../.. build",
+    "test": "mocha"
   },
   "dependencies": {
+    "@types/mocha": "^10.0.1",
+    "ts-nameof-proxy": "^0.1.14514"
   },
   "devDependencies": {
-    "typescript": "^4.5.4",
-    "rimraf": "^3.0.2"
+    "@types/lodash.clonedeep": "^4.5.7",
+    "@types/sinon": "^10.0.16",
+    "@typescript-nameof/nameof": "^0.0.1",
+    "@typescript-nameof/test": "^0.0.1",
+    "copyfiles": "^2.4.1",
+    "lodash.clonedeep": "^4.5.0",
+    "sinon": "^15.2.0"
   }
 }

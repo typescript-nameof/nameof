@@ -1,26 +1,30 @@
-/node_modules
-/.vs
-/bin
-/dist
-/obj
-/temp
-/temp
-*.js.map
-*.suo
-*.csproj
-*.csproj.user
-*.sln
-/packages/ts-nameof/temp/
-/packages/*/dist/
-/packages/*/node_modules/
-*.tsbuildinfo
+# Build results
+[Ll]ib/
+packages/babel/macro/*.cjs
+packages/babel/macro/*.map
+packages/babel/macro/*.d.cts
+
+# Playground files
+packages/playground/src/test
+packages/playground/out
+
+# Copied files
+packages/*/CHANGELOG.md
+packages/*/LICENSE
+
 # Logs
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Runtime data
+pids
 *.pid
 *.seed
 *.pid.lock
@@ -30,11 +34,12 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
+*.lcov
 
 # nyc test coverage
 .nyc_output
 
-# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
 # Bower dependency directory (https://bower.io/)
@@ -50,11 +55,23 @@ build/Release
 node_modules/
 jspm_packages/
 
+# TypeScript v1 declaration files
+typings/
+
+# TypeScript cache
+*.tsbuildinfo
+
 # Optional npm cache directory
 .npm
 
 # Optional eslint cache
 .eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
 
 # Optional REPL history
 .node_repl_history
@@ -67,9 +84,41 @@ jspm_packages/
 
 # dotenv environment variables file
 .env
+.env.test
 
-# next.js build output
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+
+# Next.js build output
 .next
 
-# OS X temporary files
-.DS_Store
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and *not* Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Temporary release-assets
+.tagName.txt
+.tagHeading.txt
+.releaseNotes.md
+.releaseTitle.md

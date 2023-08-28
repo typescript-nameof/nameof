@@ -1,0 +1,19 @@
+steps:
+  install:
+    image: node
+    commands:
+      - npm install
+  build:
+    image: node
+    commands:
+      - npm run build
+  lint:
+    image: node
+    group: test
+    commands:
+      - npm run lint
+  test:
+    image: node
+    group: test
+    commands:
+      - npm run test

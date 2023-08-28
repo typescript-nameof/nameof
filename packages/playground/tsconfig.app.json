@@ -1,0 +1,21 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "composite": true,
+        "rootDir": "./src",
+        "outDir": "./out/ts-patch",
+        "plugins": [
+            {
+                "transform": "../nameof"
+            }
+        ]
+    },
+    "include": [
+        "./src/**/*"
+    ],
+    "references": [
+        {
+            "path": "../babel/tsconfig.app.json"
+        }
+    ]
+}

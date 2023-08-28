@@ -1,0 +1,19 @@
+{
+    "extends": "./tsconfig.app.json",
+    "compilerOptions": {
+        "rootDir": "./",
+        "outDir": "./"
+    },
+    "files": [
+        "./macro/index.cts"
+    ],
+    "include": [],
+    "references": [
+        {
+            "path": "./tsconfig.app.json"
+        },
+        {
+            "path": "../common-types/tsconfig.app.json"
+        }
+    ]
+}

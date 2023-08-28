@@ -1,23 +1,60 @@
 {
-  "name": "ts-nameof-workspace",
+  "name": "typescript-nameof",
   "private": true,
-  "workspaces": [
-    "packages/common",
-    "packages/scripts-common",
-    "packages/tests-common",
-    "packages/transforms-common",
-    "packages/transforms-babel",
-    "packages/transforms-ts",
-    "packages/ts-nameof",
-    "packages/ts-nameof.macro",
-    "packages/babel-plugin-ts-nameof"
-  ],
+  "description": "A set of tools for allowing the use of `nameof()` calls in various ecosystems.",
+  "author": "Manuel Thalmann <m@nuth.ch>",
+  "files": [],
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git"
+  },
+  "bugs": {
+    "url": "https://github.com/typescript-nameof/nameof/issues"
+  },
   "scripts": {
-    "clean": "yarn workspaces run clean",
-    "build": "yarn workspaces run build",
-    "test": "yarn workspaces run test",
-    "verify": "yarn test && yarn verify-declaration-file",
-    "create-declaration-file": "yarn workspace ts-nameof build:declarations && yarn workspace ts-nameof.macro build:declarations",
-    "verify-declaration-file": "yarn workspace ts-nameof verify-declaration-file"
+    "prepare": "ts-patch install",
+    "build": "tsc --build tsconfig.build.json",
+    "rebuild": "npm run clean && npm run build",
+    "watch": "npm run build -- --watch",
+    "clean": "npm run build -- --clean && rimraf ./packages/*/lib",
+    "lint": "eslint --max-warnings 0 ./scripts .eslintrc.cjs ./packages/*/src ./packages/babel/macro ./packages/*/.eslintrc.cjs",
+    "lint-ide": "npm run lint || exit 0",
+    "test": "npm run --if-present --workspaces test",
+    "bump-version": "node --no-warnings=ExperimentalWarning --loader ts-node/esm/transpile-only ./scripts/bumpVersion.mts"
+  },
+  "devDependencies": {
+    "@manuth/eslint-plugin-typescript": "^4.1.1",
+    "@manuth/package-json-editor": "^3.1.1",
+    "@manuth/tsconfig": "^4.0.1",
+    "@types/fs-extra": "^11.0.1",
+    "@types/git-branch": "^2.0.2",
+    "@types/jest": "npm:@types/node@^20.5.7",
+    "@types/mocha": "npm:@types/node@^20.5.7",
+    "@types/nameof": "npm:@types/node@^20.5.7",
+    "@types/node": "^20.5.7",
+    "@types/npm-which": "^3.0.1",
+    "eslint": "^8.48.0",
+    "fs-extra": "^11.1.1",
+    "git-branch": "^2.0.1",
+    "globby": "^13.2.2",
+    "mocha": "^10.2.0",
+    "npm-which": "^3.0.1",
+    "rimraf": "^5.0.1",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.1",
+    "ts-patch": "^3.0.2",
+    "typescript": "^5.2.2",
+    "webpack-playground-typescript": "npm:nop@^1.0.0"
+  },
+  "workspaces": {
+    "packages": [
+      "./packages/*"
+    ]
+  },
+  "overrides": {
+    "@delagen/eslint-plugin-deprecation": {
+      "typescript": "$typescript"
+    }
   }
 }
