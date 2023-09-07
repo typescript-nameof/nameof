@@ -1,4 +1,4 @@
-import { Node } from "./Node.cjs";
+import { AccessExpressionNode } from "./AccessExpressionNode.cjs";
 import { NodeKind } from "./NodeKind.cjs";
 import { ParsedNode } from "./ParsedNode.cjs";
 import { PathKind } from "./PathKind.cjs";
@@ -7,17 +7,12 @@ import { PathPartCandidate } from "./PathPartCandidate.cjs";
 /**
  * Represents a property access.
  */
-export class PropertyAccessNode<T> extends Node<T>
+export class PropertyAccessNode<T> extends AccessExpressionNode<T>
 {
     /**
      * @inheritdoc
      */
     public readonly Type = NodeKind.PropertyAccessNode;
-
-    /**
-     * The expression of the property access operation.
-     */
-    private expression: ParsedNode<T>;
 
     /**
      * The name of the property to access.
@@ -38,17 +33,8 @@ export class PropertyAccessNode<T> extends Node<T>
      */
     public constructor(source: T, expression: ParsedNode<T>, propertyName: string)
     {
-        super(source);
-        this.expression = expression;
+        super(source, expression);
         this.propertyName = propertyName;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public get Expression(): ParsedNode<T>
-    {
-        return this.expression;
     }
 
     /**
@@ -69,24 +55,5 @@ export class PropertyAccessNode<T> extends Node<T>
             source: this.Source,
             value: this.PropertyName
         };
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public override get Path(): Array<PathPartCandidate<T>>
-    {
-        return [
-            ...this.Expression.Path,
-            this.PathPart
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public override get Root(): ParsedNode<T>
-    {
-        return this.Expression.Root;
     }
 }
