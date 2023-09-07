@@ -28,12 +28,15 @@ export class PropertyAccessNode<T> extends AccessExpressionNode<T>
      * @param expression
      * The expression of the property access operation.
      *
+     * @param property
+     * The property to access.
+     *
      * @param propertyName
      * The name of the property to access.
      */
-    public constructor(source: T, expression: ParsedNode<T>, propertyName: string)
+    public constructor(source: T, expression: ParsedNode<T>, property: ParsedNode<T>, propertyName: string)
     {
-        super(source, expression);
+        super(source, expression, property);
         this.propertyName = propertyName;
     }
 

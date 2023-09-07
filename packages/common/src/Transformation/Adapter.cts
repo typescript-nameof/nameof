@@ -332,9 +332,9 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             }
             else if (
                 expression.Type === NodeKind.IndexAccessNode &&
-                expression.Index.Type === NodeKind.StringLiteralNode)
+                expression.Property.Type === NodeKind.StringLiteralNode)
             {
-                property = expression.Index.Text;
+                property = expression.Property.Text;
                 expression = expression.Expression;
             }
 

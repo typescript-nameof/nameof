@@ -13,6 +13,11 @@ export abstract class AccessExpressionNode<T> extends Node<T>
     private expression: ParsedNode<T>;
 
     /**
+     * The property to access.
+     */
+    private property: ParsedNode<T>;
+
+    /**
      * Initializes a new instance of the {@linkcode PropertyAccessNode} class.
      *
      * @param source
@@ -20,11 +25,15 @@ export abstract class AccessExpressionNode<T> extends Node<T>
      *
      * @param expression
      * The expression of the member access operation.
+     *
+     * @param property
+     * The property to access.
      */
-    public constructor(source: T, expression: ParsedNode<T>)
+    public constructor(source: T, expression: ParsedNode<T>, property: ParsedNode<T>)
     {
         super(source);
         this.expression = expression;
+        this.property = property;
     }
 
     /**
@@ -33,6 +42,14 @@ export abstract class AccessExpressionNode<T> extends Node<T>
     public get Expression(): ParsedNode<T>
     {
         return this.expression;
+    }
+
+    /**
+     * Gets the index to access.
+     */
+    public get Property(): ParsedNode<T>
+    {
+        return this.property;
     }
 
     /**

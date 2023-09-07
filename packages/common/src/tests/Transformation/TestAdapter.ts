@@ -1,4 +1,4 @@
-import { State, StateKind } from "./State.js";
+import { Identifier, State, StateKind } from "./State.js";
 import { NameofResult } from "../../NameofResult.cjs";
 import { ResultType } from "../../ResultType.cjs";
 import { CallExpressionNode } from "../../Serialization/CallExpressionNode.cjs";
@@ -434,7 +434,16 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
             case NodeKind.IdentifierNode:
                 return new IdentifierNode(item, item.name);
             case NodeKind.PropertyAccessNode:
-                return new PropertyAccessNode(item, this.ParseInternal(item.expression, context), item.propertyName);
+                return new PropertyAccessNode(
+                    item,
+                    this.ParseInternal(item.expression, context),
+                    new IdentifierNode(
+                        {
+                            type: NodeKind.IdentifierNode,
+                            name: item.propertyName
+                        } as Identifier,
+                        item.propertyName),
+                    item.propertyName);
             case NodeKind.IndexAccessNode:
                 return new IndexAccessNode(item, this.ParseInternal(item.expression, context), this.ParseInternal(item.index, context));
             case NodeKind.FunctionNode:

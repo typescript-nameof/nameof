@@ -15,11 +15,6 @@ export class IndexAccessNode<T> extends AccessExpressionNode<T>
     public readonly Type = NodeKind.IndexAccessNode;
 
     /**
-     * The index to access.
-     */
-    private index: ParsedNode<T>;
-
-    /**
      * Initializes a new instance of the {@linkcode IndexAccessNode} class.
      *
      * @param source
@@ -28,21 +23,12 @@ export class IndexAccessNode<T> extends AccessExpressionNode<T>
      * @param expression
      * The expression of the index access operation.
      *
-     * @param index
-     * The index to access.
+     * @param property
+     * The property to access.
      */
-    public constructor(source: T, expression: ParsedNode<T>, index: ParsedNode<T>)
+    public constructor(source: T, expression: ParsedNode<T>, property: ParsedNode<T>)
     {
-        super(source, expression);
-        this.index = index;
-    }
-
-    /**
-     * Gets the index to access.
-     */
-    public get Index(): ParsedNode<T>
-    {
-        return this.index;
+        super(source, expression, property);
     }
 
     /**
@@ -50,21 +36,21 @@ export class IndexAccessNode<T> extends AccessExpressionNode<T>
      */
     public override get PathPart(): PathPartCandidate<T>
     {
-        let source = this.Index.Source;
+        let source = this.Property.Source;
 
-        switch (this.Index.Type)
+        switch (this.Property.Type)
         {
             case NodeKind.NumericLiteralNode:
             case NodeKind.StringLiteralNode:
                 let value: string | number;
 
-                if (this.Index.Type === NodeKind.NumericLiteralNode)
+                if (this.Property.Type === NodeKind.NumericLiteralNode)
                 {
-                    value = this.Index.Value;
+                    value = this.Property.Value;
                 }
                 else
                 {
-                    value = this.Index.Text;
+                    value = this.Property.Text;
                 }
 
                 return {
@@ -73,7 +59,7 @@ export class IndexAccessNode<T> extends AccessExpressionNode<T>
                     value
                 };
             case NodeKind.InterpolationNode:
-                return this.index.PathPart;
+                return this.Property.PathPart;
             default:
                 return {
                     type: PathKind.Unsupported,

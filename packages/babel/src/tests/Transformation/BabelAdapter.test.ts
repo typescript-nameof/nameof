@@ -646,7 +646,7 @@ export function BabelAdapterTests(): void
                                 {
                                     strictEqual(result.Type, NodeKind.IndexAccessNode);
                                     deepStrictEqual(result.Expression, adapter.ParseInternal(node.object, context));
-                                    deepStrictEqual(result.Index, adapter.ParseInternal(node.property, context));
+                                    deepStrictEqual(result.Property, adapter.ParseInternal(node.property, context));
                                 }
                             }
                         });
@@ -687,7 +687,7 @@ export function BabelAdapterTests(): void
                                 strictEqual(result.Type, NodeKind.IndexAccessNode);
                                 strictEqual(result.Source, node);
                                 deepStrictEqual(result.Expression, adapter.ParseInternal(container, context));
-                                deepStrictEqual(result.Index, adapter.ParseInternal(index, context));
+                                deepStrictEqual(result.Property, adapter.ParseInternal(index, context));
                             }
                         });
 

@@ -585,19 +585,19 @@ export function TypeScriptAdapterTests(): void
                                 strictEqual(result.Type, NodeKind.IndexAccessNode);
                                 strictEqual(result.Source, node);
                                 deepStrictEqual(result.Expression, adapter.ParseInternal(node.expression, context));
-                                deepStrictEqual(result.Index, adapter.ParseInternal(node.argumentExpression, context));
+                                deepStrictEqual(result.Property, adapter.ParseInternal(node.argumentExpression, context));
 
                                 if (typeof index === "number")
                                 {
-                                    strictEqual(result.Index.Type, NodeKind.NumericLiteralNode);
-                                    strictEqual(result.Index.Source, node.argumentExpression);
-                                    strictEqual(result.Index.Value, index);
+                                    strictEqual(result.Property.Type, NodeKind.NumericLiteralNode);
+                                    strictEqual(result.Property.Source, node.argumentExpression);
+                                    strictEqual(result.Property.Value, index);
                                 }
                                 else
                                 {
-                                    strictEqual(result.Index.Type, NodeKind.StringLiteralNode);
-                                    strictEqual(result.Index.Source, index);
-                                    strictEqual(result.Index.Text, index.text);
+                                    strictEqual(result.Property.Type, NodeKind.StringLiteralNode);
+                                    strictEqual(result.Property.Source, index);
+                                    strictEqual(result.Property.Text, index.text);
                                 }
                             }
                         });
@@ -617,7 +617,7 @@ export function TypeScriptAdapterTests(): void
                             strictEqual(result.Type, NodeKind.IndexAccessNode);
                             strictEqual(result.Source, node);
                             deepStrictEqual(result.Expression, adapter.ParseInternal(node.objectType, context));
-                            deepStrictEqual(result.Index, adapter.ParseInternal(node.indexType, context));
+                            deepStrictEqual(result.Property, adapter.ParseInternal(node.indexType, context));
                         });
 
                     test(

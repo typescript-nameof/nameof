@@ -451,6 +451,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
         return new PropertyAccessNode(
             source,
             this.ParseNode(expression, context),
+            this.ParseNode(property, context),
             property.name);
     }
 

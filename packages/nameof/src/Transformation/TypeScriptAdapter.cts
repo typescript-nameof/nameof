@@ -385,6 +385,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         return new PropertyAccessNode(
             source,
             this.ParseNode(expression, context),
+            this.ParseNode(property, context),
             this.PrintSourceCode(property, context));
     }
 
