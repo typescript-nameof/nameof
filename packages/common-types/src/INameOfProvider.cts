@@ -1,3 +1,5 @@
+import { KeyProvider } from "./KeyProvider.cjs";
+
 /**
  * Represents a component for determining variable- and type names.
  */
@@ -25,6 +27,27 @@ export interface INameOfProvider
      * @param obj An expression for which the last identifier will be parsed.
      */
     (obj: any): string;
+
+    /**
+     * Gets constantly typed keys of the specified type {@linkcode T}.
+     */
+    typed<T>(): KeyProvider<T>;
+
+    /**
+     * Gets constantly typed keys of the object returned by the specified {@linkcode func}.
+     *
+     * @param func
+     * The function providing the object to get a key for.
+     */
+    typed<TFunc extends (...args: any[]) => any>(func: TFunc): TFunc extends (...args: any[]) => infer U ? KeyProvider<U> : never;
+
+    /**
+     * Gets constantly typed keys of the specified {@linkcode obj}.
+     *
+     * @param obj
+     * The object to get a typed key for.
+     */
+    typed<T>(obj: T): T extends (...args: any[]) => any ? never : KeyProvider<T>;
 
     /**
      * Gets the string representation of the entire type parameter expression.
