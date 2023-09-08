@@ -434,7 +434,7 @@ export function AdapterTests(): void
                         });
 
                     test(
-                        "Checking whether only call expressions are parsed…",
+                        "Checking whether call expressions are parsed…",
                         () =>
                         {
                             let assertions: Array<[NodeKind, boolean]> = [
@@ -459,6 +459,56 @@ export function AdapterTests(): void
                                 {
                                     strictEqual(call, undefined);
                                 }
+                            }
+                        });
+
+                    test(
+                        `Checking whether member access expressions are detected properly if they are part of a \`nameof.${NameofFunction.Typed}\` call…`,
+                        () =>
+                        {
+                            let root: CallExpression = {
+                                ...validInput,
+                                expression: {
+                                    type: NodeKind.PropertyAccessNode,
+                                    expression: {
+                                        type: NodeKind.IdentifierNode,
+                                        name: "nameof"
+                                    },
+                                    propertyName: NameofFunction.Typed
+                                },
+                                typeArguments: [],
+                                arguments: [
+                                    {
+                                        type: NodeKind.IdentifierNode,
+                                        name: "console"
+                                    }
+                                ]
+                            };
+
+                            let assertions = [
+                                {
+                                    type: NodeKind.PropertyAccessNode,
+                                    expression: root,
+                                    propertyName: "log"
+                                },
+                                {
+                                    type: NodeKind.IndexAccessNode,
+                                    expression: root,
+                                    index: {
+                                        type: NodeKind.StringLiteralNode,
+                                        value: "warn"
+                                    }
+                                }
+                            ] as State[];
+
+                            for (let assertion of assertions)
+                            {
+                                let call = adapter.GetNameofCall(assertion, {});
+                                ok(call);
+                                strictEqual(call.source, assertion);
+                                strictEqual(call.function, NameofFunction.Typed);
+                                deepStrictEqual(call.typeArguments, []);
+                                deepStrictEqual(call.arguments, [assertion]);
                             }
                         });
 
