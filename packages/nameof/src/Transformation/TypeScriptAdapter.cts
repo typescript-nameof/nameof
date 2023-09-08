@@ -1,23 +1,23 @@
 import
-    {
-        Adapter,
-        CallExpressionNode,
-        FunctionNode,
-        IdentifierNode,
-        IndexAccessNode,
-        INodeLocation,
-        MissingImportTypeQualifierError,
-        NameofResult,
-        NodeKind,
-        NoReturnExpressionError,
-        NumericLiteralNode,
-        ParsedNode,
-        PropertyAccessNode,
-        ResultType,
-        StringLiteralNode,
-        UnsupportedNode,
-        UnsupportedNodeError
-    } from "@typescript-nameof/common";
+{
+    Adapter,
+    CallExpressionNode,
+    FunctionNode,
+    IdentifierNode,
+    IndexAccessNode,
+    INodeLocation,
+    MissingImportTypeQualifierError,
+    NameofResult,
+    NodeKind,
+    NoReturnExpressionError,
+    NumericLiteralNode,
+    ParsedNode,
+    PropertyAccessNode,
+    ResultType,
+    StringLiteralNode,
+    UnsupportedNode,
+    UnsupportedNodeError
+} from "@typescript-nameof/common";
 import ts = require("typescript");
 import { ITypeScriptContext } from "./ITypeScriptContext.cjs";
 import { TypeScriptFeatures } from "./TypeScriptFeatures.cjs";
@@ -150,6 +150,21 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     protected IsCallExpression(item: ts.Node): item is ts.CallExpression
     {
         return this.TypeScript.isCallExpression(item);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} is an accessor expression.
+     */
+    protected override IsAccessExpression(item: ts.Node): boolean
+    {
+        return this.TypeScript.isPropertyAccessExpression(item) ||
+            this.TypeScript.isElementAccessExpression(item);
     }
 
     /**

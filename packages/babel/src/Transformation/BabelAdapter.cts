@@ -174,6 +174,20 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
      * The item to check.
      *
      * @returns
+     * A value indicating whether the specified {@linkcode item} is an accessor expression.
+     */
+    protected override IsAccessExpression(item: types.Node): boolean
+    {
+        return this.Types.isMemberExpression(item);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
      * A value indicating whether the specified {@linkcode item} is a string literal.
      */
     protected IsStringLiteral(item: types.Node): item is types.StringLiteral

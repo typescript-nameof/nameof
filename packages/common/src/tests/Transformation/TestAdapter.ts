@@ -119,6 +119,24 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
      * The item to check.
      *
      * @returns
+     * A value indicating whether the specified {@linkcode item} is an accessor expression.
+     */
+    public override IsAccessExpression(item: State): boolean
+    {
+        return (
+            [
+                NodeKind.PropertyAccessNode,
+                NodeKind.IndexAccessNode
+            ] as Array<NodeKind | StateKind>).includes(item.type);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
      * A value indicating whether the specified {@linkcode item} is a string literal.
      */
     public override IsStringLiteral(item: State): boolean

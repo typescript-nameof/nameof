@@ -243,6 +243,14 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     protected abstract IsCallExpression(item: TNode): boolean;
 
     /**
+     * Checks whether the specified {@linkcode item} is a property- or an index-accessor.
+     *
+     * @param item
+     * The item to check.
+     */
+    protected abstract IsAccessExpression(item: TNode): boolean;
+
+    /**
      * Checks whether the specified {@linkcode item} is a string literal.
      *
      * @param item
