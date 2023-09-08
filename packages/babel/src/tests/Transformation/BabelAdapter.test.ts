@@ -46,6 +46,20 @@ export function BabelAdapterTests(): void
                  * The item to check.
                  *
                  * @returns
+                 * A value indicating whether the specified {@linkcode item} is an accessor expression.
+                 */
+                public override IsAccessExpression(item: babel.types.Node): boolean
+                {
+                    return super.IsAccessExpression(item);
+                }
+
+                /**
+                 * @inheritdoc
+                 *
+                 * @param item
+                 * The item to check.
+                 *
+                 * @returns
                  * A value indicating whether the specified {@linkcode item} is a string literal.
                  */
                 public override IsStringLiteral(item: babel.types.Node): item is babel.types.StringLiteral
@@ -348,6 +362,30 @@ export function BabelAdapterTests(): void
                             ok(adapter.IsCallExpression(
                                 t.callExpression(t.identifier("nameof"),
                                     [])));
+                        });
+                });
+
+            suite(
+                nameOf<TestAdapter>((adapter) => adapter.IsAccessExpression),
+                () =>
+                {
+                    test(
+                        "Checking whether access expressions are detected properly…",
+                        () =>
+                        {
+                            ok(!adapter.IsAccessExpression(t.numericLiteral(42)));
+
+                            ok(adapter.IsAccessExpression(
+                                t.memberExpression(
+                                    t.identifier("hello"),
+                                    t.identifier("world"))));
+
+                            ok(
+                                adapter.IsAccessExpression(
+                                    t.memberExpression(
+                                        t.identifier("rose"),
+                                        t.stringLiteral("bud"),
+                                        true)));
                         });
                 });
 
@@ -974,7 +1012,7 @@ export function BabelAdapterTests(): void
                                         type: ResultType.Node,
                                         node
                                     }),
-                                    node);
+                                node);
                         });
                 });
         });

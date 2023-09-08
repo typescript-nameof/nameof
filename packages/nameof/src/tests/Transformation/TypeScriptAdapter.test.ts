@@ -51,6 +51,20 @@ export function TypeScriptAdapterTests(): void
                  * The item to check.
                  *
                  * @returns
+                 * A value indicating whether the specified {@linkcode item} is an accessor expression.
+                 */
+                public override IsAccessExpression(item: typescript.Node): boolean
+                {
+                    return super.IsAccessExpression(item);
+                }
+
+                /**
+                 * @inheritdoc
+                 *
+                 * @param item
+                 * The item to check.
+                 *
+                 * @returns
                  * A value indicating whether the specified {@linkcode item} is a string literal.
                  */
                 public override IsStringLiteral(item: typescript.Node): item is typescript.StringLiteral
@@ -271,6 +285,22 @@ export function TypeScriptAdapterTests(): void
                                         ts.factory.createIdentifier("nameof"),
                                         [],
                                         [])));
+                        });
+                });
+
+            suite(
+                nameOf<TestAdapter>((adapter) => adapter.IsAccessExpression),
+                () =>
+                {
+                    test(
+                        "Checking whether access expressions are detected properly…",
+                        () =>
+                        {
+                            let root = ts.factory.createIdentifier("here");
+
+                            ok(!adapter.IsAccessExpression(ts.factory.createNumericLiteral(420)));
+                            ok(adapter.IsAccessExpression(ts.factory.createPropertyAccessExpression(root, "be")));
+                            ok(adapter.IsAccessExpression(ts.factory.createElementAccessExpression(root, ts.factory.createStringLiteral("code"))));
                         });
                 });
 
