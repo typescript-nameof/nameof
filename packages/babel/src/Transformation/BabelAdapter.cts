@@ -77,24 +77,6 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
     /**
      * @inheritdoc
      *
-     * @param input
-     * The item to transform.
-     *
-     * @param context
-     * The context of the operation.
-     *
-     * @returns
-     * The transformed node.
-     */
-    public override Transform(input: NodePath, context: IBabelContext): types.Node
-    {
-        context.traverseChildren?.();
-        return super.Transform(input, context);
-    }
-
-    /**
-     * @inheritdoc
-     *
      * @param item
      * The item whose location to get.
      *

@@ -41,18 +41,23 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
                             let transformer = (path: babel.NodePath, state: babel.PluginPass): void =>
                             {
                                 babelContext.state = state;
-                                babelContext.traverseChildren = () => path.traverse(visitor, state);
                                 this.TransformNode(path, babelContext);
                             };
 
                             let visitor: babel.Visitor<babel.PluginPass> = {
-                                CallExpression: transformer
+                                exit: (path, state) =>
+                                {
+                                    if (path.isCallExpression() || path.isMemberExpression())
+                                    {
+                                        transformer(path, state);
+                                        path.skip();
+                                    }
+                                }
                             };
 
                             path.traverse(
                                 {
-                                    ...visitor,
-                                    MemberExpression: transformer
+                                    ...visitor
                                 },
                                 state);
                         });
