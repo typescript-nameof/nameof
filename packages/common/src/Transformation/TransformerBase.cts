@@ -2,6 +2,7 @@ import { IAdapter } from "./IAdapter.cjs";
 import { ITransformationContext } from "./ITransformationContext.cjs";
 import { TransformAction } from "./TransformAction.cjs";
 import { TransformerFeatures } from "./TransformerFeatures.cjs";
+import { MissingPropertyAccessError } from "../Diagnostics/MissingPropertyAccessError.cjs";
 import { UnusedInterpolationError } from "../Diagnostics/UnusedInterpolationError.cjs";
 
 /**
@@ -78,11 +79,17 @@ export abstract class TransformerBase<TInput, TNode, TContext extends ITransform
         };
 
         let result = action(context);
-        let remainingCall = context.interpolationCalls?.[0];
+        let remainingInterpolationCall = context.interpolationCalls?.[0];
+        let remainingTypedCall = context.typedCalls?.[0];
 
-        if (remainingCall)
+        if (remainingInterpolationCall)
         {
-            new UnusedInterpolationError(this.Adapter, remainingCall, context).ReportAction();
+            new UnusedInterpolationError(this.Adapter, remainingInterpolationCall, context).ReportAction();
+        }
+
+        if (remainingTypedCall)
+        {
+            new MissingPropertyAccessError(this.Adapter, remainingTypedCall, context).ReportAction();
         }
 
         return result;

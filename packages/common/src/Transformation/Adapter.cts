@@ -20,6 +20,7 @@ import { UnsupportedScenarioError } from "../Diagnostics/UnsupportedScenarioErro
 import { NameofFunction } from "../NameofFunction.cjs";
 import { NameofResult } from "../NameofResult.cjs";
 import { ResultType } from "../ResultType.cjs";
+import { AccessExpressionNode } from "../Serialization/AccessExpressionNode.cjs";
 import { CallExpressionNode } from "../Serialization/CallExpressionNode.cjs";
 import { FunctionNode } from "../Serialization/FunctionNode.cjs";
 import { IndexAccessNode } from "../Serialization/IndexAccessNode.cjs";
@@ -480,10 +481,20 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     {
         if (this.IsAccessExpression(call.source))
         {
+            let accessExpression = this.ParseInternal(call.source, context) as AccessExpressionNode<TNode>;
+            let index = context.typedCalls?.indexOf(accessExpression.Expression.Source) ?? -1;
+
+            if (index >= 0)
+            {
+                context.typedCalls?.splice(index, 1);
+            }
+
             return this.ProcessDefault(call, context);
         }
         else
         {
+            context.typedCalls ??= [];
+            context.typedCalls.push(call.source);
             return undefined;
         }
     }
