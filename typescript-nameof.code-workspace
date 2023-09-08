@@ -150,7 +150,7 @@
                     "--build",
                     "--force",
                     "--watch",
-                    "${workspaceFolder:playground}/tsconfig.app.json"
+                    "${workspaceFolder:playground}/tsconfig.test.json"
                 ],
                 "resolveSourceMapLocations": [
                     "${workspaceFolder:nameof}/**",
