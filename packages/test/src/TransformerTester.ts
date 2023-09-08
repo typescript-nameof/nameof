@@ -266,6 +266,53 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
             });
 
         suite(
+            "nameof.typed()",
+            () =>
+            {
+                test(
+                    "Checking whether general calls work as expected…",
+                    async function()
+                    {
+                        setConfig(this);
+                        await transforms("nameof.typed(console).log", '"log"');
+                    });
+
+                test(
+                    "Checking whether indicating properties using element accessors works as expected…",
+                    async function()
+                    {
+                        setConfig(this);
+                        await transforms('nameof.typed(console)["warn"]', '"warn"');
+                    });
+
+                test(
+                    "Checking whether providing an object using a function works as expected…",
+                    async function()
+                    {
+                        setConfig(this);
+                        await transforms("nameof.typed(() => console).log", '"log"');
+                    });
+
+                test(
+                    "Checking whether getting keys based on a type works as expected…",
+                    async function()
+                    {
+                        setConfig(this);
+                        await transforms("nameof.typed<Console>().log", '"log"');
+                    });
+
+                test(
+                    "Checking whether accessing no property throws an error…",
+                    async function()
+                    {
+                        setConfig(this);
+                        await reports("nameof.typed<Console>()", MissingPropertyAccessError);
+                        await reports("nameof.typed(console)", MissingPropertyAccessError);
+                        await reports("nameof.typed(() => console)", MissingPropertyAccessError);
+                    });
+            });
+
+        suite(
             "nameof.full()",
             () =>
             {
