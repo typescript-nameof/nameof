@@ -13,7 +13,7 @@ steps:
     commands:
       - npm run lint
   test:
-    image: node
+    image: node:lts
     group: test
     commands:
       - npm run test
