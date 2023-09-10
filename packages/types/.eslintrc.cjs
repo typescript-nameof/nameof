@@ -7,18 +7,5 @@ module.exports = {
             join(__dirname, "tsconfig.eslint.json"),
             join(__dirname, "type-tests", "tsconfig.json")
         ]
-    },
-    overrides: [
-        {
-            files: [
-                "*.test-d.ts"
-            ],
-            rules: {
-                "jsdoc/require-jsdoc": "off",
-                "@delagen/deprecation/deprecation": "off",
-                "@typescript-eslint/naming-convention": "off",
-                "@typescript-eslint/no-namespace": "off"
-            }
-        }
-    ]
+    }
 };

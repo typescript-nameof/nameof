@@ -15,27 +15,5 @@ module.exports = {
             join(__dirname, "tsconfig.editor.json"),
             join(__dirname, "tsconfig.eslint.json")
         ]
-    },
-    rules: {
-        "@typescript-eslint/no-unused-vars": [
-            "warn",
-            {
-                args: "none",
-                destructuredArrayIgnorePattern: "^_"
-            }
-        ]
-    },
-    overrides: [
-        {
-            files: [
-                "*.test-d.ts"
-            ],
-            rules: {
-                "jsdoc/require-jsdoc": "off",
-                "@delagen/deprecation/deprecation": "off",
-                "@typescript-eslint/naming-convention": "off",
-                "@typescript-eslint/no-namespace": "off"
-            }
-        }
-    ]
+    }
 };
