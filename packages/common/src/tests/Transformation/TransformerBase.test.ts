@@ -4,6 +4,7 @@ import { createSandbox, SinonSandbox, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";
 import { State } from "./State.js";
 import { TestAdapter } from "./TestAdapter.js";
+import { MissingPropertyAccessError } from "../../Diagnostics/MissingPropertyAccessError.cjs";
 import { UnusedInterpolationError } from "../../Diagnostics/UnusedInterpolationError.cjs";
 import { NodeKind } from "../../Serialization/NodeKind.cjs";
 import { IAdapter } from "../../Transformation/IAdapter.cjs";
@@ -142,6 +143,21 @@ export function TransformerBaseTests(): void
 
                             strictEqual(errorHandler.Errors.length, 1);
                             strictEqual(errorHandler.Errors[0].name, UnusedInterpolationError.name);
+                        });
+
+                    test(
+                        "Checking whether an error is thrown if a property access of a `nameof.typed` call is missing…",
+                        () =>
+                        {
+                            transformer.MonitorTransformation(
+                                (context) =>
+                                {
+                                    context.typedCalls ??= [];
+                                    context.typedCalls.push(node);
+                                });
+
+                            strictEqual(errorHandler.Errors.length, 1);
+                            strictEqual(errorHandler.Errors[0].name, MissingPropertyAccessError.name);
                         });
                 });
         });
