@@ -64,15 +64,15 @@ export abstract class TransformerBase<TInput, TNode, TContext extends ITransform
     protected abstract InitializeAdapter(): IAdapter<TInput, TNode, TContext>;
 
     /**
-     * Monitors the `nameof.interpolate` calls during the execution of the specified {@linkcode action}.
+     * Monitors the transformation in the specified {@linkcode action} for errors.
      *
      * @param action
-     * The action to execute.
+     * The action to monitor.
      *
      * @returns
      * The result of the action.
      */
-    protected MonitorInterpolations<T>(action: TransformAction<TNode, T>): T
+    protected MonitorTransformation<T>(action: TransformAction<TNode, T>): T
     {
         let context: ITransformationContext<TNode> = {
             interpolationCalls: []

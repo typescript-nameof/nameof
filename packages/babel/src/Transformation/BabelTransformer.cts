@@ -33,7 +33,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
             visitor: {
                 Program: (path, state) =>
                 {
-                    this.MonitorInterpolations(
+                    this.MonitorTransformation(
                         (context) =>
                         {
                             let babelContext: IBabelContext = context as IBabelContext;
@@ -73,7 +73,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
     {
         return (params): void =>
         {
-            this.MonitorInterpolations(
+            this.MonitorTransformation(
                 (context) =>
                 {
                     let babelContext: IBabelContext = context as IBabelContext;
