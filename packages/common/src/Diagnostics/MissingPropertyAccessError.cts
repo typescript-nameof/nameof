@@ -28,6 +28,6 @@ export class MissingPropertyAccessError<TInput, TNode, TContext> extends Adapter
      */
     protected get Message(): string
     {
-        return `A property of the parameter \`${this.EscapedCode}\` must be accessed.`;
+        return `A property of the expression \`${this.EscapedCode}\` must be accessed.`;
     }
 }

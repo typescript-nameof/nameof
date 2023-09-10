@@ -86,7 +86,7 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      */
     protected VisitSourceFile(file: SourceFile, tsContext: TransformationContext, postTransformHook?: TransformHook): SourceFile
     {
-        return this.MonitorInterpolations(
+        return this.MonitorTransformation(
             (context) =>
             {
                 let typeScriptContext: ITypeScriptContext = context as any;

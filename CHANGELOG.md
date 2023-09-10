@@ -6,7 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## TypeScript `nameof` [Unreleased]
 
-[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.2...dev)
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.3...dev)
+
+## TypeScript `nameof` v0.0.3
+### Added
+  - A function `nameof.typed` to get strictly typed key names  
+    What, you don't need such a thing!? idc, I do!
+
+    Usage:
+    ```ts
+    nameof.typed<Console>().warn;
+    // or
+    nameof.typed(() => process).exit;
+    // or
+    nameof.typed((module: NodeJS.Module) => module.require).resolve;
+    ```
+
+### Updated
+  - All dependencies
+  - Babel components for streamlining node transformation order
+
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.2...v0.0.3)
 
 ## TypeScript `nameof` v0.0.2
 ### Fixed

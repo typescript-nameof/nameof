@@ -20,8 +20,10 @@ import { UnsupportedScenarioError } from "../Diagnostics/UnsupportedScenarioErro
 import { NameofFunction } from "../NameofFunction.cjs";
 import { NameofResult } from "../NameofResult.cjs";
 import { ResultType } from "../ResultType.cjs";
+import { AccessExpressionNode } from "../Serialization/AccessExpressionNode.cjs";
 import { CallExpressionNode } from "../Serialization/CallExpressionNode.cjs";
 import { FunctionNode } from "../Serialization/FunctionNode.cjs";
+import { IndexAccessNode } from "../Serialization/IndexAccessNode.cjs";
 import { InterpolationNode } from "../Serialization/InterpolationNode.cjs";
 import { NameofCall } from "../Serialization/NameofCall.cjs";
 import { NodeKind } from "../Serialization/NodeKind.cjs";
@@ -30,6 +32,7 @@ import { ParsedNode } from "../Serialization/ParsedNode.cjs";
 import { PathKind } from "../Serialization/PathKind.cjs";
 import { PathPart } from "../Serialization/PathPart.cjs";
 import { PathPartCandidate } from "../Serialization/PathPartCandidate.cjs";
+import { PropertyAccessNode } from "../Serialization/PropertyAccessNode.cjs";
 import { UnsupportedNode } from "../Serialization/UnsupportedNode.cjs";
 
 /**
@@ -243,6 +246,14 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     protected abstract IsCallExpression(item: TNode): boolean;
 
     /**
+     * Checks whether the specified {@linkcode item} is a property- or an index-accessor.
+     *
+     * @param item
+     * The item to check.
+     */
+    protected abstract IsAccessExpression(item: TNode): boolean;
+
+    /**
      * Checks whether the specified {@linkcode item} is a string literal.
      *
      * @param item
@@ -319,7 +330,26 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      */
     protected GetNameofCall(item: TNode, context: TContext): NameofCall<TNode> | undefined
     {
-        if (this.IsCallExpression(item))
+        if (this.IsAccessExpression(item))
+        {
+            let accessExpression = this.ParseInternal(item, context) as PropertyAccessNode<TNode> | IndexAccessNode<TNode>;
+            let nameofCall = this.GetNameofCall(accessExpression.Expression.Source, context);
+
+            if (
+                nameofCall &&
+                nameofCall.function === NameofFunction.Typed)
+            {
+                return {
+                    ...nameofCall,
+                    source: item,
+                    typeArguments: [],
+                    arguments: [
+                        accessExpression.Source
+                    ]
+                };
+            }
+        }
+        else if (this.IsCallExpression(item))
         {
             let callNode = this.ParseInternal(item, context) as CallExpressionNode<TNode>;
             let expression = this.ParseInternal(callNode.Expression, context);
@@ -332,9 +362,9 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             }
             else if (
                 expression.Type === NodeKind.IndexAccessNode &&
-                expression.Index.Type === NodeKind.StringLiteralNode)
+                expression.Property.Type === NodeKind.StringLiteralNode)
             {
-                property = expression.Index.Text;
+                property = expression.Property.Text;
                 expression = expression.Expression;
             }
 
@@ -393,6 +423,8 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         {
             case undefined:
                 return this.ProcessDefault(call, context);
+            case NameofFunction.Typed:
+                return this.ProcessTyped(call, context);
             case NameofFunction.Full:
                 return this.ProcessFull(call, context);
             case NameofFunction.Split:
@@ -430,6 +462,40 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         else
         {
             throw new InvalidDefaultCallError(this, call, context);
+        }
+    }
+
+    /**
+     * Processes the specified `nameof.typed` {@linkcode call}.
+     *
+     * @param call
+     * The call to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode call}.
+     */
+    protected ProcessTyped(call: NameofCall<TNode>, context: TContext): NameofResult<TNode> | undefined
+    {
+        if (this.IsAccessExpression(call.source))
+        {
+            let accessExpression = this.ParseInternal(call.source, context) as AccessExpressionNode<TNode>;
+            let index = context.typedCalls?.indexOf(accessExpression.Expression.Source) ?? -1;
+
+            if (index >= 0)
+            {
+                context.typedCalls?.splice(index, 1);
+            }
+
+            return this.ProcessDefault(call, context);
+        }
+        else
+        {
+            context.typedCalls ??= [];
+            context.typedCalls.push(call.source);
+            return undefined;
         }
     }
 

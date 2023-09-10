@@ -2,6 +2,7 @@ import { IAdapter } from "./IAdapter.cjs";
 import { ITransformationContext } from "./ITransformationContext.cjs";
 import { TransformAction } from "./TransformAction.cjs";
 import { TransformerFeatures } from "./TransformerFeatures.cjs";
+import { MissingPropertyAccessError } from "../Diagnostics/MissingPropertyAccessError.cjs";
 import { UnusedInterpolationError } from "../Diagnostics/UnusedInterpolationError.cjs";
 
 /**
@@ -63,26 +64,32 @@ export abstract class TransformerBase<TInput, TNode, TContext extends ITransform
     protected abstract InitializeAdapter(): IAdapter<TInput, TNode, TContext>;
 
     /**
-     * Monitors the `nameof.interpolate` calls during the execution of the specified {@linkcode action}.
+     * Monitors the transformation in the specified {@linkcode action} for errors.
      *
      * @param action
-     * The action to execute.
+     * The action to monitor.
      *
      * @returns
      * The result of the action.
      */
-    protected MonitorInterpolations<T>(action: TransformAction<TNode, T>): T
+    protected MonitorTransformation<T>(action: TransformAction<TNode, T>): T
     {
         let context: ITransformationContext<TNode> = {
             interpolationCalls: []
         };
 
         let result = action(context);
-        let remainingCall = context.interpolationCalls?.[0];
+        let remainingInterpolationCall = context.interpolationCalls?.[0];
+        let remainingTypedCall = context.typedCalls?.[0];
 
-        if (remainingCall)
+        if (remainingInterpolationCall)
         {
-            new UnusedInterpolationError(this.Adapter, remainingCall, context).ReportAction();
+            new UnusedInterpolationError(this.Adapter, remainingInterpolationCall, context).ReportAction();
+        }
+
+        if (remainingTypedCall)
+        {
+            new MissingPropertyAccessError(this.Adapter, remainingTypedCall, context).ReportAction();
         }
 
         return result;

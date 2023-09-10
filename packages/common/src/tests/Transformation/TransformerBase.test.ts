@@ -4,6 +4,7 @@ import { createSandbox, SinonSandbox, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";
 import { State } from "./State.js";
 import { TestAdapter } from "./TestAdapter.js";
+import { MissingPropertyAccessError } from "../../Diagnostics/MissingPropertyAccessError.cjs";
 import { UnusedInterpolationError } from "../../Diagnostics/UnusedInterpolationError.cjs";
 import { NodeKind } from "../../Serialization/NodeKind.cjs";
 import { IAdapter } from "../../Transformation/IAdapter.cjs";
@@ -54,9 +55,9 @@ export function TransformerBaseTests(): void
                  * @returns
                  * The result of the action.
                  */
-                public override MonitorInterpolations<T>(action: TransformAction<State, T>): T
+                public override MonitorTransformation<T>(action: TransformAction<State, T>): T
                 {
-                    return super.MonitorInterpolations(action);
+                    return super.MonitorTransformation(action);
                 }
             }
 
@@ -118,7 +119,7 @@ export function TransformerBaseTests(): void
                 });
 
             suite(
-                nameOf<TestTransformer>((transformer) => transformer.MonitorInterpolations),
+                nameOf<TestTransformer>((transformer) => transformer.MonitorTransformation),
                 () =>
                 {
                     test(
@@ -126,14 +127,14 @@ export function TransformerBaseTests(): void
                         () =>
                         {
                             let returnValue = "It's-a me!";
-                            strictEqual(transformer.MonitorInterpolations(() => returnValue), returnValue);
+                            strictEqual(transformer.MonitorTransformation(() => returnValue), returnValue);
                         });
 
                     test(
                         "Checking whether an error is thrown if an interpolation call is detected that is unaccounted for…",
                         () =>
                         {
-                            transformer.MonitorInterpolations(
+                            transformer.MonitorTransformation(
                                 (context) =>
                                 {
                                     context.interpolationCalls ??= [];
@@ -142,6 +143,21 @@ export function TransformerBaseTests(): void
 
                             strictEqual(errorHandler.Errors.length, 1);
                             strictEqual(errorHandler.Errors[0].name, UnusedInterpolationError.name);
+                        });
+
+                    test(
+                        "Checking whether an error is thrown if a property access of a `nameof.typed` call is missing…",
+                        () =>
+                        {
+                            transformer.MonitorTransformation(
+                                (context) =>
+                                {
+                                    context.typedCalls ??= [];
+                                    context.typedCalls.push(node);
+                                });
+
+                            strictEqual(errorHandler.Errors.length, 1);
+                            strictEqual(errorHandler.Errors[0].name, MissingPropertyAccessError.name);
                         });
                 });
         });

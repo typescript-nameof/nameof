@@ -21,6 +21,11 @@ expectType<string>(nameof(TestClass));
 expectType<string>(nameof<TestNamespace.TestType>());
 expectType<string>(nameof<TestClass>(((t) => t.prop1)));
 
+// nameof.typed tests
+expectType<"log">(nameof.typed(console).log);
+expectType<"warn">(nameof.typed<Console>().warn);
+expectType<"typed">(nameof.typed(() => nameof).typed);
+
 // nameof.full tests
 const testInstance = new TestClass();
 expectType<string>(nameof.full(testInstance.prop1));

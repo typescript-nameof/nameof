@@ -46,6 +46,20 @@ export function BabelAdapterTests(): void
                  * The item to check.
                  *
                  * @returns
+                 * A value indicating whether the specified {@linkcode item} is an accessor expression.
+                 */
+                public override IsAccessExpression(item: babel.types.Node): boolean
+                {
+                    return super.IsAccessExpression(item);
+                }
+
+                /**
+                 * @inheritdoc
+                 *
+                 * @param item
+                 * The item to check.
+                 *
+                 * @returns
                  * A value indicating whether the specified {@linkcode item} is a string literal.
                  */
                 public override IsStringLiteral(item: babel.types.Node): item is babel.types.StringLiteral
@@ -352,6 +366,30 @@ export function BabelAdapterTests(): void
                 });
 
             suite(
+                nameOf<TestAdapter>((adapter) => adapter.IsAccessExpression),
+                () =>
+                {
+                    test(
+                        "Checking whether access expressions are detected properly…",
+                        () =>
+                        {
+                            ok(!adapter.IsAccessExpression(t.numericLiteral(42)));
+
+                            ok(adapter.IsAccessExpression(
+                                t.memberExpression(
+                                    t.identifier("hello"),
+                                    t.identifier("world"))));
+
+                            ok(
+                                adapter.IsAccessExpression(
+                                    t.memberExpression(
+                                        t.identifier("rose"),
+                                        t.stringLiteral("bud"),
+                                        true)));
+                        });
+                });
+
+            suite(
                 nameOf<TestAdapter>((adapter) => adapter.IsStringLiteral),
                 () =>
                 {
@@ -646,7 +684,7 @@ export function BabelAdapterTests(): void
                                 {
                                     strictEqual(result.Type, NodeKind.IndexAccessNode);
                                     deepStrictEqual(result.Expression, adapter.ParseInternal(node.object, context));
-                                    deepStrictEqual(result.Index, adapter.ParseInternal(node.property, context));
+                                    deepStrictEqual(result.Property, adapter.ParseInternal(node.property, context));
                                 }
                             }
                         });
@@ -687,7 +725,7 @@ export function BabelAdapterTests(): void
                                 strictEqual(result.Type, NodeKind.IndexAccessNode);
                                 strictEqual(result.Source, node);
                                 deepStrictEqual(result.Expression, adapter.ParseInternal(container, context));
-                                deepStrictEqual(result.Index, adapter.ParseInternal(index, context));
+                                deepStrictEqual(result.Property, adapter.ParseInternal(index, context));
                             }
                         });
 
@@ -974,7 +1012,7 @@ export function BabelAdapterTests(): void
                                         type: ResultType.Node,
                                         node
                                     }),
-                                    node);
+                                node);
                         });
                 });
         });

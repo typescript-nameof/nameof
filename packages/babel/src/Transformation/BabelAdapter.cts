@@ -77,24 +77,6 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
     /**
      * @inheritdoc
      *
-     * @param input
-     * The item to transform.
-     *
-     * @param context
-     * The context of the operation.
-     *
-     * @returns
-     * The transformed node.
-     */
-    public override Transform(input: NodePath, context: IBabelContext): types.Node
-    {
-        context.traverseChildren?.();
-        return super.Transform(input, context);
-    }
-
-    /**
-     * @inheritdoc
-     *
      * @param item
      * The item whose location to get.
      *
@@ -165,6 +147,20 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
     protected IsCallExpression(item: types.Node): item is types.CallExpression
     {
         return this.Types.isCallExpression(item);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} is an accessor expression.
+     */
+    protected override IsAccessExpression(item: types.Node): boolean
+    {
+        return this.Types.isMemberExpression(item);
     }
 
     /**
@@ -451,6 +447,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
         return new PropertyAccessNode(
             source,
             this.ParseNode(expression, context),
+            this.ParseNode(property, context),
             property.name);
     }
 

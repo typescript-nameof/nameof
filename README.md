@@ -64,6 +64,7 @@ This section provides a brief explanation as to what functionalities are covered
   - [Table of Contents](#table-of-contents)
   - [Syntax](#syntax)
     - [`nameof`](#nameof)
+    - [`nameof.typed`](#nameoftyped)
     - [`nameof.full`](#nameoffull)
     - [`nameof.interpolate`](#nameofinterpolate)
     - [`nameof.array`](#nameofarray)
@@ -101,6 +102,50 @@ console.log(nameof<void>());                    // Prints `void`
 console.log(nameof<ITest>());                   // Prints `ITest`
 console.log(nameof<ITest>((x) => x.prop));      // Prints `prop`
 console.log(nameof<ITest>((x) => x["prop"]));   // Prints `prop`
+```
+
+### `nameof.typed`
+The return type of the `nameof` call is `string`.
+In some cases you might want to have the type of the `nameof` result set to its constant value rather than `string`.
+
+The `nameof.typed()` function allows you to do exactly this.
+
+The `typed` function requires either a type argument or a function returning the object to get a key for.
+You can get the constantly typed property name by accessing the corresponding property of the `typed` call.
+
+Examples:
+```ts
+class Test {
+  Hello() { }
+  World() { }
+}
+
+class Nested {
+  Inner: Test;
+}
+
+let a = nameof.typed<Test>().Hello;                           // `a` has the type `"Hello"`
+let b = nameof.typed<Test>().World;                           // `b` has the type `"World"`
+let c = nameof.typed<Nested>().Inner;                         // `c` has the type `"Inner"`
+let d = nameof.typed((nested: Nested) => nested.Inner).Hello; // `d` has the type `"Hello"`
+```
+
+Having TypeScripts type checker know what exact type the `nameof.typed` result has, allows the use of the `nameof.typed` expressions to be used as element accessors.
+
+Example
+
+```ts
+class Unifier {
+  Add(x: number, y: number) { return x + y; }
+  Concatenate(x: string, y: string) { return x + y; }
+}
+
+let unifier = new Unifier();
+unifier[nameof.typed<Unifier>().Add](4, 2);                     // Returns `6`.
+unifier[nameof.typed<Unifier>().Add]("Hello", "World");         // Reports an error because a `number` is expected.
+
+unifier[nameof.typed<Unifier>().Concatenate]("Hello", "World"); // Returns `HelloWorld`
+unifier[nameof.typed<Unifier>().Concatenate](4, 2);             // Reports an error because a `string` is expected.
 ```
 
 ### `nameof.full`

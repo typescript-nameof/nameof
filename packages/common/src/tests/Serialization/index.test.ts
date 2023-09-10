@@ -1,4 +1,5 @@
 import { basename } from "node:path";
+import { AccessExpressionNodeTests } from "./AccessExpressionNode.test.js";
 import { IdentifierNodeTests } from "./IdentifierNode.test.js";
 import { IndexAccessNodeTests } from "./IndexAccessNode.test.js";
 import { InterpolationNodeTests } from "./InterpolationNode.test.js";
@@ -17,6 +18,7 @@ export function SerializationTests(): void
         {
             NodeTests();
             IdentifierNodeTests();
+            AccessExpressionNodeTests();
             PropertyAccessNodeTests();
             IndexAccessNodeTests();
             InterpolationNodeTests();

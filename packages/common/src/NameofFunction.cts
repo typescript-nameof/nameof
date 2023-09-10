@@ -4,6 +4,11 @@
 export const enum NameofFunction
 {
     /**
+     * Indicates the `typed` function.
+     */
+    Typed = "typed",
+
+    /**
      * Indicates the `full` function.
      */
     Full = "full",

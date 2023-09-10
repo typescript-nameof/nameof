@@ -145,12 +145,12 @@
                 "cwd": "${workspaceFolder:playground}",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare Playground",
-                "program": "${workspaceFolder:playground}/node_modules/typescript/bin/tsc",
+                "program": "${workspaceFolder:Solution Items}/node_modules/typescript/bin/tsc",
                 "args": [
                     "--build",
                     "--force",
                     "--watch",
-                    "${workspaceFolder:playground}/tsconfig.app.json"
+                    "${workspaceFolder:playground}/tsconfig.test.json"
                 ],
                 "resolveSourceMapLocations": [
                     "${workspaceFolder:nameof}/**",

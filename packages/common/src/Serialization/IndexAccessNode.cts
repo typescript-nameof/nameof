@@ -1,4 +1,4 @@
-import { Node } from "./Node.cjs";
+import { AccessExpressionNode } from "./AccessExpressionNode.cjs";
 import { NodeKind } from "./NodeKind.cjs";
 import { ParsedNode } from "./ParsedNode.cjs";
 import { PathKind } from "./PathKind.cjs";
@@ -7,22 +7,12 @@ import { PathPartCandidate } from "./PathPartCandidate.cjs";
 /**
  * Represents an index access node.
  */
-export class IndexAccessNode<T> extends Node<T>
+export class IndexAccessNode<T> extends AccessExpressionNode<T>
 {
     /**
      * @inheritdoc
      */
     public readonly Type = NodeKind.IndexAccessNode;
-
-    /**
-     * The expression of the index access operation.
-     */
-    private expression: ParsedNode<T>;
-
-    /**
-     * The index to access.
-     */
-    private index: ParsedNode<T>;
 
     /**
      * Initializes a new instance of the {@linkcode IndexAccessNode} class.
@@ -33,30 +23,12 @@ export class IndexAccessNode<T> extends Node<T>
      * @param expression
      * The expression of the index access operation.
      *
-     * @param index
-     * The index to access.
+     * @param property
+     * The property to access.
      */
-    public constructor(source: T, expression: ParsedNode<T>, index: ParsedNode<T>)
+    public constructor(source: T, expression: ParsedNode<T>, property: ParsedNode<T>)
     {
-        super(source);
-        this.expression = expression;
-        this.index = index;
-    }
-
-    /**
-     * Gets the expression of the index access operation.
-     */
-    public get Expression(): ParsedNode<T>
-    {
-        return this.expression;
-    }
-
-    /**
-     * Gets the index to access.
-     */
-    public get Index(): ParsedNode<T>
-    {
-        return this.index;
+        super(source, expression, property);
     }
 
     /**
@@ -64,21 +36,21 @@ export class IndexAccessNode<T> extends Node<T>
      */
     public override get PathPart(): PathPartCandidate<T>
     {
-        let source = this.Index.Source;
+        let source = this.Property.Source;
 
-        switch (this.Index.Type)
+        switch (this.Property.Type)
         {
             case NodeKind.NumericLiteralNode:
             case NodeKind.StringLiteralNode:
                 let value: string | number;
 
-                if (this.Index.Type === NodeKind.NumericLiteralNode)
+                if (this.Property.Type === NodeKind.NumericLiteralNode)
                 {
-                    value = this.Index.Value;
+                    value = this.Property.Value;
                 }
                 else
                 {
-                    value = this.Index.Text;
+                    value = this.Property.Text;
                 }
 
                 return {
@@ -87,7 +59,7 @@ export class IndexAccessNode<T> extends Node<T>
                     value
                 };
             case NodeKind.InterpolationNode:
-                return this.index.PathPart;
+                return this.Property.PathPart;
             default:
                 return {
                     type: PathKind.Unsupported,
@@ -95,24 +67,5 @@ export class IndexAccessNode<T> extends Node<T>
                     source
                 };
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public override get Path(): Array<PathPartCandidate<T>>
-    {
-        return [
-            ...this.Expression.Path,
-            this.PathPart
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public override get Root(): ParsedNode<T>
-    {
-        return this.Expression.Root;
     }
 }

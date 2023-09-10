@@ -20,9 +20,11 @@ export function PropertyAccessNodeTests(): void
             setup(
                 () =>
                 {
+                    let innerMember = new IdentifierNode({}, "full");
+                    let outerMember = new IdentifierNode({}, "bind");
                     root = new IdentifierNode({}, "nameof");
-                    innerAccessor = new PropertyAccessNode({}, root, "full");
-                    outerAccessor = new PropertyAccessNode({}, innerAccessor, "bind");
+                    innerAccessor = new PropertyAccessNode({}, root, innerMember, innerMember.Name);
+                    outerAccessor = new PropertyAccessNode({}, innerAccessor, outerMember, outerMember.Name);
                 });
 
             suite(
@@ -33,7 +35,8 @@ export function PropertyAccessNodeTests(): void
                         "Checking whether the path part represents the property access node properly…",
                         () =>
                         {
-                            let accessNode = new PropertyAccessNode({}, root, "split");
+                            let member = new IdentifierNode({}, "split");
+                            let accessNode = new PropertyAccessNode({}, root, member, member.Name);
                             let part = accessNode.PathPart;
                             strictEqual(part.type, PathKind.PropertyAccess);
                             strictEqual(part.source, accessNode.Source);

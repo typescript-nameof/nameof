@@ -33,21 +33,33 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
             visitor: {
                 Program: (path, state) =>
                 {
-                    this.MonitorInterpolations(
+                    this.MonitorTransformation(
                         (context) =>
                         {
                             let babelContext: IBabelContext = context as IBabelContext;
 
+                            let transformer = (path: babel.NodePath, state: babel.PluginPass): void =>
+                            {
+                                babelContext.state = state;
+                                this.TransformNode(path, babelContext);
+                            };
+
                             let visitor: babel.Visitor<babel.PluginPass> = {
-                                CallExpression: (path, state) =>
+                                exit: (path, state) =>
                                 {
-                                    babelContext.state = state;
-                                    babelContext.traverseChildren = () => path.traverse(visitor, state);
-                                    this.TransformNode(path, babelContext);
+                                    if (path.isCallExpression() || path.isMemberExpression())
+                                    {
+                                        transformer(path, state);
+                                        path.skip();
+                                    }
                                 }
                             };
 
-                            path.traverse(visitor, state);
+                            path.traverse(
+                                {
+                                    ...visitor
+                                },
+                                state);
                         });
                 }
             }
@@ -61,7 +73,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
     {
         return (params): void =>
         {
-            this.MonitorInterpolations(
+            this.MonitorTransformation(
                 (context) =>
                 {
                     let babelContext: IBabelContext = context as IBabelContext;
@@ -70,6 +82,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
                     (params.references.default as Array<babel.NodePath<babel.types.Identifier>>).slice().reverse().forEach(
                         (path) =>
                         {
+                            let t = this.Features.Types;
                             babelContext.nameofName = path.node.name;
                             this.TransformNode(getPath(), babelContext);
 
@@ -90,8 +103,29 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
 
                                 const grandParentPath = parentPath.parentPath;
 
-                                if (parentPath.type === "MemberExpression" && grandParentPath?.type === "CallExpression")
+                                if (parentPath.isMemberExpression() && grandParentPath?.type === "CallExpression")
                                 {
+                                    let member: string | undefined;
+
+                                    if (t.isIdentifier(parentPath.node.property))
+                                    {
+                                        member = parentPath.node.property.name;
+                                    }
+                                    else if (t.isStringLiteral(parentPath.node.property))
+                                    {
+                                        member = parentPath.node.property.value;
+                                    }
+
+                                    if (member === "typed")
+                                    {
+                                        let grandGrandParentPath = grandParentPath.parentPath;
+
+                                        if (grandGrandParentPath?.isMemberExpression())
+                                        {
+                                            return grandGrandParentPath;
+                                        }
+                                    }
+
                                     return grandParentPath;
                                 }
 

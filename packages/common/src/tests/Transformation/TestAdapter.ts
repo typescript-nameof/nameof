@@ -1,4 +1,4 @@
-import { State, StateKind } from "./State.js";
+import { Identifier, State, StateKind } from "./State.js";
 import { NameofResult } from "../../NameofResult.cjs";
 import { ResultType } from "../../ResultType.cjs";
 import { CallExpressionNode } from "../../Serialization/CallExpressionNode.cjs";
@@ -110,6 +110,24 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
     public override IsCallExpression(item: State): boolean
     {
         return item.type === NodeKind.CallExpressionNode;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to check.
+     *
+     * @returns
+     * A value indicating whether the specified {@linkcode item} is an accessor expression.
+     */
+    public override IsAccessExpression(item: State): boolean
+    {
+        return (
+            [
+                NodeKind.PropertyAccessNode,
+                NodeKind.IndexAccessNode
+            ] as Array<NodeKind | StateKind>).includes(item.type);
     }
 
     /**
@@ -283,6 +301,23 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
      * @returns
      * The parsed representation of the specified {@linkcode call}.
      */
+    public override ProcessTyped(call: NameofCall<State>, context: ITransformationContext<State>): NameofResult<State> | undefined
+    {
+        return super.ProcessTyped(call, context);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param call
+     * The call to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode call}.
+     */
     public override ProcessFull(call: NameofCall<State>, context: ITransformationContext<State>): NameofResult<State>
     {
         return super.ProcessFull(call, context);
@@ -434,7 +469,16 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
             case NodeKind.IdentifierNode:
                 return new IdentifierNode(item, item.name);
             case NodeKind.PropertyAccessNode:
-                return new PropertyAccessNode(item, this.ParseInternal(item.expression, context), item.propertyName);
+                return new PropertyAccessNode(
+                    item,
+                    this.ParseInternal(item.expression, context),
+                    new IdentifierNode(
+                        {
+                            type: NodeKind.IdentifierNode,
+                            name: item.propertyName
+                        } as Identifier,
+                        item.propertyName),
+                    item.propertyName);
             case NodeKind.IndexAccessNode:
                 return new IndexAccessNode(item, this.ParseInternal(item.expression, context), this.ParseInternal(item.index, context));
             case NodeKind.FunctionNode:

@@ -67,18 +67,23 @@ export type CallExpression = NodeData & {
 };
 
 /**
+ * Represents an access expression node.
+ */
+export type AccessExpression = NodeData & {
+    /**
+     * The expression of the access expression.
+     */
+    expression: State;
+};
+
+/**
  * Represents a property access node.
  */
-export type PropertyAccess = NodeData & {
+export type PropertyAccess = AccessExpression & {
     /**
      * @inheritdoc
      */
     type: NodeKind.PropertyAccessNode;
-
-    /**
-     * The expression of the property access.
-     */
-    expression: State;
 
     /**
      * The name of the accessed property.
@@ -89,16 +94,11 @@ export type PropertyAccess = NodeData & {
 /**
  * Represents an index access node.
  */
-export type IndexAccess = NodeData & {
+export type IndexAccess = AccessExpression & {
     /**
      * @inheritdoc
      */
     type: NodeKind.IndexAccessNode;
-
-    /**
-     * The expression of the index access.
-     */
-    expression: State;
 
     /**
      * The index that is accessed.

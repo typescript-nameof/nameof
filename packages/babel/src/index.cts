@@ -1,4 +1,5 @@
-import type babel = require("@babel/core");
+// eslint-disable-next-line node/no-unpublished-import
+import type babel from "@babel/core";
 import { BabelTransformer } from "./Transformation/BabelTransformer.cjs";
 
 export { BabelTransformer };
@@ -12,8 +13,9 @@ export { BabelTransformer };
  * @returns
  * A plugin for transforming `nameof` calls.
  */
-// eslint-disable-next-line import/no-default-export
-export default function plugin(context: typeof babel): babel.PluginItem
+function plugin(context: typeof babel): babel.PluginItem
 {
     return new BabelTransformer(context).Plugin;
 }
+
+export default (plugin as any);
