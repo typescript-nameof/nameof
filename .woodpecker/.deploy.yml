@@ -11,10 +11,6 @@ steps:
     image: node
     commands:
       - npm install
-    when:
-      event:
-        - tag
-        - deployment
   prepare release:
     image: node
     commands:
@@ -22,10 +18,6 @@ steps:
       - node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${CI_COMMIT_REF##refs/tags/}'))" > .tagName.txt
       - export TagName=$$(cat .tagName.txt)
       - echo "/^## \(.* \($${TagName}\|\[$${TagName}\]\)\)\$/" > .tagHeading.txt
-    when:
-      event:
-        - tag
-        - deployment
   check release prerequisites:
     image: node
     secrets:
@@ -48,18 +40,10 @@ steps:
       - testNPM $NPM_TOKEN || { echo "The NPM Access Token is invalid!" && false; }
       - testGitHub $GITHUB_PACKAGE_TOKEN || { echo "The GitHub Package Token is invalid!" && false; }
       - testGitHub $GITHUB_PUBLISH_TOKEN || { echo "The GitHub Publish Token is invalid!" && false; }
-    when:
-      event:
-        - tag
-        - deployment
   create package:
     image: node
     commands:
       - npm pack -w @typescript-nameof/nameof -w @typescript-nameof/types -w @typescript-nameof/babel -w @typescript-nameof/common -w @typescript-nameof/common-types
-    when:
-      event:
-        - tag
-        - deployment
   prepare release notes:
     image: alpine
     commands:
@@ -70,10 +54,6 @@ steps:
       - sed -i "1,$${TagHeading}{ $${TagHeading}P ; d } ; $${HeadingPattern},\$d" .releaseNotes.md
       - cp -f .releaseNotes.md .releaseTitle.md
       - sed -i "2,\$d ; s$${HeadingPattern}\\\\1/" .releaseTitle.md
-    when:
-      event:
-        - tag
-        - deployment
   publish package to npm:
     image: node
     secrets:
