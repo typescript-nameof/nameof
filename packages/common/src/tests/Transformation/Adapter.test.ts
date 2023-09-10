@@ -2,7 +2,7 @@ import { deepStrictEqual, doesNotThrow, notDeepStrictEqual, ok, strictEqual, thr
 import cloneDeep from "lodash.clonedeep";
 import { createSandbox, match, SinonMatcher, SinonSandbox, SinonStub, SinonStubbedInstance } from "sinon";
 import { nameOf } from "ts-nameof-proxy";
-import { ArrayLiteral, CallExpression, FunctionData, Identifier, IndexAccess, Interpolation, NumericLiteral, PropertyAccess, State, StateKind } from "./State.js";
+import { AccessExpression, ArrayLiteral, CallExpression, FunctionData, Identifier, IndexAccess, Interpolation, NumericLiteral, PropertyAccess, State, StateKind } from "./State.js";
 import { TestAdapter } from "./TestAdapter.js";
 import { CustomError } from "../../Diagnostics/CustomError.cjs";
 import { IndexOutOfBoundsError } from "../../Diagnostics/IndexOutOfBoundsError.cjs";
@@ -53,6 +53,8 @@ export function AdapterTests(): void
             let adapter: SinonStubbedInstance<TestAdapter>;
             let features: SinonStubbedInstance<TransformerFeatures<State, any>>;
             let validInput: CallExpression;
+            let typedCall: CallExpression;
+            let typedInput: PropertyAccess;
             let consoleLog: PropertyAccess;
             let functionNode: FunctionData;
             let identifier: IdentifierNode<State>;
@@ -108,6 +110,28 @@ export function AdapterTests(): void
                             consoleNode
                         ],
                         typeArguments: []
+                    };
+
+                    typedCall = {
+                        ...validInput,
+                        expression: {
+                            type: NodeKind.PropertyAccessNode,
+                            expression: validInput.expression,
+                            propertyName: NameofFunction.Typed
+                        },
+                        arguments: [
+                            {
+                                type: NodeKind.IdentifierNode,
+                                name: "user"
+                            }
+                        ],
+                        typeArguments: []
+                    };
+
+                    typedInput = {
+                        type: NodeKind.PropertyAccessNode,
+                        expression: typedCall,
+                        propertyName: "ban"
                     };
 
                     functionNode = {
@@ -466,37 +490,14 @@ export function AdapterTests(): void
                         `Checking whether member access expressions are detected properly if they are part of a \`nameof.${NameofFunction.Typed}\` call…`,
                         () =>
                         {
-                            let root: CallExpression = {
-                                ...validInput,
-                                expression: {
-                                    type: NodeKind.PropertyAccessNode,
-                                    expression: {
-                                        type: NodeKind.IdentifierNode,
-                                        name: "nameof"
-                                    },
-                                    propertyName: NameofFunction.Typed
-                                },
-                                typeArguments: [],
-                                arguments: [
-                                    {
-                                        type: NodeKind.IdentifierNode,
-                                        name: "console"
-                                    }
-                                ]
-                            };
-
                             let assertions = [
+                                typedInput,
                                 {
-                                    type: NodeKind.PropertyAccessNode,
-                                    expression: root,
-                                    propertyName: "log"
-                                },
-                                {
+                                    ...typedInput,
                                     type: NodeKind.IndexAccessNode,
-                                    expression: root,
                                     index: {
                                         type: NodeKind.StringLiteralNode,
-                                        value: "warn"
+                                        value: typedInput.propertyName
                                     }
                                 }
                             ] as State[];
@@ -584,6 +585,10 @@ export function AdapterTests(): void
                                     nameOf<TestAdapter>((adapter) => adapter.ProcessDefault)
                                 ],
                                 [
+                                    NameofFunction.Typed,
+                                    nameOf<TestAdapter>((adapter) => adapter.ProcessTyped)
+                                ],
+                                [
                                     NameofFunction.Full,
                                     nameOf<TestAdapter>((adapter) => adapter.ProcessFull)
                                 ],
@@ -657,6 +662,162 @@ export function AdapterTests(): void
 
                             nameofCall.arguments = [node, node];
                             throws(() => adapter.ProcessDefault(nameofCall, {}), InvalidDefaultCallError);
+                        });
+                });
+
+            suite(
+                nameOf<TestAdapter>((adapter) => adapter.ProcessTyped),
+                () =>
+                {
+                    let rawCall: NameofCall<State>;
+                    let propertyInput: PropertyAccess;
+                    let propertyCall: NameofCall<State>;
+                    let indexAccessInput: IndexAccess;
+                    let indexAccessCall: NameofCall<State>;
+
+                    setup(
+                        () =>
+                        {
+                            indexAccessInput = {
+                                ...typedInput,
+                                expression: {
+                                    ...typedInput.expression
+                                },
+                                type: NodeKind.IndexAccessNode,
+                                index: {
+                                    type: NodeKind.StringLiteralNode,
+                                    value: typedInput.propertyName
+                                }
+                            };
+
+                            rawCall = {
+                                source: typedCall,
+                                function: NameofFunction.Typed,
+                                arguments: typedCall.arguments,
+                                typeArguments: []
+                            };
+
+                            propertyInput = typedInput;
+
+                            propertyCall = {
+                                ...rawCall,
+                                source: propertyInput,
+                                arguments: [
+                                    propertyInput
+                                ]
+                            };
+
+                            indexAccessCall = {
+                                ...rawCall,
+                                source: indexAccessInput,
+                                arguments: [
+                                    indexAccessInput
+                                ]
+                            };
+                        });
+
+                    test(
+                        "Checking whether `nameof.typed` calls are tracked…",
+                        () =>
+                        {
+                            let context: ITransformationContext<State> = {};
+
+                            adapter.ProcessTyped(
+                                {
+                                    source: typedCall,
+                                    function: NameofFunction.Typed,
+                                    arguments: typedCall.arguments,
+                                    typeArguments: []
+                                },
+                                context);
+
+                            strictEqual(context.typedCalls?.length, 1);
+                            strictEqual(context.typedCalls[0], typedCall);
+                        });
+
+                    test(
+                        "Checking whether `nameof.typed` calls are processed properly…",
+                        () =>
+                        {
+                            let assertions: Array<NameofCall<State>> = [
+                                propertyCall,
+                                indexAccessCall
+                            ];
+
+                            for (let assertion of assertions)
+                            {
+                                let result = adapter.ProcessTyped(assertion, {});
+                                strictEqual(result?.type, ResultType.Plain);
+                                strictEqual(result.text, typedInput.propertyName);
+                            }
+                        });
+
+                    test(
+                        "Checking whether `nameof.typed` calls are removed from the tracked list once they were used…",
+                        () =>
+                        {
+                            let context: ITransformationContext<State>;
+
+                            let typedCalls: Array<NameofCall<State>> = [
+                                propertyCall,
+                                indexAccessCall
+                            ];
+
+                            let expressions: AccessExpression[] = [
+                                propertyInput,
+                                indexAccessInput
+                            ];
+
+                            /**
+                             * Processes the specified {@linkcode expression}.
+                             *
+                             * @param expression
+                             * The expression to process.
+                             */
+                            function processExpression(expression: AccessExpression): void
+                            {
+                                adapter.ProcessTyped(
+                                    {
+                                        source: expression.expression,
+                                        function: NameofFunction.Typed,
+                                        arguments: [],
+                                        typeArguments: []
+                                    },
+                                    context);
+                            }
+
+                            for (let call of typedCalls)
+                            {
+                                let currentInput = call.source as AccessExpression;
+                                let otherInputs: AccessExpression[] = [];
+                                context = {};
+
+                                for (let input of expressions)
+                                {
+                                    if (input !== call.source)
+                                    {
+                                        otherInputs.push(input);
+                                    }
+                                }
+
+                                processExpression(currentInput);
+                                strictEqual(context.typedCalls?.length, 1);
+                                adapter.ProcessTyped(call, context);
+                                strictEqual(context.typedCalls.length, 0);
+
+                                for (let input of otherInputs)
+                                {
+                                    processExpression(input);
+                                }
+
+                                strictEqual(context.typedCalls.length, otherInputs.length);
+                                adapter.ProcessTyped(call, context);
+                                strictEqual(context.typedCalls.length, otherInputs.length);
+                                processExpression(currentInput);
+                                strictEqual(context.typedCalls.length, otherInputs.length + 1);
+                                adapter.ProcessTyped(call, context);
+                                strictEqual(context.typedCalls.length, otherInputs.length);
+                            }
                         });
                 });
 

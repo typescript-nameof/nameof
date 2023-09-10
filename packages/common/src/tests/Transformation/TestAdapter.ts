@@ -301,6 +301,23 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
      * @returns
      * The parsed representation of the specified {@linkcode call}.
      */
+    public override ProcessTyped(call: NameofCall<State>, context: ITransformationContext<State>): NameofResult<State> | undefined
+    {
+        return super.ProcessTyped(call, context);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param call
+     * The call to transform.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode call}.
+     */
     public override ProcessFull(call: NameofCall<State>, context: ITransformationContext<State>): NameofResult<State>
     {
         return super.ProcessFull(call, context);
