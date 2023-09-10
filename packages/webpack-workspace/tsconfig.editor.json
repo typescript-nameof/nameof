@@ -1,0 +1,9 @@
+{
+    "extends": "../playground/tsconfig.base.json",
+    "compilerOptions": {
+        "noEmit": true
+    },
+    "include": [
+        "./webpack.config.cts"
+    ]
+}

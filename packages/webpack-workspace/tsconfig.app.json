@@ -1,0 +1,16 @@
+{
+    "extends": "../playground/tsconfig.test.json",
+    "compilerOptions": {
+        "rootDir": "../playground",
+        "plugins": [
+            {
+                "transform": "../nameof"
+            }
+        ]
+    },
+    "references": [
+        {
+            "path": "../babel/tsconfig.app.json"
+        }
+    ]
+}
