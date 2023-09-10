@@ -42,14 +42,6 @@ export interface INameOfProvider
     typed<TFunc extends (...args: any[]) => any>(func: TFunc): TFunc extends (...args: any[]) => infer U ? KeyProvider<U> : never;
 
     /**
-     * Gets constantly typed keys of the specified {@linkcode obj}.
-     *
-     * @param obj
-     * The object to get a typed key for.
-     */
-    typed<T>(obj: T): T extends (...args: any[]) => any ? never : KeyProvider<T>;
-
-    /**
      * Gets the string representation of the entire type parameter expression.
      *
      * @example nameof.full<MyNamespace.MyInnerInterface>() -> "MyNamespace.MyInnerInterface"

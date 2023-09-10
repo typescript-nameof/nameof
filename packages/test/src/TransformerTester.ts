@@ -274,23 +274,8 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                     async function()
                     {
                         setConfig(this);
-                        await transforms("nameof.typed(console).log", '"log"');
-                    });
-
-                test(
-                    "Checking whether indicating properties using element accessors works as expected…",
-                    async function()
-                    {
-                        setConfig(this);
-                        await transforms('nameof.typed(console)["warn"]', '"warn"');
-                    });
-
-                test(
-                    "Checking whether providing an object using a function works as expected…",
-                    async function()
-                    {
-                        setConfig(this);
                         await transforms("nameof.typed(() => console).log", '"log"');
+                        await transforms('nameof.typed(() => console)["warn"]', '"warn"');
                     });
 
                 test(
@@ -307,7 +292,6 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                     {
                         setConfig(this);
                         await reports("nameof.typed<Console>()", MissingPropertyAccessError);
-                        await reports("nameof.typed(console)", MissingPropertyAccessError);
                         await reports("nameof.typed(() => console)", MissingPropertyAccessError);
                     });
             });
