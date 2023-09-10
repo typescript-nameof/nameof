@@ -18,7 +18,7 @@
     "rebuild": "npm run clean && npm run build",
     "watch": "npm run build -- --watch",
     "clean": "npm run build -- --clean && rimraf ./packages/*/lib",
-    "lint": "eslint --max-warnings 0 ./scripts .eslintrc.cjs ./packages/*/src ./packages/babel/macro ./packages/*/.eslintrc.cjs",
+    "lint": "eslint --max-warnings 0 ./scripts .eslintrc.cjs ./packages/*/src ./packages/babel/macro ./packages/*/.eslintrc.cjs ./packages/*/webpack.config.cts",
     "lint-ide": "npm run lint || exit 0",
     "test": "npm run --if-present --workspaces test",
     "bump-version": "node --no-warnings=ExperimentalWarning --loader ts-node/esm/transpile-only ./scripts/bumpVersion.mts"
