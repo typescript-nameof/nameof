@@ -3,6 +3,8 @@ import { ErrorHandler } from "@typescript-nameof/common";
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import { TransformerExtras } from "ts-patch";
 import { Program, SourceFile, TransformationContext, Transformer, TransformerFactory } from "typescript";
+import { server } from "typescript/lib/tsserverlibrary";
+import { LanguageServicePluginModule } from "./LanguageService/LanguageServicePluginModule.cjs";
 import * as text from "./text/index.cjs";
 import { TSJestTransformer } from "./Transformation/TSJestTransformer.cjs";
 import { TSPatchTransformer } from "./Transformation/TSPatchTransformer.cjs";
@@ -12,12 +14,25 @@ import { TypeScriptTransformer } from "./Transformation/TypeScriptTransformer.cj
 import * as meta from "./version.cjs";
 
 /**
+ * Represents the context of a language service plugin creation.
+ */
+type PluginContext = Parameters<server.PluginModuleFactory>[0];
+
+/**
  * Creates a `nameof` transformer for vanilla TypeScript.
  *
  * @param context
  * The context of the TypeScript transformation.
  */
 function nameof(context: TransformationContext): Transformer<SourceFile>;
+
+/**
+ * Creates a language service for validating `nameof` calls.
+ *
+ * @param context
+ * The context of the TypeScript language service.
+ */
+function nameof(context: PluginContext): server.PluginModule;
 
 /**
  * Creates a `nameof` transformer for `ts-patch`.
@@ -42,35 +57,42 @@ function nameof(program: Program, config?: Record<string, unknown>, extras?: Tra
  * @returns
  * A transformer for the corresponding ecosystem.
  */
-function nameof(...args: [Program, Record<string, unknown>?, TransformerExtras?] | [TransformationContext]): TransformerFactory<SourceFile> | Transformer<SourceFile>
+function nameof(...args: [Program | Parameters<server.PluginModuleFactory>[0], Record<string, unknown>?, TransformerExtras?] | [TransformationContext]): TransformerFactory<SourceFile> | Transformer<SourceFile> | ReturnType<server.PluginModuleFactory>
 {
     let factory: TransformerFactory<SourceFile>;
 
-    if (
-        args[2]?.addDiagnostic)
+    if ("typescript" in args[0])
     {
-        // Detecting `ts-patch` (ttypescript's `addDiagnostic` implementation doesn't do anything)
-        if (args[2].diagnostics)
+        return new LanguageServicePluginModule(args[0].typescript as any);
+    }
+    else
+    {
+        if (
+            args[2]?.addDiagnostic)
         {
-            factory = new TSPatchTransformer(args[2]).Factory;
+            // Detecting `ts-patch` (ttypescript's `addDiagnostic` implementation doesn't do anything)
+            if (args[2].diagnostics)
+            {
+                factory = new TSPatchTransformer(args[2]).Factory;
+            }
+            else
+            {
+                factory = new TSPatchTransformer(args[2], undefined, new ErrorHandler()).Factory;
+            }
         }
         else
         {
-            factory = new TSPatchTransformer(args[2], undefined, new ErrorHandler()).Factory;
+            factory = new TypeScriptTransformer().Factory;
         }
-    }
-    else
-    {
-        factory = new TypeScriptTransformer().Factory;
-    }
 
-    if ("factory" in args[0])
-    {
-        return factory(args[0]);
-    }
-    else
-    {
-        return factory;
+        if ("factory" in args[0])
+        {
+            return factory(args[0]);
+        }
+        else
+        {
+            return factory;
+        }
     }
 }
 
