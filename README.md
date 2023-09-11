@@ -135,17 +135,19 @@ Having TypeScripts type checker know what exact type the `nameof.typed` result h
 Example
 
 ```ts
+import { replace } from "sinon";
+
 class Unifier {
   Add(x: number, y: number) { return x + y; }
   Concatenate(x: string, y: string) { return x + y; }
 }
 
 let unifier = new Unifier();
-unifier[nameof.typed<Unifier>().Add](4, 2);                     // Returns `6`.
-unifier[nameof.typed<Unifier>().Add]("Hello", "World");         // Reports an error because a `number` is expected.
+replace(unifier, nameof.typed<Unifier>().Add, (x, y) => 420);             // Reports no error
+replace(unifier, nameof.typed<Unifier>().Add, (x, y) => "test");          // Reports an error. Return type `number` is expected.
 
-unifier[nameof.typed<Unifier>().Concatenate]("Hello", "World"); // Returns `HelloWorld`
-unifier[nameof.typed<Unifier>().Concatenate](4, 2);             // Reports an error because a `string` is expected.
+replace(unifier, nameof.typed<Unifier>().Concatenate, (x, y) => "test");  // Returns `HelloWorld`
+replace(unifier, nameof.typed<Unifier>().Concatenate, (x, y) => 420);     // Reports an error. Return type `string` is expected.
 ```
 
 ### `nameof.full`
