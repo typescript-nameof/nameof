@@ -9,7 +9,7 @@ import { TypeScriptFeatures } from "../Transformation/TypeScriptFeatures.cjs";
  * @template TFeatures
  * The type of the features for the error handler.
  */
-export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeScriptFeatures> extends ErrorHandler<Node, ITypeScriptContext>
+export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeScriptFeatures, TContext extends ITypeScriptContext = ITypeScriptContext> extends ErrorHandler<Node, TContext>
 {
     /**
      * A set of features for the error handler.
@@ -51,7 +51,7 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
      * @param error
      * The error to report.
      */
-    public override Report(location: INodeLocation, item: Node, context: ITypeScriptContext, error: Error): void
+    public override Report(location: INodeLocation, item: Node, context: TContext, error: Error): void
     {
         this.ReportDiagnostic(location, item, context, this.GetDiagnostic(item, context, error), error);
     }
@@ -111,7 +111,7 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
      * @param error
      * The original error.
      */
-    protected ReportDiagnostic(location: INodeLocation, item: Node, context: ITypeScriptContext, diagnostic: Diagnostic, error: Error): void
+    protected ReportDiagnostic(location: INodeLocation, item: Node, context: TContext, diagnostic: Diagnostic, error: Error): void
     {
         super.Report(location, item, context, error);
     }
