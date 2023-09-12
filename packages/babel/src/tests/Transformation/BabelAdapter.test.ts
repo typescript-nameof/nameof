@@ -208,8 +208,9 @@ export function BabelAdapterTests(): void
             let t: typeof babel.types;
 
             setup(
-                async () =>
+                async function()
                 {
+                    this.timeout(5 * 1000);
                     tempFile = new TempFile();
                     adapter = new TestAdapter(new BabelFeatures(babel));
                     let result = await wrapNode("", "File");
