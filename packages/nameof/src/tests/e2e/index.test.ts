@@ -1,3 +1,4 @@
+import { LanguageServiceTester } from "./LanguageServiceTester.js";
 import { ReplaceInFilesTester } from "./ReplaceInFilesTester.js";
 import { ReplaceInTextTester } from "./ReplaceInTextTester.js";
 import { TSJestTester } from "./TSJestTester.js";
@@ -18,5 +19,6 @@ export function EndToEndTests(): void
             new TSPatchTester().Register();
             new TTypeScriptTester().Register();
             new TSJestTester().Register();
+            new LanguageServiceTester().Register();
         });
 }

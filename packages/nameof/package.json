@@ -45,6 +45,7 @@
   "devDependencies": {
     "@manuth/package-json-editor": "^3.1.1",
     "@manuth/temp-files": "^3.0.2",
+    "@manuth/typescript-languageservice-tester": "^5.0.1",
     "@tsd/typescript": "npm:nop@^1.0.0",
     "@types/fs-extra": "^11.0.1",
     "@types/mocha": "^10.0.1",
