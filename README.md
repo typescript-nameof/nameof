@@ -336,13 +336,27 @@ Please run the following to install the integration in your project:
     ```
 
 ### Enable Real Time Error Reporting (Optional)
+If you are using a `vscode` editor, you might want to install the ["TypeScript nameof Plugin" extension](./packages/vscode) in order to enable real-time error reporting.
 
+For other editors, add `@typescript-nameof/nameof` as a language service plugin to your `tsconfig` file:
+
+```json
+{
+    "compilerOptions": {
+        "plugins": [
+            {
+                "name": "@typescript-nameof/nameof"
+            }
+        ]
+    }
+}
+```
 
 ### Configure Compiler to Use TypeScript `nameof`
 Lastly, you need to configure your compiler to pick up the plugin.
 
 #### `ts-patch` and `ttypescript`
-Add the following plugin configuration to your project's `tsconfig` file:
+Add the following transformer plugin configuration to your project's `tsconfig` file:
 
 ***tsconfig.json:***
 ```json
