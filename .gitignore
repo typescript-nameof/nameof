@@ -12,6 +12,9 @@ packages/playground/out
 packages/*/CHANGELOG.md
 packages/*/LICENSE
 
+# Temporary files
+packages/vscode/package-lock.json
+
 # Logs
 logs
 *.log

@@ -21,9 +21,18 @@
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {},
+  "scripts": {
+    "vscode:prepublish": "copyfiles ../../{CHANGELOG.md,LICENSE} -u 2 . && npm run load-dependencies",
+    "load-dependencies": "npm run unlink-root && npm run init-dependencies && npm run restore-root",
+    "init-dependencies": "copyfiles \"../../node_modules/**/*\" -u 2 . && npm prune --ignore-lifecycle",
+    "unlink-root": "mve ../../package.json ../../_package.json",
+    "restore-root": "mve ../../_package.json ../../package.json"
+  },
   "dependencies": {
     "@typescript-nameof/nameof": "^0.0.3"
+  },
+  "devDependencies": {
+    "mve": "^0.1.2"
   },
   "displayName": "TypeScript nameof Plugin",
   "publisher": "typescript-nameof",
