@@ -51,7 +51,7 @@ export class LanguageServiceTester extends TransformerTester<any, any>
         suiteSetup(
             async function()
             {
-                this.timeout(1 * 60 * 1000);
+                this.timeout(5 * 60 * 1000);
                 self.tempDir = new TempDirectory();
                 self.tester = new ServiceTester(self.tempDir.FullName);
                 await self.tester.Install();
