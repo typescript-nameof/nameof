@@ -1,0 +1,38 @@
+{
+  "name": "typescript-nameof-plugin",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "description": "A VSCode-Extension for validating `nameof` calls using `@typescript-nameof`",
+  "markdownDescription": "A VSCode-Extension for validating `nameof` calls using `@typescript-nameof`",
+  "author": "Manuel Thalmann <m@nuth.ch>",
+  "engines": {
+    "vscode": "^1.22.0"
+  },
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git",
+    "directory": "packages/vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/typescript-nameof/nameof/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {},
+  "dependencies": {
+    "@typescript-nameof/nameof": "^0.0.3"
+  },
+  "displayName": "TypeScript nameof Plugin",
+  "publisher": "typescript-nameof",
+  "contributes": {
+    "typescriptServerPlugins": [
+      {
+        "name": "@typescript-nameof/nameof",
+        "enableForWorkspaceTypeScriptVersions": true
+      }
+    ]
+  }
+}

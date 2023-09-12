@@ -53,6 +53,8 @@ This section provides a brief explanation as to what functionalities are covered
     Exposes common type declarations which are used by all packages
   - [`@typescript-nameof/test`](./packages/test):  
     Holds unit components which are used for testing whether the `nameof` integrations work properly.
+  - [typescript-nameof-plugin](./packages/vscode):  
+    An extension for highlighting malformed `nameof` calls in your `vscode` editor.
   - [`@typescript-nameof/playground`](./packages/playground):  
     Contains a few example projects for trying out `nameof`-integrations
 
@@ -74,12 +76,13 @@ This section provides a brief explanation as to what functionalities are covered
     - [Set Up a Project](#set-up-a-project)
     - [Install Type Declarations](#install-type-declarations)
     - [Install TypeScript `nameof` Integration](#install-typescript-nameof-integration)
+    - [Enable Real Time Error Reporting (Optional)](#enable-real-time-error-reporting-optional)
     - [Configure Compiler to Use TypeScript `nameof`](#configure-compiler-to-use-typescript-nameof)
       - [`ts-patch` and `ttypescript`](#ts-patch-and-ttypescript)
       - [`webpack` (using `ts-loader`)](#webpack-using-ts-loader)
       - [`ts-jest`](#ts-jest)
-    - [`babel` Using a Plugin](#babel-using-a-plugin)
-    - [`babel` Using a Macro](#babel-using-a-macro)
+      - [`babel` Using a Plugin](#babel-using-a-plugin)
+      - [`babel` Using a Macro](#babel-using-a-macro)
   - [Thank You!](#thank-you)
 
 ## Syntax
@@ -332,6 +335,9 @@ Please run the following to install the integration in your project:
     npm install --save-dev babel-plugin-macros @typescript-nameof/babel
     ```
 
+### Enable Real Time Error Reporting (Optional)
+
+
 ### Configure Compiler to Use TypeScript `nameof`
 Lastly, you need to configure your compiler to pick up the plugin.
 
@@ -402,7 +408,7 @@ module.exports = {
 }
 ```
 
-### `babel` Using a Plugin
+#### `babel` Using a Plugin
 In order to use TypeScript `nameof`'s Babel.js plugin, add the following to your configuration:
 
 ***babel.config.js:***
@@ -415,7 +421,7 @@ module.exports = {
 };
 ```
 
-### `babel` Using a Macro
+#### `babel` Using a Macro
 In order to use the Babel.js macro, you need to set up `babel-plugin-macros` properly.
 Please head to the project page to find out how to do so:
 

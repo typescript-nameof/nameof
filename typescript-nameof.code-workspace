@@ -23,6 +23,9 @@
             "path": "./packages/test"
         },
         {
+            "path": "./packages/vscode"
+        },
+        {
             "path": "./packages/playground"
         }
     ],
@@ -258,6 +261,16 @@
                     "${workspaceFolder:common}/**",
                     "${workspaceFolder:babel}/**",
                     "!**/node_modules/**"
+                ]
+            },
+            {
+                "type": "extensionHost",
+                "request": "launch",
+                "name": "Launch `nameof` Plugin Extension",
+                "args": [
+                    "--extensionDevelopmentPath=${workspaceFolder:vscode}",
+                    "${workspaceFolder:playground}",
+                    "${workspaceFolder:playground}/src/test/index.ts"
                 ]
             }
         ],
