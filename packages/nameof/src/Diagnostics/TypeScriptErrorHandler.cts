@@ -1,5 +1,6 @@
 import { ErrorHandler, INodeLocation } from "@typescript-nameof/common";
 import { Diagnostic, Node } from "typescript";
+import { Constants } from "../Constants.cjs";
 import { ITypeScriptContext } from "../Transformation/ITypeScriptContext.cjs";
 import { TypeScriptFeatures } from "../Transformation/TypeScriptFeatures.cjs";
 
@@ -75,7 +76,7 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
     {
         return {
             category: this.Features.TypeScript.DiagnosticCategory.Error,
-            source: "typescript-nameof",
+            source: Constants.SourceName,
             messageText: error.message,
             code: 1337,
             ...(
