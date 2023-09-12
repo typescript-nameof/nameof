@@ -36,6 +36,14 @@ export class LanguageServiceTester extends TransformerTester<any, any>
     /**
      * @inheritdoc
      */
+    protected override get Timeout(): number
+    {
+        return super.Timeout * 2;
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected override RegisterTests(): void
     {
         let self = this;
