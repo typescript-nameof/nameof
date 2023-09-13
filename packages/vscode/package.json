@@ -25,7 +25,7 @@
     "load-dependencies": "npm run unlink-root && npm run init-dependencies && npm run restore-root",
     "init-dependencies": "copyfiles \"../../node_modules/**/*\" -u 2 . && npm prune --ignore-lifecycle && npm install --package-lock-only",
     "unlink-root": "mve ../../package.json ../../_package.json",
-    "restore-root": "mve ../../_package.json ../../package.json"
+    "restore-root": "rm package-lock.json && mve ../../_package.json ../../package.json"
   },
   "dependencies": {
     "@typescript-nameof/nameof": "^0.0.3"
