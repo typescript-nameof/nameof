@@ -1,6 +1,6 @@
 {
   "name": "@typescript-nameof/test",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "private": true,
   "description": "Provides common components for testing `nameof` transformers and plugins.",
@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@types/mocha": "^10.0.1",
-    "@typescript-nameof/common": "^0.0.3",
+    "@typescript-nameof/common": "^0.0.4",
     "sinon": "^15.2.0",
     "ts-morph": "^19.0.0"
   },
