@@ -11,10 +11,6 @@ steps:
     image: node
     commands:
       - npm install
-    when:
-      event:
-        - tag
-        - deployment
   prepare release:
     image: node
     commands:
@@ -22,14 +18,12 @@ steps:
       - node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${CI_COMMIT_REF##refs/tags/}'))" > .tagName.txt
       - export TagName=$$(cat .tagName.txt)
       - echo "/^## \(.* \($${TagName}\|\[$${TagName}\]\)\)\$/" > .tagHeading.txt
-    when:
-      event:
-        - tag
-        - deployment
   check release prerequisites:
     image: node
     secrets:
       - npm_token
+      - ovsx_token
+      - vsce_token
       - github_package_token
       - github_publish_token
     commands:
@@ -43,23 +37,33 @@ steps:
         testGitHub() {
           node -e 'new (require("@octokit/rest").Octokit)({ auth: "'"$1"'" }).request("GET /user").catch(() => process.exit(1))' > /dev/null 2>&1
         }
+      - export PUBLISHER=$$(node -e "console.log(JSON.parse(require('fs').readFileSync('./packages/vscode/package.json').toString()).publisher)")
+      - >
+        testOVSX() {
+          url='https://open-vsx.org/api/-/namespace/create?token='"$1"
+          output=$(curl -X POST $url --header 'Content-Type: application/json' --data-raw '{ "name": "'"$PUBLISHER"'" }')
+          node -e 'JSON.parse('"'$output'"').error?.includes("Invalid access token") && process.exit(1);'
+        }
+      - >
+        testVSCE() {
+          npx vsce verify-pat $PUBLISHER --pat $1 > /dev/null 2>&1
+        }
       - export TagHeading=$$(cat .tagHeading.txt)
       - '[ ! -z "$$(sed "$${TagHeading}p;d" CHANGELOG.md)" ] || { echo "No Changelog Entries Found!" && false; }'
-      - testNPM $NPM_TOKEN || { echo "The NPM Access Token is invalid!" && false; }
+      - testNPM $NPM_TOKEN               || { echo "The NPM Access Token is invalid!" && false; }
+      - testOVSX $OVSX_TOKEN             || { echo "The Open VSX Token is invalid!" && false; }
+      - testVSCE $VSCE_TOKEN             || { echo "The Visual Studio Marketplace Token is invalid!" && false; }
       - testGitHub $GITHUB_PACKAGE_TOKEN || { echo "The GitHub Package Token is invalid!" && false; }
       - testGitHub $GITHUB_PUBLISH_TOKEN || { echo "The GitHub Publish Token is invalid!" && false; }
-    when:
-      event:
-        - tag
-        - deployment
   create package:
     image: node
     commands:
       - npm pack -w @typescript-nameof/nameof -w @typescript-nameof/types -w @typescript-nameof/babel -w @typescript-nameof/common -w @typescript-nameof/common-types
-    when:
-      event:
-        - tag
-        - deployment
+  create extension:
+    image: node
+    commands:
+      - npm exec --workspace ./packages/vscode -- vsce package
+      - npm run --prefix ./packages/vscode vscode:postpublish
   prepare release notes:
     image: alpine
     commands:
@@ -70,10 +74,6 @@ steps:
       - sed -i "1,$${TagHeading}{ $${TagHeading}P ; d } ; $${HeadingPattern},\$d" .releaseNotes.md
       - cp -f .releaseNotes.md .releaseTitle.md
       - sed -i "2,\$d ; s$${HeadingPattern}\\\\1/" .releaseTitle.md
-    when:
-      event:
-        - tag
-        - deployment
   publish package to npm:
     image: node
     secrets:
@@ -93,6 +93,24 @@ steps:
       - npm publish --workspaces
     when:
       event: deployment
+  publish extension to ovsx marketplace:
+    image: node
+    secrets:
+      - ovsx_token
+    commands:
+      - npm exec --workspace ./packages/vscode -- ovsx publish --pat $OVSX_TOKEN
+      - npm run --prefix ./packages/vscode vscode:postpublish
+    when:
+      event: deployment
+  publish extension to vscode marketplace:
+    image: node
+    secrets:
+      - vsce_token
+    commands:
+      - npm exec --workspace ./packages/vscode -- vsce publish --pat $VSCE_TOKEN
+      - npm run --prefix ./packages/vscode vscode:postpublish
+    when:
+      event: deployment
   publish release:
     image: plugins/github-release
     settings:
@@ -100,6 +118,7 @@ steps:
         from_secret: github_publish_token
       files:
         - "*.tgz"
+        - "*.vsix"
       title: .releaseTitle.md
       note: .releaseNotes.md
     when:

@@ -91,27 +91,31 @@ export function replaceInText(fileName: string, fileText?: string): ISubstitutio
         sourceFile,
         [
             transformer.GetFactory(
-                (oldNode, newNode) =>
                 {
-                    if (oldNode !== newNode)
-                    {
-                        let nodeStart = oldNode.getStart(sourceFile);
-                        let lastTransformation = transformations[transformations.length - 1];
-
-                        // remove the last transformation if it's nested within this transformation
-                        if (lastTransformation !== undefined && lastTransformation.start > nodeStart)
+                    postTransformHook:
+                        (oldNode, newNode) =>
                         {
-                            transformations.pop();
-                        }
-
-                        transformations.push(
+                            if (oldNode !== newNode)
                             {
-                                start: nodeStart,
-                                end: oldNode.end,
-                                text: printer.printNode(ts.EmitHint.Unspecified, newNode, sourceFile)
-                            });
-                    }
-                })
+                                let nodeStart = oldNode.getStart(sourceFile);
+                                let lastTransformation = transformations[transformations.length - 1];
+
+                                // remove the last transformation if it's nested within this transformation
+                                if (lastTransformation !== undefined && lastTransformation.start > nodeStart)
+                                {
+                                    transformations.pop();
+                                }
+
+                                transformations.push(
+                                    {
+                                        start: nodeStart,
+                                        end: oldNode.end,
+                                        text: printer.printNode(ts.EmitHint.Unspecified, newNode, sourceFile)
+                                    });
+                            }
+                        }
+                }
+            )
         ]);
 
     if (transformations.length === 0)

@@ -72,14 +72,17 @@ export function TypeScriptTransformerBaseTests(): void
                                 file,
                                 [
                                     transformer.GetFactory(
-                                        (oldNode, newNode) =>
                                         {
-                                            if (oldNode !== newNode)
-                                            {
-                                                map.set(newNode, oldNode);
-                                            }
+                                            postTransformHook:
+                                                (oldNode, newNode) =>
+                                                {
+                                                    if (oldNode !== newNode)
+                                                    {
+                                                        map.set(newNode, oldNode);
+                                                    }
+                                                }
                                         })
-                                    ]).transformed[0];
+                                ]).transformed[0];
 
                             /**
                              * Checks whether all transformations are in the map.

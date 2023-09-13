@@ -6,7 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## TypeScript `nameof` [Unreleased]
 
-[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.3...dev)
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.4...dev)
+
+## TypeScript `nameof` v0.0.4
+### Added
+  - A TypeScript Language Service plugin and a corresponding `vscode` extension to show `nameof()`-related issues in the IDE
+
+### Updated
+  - The `README` file to include more reasonable examples
+
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.3...v0.0.4)
 
 ## TypeScript `nameof` v0.0.3
 ### Added

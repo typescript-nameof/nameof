@@ -1,7 +1,6 @@
 import { IAdapter, TransformerBase } from "@typescript-nameof/common";
 import { Node, SourceFile, TransformationContext, TransformerFactory } from "typescript";
 import { ITypeScriptContext } from "./ITypeScriptContext.cjs";
-import { TransformHook } from "./TransformHook.cjs";
 import { TypeScriptAdapter } from "./TypeScriptAdapter.cjs";
 import { TypeScriptFeatures } from "./TypeScriptFeatures.cjs";
 
@@ -41,19 +40,19 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
     /**
      * Gets a factory with a pre-defined {@linkcode context}.
      *
-     * @param postTransformHook
-     * A hook to execute after transforming a node.
+     * @param context
+     * The context of the transformation.
      *
      * @returns
      * A newly created factory with a pre-defined {@linkcode context}.
      */
-    public GetFactory(postTransformHook?: TransformHook): TransformerFactory<SourceFile>
+    public GetFactory(context: Partial<ITypeScriptContext>): TransformerFactory<SourceFile>
     {
         return (tsContext) =>
         {
             return (file) =>
             {
-                return this.VisitSourceFile(file, tsContext, postTransformHook);
+                return this.VisitSourceFile(file, tsContext, context);
             };
         };
     }
@@ -78,20 +77,22 @@ export abstract class TypeScriptTransformerBase<TFeatures extends TypeScriptFeat
      * @param tsContext
      * The context of the typescript transformation.
      *
-     * @param postTransformHook
-     * A hook to execute after transforming a node.
+     * @param context
+     * The context of the transformation.
      *
      * @returns
      * The transformed representation of the specified {@linkcode file}.
      */
-    protected VisitSourceFile(file: SourceFile, tsContext: TransformationContext, postTransformHook?: TransformHook): SourceFile
+    protected VisitSourceFile(file: SourceFile, tsContext: TransformationContext, context?: Partial<ITypeScriptContext>): SourceFile
     {
+        let defaults = context ?? {};
+
         return this.MonitorTransformation(
             (context) =>
             {
                 let typeScriptContext: ITypeScriptContext = context as any;
                 typeScriptContext.file = file;
-                typeScriptContext.postTransformHook = postTransformHook;
+                Object.assign(context, defaults);
 
                 return this.VisitNode(file, typeScriptContext, tsContext);
             });
