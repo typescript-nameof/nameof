@@ -63,6 +63,7 @@ steps:
     image: node
     commands:
       - npm exec --workspace ./packages/vscode -- vsce package
+      - npm run --workspace ./packages/vscode vscode:postpublish
   prepare release notes:
     image: alpine
     commands:
@@ -98,6 +99,7 @@ steps:
       - ovsx_token
     commands:
       - npm run --workspace ./packages/vscode -- ovsx publish --pat $OVSX_TOKEN
+      - npm run --workspace ./packages/vscode vscode:postpublish
     when:
       event: deployment
   publish extension to vscode marketplace:
@@ -106,6 +108,7 @@ steps:
       - vsce_token
     commands:
       - npm run --workspace ./packages/vscode -- vsce publish --pat $VSCE_TOKEN
+      - npm run --workspace ./packages/vscode vscode:postpublish
   publish release:
     image: plugins/github-release
     settings:
