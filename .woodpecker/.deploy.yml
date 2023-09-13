@@ -42,7 +42,7 @@ steps:
         testOVSX() {
           url='https://open-vsx.org/api/-/namespace/create?token='"$1"
           output=$(curl -X POST $url --header 'Content-Type: application/json' --data-raw '{ "name": "'"$PUBLISHER"'" }')
-          node -e 'JSON.parse('"'$output'"').error.includes("Invalid access token") && process.exit(1);'
+          node -e 'JSON.parse('"'$output'"').error?.includes("Invalid access token") && process.exit(1);'
         }
       - >
         testVSCE() {
