@@ -24,7 +24,7 @@
     "bump-version": "node --no-warnings=ExperimentalWarning --loader ts-node/esm/transpile-only ./scripts/bumpVersion.mts"
   },
   "devDependencies": {
-    "@manuth/eslint-plugin-typescript": "^4.1.2",
+    "@manuth/eslint-plugin-typescript": "^4.1.4",
     "@manuth/package-json-editor": "^3.1.1",
     "@manuth/tsconfig": "^4.0.1",
     "@types/fs-extra": "^11.0.1",
