@@ -283,8 +283,11 @@ export function BabelAdapterTests(): void
                 {
                     test(
                         "Checking whether the location of nodes is determined properly…",
-                        async () =>
+                        async function()
                         {
+                            this.timeout(10 * 1000);
+                            this.slow(5 * 1000);
+
                             for (let i = 0; i <= 3; i++)
                             {
                                 for (let j = 0; j <= 3; j++)

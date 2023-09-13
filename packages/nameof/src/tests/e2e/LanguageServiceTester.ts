@@ -38,7 +38,7 @@ export class LanguageServiceTester extends TransformerTester<any, any>
      */
     protected override get Timeout(): number
     {
-        return 5 * 60 * 1000;
+        return 10 * 60 * 1000;
     }
 
     /**

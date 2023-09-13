@@ -21,6 +21,14 @@ export class ReplaceInFilesTester extends TransformerTester<any, any>
 
     /**
      * @inheritdoc
+     */
+    protected override get Timeout(): number
+    {
+        return 5 * 1000;
+    }
+
+    /**
+     * @inheritdoc
      *
      * @param input
      * The input of the transformation.
