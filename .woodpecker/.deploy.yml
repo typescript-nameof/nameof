@@ -98,7 +98,7 @@ steps:
     secrets:
       - ovsx_token
     commands:
-      - npm run --workspace ./packages/vscode -- ovsx publish --pat $OVSX_TOKEN
+      - npm exec --workspace ./packages/vscode -- ovsx publish --pat $OVSX_TOKEN
       - npm run --prefix ./packages/vscode vscode:postpublish
     when:
       event: deployment
@@ -107,7 +107,7 @@ steps:
     secrets:
       - vsce_token
     commands:
-      - npm run --workspace ./packages/vscode -- vsce publish --pat $VSCE_TOKEN
+      - npm exec --workspace ./packages/vscode -- vsce publish --pat $VSCE_TOKEN
       - npm run --prefix ./packages/vscode vscode:postpublish
     when:
       event: deployment
