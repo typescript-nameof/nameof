@@ -109,6 +109,8 @@ steps:
     commands:
       - npm run --workspace ./packages/vscode -- vsce publish --pat $VSCE_TOKEN
       - npm run --prefix ./packages/vscode vscode:postpublish
+    when:
+      event: deployment
   publish release:
     image: plugins/github-release
     settings:
