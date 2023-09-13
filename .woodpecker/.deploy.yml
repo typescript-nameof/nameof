@@ -22,6 +22,8 @@ steps:
     image: node
     secrets:
       - npm_token
+      - ovsx_token
+      - vsce_token
       - github_package_token
       - github_publish_token
     commands:
