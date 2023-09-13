@@ -1,6 +1,6 @@
 {
   "name": "typescript-nameof-plugin",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "private": true,
   "description": "A VSCode-Extension for validating `nameof` calls using `@typescript-nameof`",
@@ -29,7 +29,7 @@
     "restore-root": "rm package-lock.json && mve ../../_package.json ../../package.json"
   },
   "dependencies": {
-    "@typescript-nameof/nameof": "^0.0.4"
+    "@typescript-nameof/nameof": "^0.0.5"
   },
   "devDependencies": {
     "mve": "^0.1.2"
