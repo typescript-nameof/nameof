@@ -13,7 +13,7 @@ class TestClass
 {
     public prop1 = "";
 
-    public prop2 = "";
+    public prop2: TestClass = undefined as any;
 }
 
 // nameof tests
@@ -22,7 +22,7 @@ expectType<string>(nameof<TestNamespace.TestType>());
 expectType<string>(nameof<TestClass>(((t) => t.prop1)));
 
 // nameof.typed tests
-expectType<"log">(nameof.typed(console).log);
+expectType<"log">(nameof.typed(() => console).log);
 expectType<"warn">(nameof.typed<Console>().warn);
 expectType<"typed">(nameof.typed(() => nameof).typed);
 
@@ -33,7 +33,7 @@ expectType<string>(nameof.full(testInstance.prop1, 1));
 expectType<string>(nameof.full<TestNamespace.TestType>());
 expectType<string>(nameof.full<TestNamespace.TestType>(1));
 expectType<string>(nameof.full<TestClass>(((t) => t.prop1)));
-expectType<string>(nameof.full<TestClass>((t) => t.prop1, 1));
+expectType<string>(nameof.full<TestClass>((t) => t.prop2.prop1, 1));
 
 // nameof.array tests
 expectNotDeprecated(nameof.array);
@@ -51,7 +51,7 @@ expectType<string[]>(nameof.toArray<TestClass>(t => [t.prop1]));
 expectType<string[]>((nameof.split(testInstance.prop1)));
 expectType<string[]>((nameof.split(testInstance.prop1, 1)));
 expectType<string[]>((nameof.split<TestClass>(obj => obj.prop1)));
-expectType<string[]>((nameof.split<TestClass>(obj => obj.prop1, 1)));
+expectType<string[]>((nameof.split<TestClass>(obj => obj.prop2.prop1, 1)));
 
 // nameof.interpolate tests
 expectAssignable<string>(nameof.interpolate(""));
