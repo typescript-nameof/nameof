@@ -6,8 +6,8 @@
 node_modules/@typescript-nameof/*/[Ss]rc
 
 # TypeScript config-files
-node_modules/@typescript-nameof/tsconfig.json
-node_modules/@typescript-nameof/tsconfig.*.json
+node_modules/@typescript-nameof/*/tsconfig.json
+node_modules/@typescript-nameof/*/tsconfig.*.json
 
 # Source-maps
 node_modules/@typescript-nameof/*/[Ll]ib/**/*.map
