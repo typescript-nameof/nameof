@@ -963,7 +963,9 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      */
     protected GetPath(call: NameofCall<TNode>, path: Array<PathPartCandidate<TNode>>, index: NumericLiteralNode<TNode>, context: TContext): Array<PathPart<TNode>>
     {
-        if (Math.abs(index.Value) > path.length)
+        if (
+            index.Value === path.length ||
+            Math.abs(index.Value) > path.length)
         {
             throw new IndexOutOfBoundsError(this, index, path.length, context);
         }
