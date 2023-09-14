@@ -1,6 +1,6 @@
 {
   "name": "@typescript-nameof/common-types",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "type": "module",
   "description": "Provides Common Types for TypeScript `nameof` Packages.",
   "author": "Manuel Thalmann <m@nuth.ch>",
