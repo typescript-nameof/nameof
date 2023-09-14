@@ -10,7 +10,6 @@ import
     MissingPropertyAccessError,
     NestedNameofError,
     NoReturnExpressionError,
-    SegmentNotFoundError,
     UnsupportedAccessorTypeError,
     UnsupportedNodeError,
     UnsupportedScenarioError,
@@ -616,14 +615,9 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
 
                         for (let call of ["nameof.full", "nameof.split"])
                         {
-                            for (let snippet of outOfBounds)
+                            for (let snippet of [...outOfBounds, ...noSegmentLeft])
                             {
                                 await reports(`${call}${snippet}`, IndexOutOfBoundsError);
-                            }
-
-                            for (let snippet of noSegmentLeft)
-                            {
-                                await reports(`${call}${snippet}`, SegmentNotFoundError);
                             }
 
                             for (let snippet of invalidIndex)
