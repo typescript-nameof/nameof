@@ -21,7 +21,7 @@
     "access": "public"
   },
   "scripts": {
-    "vscode:prepublish": "copyfiles ../../{CHANGELOG.md,LICENSE} -u 2 . && npm run load-dependencies",
+    "vscode:prepublish": "copyfiles ../../{CHANGELOG.md,LICENSE} -u 2 . && npm run --prefix ../.. build && npm run load-dependencies",
     "vscode:postpublish": "rimraf node_modules package-lock.json && npm run restore-root",
     "load-dependencies": "npm run unlink-root && npm run init-dependencies",
     "init-dependencies": "copyfiles \"../../node_modules/**/*\" -Fu 2 . && npm prune --ignore-lifecycle && npm install --package-lock-only",
