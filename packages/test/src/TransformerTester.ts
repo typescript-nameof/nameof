@@ -263,6 +263,23 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             reports(`nameof(${assertion}())`, NestedNameofError);
                         }
                     });
+
+                test(
+                    "Checking whether malformed, nested `nameof` calls are reported properly…",
+                    () =>
+                    {
+                        let assertions = [
+                            "nameof",
+                            "nameof.full",
+                            "nameof.array",
+                            "nameof.split"
+                        ];
+
+                        for (let assertion of assertions)
+                        {
+                            reports(`nameof(${assertion}(class Test { }))`, NestedNameofError);
+                        }
+                    });
             });
 
         suite(
