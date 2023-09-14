@@ -1,5 +1,5 @@
 # TypeScript cache
-*.tsbuildinfo
+node_modules/@typescript-nameof/*/*.tsbuildinfo
 
 # Source-files
 [Ss]rc/
