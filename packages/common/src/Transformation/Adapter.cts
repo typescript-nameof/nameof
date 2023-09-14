@@ -137,27 +137,36 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
 
         try
         {
+            let newNode = node;
             let nameofCall = this.GetNameofCall(node, context);
 
             if (nameofCall)
             {
-                let result = this.ProcessNameofCall(nameofCall, context);
-
-                if (result)
+                try
                 {
-                    let newNode: TNode;
+                    let result = this.ProcessNameofCall(nameofCall, context);
 
-                    if (Array.isArray(result))
+                    if (result)
                     {
-                        newNode = this.DumpArray(result);
-                    }
-                    else
-                    {
-                        newNode = this.Dump(result);
-                    }
+                        if (Array.isArray(result))
+                        {
+                            newNode = this.DumpArray(result);
+                        }
+                        else
+                        {
+                            newNode = this.Dump(result);
+                        }
 
+                        return newNode;
+                    }
+                }
+                catch (error)
+                {
+                    throw error;
+                }
+                finally
+                {
                     this.StoreOriginal(node, newNode);
-                    return newNode;
                 }
             }
         }
