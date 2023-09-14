@@ -14,6 +14,8 @@ class TestClass
     public prop1 = "";
 
     public prop2: TestClass = undefined as any;
+
+    public optionalProp?: string;
 }
 
 // nameof tests
@@ -25,6 +27,7 @@ expectType<string>(nameof<TestClass>(((t) => t.prop1)));
 expectType<"log">(nameof.typed(() => console).log);
 expectType<"warn">(nameof.typed<Console>().warn);
 expectType<"typed">(nameof.typed(() => nameof).typed);
+expectType<"optionalProp">(nameof.typed<TestClass>().optionalProp);
 
 // nameof.full tests
 const testInstance = new TestClass();
