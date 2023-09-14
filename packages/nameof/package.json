@@ -34,7 +34,7 @@
   },
   "scripts": {
     "prepack": "copyfiles ../../{CHANGELOG.md,LICENSE} -u 2 . && npm run --prefix ../.. build",
-    "test": "tsd && mocha"
+    "test": "tsd --files ./type-tests && mocha"
   },
   "dependencies": {
     "@typescript-nameof/common": "^0.0.6",
@@ -59,8 +59,5 @@
   },
   "peerDependencies": {
     "typescript": "*"
-  },
-  "tsd": {
-    "directory": "./type-tests"
   }
 }

@@ -25,7 +25,7 @@
   },
   "scripts": {
     "prepack": "copyfiles ../../{CHANGELOG.md,LICENSE} -u 2 . && npm run --prefix ../.. build",
-    "test": "tsd"
+    "test": "tsd --files ./type-tests"
   },
   "dependencies": {
     "@typescript-nameof/common-types": "^0.0.6"
@@ -33,8 +33,5 @@
   "devDependencies": {
     "copyfiles": "^2.4.1",
     "tsd": "^0.29.0"
-  },
-  "tsd": {
-    "directory": "./type-tests"
   }
 }
