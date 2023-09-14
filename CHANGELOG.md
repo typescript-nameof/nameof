@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## TypeScript `nameof` [Unreleased]
+### Fixed
+  - Language service plugin to improve accuracy of error messages
+
+### Updated
+  - The `IndexOutOfBoundError` message to show proper bounds
+  - Adapter to report errors for malformed, nested `nameof` calls
+  - CI configuration to add `.vsix` files to future releases
+  - All dependencies
+
+### Removed
+  - Unnecessary files from vscode extension
 
 [Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.5...dev)
 
