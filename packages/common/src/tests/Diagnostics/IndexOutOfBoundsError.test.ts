@@ -134,7 +134,7 @@ export function IndexOutOfBoundsErrorTests(): void
 
                                 if (nonZero)
                                 {
-                                    expected = `${rangeText} ${-value} and ${value}`;
+                                    expected = `${rangeText} ${-value} and ${value - 1}`;
                                 }
                                 else
                                 {

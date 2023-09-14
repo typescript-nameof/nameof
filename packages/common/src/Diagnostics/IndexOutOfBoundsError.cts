@@ -76,7 +76,7 @@ export class IndexOutOfBoundsError<TInput, TNode, TContext> extends AdapterError
         }
         else
         {
-            expectation = `a value between ${-this.SegmentCount} and ${this.SegmentCount}`;
+            expectation = `a value between ${-this.SegmentCount} and ${this.SegmentCount - 1}`;
         }
 
         return `The specified index is invalid. Expected ${expectation}, but got ${this.Index}`;

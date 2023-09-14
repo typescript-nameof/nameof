@@ -6,7 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## TypeScript `nameof` [Unreleased]
 
-[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.5...dev)
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.6...dev)
+
+## TypeScript `nameof` v0.0.6
+### Fixed
+  - Language service plugin to improve accuracy of error messages
+
+### Updated
+  - The `IndexOutOfBoundError` message to show proper bounds
+  - Adapter to report errors for malformed, nested `nameof` calls
+  - CI configuration to add `.vsix` files to future releases
+  - All dependencies
+
+### Removed
+  - Unnecessary files from vscode extension
+
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.5...v0.0.6)
 
 ## TypeScript `nameof` v0.0.5
 ### Fixed

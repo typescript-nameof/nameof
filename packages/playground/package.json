@@ -1,6 +1,6 @@
 {
   "name": "@typescript-nameof/playground",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "type": "module",
   "private": true,
   "description": "A project for testing the functionality of the `nameof` plugin.",
@@ -37,7 +37,7 @@
     "@types/nameof": "file:../types",
     "babel-plugin-macros": "^3.1.0",
     "cross-env": "^7.0.3",
-    "jest": "^29.6.4",
+    "jest": "^29.7.0",
     "ts-jest": "^29.1.1"
   },
   "devDependencies": {

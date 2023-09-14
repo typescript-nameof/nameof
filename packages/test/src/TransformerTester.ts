@@ -10,7 +10,6 @@ import
     MissingPropertyAccessError,
     NestedNameofError,
     NoReturnExpressionError,
-    SegmentNotFoundError,
     UnsupportedAccessorTypeError,
     UnsupportedNodeError,
     UnsupportedScenarioError,
@@ -261,6 +260,23 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                         for (let assertion of assertions)
                         {
                             reports(`nameof(${assertion}())`, NestedNameofError);
+                        }
+                    });
+
+                test(
+                    "Checking whether malformed, nested `nameof` calls are reported properly…",
+                    () =>
+                    {
+                        let assertions = [
+                            "nameof",
+                            "nameof.full",
+                            "nameof.array",
+                            "nameof.split"
+                        ];
+
+                        for (let assertion of assertions)
+                        {
+                            reports(`nameof(${assertion}(class Test { }))`, NestedNameofError);
                         }
                     });
             });
@@ -599,14 +615,9 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
 
                         for (let call of ["nameof.full", "nameof.split"])
                         {
-                            for (let snippet of outOfBounds)
+                            for (let snippet of [...outOfBounds, ...noSegmentLeft])
                             {
                                 await reports(`${call}${snippet}`, IndexOutOfBoundsError);
-                            }
-
-                            for (let snippet of noSegmentLeft)
-                            {
-                                await reports(`${call}${snippet}`, SegmentNotFoundError);
                             }
 
                             for (let snippet of invalidIndex)

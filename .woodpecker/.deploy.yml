@@ -118,7 +118,7 @@ steps:
         from_secret: github_publish_token
       files:
         - "*.tgz"
-        - "*.vsix"
+        - "packages/vscode/*.vsix"
       title: .releaseTitle.md
       note: .releaseNotes.md
     when:

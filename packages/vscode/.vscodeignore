@@ -1,0 +1,20 @@
+# TypeScript cache
+node_modules/@typescript-nameof/*/*.tsbuildinfo
+
+# Source-files
+[Ss]rc/
+node_modules/@typescript-nameof/*/[Ss]rc
+
+# TypeScript config-files
+node_modules/@typescript-nameof/*/tsconfig.json
+node_modules/@typescript-nameof/*/tsconfig.*.json
+
+# Source-maps
+node_modules/@typescript-nameof/*/[Ll]ib/**/*.map
+
+# Unit-Tests
+node_modules/@typescript-nameof/*/.mocharc.*
+node_modules/@typescript-nameof/*/[Ll]ib/tests/
+
+# tsd Tests
+node_modules/@typescript-nameof/*/type-tests/

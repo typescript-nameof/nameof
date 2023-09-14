@@ -1,6 +1,6 @@
 {
   "name": "typescript-nameof-plugin",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "type": "module",
   "private": true,
   "description": "A VSCode-Extension for validating `nameof` calls using `@typescript-nameof`",
@@ -21,18 +21,19 @@
     "access": "public"
   },
   "scripts": {
-    "vscode:prepublish": "copyfiles ../../{CHANGELOG.md,LICENSE} -u 2 . && npm run load-dependencies",
-    "vscode:postpublish": "npm run restore-root",
+    "vscode:prepublish": "copyfiles ../../{CHANGELOG.md,LICENSE} -u 2 . && npm run --prefix ../.. build && npm run load-dependencies",
+    "vscode:postpublish": "rimraf node_modules package-lock.json && npm run restore-root",
     "load-dependencies": "npm run unlink-root && npm run init-dependencies",
     "init-dependencies": "copyfiles \"../../node_modules/**/*\" -Fu 2 . && npm prune --ignore-lifecycle && npm install --package-lock-only",
     "unlink-root": "mve ../../package.json ../../_package.json",
-    "restore-root": "rm package-lock.json && mve ../../_package.json ../../package.json"
+    "restore-root": "mve ../../_package.json ../../package.json"
   },
   "dependencies": {
-    "@typescript-nameof/nameof": "^0.0.5"
+    "@typescript-nameof/nameof": "^0.0.6"
   },
   "devDependencies": {
-    "mve": "^0.1.2"
+    "mve": "^0.1.2",
+    "rimraf": "^5.0.1"
   },
   "displayName": "TypeScript nameof Plugin",
   "markdownDescription": "A VSCode-Extension for validating `nameof` calls using `@typescript-nameof`",
