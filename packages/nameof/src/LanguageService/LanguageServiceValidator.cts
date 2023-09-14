@@ -1,7 +1,6 @@
 import ts from "typescript";
 import { ILanguageServiceContext } from "./ILanguageServiceContext.cjs";
 import { LanguageServiceFeatures } from "./LanguageServiceFeatures.cjs";
-import { ITypeScriptContext } from "../Transformation/ITypeScriptContext.cjs";
 import { TypeScriptTransformerBase } from "../Transformation/TypeScriptTransformerBase.cjs";
 
 /**
@@ -37,26 +36,5 @@ export class LanguageServiceValidator extends TypeScriptTransformerBase<Language
         let context: Partial<ILanguageServiceContext> = { diagnostics: [] };
         this.Features.TypeScript.transform(sourceFile, [this.GetFactory(context)], compilerOptions);
         return context.diagnostics ?? [];
-    }
-
-    /**
-     * Transforms the specified {@linkcode node}.
-     *
-     * @param node
-     * The node to transform.
-     *
-     * @param context
-     * The context of the operation.
-     *
-     * @param tsContext
-     * The context of the typescript transformation.
-     *
-     * @returns
-     * The transformed representation of the specified {@linkcode node}.
-     */
-    protected override VisitNode<T extends ts.Node>(node: T, context: ITypeScriptContext, tsContext: ts.TransformationContext): T
-    {
-        super.VisitNode(node, context, tsContext);
-        return node;
     }
 }
