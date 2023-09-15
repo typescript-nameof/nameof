@@ -34,7 +34,7 @@ To find out more on how to set up TypeScript `nameof`, please head to the [Compi
 
 ## Features
   - **Easy Compiler Integration:** The `@typescript-nameof/nameof` package provides support for a wide variety of ecosystems out of the box.
-  - **Error Reporting:** In ecosystems supporting error reporting (`ts-patch` and `ts-jest`), rich error reporting experience is provided. For other ecosystems, errors including file names and locations of errors are printed to the console.
+  - **Error Reporting:** "TypeScript `nameof`" provides rich error reporting for vscode using a dedicated [extension](./packages/vscode). For editors supporting [TypeScript Language Service Plugins][LanguageServicePlugin], `@typescript-nameof/nameof` can also be used as a language service plugin. To find out how to do this, head over to the [Compiler Setup](#compiler-setup). Furthermore, supported compilers (currently only `ts-patch` and `ts-jest`) will report error messages in a useful format while compiling. For other ecosystems, errors including file names and locations of errors are printed to the console.
   - **Keyword Type Support:** Getting the name of keyword types such as `any`, `string`, `number` etc. is supported
 
 ## Packages
@@ -459,3 +459,6 @@ Furthermore, I'd like to thank each of the other contributors of `ts-nameof`, na
   - [@Kukks](https://github.com/Kukks)
 
 Without your work this reboot couldn't exist!
+
+<!--- References -->
+[LanguageServicePlugin]: https://github.com/microsoft/TypeScript/wiki/Writing-a-Language-Service-Plugin
