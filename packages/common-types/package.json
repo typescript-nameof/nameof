@@ -1,6 +1,6 @@
 {
   "name": "@typescript-nameof/common-types",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "description": "Provides Common Types for TypeScript `nameof` Packages.",
   "author": "Manuel Thalmann <m@nuth.ch>",
@@ -25,13 +25,10 @@
   },
   "scripts": {
     "prepack": "copyfiles ../../{CHANGELOG.md,LICENSE} -u 2 . && npm run --prefix ../.. build",
-    "test": "tsd"
+    "test": "tsd --files ./type-tests"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
     "tsd": "^0.29.0"
-  },
-  "tsd": {
-    "directory": "./type-tests"
   }
 }

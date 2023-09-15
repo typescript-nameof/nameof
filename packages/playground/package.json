@@ -1,6 +1,6 @@
 {
   "name": "@typescript-nameof/playground",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "private": true,
   "description": "A project for testing the functionality of the `nameof` plugin.",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@babel/cli": "^7.22.15",
-    "@babel/core": "^7.22.17",
+    "@babel/core": "^7.22.19",
     "@babel/preset-env": "^7.22.15",
     "@babel/preset-typescript": "^7.22.15",
     "@types/babel__core": "^7.20.1",
