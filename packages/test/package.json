@@ -38,6 +38,6 @@
   },
   "devDependencies": {
     "@types/sinon": "^10.0.16",
-    "ts-nameof-proxy": "^0.1.14514"
+    "ts-nameof-proxy": "^1.0.1"
   }
 }
