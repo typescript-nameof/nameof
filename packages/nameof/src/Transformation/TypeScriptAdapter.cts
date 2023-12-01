@@ -33,6 +33,11 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     private printer: ts.Printer | undefined;
 
     /**
+     * Syntax kinds producing identifier nodes.
+     */
+    private identifierNodeKinds: Set<ts.SyntaxKind>;
+
+    /**
      * Initializes a new instance of the {@linkcode TypeScriptAdapter} class.
      *
      * @param features
@@ -41,6 +46,21 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     public constructor(features: TypeScriptFeatures)
     {
         super(features);
+
+        this.identifierNodeKinds = new Set([
+            this.TypeScript.SyntaxKind.ThisKeyword,
+            this.TypeScript.SyntaxKind.SuperKeyword,
+            this.TypeScript.SyntaxKind.AnyKeyword,
+            this.TypeScript.SyntaxKind.UnknownKeyword,
+            this.TypeScript.SyntaxKind.VoidKeyword,
+            this.TypeScript.SyntaxKind.NeverKeyword,
+            this.TypeScript.SyntaxKind.ObjectKeyword,
+            this.TypeScript.SyntaxKind.BooleanKeyword,
+            this.TypeScript.SyntaxKind.NumberKeyword,
+            this.TypeScript.SyntaxKind.BigIntKeyword,
+            this.TypeScript.SyntaxKind.StringKeyword,
+            this.TypeScript.SyntaxKind.SymbolKeyword
+        ]);
     }
 
     /**
@@ -254,6 +274,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
      */
     protected ParseInternal(item: ts.Node, context: ITypeScriptContext): ParsedNode<ts.Node>
     {
+        const typeScript = this.TypeScript;
         if (this.IsCallExpression(item))
         {
             return new CallExpressionNode<ts.Node>(
@@ -262,25 +283,11 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                 item.typeArguments ?? [],
                 item.arguments);
         }
-        else if (
-            [
-                this.TypeScript.SyntaxKind.ThisKeyword,
-                this.TypeScript.SyntaxKind.SuperKeyword,
-                this.TypeScript.SyntaxKind.AnyKeyword,
-                this.TypeScript.SyntaxKind.UnknownKeyword,
-                this.TypeScript.SyntaxKind.VoidKeyword,
-                this.TypeScript.SyntaxKind.NeverKeyword,
-                this.TypeScript.SyntaxKind.ObjectKeyword,
-                this.TypeScript.SyntaxKind.BooleanKeyword,
-                this.TypeScript.SyntaxKind.NumberKeyword,
-                this.TypeScript.SyntaxKind.BigIntKeyword,
-                this.TypeScript.SyntaxKind.StringKeyword,
-                this.TypeScript.SyntaxKind.SymbolKeyword
-            ].includes(item.kind))
+        else if (this.identifierNodeKinds.has(item.kind))
         {
             return new IdentifierNode(item, this.PrintSourceCode(item, context));
         }
-        else if (this.TypeScript.isNumericLiteral(item))
+        else if (typeScript.isNumericLiteral(item))
         {
             return new NumericLiteralNode(item, parseFloat(item.text));
         }
@@ -288,15 +295,15 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         {
             return new StringLiteralNode(item, item.text);
         }
-        else if (this.TypeScript.isIdentifier(item))
+        else if (typeScript.isIdentifier(item))
         {
             return new IdentifierNode(item, this.PrintSourceCode(item, context));
         }
-        else if (this.TypeScript.isTypeReferenceNode(item))
+        else if (typeScript.isTypeReferenceNode(item))
         {
             return this.ParseNode(item.typeName, context);
         }
-        else if (this.TypeScript.isImportTypeNode(item))
+        else if (typeScript.isImportTypeNode(item))
         {
             if (item.qualifier)
             {
@@ -308,19 +315,16 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
             }
         }
         else if (
-            this.TypeScript.isNonNullExpression(item) ||
-            this.TypeScript.isParenthesizedExpression(item) ||
-            this.TypeScript.isAsExpression(item))
+            typeScript.isNonNullExpression(item) ||
+            typeScript.isParenthesizedExpression(item) ||
+            typeScript.isAsExpression(item))
         {
             return this.ParseNode(item.expression, context);
         }
-        else if (this.TypeScript.isPrefixUnaryExpression(item))
+        else if (typeScript.isPrefixUnaryExpression(item))
         {
-            if (
-                [
-                    this.TypeScript.SyntaxKind.PlusToken,
-                    this.TypeScript.SyntaxKind.MinusToken
-                ].includes(item.operator))
+            if (item.operator === typeScript.SyntaxKind.PlusToken ||
+                item.operator === typeScript.SyntaxKind.MinusToken)
             {
                 let node = this.ParseNode(item.operand, context);
 
@@ -328,20 +332,20 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                 {
                     return new NumericLiteralNode(
                         item,
-                        node.Value * (item.operator === this.TypeScript.SyntaxKind.MinusToken ? -1 : 1));
+                        node.Value * (item.operator === typeScript.SyntaxKind.MinusToken ? -1 : 1));
                 }
             }
         }
-        else if (this.TypeScript.isPropertyAccessExpression(item))
+        else if (typeScript.isPropertyAccessExpression(item))
         {
             return this.ParsePropertyAccessExpression(item, item.expression, item.name, context);
         }
         // Dotted paths in type references
-        else if (this.TypeScript.isQualifiedName(item))
+        else if (typeScript.isQualifiedName(item))
         {
             return this.ParsePropertyAccessExpression(item, item.left, item.right, context);
         }
-        else if (this.TypeScript.isElementAccessExpression(item))
+        else if (typeScript.isElementAccessExpression(item))
         {
             return new IndexAccessNode(
                 item,
@@ -349,11 +353,11 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                 this.ParseNode(item.argumentExpression, context));
         }
         // Index access paths in type references
-        else if (this.TypeScript.isIndexedAccessTypeNode(item))
+        else if (typeScript.isIndexedAccessTypeNode(item))
         {
             let indexer: ts.Node;
 
-            if (this.TypeScript.isLiteralTypeNode(item.indexType))
+            if (typeScript.isLiteralTypeNode(item.indexType))
             {
                 indexer = item.indexType.literal;
             }
@@ -368,8 +372,8 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
                 this.ParseNode(indexer, context));
         }
         else if (
-            this.TypeScript.isArrowFunction(item) ||
-            this.TypeScript.isFunctionExpression(item))
+            typeScript.isArrowFunction(item) ||
+            typeScript.isFunctionExpression(item))
         {
             return this.ParseFunction(item, context);
         }
