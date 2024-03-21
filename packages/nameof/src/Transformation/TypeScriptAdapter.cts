@@ -275,6 +275,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     protected ParseInternal(item: ts.Node, context: ITypeScriptContext): ParsedNode<ts.Node>
     {
         const typeScript = this.TypeScript;
+
         if (this.IsCallExpression(item))
         {
             return new CallExpressionNode<ts.Node>(
