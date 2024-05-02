@@ -33,7 +33,16 @@ export class ReplaceInTextTester extends TransformerTester<Node, ITypeScriptCont
     {
         try
         {
-            return replaceInText(code).fileText ?? "";
+            let result = replaceInText(code);
+
+            if (result.replaced)
+            {
+                return result.fileText ?? "";
+            }
+            else
+            {
+                return code;
+            }
         }
         catch (error)
         {
