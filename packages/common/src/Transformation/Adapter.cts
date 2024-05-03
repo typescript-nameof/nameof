@@ -428,6 +428,23 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             }
         }
 
+        return this.TryParse(item, context);
+    }
+
+    /**
+     * Tries to parse the specified {@linkcode item} and returns the result or the error that occurred.
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item} or a {@linkcode UnsupportedNode} in case a documented error occurred.
+     */
+    protected TryParse(item: TNode, context: TContext): ParsedNode<TNode>
+    {
         try
         {
             return this.ParseInternal(item, context);
