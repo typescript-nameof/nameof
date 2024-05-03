@@ -394,6 +394,72 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
+     * Parses the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    protected ParseNode(item: TNode, context: TContext): ParsedNode<TNode>
+    {
+        if (this.IsCallExpression(item))
+        {
+            let nameofCall = this.GetNameofCall(item, context);
+
+            if (
+                nameofCall &&
+                nameofCall.function === NameofFunction.Interpolate)
+            {
+                let expectedLength = 1;
+
+                if (nameofCall.arguments.length === expectedLength)
+                {
+                    return new InterpolationNode(nameofCall.source, nameofCall.arguments[0]);
+                }
+                else
+                {
+                    throw new InvalidArgumentCountError(this, nameofCall, expectedLength, context);
+                }
+            }
+        }
+
+        try
+        {
+            return this.ParseInternal(item, context);
+        }
+        catch (error)
+        {
+            if (error instanceof InternalError)
+            {
+                return new UnsupportedNode(item, error);
+            }
+            else
+            {
+                throw error;
+            }
+        }
+    }
+
+    /**
+     * Parses the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    protected abstract ParseInternal(item: TNode, context: TContext): ParsedNode<TNode>;
+
+    /**
      * Gets the targets of the specified `nameof` {@linkcode call}.
      *
      * @param call
@@ -804,94 +870,6 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Parses the specified {@linkcode item}.
-     *
-     * @param item
-     * The item to parse.
-     *
-     * @param context
-     * The context of the operation.
-     *
-     * @returns
-     * The parsed representation of the specified {@linkcode item}.
-     */
-    protected ParseNode(item: TNode, context: TContext): ParsedNode<TNode>
-    {
-        if (this.IsCallExpression(item))
-        {
-            let nameofCall = this.GetNameofCall(item, context);
-
-            if (
-                nameofCall &&
-                nameofCall.function === NameofFunction.Interpolate)
-            {
-                let expectedLength = 1;
-
-                if (nameofCall.arguments.length === expectedLength)
-                {
-                    return new InterpolationNode(nameofCall.source, nameofCall.arguments[0]);
-                }
-                else
-                {
-                    throw new InvalidArgumentCountError(this, nameofCall, expectedLength, context);
-                }
-            }
-        }
-
-        try
-        {
-            return this.ParseInternal(item, context);
-        }
-        catch (error)
-        {
-            if (error instanceof InternalError)
-            {
-                return new UnsupportedNode(item, error);
-            }
-            else
-            {
-                throw error;
-            }
-        }
-    }
-
-    /**
-     * Parses the specified {@linkcode item}.
-     *
-     * @param item
-     * The item to parse.
-     *
-     * @param context
-     * The context of the operation.
-     *
-     * @returns
-     * The parsed representation of the specified {@linkcode item}.
-     */
-    protected abstract ParseInternal(item: TNode, context: TContext): ParsedNode<TNode>;
-
-    /**
-     * Dumps the specified {@linkcode item}.
-     *
-     * @param item
-     * The item to dump.
-     */
-    protected abstract Dump(item: NameofResult<TNode>): TNode;
-
-    /**
-     * Dumps the specified {@linkcode items}.
-     *
-     * @param items
-     * The items to dump-
-     *
-     * @returns
-     * The newly created node.
-     */
-    protected DumpArray(items: Array<NameofResult<TNode>>): TNode
-    {
-        return this.CreateArrayLiteral(items.map((item) => this.Dump(item)));
-    }
-
-    /**
      * Gets the trailing name of the specified {@linkcode path}.
      *
      * @param call
@@ -1058,5 +1036,27 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
 
         throw new SegmentNotFoundError(this, call, context);
+    }
+
+    /**
+     * Dumps the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to dump.
+     */
+    protected abstract Dump(item: NameofResult<TNode>): TNode;
+
+    /**
+     * Dumps the specified {@linkcode items}.
+     *
+     * @param items
+     * The items to dump-
+     *
+     * @returns
+     * The newly created node.
+     */
+    protected DumpArray(items: Array<NameofResult<TNode>>): TNode
+    {
+        return this.CreateArrayLiteral(items.map((item) => this.Dump(item)));
     }
 }

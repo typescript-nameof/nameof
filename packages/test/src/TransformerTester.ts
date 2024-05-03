@@ -645,6 +645,14 @@ export abstract class TransformerTester<TNode, TContext = Record<string, never>>
                             }
                         }
                     });
+
+                test(
+                    "Checking whether call expressions with unsupported expression-nodes can be transformed…",
+                    async function()
+                    {
+                        setConfig(this);
+                        await transforms("!function() { }()", "!function() { }()");
+                    });
             });
     }
 }

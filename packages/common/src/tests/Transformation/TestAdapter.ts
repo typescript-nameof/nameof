@@ -244,6 +244,69 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
     /**
      * @inheritdoc
      *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    public override ParseNode(item: State, context: ITransformationContext<State>): ParsedNode<State>
+    {
+        return super.ParseNode(item, context);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    public override ParseInternal(item: State, context: ITransformationContext<State>): ParsedNode<State>
+    {
+        switch (item.type)
+        {
+            case NodeKind.CallExpressionNode:
+                return new CallExpressionNode(item, item.expression, item.typeArguments, item.arguments);
+            case NodeKind.IdentifierNode:
+                return new IdentifierNode(item, item.name);
+            case NodeKind.PropertyAccessNode:
+                return new PropertyAccessNode(
+                    item,
+                    this.ParseInternal(item.expression, context),
+                    new IdentifierNode(
+                        {
+                            type: NodeKind.IdentifierNode,
+                            name: item.propertyName
+                        } as Identifier,
+                        item.propertyName),
+                    item.propertyName);
+            case NodeKind.IndexAccessNode:
+                return new IndexAccessNode(item, this.ParseInternal(item.expression, context), this.ParseInternal(item.index, context));
+            case NodeKind.FunctionNode:
+                return new FunctionNode(item, item.parameters, item.body);
+            case NodeKind.StringLiteralNode:
+                return new StringLiteralNode(item, item.value);
+            case NodeKind.NumericLiteralNode:
+                return new NumericLiteralNode(item, item.value);
+            case NodeKind.InterpolationNode:
+                return new InterpolationNode(item, item.node);
+            default:
+                return new UnsupportedNode(item);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     *
      * @param call
      * The call to get the targets from.
      *
@@ -434,111 +497,6 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
     /**
      * @inheritdoc
      *
-     * @param item
-     * The item to parse.
-     *
-     * @param context
-     * The context of the operation.
-     *
-     * @returns
-     * The parsed representation of the specified {@linkcode item}.
-     */
-    public override ParseNode(item: State, context: ITransformationContext<State>): ParsedNode<State>
-    {
-        return super.ParseNode(item, context);
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param item
-     * The item to parse.
-     *
-     * @param context
-     * The context of the operation.
-     *
-     * @returns
-     * The parsed representation of the specified {@linkcode item}.
-     */
-    public override ParseInternal(item: State, context: ITransformationContext<State>): ParsedNode<State>
-    {
-        switch (item.type)
-        {
-            case NodeKind.CallExpressionNode:
-                return new CallExpressionNode(item, item.expression, item.typeArguments, item.arguments);
-            case NodeKind.IdentifierNode:
-                return new IdentifierNode(item, item.name);
-            case NodeKind.PropertyAccessNode:
-                return new PropertyAccessNode(
-                    item,
-                    this.ParseInternal(item.expression, context),
-                    new IdentifierNode(
-                        {
-                            type: NodeKind.IdentifierNode,
-                            name: item.propertyName
-                        } as Identifier,
-                        item.propertyName),
-                    item.propertyName);
-            case NodeKind.IndexAccessNode:
-                return new IndexAccessNode(item, this.ParseInternal(item.expression, context), this.ParseInternal(item.index, context));
-            case NodeKind.FunctionNode:
-                return new FunctionNode(item, item.parameters, item.body);
-            case NodeKind.StringLiteralNode:
-                return new StringLiteralNode(item, item.value);
-            case NodeKind.NumericLiteralNode:
-                return new NumericLiteralNode(item, item.value);
-            case NodeKind.InterpolationNode:
-                return new InterpolationNode(item, item.node);
-            default:
-                return new UnsupportedNode(item);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param item
-     * The item to dump.
-     *
-     * @returns
-     * The dumped node.
-     */
-    public override Dump(item: NameofResult<State>): State
-    {
-        if (item.type === ResultType.Node)
-        {
-            return item.node;
-        }
-        else if (item.type === ResultType.Plain)
-        {
-            return {
-                type: NodeKind.StringLiteralNode,
-                value: item.text
-            };
-        }
-        else
-        {
-            return { type: StateKind.TemplateLiteral };
-        }
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param items
-     * The items to dump-
-     *
-     * @returns
-     * The newly created node.
-     */
-    public override DumpArray(items: Array<NameofResult<State>>): State
-    {
-        return super.DumpArray(items);
-    }
-
-    /**
-     * @inheritdoc
-     *
      * @param call
      * The call which is being transformed.
      *
@@ -603,5 +561,47 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
     public override GetPathSegments(call: NameofCall<State>, path: Array<PathPartCandidate<State>>, start: number, count: number, context: ITransformationContext<State>): Array<PathPart<State>>
     {
         return super.GetPathSegments(call, path, start, count, context);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to dump.
+     *
+     * @returns
+     * The dumped node.
+     */
+    public override Dump(item: NameofResult<State>): State
+    {
+        if (item.type === ResultType.Node)
+        {
+            return item.node;
+        }
+        else if (item.type === ResultType.Plain)
+        {
+            return {
+                type: NodeKind.StringLiteralNode,
+                value: item.text
+            };
+        }
+        else
+        {
+            return { type: StateKind.TemplateLiteral };
+        }
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param items
+     * The items to dump-
+     *
+     * @returns
+     * The newly created node.
+     */
+    public override DumpArray(items: Array<NameofResult<State>>): State
+    {
+        return super.DumpArray(items);
     }
 }
