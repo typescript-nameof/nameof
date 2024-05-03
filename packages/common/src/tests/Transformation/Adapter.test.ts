@@ -1326,7 +1326,7 @@ export function AdapterTests(): void
                 });
 
             suite(
-                nameOf<TestAdapter>((adapter) => adapter.ParseNode),
+                nameOf<TestAdapter>((adapter) => adapter.Parse),
                 () =>
                 {
                     let interpolationCall: CallExpression;
@@ -1358,7 +1358,7 @@ export function AdapterTests(): void
                         "Checking whether interpolation calls are handled by this method…",
                         () =>
                         {
-                            let result = adapter.ParseNode(interpolationCall, {});
+                            let result = adapter.Parse(interpolationCall, {});
                             strictEqual(result.Type, NodeKind.InterpolationNode);
                             strictEqual(result.Source, interpolationCall);
                             strictEqual(result.Expression, consoleLog);
@@ -1369,7 +1369,7 @@ export function AdapterTests(): void
                         () =>
                         {
                             interpolationCall.arguments = [consoleLog, consoleLog];
-                            throws(() => adapter.ParseNode(interpolationCall, {}), InvalidArgumentCountError);
+                            throws(() => adapter.Parse(interpolationCall, {}), InvalidArgumentCountError);
                         });
 
                     test(
@@ -1377,7 +1377,7 @@ export function AdapterTests(): void
                         () =>
                         {
                             let context = {};
-                            adapter.ParseNode(consoleLog, context);
+                            adapter.Parse(consoleLog, context);
                             ok(adapter.ParseInternal.calledWith(consoleLog, context));
                         });
 
@@ -1387,7 +1387,7 @@ export function AdapterTests(): void
                         {
                             let error = new CustomError(adapter, validInput, {}, "");
                             adapter.ParseInternal.throws(error);
-                            let result = adapter.ParseNode(consoleLog, {});
+                            let result = adapter.Parse(consoleLog, {});
                             strictEqual(result.Type, NodeKind.UnsupportedNode);
                             strictEqual(result.Source, consoleLog);
                             strictEqual(result.Reason, error);

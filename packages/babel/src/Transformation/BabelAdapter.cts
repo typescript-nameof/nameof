@@ -317,13 +317,13 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
         }
         else if (this.Types.isTSTypeReference(item))
         {
-            return this.ParseNode(item.typeName, context);
+            return this.Parse(item.typeName, context);
         }
         else if (this.Types.isTSImportType(item))
         {
             if (item.qualifier)
             {
-                return this.ParseNode(item.qualifier, context);
+                return this.Parse(item.qualifier, context);
             }
             else
             {
@@ -335,13 +335,13 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
             this.Types.isParenthesizedExpression(item) ||
             this.Types.isTSAsExpression(item))
         {
-            return this.ParseNode(item.expression, context);
+            return this.Parse(item.expression, context);
         }
         else if (this.Types.isUnaryExpression(item))
         {
             if (["-", "+"].includes(item.operator))
             {
-                let node = this.ParseNode(item.argument, context);
+                let node = this.Parse(item.argument, context);
 
                 if (node.Type === NodeKind.NumericLiteralNode)
                 {
@@ -357,8 +357,8 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
             {
                 return new IndexAccessNode(
                     item,
-                    this.ParseNode(item.object, context),
-                    this.ParseNode(item.property, context));
+                    this.Parse(item.object, context),
+                    this.Parse(item.property, context));
             }
             else if (this.Types.isIdentifier(item.property))
             {
@@ -386,8 +386,8 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
 
             return new IndexAccessNode(
                 item,
-                this.ParseNode(item.objectType, context),
-                this.ParseNode(indexer, context));
+                this.Parse(item.objectType, context),
+                this.Parse(indexer, context));
         }
         else if (
             this.Types.isFunctionExpression(item) ||
@@ -446,8 +446,8 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
     {
         return new PropertyAccessNode(
             source,
-            this.ParseNode(expression, context),
-            this.ParseNode(property, context),
+            this.Parse(expression, context),
+            this.Parse(property, context),
             property.name);
     }
 

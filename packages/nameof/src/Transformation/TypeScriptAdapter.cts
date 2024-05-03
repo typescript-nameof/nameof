@@ -302,13 +302,13 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         }
         else if (typeScript.isTypeReferenceNode(item))
         {
-            return this.ParseNode(item.typeName, context);
+            return this.Parse(item.typeName, context);
         }
         else if (typeScript.isImportTypeNode(item))
         {
             if (item.qualifier)
             {
-                return this.ParseNode(item.qualifier, context);
+                return this.Parse(item.qualifier, context);
             }
             else
             {
@@ -320,14 +320,14 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
             typeScript.isParenthesizedExpression(item) ||
             typeScript.isAsExpression(item))
         {
-            return this.ParseNode(item.expression, context);
+            return this.Parse(item.expression, context);
         }
         else if (typeScript.isPrefixUnaryExpression(item))
         {
             if (item.operator === typeScript.SyntaxKind.PlusToken ||
                 item.operator === typeScript.SyntaxKind.MinusToken)
             {
-                let node = this.ParseNode(item.operand, context);
+                let node = this.Parse(item.operand, context);
 
                 if (node.Type === NodeKind.NumericLiteralNode)
                 {
@@ -350,8 +350,8 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
         {
             return new IndexAccessNode(
                 item,
-                this.ParseNode(item.expression, context),
-                this.ParseNode(item.argumentExpression, context));
+                this.Parse(item.expression, context),
+                this.Parse(item.argumentExpression, context));
         }
         // Index access paths in type references
         else if (typeScript.isIndexedAccessTypeNode(item))
@@ -369,8 +369,8 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
 
             return new IndexAccessNode(
                 item,
-                this.ParseNode(item.objectType, context),
-                this.ParseNode(indexer, context));
+                this.Parse(item.objectType, context),
+                this.Parse(indexer, context));
         }
         else if (
             typeScript.isArrowFunction(item) ||
@@ -404,8 +404,8 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
     {
         return new PropertyAccessNode(
             source,
-            this.ParseNode(expression, context),
-            this.ParseNode(property, context),
+            this.Parse(expression, context),
+            this.Parse(property, context),
             this.PrintSourceCode(property, context));
     }
 

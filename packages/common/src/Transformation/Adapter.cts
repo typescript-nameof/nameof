@@ -405,7 +405,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * @returns
      * The parsed representation of the specified {@linkcode item}.
      */
-    protected ParseNode(item: TNode, context: TContext): ParsedNode<TNode>
+    protected Parse(item: TNode, context: TContext): ParsedNode<TNode>
     {
         if (this.IsCallExpression(item))
         {
@@ -652,12 +652,12 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
 
         let processor = (node: TNode): NameofResult<TNode> =>
         {
-            return this.GetName(call, this.ParseNode(node, context).Path, context);
+            return this.GetName(call, this.Parse(node, context).Path, context);
         };
 
         if (call.arguments.length === 1)
         {
-            let parsedNode = this.ParseNode(call.arguments[0], context);
+            let parsedNode = this.Parse(call.arguments[0], context);
 
             if (parsedNode.Type === NodeKind.FunctionNode)
             {
@@ -758,7 +758,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             }
             else if (call.typeArguments.length === 1)
             {
-                let parsedArgument = this.ParseNode(call.arguments[0], context);
+                let parsedArgument = this.Parse(call.arguments[0], context);
 
                 if (parsedArgument.Type === NodeKind.NumericLiteralNode)
                 {
@@ -777,7 +777,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
         else if (call.arguments.length === 2)
         {
-            let parsedNode = this.ParseNode(call.arguments[1], context);
+            let parsedNode = this.Parse(call.arguments[1], context);
 
             if (parsedNode.Type === NodeKind.NumericLiteralNode)
             {
@@ -823,7 +823,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      */
     protected ProcessSingle(call: NameofCall<TNode>, node: TNode, context: TContext): Array<PathPartCandidate<TNode>>
     {
-        let result = this.ParseNode(node, context);
+        let result = this.Parse(node, context);
 
         if (result.Type === NodeKind.FunctionNode)
         {
@@ -852,7 +852,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      */
     protected ProcessFunctionBody(functionNode: FunctionNode<TNode>, node: TNode, context: TContext): Array<PathPartCandidate<TNode>>
     {
-        let path = this.ParseNode(node, context).Path;
+        let path = this.Parse(node, context).Path;
 
         if (
             path[0].type === PathKind.Identifier &&

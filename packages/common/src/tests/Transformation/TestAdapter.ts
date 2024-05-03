@@ -253,9 +253,9 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
      * @returns
      * The parsed representation of the specified {@linkcode item}.
      */
-    public override ParseNode(item: State, context: ITransformationContext<State>): ParsedNode<State>
+    public override Parse(item: State, context: ITransformationContext<State>): ParsedNode<State>
     {
-        return super.ParseNode(item, context);
+        return super.Parse(item, context);
     }
 
     /**
