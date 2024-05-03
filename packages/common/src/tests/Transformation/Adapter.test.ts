@@ -279,9 +279,9 @@ export function AdapterTests(): void
                             let error = sandbox.createStubInstance(UnsupportedNodeError);
                             let reportAction = sandbox.stub(error, "ReportAction");
                             sandbox.replaceGetter(error, "ReportAction", () => reportAction);
-                            sandbox.stub(adapter, "ParseInternal");
-                            adapter.ParseInternal = sandbox.stub();
-                            adapter.ParseInternal.throws(error);
+                            sandbox.stub(adapter, "ProcessNameofCall");
+                            adapter.ProcessNameofCall = sandbox.stub();
+                            adapter.ProcessNameofCall.throws(error);
                             ok(!reportAction.called);
                             adapter.Transform(validInput, {});
                             ok(reportAction.calledOnce);
@@ -439,7 +439,7 @@ export function AdapterTests(): void
                         "Checking whether default calls are interpreted properly…",
                         () =>
                         {
-                            let call = adapter.GetNameofCall(validInput, {});
+                            let call = adapter.GetNameofCall(adapter.Parse(validInput, {}), {});
                             ok(call);
                             assertCorrectCallData(validInput, call);
                         });
@@ -454,7 +454,7 @@ export function AdapterTests(): void
                                 name: "myNameof"
                             };
 
-                            strictEqual(adapter.GetNameofCall(validInput, {}), undefined);
+                            strictEqual(adapter.GetNameofCall(adapter.Parse(validInput, {}), {}), undefined);
                         });
 
                     test(
@@ -473,7 +473,7 @@ export function AdapterTests(): void
                                     type: assertion[0] as any
                                 };
 
-                                let call = adapter.GetNameofCall(node, {});
+                                let call = adapter.GetNameofCall(adapter.Parse(node, {}), {});
 
                                 if (assertion[1])
                                 {
@@ -504,7 +504,7 @@ export function AdapterTests(): void
 
                             for (let assertion of assertions)
                             {
-                                let call = adapter.GetNameofCall(assertion, {});
+                                let call = adapter.GetNameofCall(adapter.Parse(assertion, {}), {});
                                 ok(call);
                                 strictEqual(call.source, assertion);
                                 strictEqual(call.function, NameofFunction.Typed);
@@ -545,7 +545,7 @@ export function AdapterTests(): void
                                         };
                                     }
 
-                                    let call = adapter.GetNameofCall(node, {});
+                                    let call = adapter.GetNameofCall(adapter.Parse(node, {}), {});
                                     assertCorrectCallData(node, call, nameofFunction);
                                 }
                             });

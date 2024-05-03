@@ -227,8 +227,8 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
     /**
      * @inheritdoc
      *
-     * @param item
-     * The item to parse.
+     * @param node
+     * The node to parse.
      *
      * @param context
      * The context of the operation.
@@ -236,9 +236,9 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
      * @returns
      * The parsed {@linkcode NameofCall} or `undefined` if no `nameof` call was found.
      */
-    public override GetNameofCall(item: State, context: ITransformationContext<State>): NameofCall<State> | undefined
+    public override GetNameofCall(node: ParsedNode<State>, context: ITransformationContext<State>): NameofCall<State> | undefined
     {
-        return super.GetNameofCall(item, context);
+        return super.GetNameofCall(node, context);
     }
 
     /**

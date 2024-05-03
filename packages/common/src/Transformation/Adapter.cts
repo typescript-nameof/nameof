@@ -23,7 +23,6 @@ import { ResultType } from "../ResultType.cjs";
 import { AccessExpressionNode } from "../Serialization/AccessExpressionNode.cjs";
 import { CallExpressionNode } from "../Serialization/CallExpressionNode.cjs";
 import { FunctionNode } from "../Serialization/FunctionNode.cjs";
-import { IndexAccessNode } from "../Serialization/IndexAccessNode.cjs";
 import { InterpolationNode } from "../Serialization/InterpolationNode.cjs";
 import { NameofCall } from "../Serialization/NameofCall.cjs";
 import { NodeKind } from "../Serialization/NodeKind.cjs";
@@ -32,7 +31,6 @@ import { ParsedNode } from "../Serialization/ParsedNode.cjs";
 import { PathKind } from "../Serialization/PathKind.cjs";
 import { PathPart } from "../Serialization/PathPart.cjs";
 import { PathPartCandidate } from "../Serialization/PathPartCandidate.cjs";
-import { PropertyAccessNode } from "../Serialization/PropertyAccessNode.cjs";
 import { UnsupportedNode } from "../Serialization/UnsupportedNode.cjs";
 
 /**
@@ -138,7 +136,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         try
         {
             let newNode = node;
-            let nameofCall = this.GetNameofCall(node, context);
+            let nameofCall = this.GetNameofCall(this.Parse(node, context), context);
 
             if (nameofCall)
             {
@@ -326,23 +324,22 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Gets the {@linkcode NameofCall} represented by the specified {@linkcode item}.
+     * Gets the {@linkcode NameofCall} represented by the specified {@linkcode node}.
      *
-     * @param item
-     * The item to parse.
+     * @param node
+     * The node to convert.
      *
      * @param context
      * The context of the operation.
      *
      * @returns
-     * The parsed {@linkcode NameofCall} or `undefined` if no `nameof` call was found.
+     * The either a {@linkcode NameofCall} or `undefined` if no `nameof` call was found.
      */
-    protected GetNameofCall(item: TNode, context: TContext): NameofCall<TNode> | undefined
+    protected GetNameofCall(node: ParsedNode<TNode>, context: TContext): NameofCall<TNode> | undefined
     {
-        if (this.IsAccessExpression(item))
+        if (node instanceof AccessExpressionNode)
         {
-            let accessExpression = this.ParseInternal(item, context) as PropertyAccessNode<TNode> | IndexAccessNode<TNode>;
-            let nameofCall = this.GetNameofCall(accessExpression.Expression.Source, context);
+            let nameofCall = this.GetNameofCall(node.Expression, context);
 
             if (
                 nameofCall &&
@@ -350,18 +347,17 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             {
                 return {
                     ...nameofCall,
-                    source: item,
+                    source: node.Source,
                     typeArguments: [],
                     arguments: [
-                        accessExpression.Source
+                        node.Source
                     ]
                 };
             }
         }
-        else if (this.IsCallExpression(item))
+        else if (node.Type === NodeKind.CallExpressionNode)
         {
-            let callNode = this.ParseInternal(item, context) as CallExpressionNode<TNode>;
-            let expression = this.ParseInternal(callNode.Expression, context);
+            let expression = this.Parse(node.Expression, context);
             let property: string | undefined;
 
             if (expression.Type === NodeKind.PropertyAccessNode)
@@ -382,10 +378,24 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                 expression.Name === this.GetNameofName(context))
             {
                 return {
-                    source: item,
+                    source: node.Source,
                     function: property,
-                    typeArguments: callNode.TypeArguments,
-                    arguments: callNode.Arguments
+                    typeArguments: node.TypeArguments,
+                    arguments: node.Arguments
+                };
+            }
+        }
+        else if (node.Type === NodeKind.InterpolationNode)
+        {
+            if (this.IsCallExpression(node.Source))
+            {
+                let call = this.TryParse(node.Source, context) as CallExpressionNode<TNode>;
+
+                return {
+                    source: node.Source,
+                    function: NameofFunction.Interpolate,
+                    arguments: call.Arguments,
+                    typeArguments: call.TypeArguments
                 };
             }
         }
@@ -407,9 +417,11 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      */
     protected Parse(item: TNode, context: TContext): ParsedNode<TNode>
     {
+        let node = this.TryParse(item, context);
+
         if (this.IsCallExpression(item))
         {
-            let nameofCall = this.GetNameofCall(item, context);
+            let nameofCall = this.GetNameofCall(node, context);
 
             if (
                 nameofCall &&
@@ -428,7 +440,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             }
         }
 
-        return this.TryParse(item, context);
+        return node;
     }
 
     /**
