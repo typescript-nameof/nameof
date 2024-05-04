@@ -21,6 +21,26 @@ export class BabelPluginTester extends TransformerTester<babel.Node, IBabelConte
 
     /**
      * @inheritdoc
+     */
+    public override RegisterTests(): void
+    {
+        suite(
+            "General",
+            () =>
+            {
+                test(
+                    "Checking whether the package can be used as a babel plugin…",
+                    async () =>
+                    {
+                        await this.RunBabel("!function(){}()", "@typescript-nameof/babel");
+                    });
+            });
+
+        super.RegisterTests();
+    }
+
+    /**
+     * @inheritdoc
      *
      * @param code
      * The code to transform.
@@ -38,21 +58,38 @@ export class BabelPluginTester extends TransformerTester<babel.Node, IBabelConte
             return new BabelTransformer(babelAPI, errorHandler).Plugin;
         };
 
+        return this.RunBabel(code, plugin);
+    }
+
+    /**
+     * Transforms the specified {@linkcode code} using babel.
+     *
+     * @param code
+     * The code to transform.
+     *
+     * @param plugin
+     * The plugin to use for the transformation.
+     *
+     * @returns
+     * The transformed {@linkcode code}.
+     */
+    protected async RunBabel(code: string, plugin: babel.PluginItem): Promise<string>
+    {
         return (
             await babel.transformAsync(
-            code,
-            {
-                presets: [
-                    "@babel/preset-typescript"
-                ],
-                plugins: [
-                    plugin
-                ],
-                filename: resolve(fileURLToPath(new URL(".", import.meta.url)), "test.ts"),
-                ast: false,
-                generatorOpts: {
-                    retainLines: true
-                }
-            }))?.code ?? "";
+                code,
+                {
+                    presets: [
+                        "@babel/preset-typescript"
+                    ],
+                    plugins: [
+                        plugin
+                    ],
+                    filename: resolve(fileURLToPath(new URL(".", import.meta.url)), "test.ts"),
+                    ast: false,
+                    generatorOpts: {
+                        retainLines: true
+                    }
+                }))?.code ?? "";
     }
 }
