@@ -402,6 +402,27 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
+     * Gets the targets of the specified `nameof` {@linkcode call}.
+     *
+     * @param call
+     * The call to get the targets from.
+     *
+     * @returns
+     * The targets of the specified {@linkcode call}.
+     */
+    protected GetTargets(call: NameofCall<TNode>): readonly TNode[]
+    {
+        if (call.arguments.length > 0)
+        {
+            return call.arguments;
+        }
+        else
+        {
+            return call.typeArguments;
+        }
+    }
+
+    /**
      * Parses the specified {@linkcode item}.
      *
      * @param item
@@ -485,27 +506,6 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      * The parsed representation of the specified {@linkcode item}.
      */
     protected abstract ParseInternal(item: TNode, context: TContext): ParsedNode<TNode>;
-
-    /**
-     * Gets the targets of the specified `nameof` {@linkcode call}.
-     *
-     * @param call
-     * The call to get the targets from.
-     *
-     * @returns
-     * The targets of the specified {@linkcode call}.
-     */
-    protected GetTargets(call: NameofCall<TNode>): readonly TNode[]
-    {
-        if (call.arguments.length > 0)
-        {
-            return call.arguments;
-        }
-        else
-        {
-            return call.typeArguments;
-        }
-    }
 
     /**
      * Transforms the specified `nameof` {@linkcode call}.

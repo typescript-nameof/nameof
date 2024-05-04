@@ -244,6 +244,20 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
     /**
      * @inheritdoc
      *
+     * @param call
+     * The call to get the targets from.
+     *
+     * @returns
+     * The targets of the specified {@linkcode call}.
+     */
+    public override GetTargets(call: NameofCall<State>): readonly State[]
+    {
+        return super.GetTargets(call);
+    }
+
+    /**
+     * @inheritdoc
+     *
      * @param item
      * The item to parse.
      *
@@ -302,20 +316,6 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
             default:
                 return new UnsupportedNode(item);
         }
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param call
-     * The call to get the targets from.
-     *
-     * @returns
-     * The targets of the specified {@linkcode call}.
-     */
-    public override GetTargets(call: NameofCall<State>): readonly State[]
-    {
-        return super.GetTargets(call);
     }
 
     /**
