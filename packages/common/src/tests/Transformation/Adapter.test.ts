@@ -594,8 +594,8 @@ export function AdapterTests(): void
                                 ]
                             };
 
-                            sandbox.stub(adapter, "ParseInternal");
-                            adapter.ParseInternal.callThrough();
+                            sandbox.stub(adapter, "TryParse");
+                            adapter.TryParse.callThrough();
                         });
 
                     test(
@@ -617,12 +617,24 @@ export function AdapterTests(): void
                         });
 
                     test(
-                        `Checking whether other nodes are forwarded to the \`${nameOf<TestAdapter>((a) => a.ParseInternal)}\` method…`,
+                        `Checking whether other nodes are forwarded to the \`${nameOf<TestAdapter>((a) => a.TryParse)}\` method…`,
                         () =>
                         {
                             let context = {};
                             adapter.Parse(consoleLog, context);
-                            ok(adapter.ParseInternal.calledWith(consoleLog, context));
+                            ok(adapter.TryParse.calledWith(consoleLog, context));
+                        });
+                });
+
+            suite(
+                nameOf<TestAdapter>((adapter) => adapter.TryParse),
+                () =>
+                {
+                    setup(
+                        () =>
+                        {
+                            sandbox.stub(adapter, "ParseInternal");
+                            adapter.ParseInternal.callThrough();
                         });
 
                     test(

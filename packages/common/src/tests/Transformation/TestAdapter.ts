@@ -282,6 +282,23 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
      * The context of the operation.
      *
      * @returns
+     * The parsed representation of the specified {@linkcode item} or a {@linkcode UnsupportedNode} in case a documented error occurred.
+     */
+    public override TryParse(item: State, context: ITransformationContext<State>): ParsedNode<State>
+    {
+        return super.TryParse(item, context);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
      * The parsed representation of the specified {@linkcode item}.
      */
     public override ParseInternal(item: State, context: ITransformationContext<State>): ParsedNode<State>
