@@ -30,6 +30,7 @@ import { IUnsupportedPath } from "../../Serialization/IUnsupportedPath.cjs";
 import { NameofCall } from "../../Serialization/NameofCall.cjs";
 import { NodeKind } from "../../Serialization/NodeKind.cjs";
 import { NumericLiteralNode } from "../../Serialization/NumericLiteralNode.cjs";
+import { ParsedNode } from "../../Serialization/ParsedNode.cjs";
 import { PathKind } from "../../Serialization/PathKind.cjs";
 import { PathPart } from "../../Serialization/PathPart.cjs";
 import { PathPartCandidate } from "../../Serialization/PathPartCandidate.cjs";
@@ -435,11 +436,33 @@ export function AdapterTests(): void
                         deepStrictEqual(call?.typeArguments, node.typeArguments);
                     }
 
+                    /**
+                     * Parses the specified {@linkcode item}.
+                     *
+                     * @param item
+                     * The item to parse.
+                     *
+                     * @returns
+                     * The parsed representation of the specified {@linkcode item}.
+                     */
+                    function parse(item: State): ParsedNode<State>
+                    {
+                        return adapter.Parse(item, {});
+                    }
+
+                    let validNode: ParsedNode<State>;
+
+                    setup(
+                        () =>
+                        {
+                            validNode = adapter.Parse(validInput, {});
+                        });
+
                     test(
                         "Checking whether default calls are interpreted properly…",
                         () =>
                         {
-                            let call = adapter.GetNameofCall(adapter.Parse(validInput, {}), {});
+                            let call = adapter.GetNameofCall(validNode, {});
                             ok(call);
                             assertCorrectCallData(validInput, call);
                         });
@@ -454,7 +477,7 @@ export function AdapterTests(): void
                                 name: "myNameof"
                             };
 
-                            strictEqual(adapter.GetNameofCall(adapter.Parse(validInput, {}), {}), undefined);
+                            strictEqual(adapter.GetNameofCall(parse(validInput), {}), undefined);
                         });
 
                     test(
@@ -473,7 +496,7 @@ export function AdapterTests(): void
                                     type: assertion[0] as any
                                 };
 
-                                let call = adapter.GetNameofCall(adapter.Parse(node, {}), {});
+                                let call = adapter.GetNameofCall(parse(node), {});
 
                                 if (assertion[1])
                                 {
@@ -504,7 +527,7 @@ export function AdapterTests(): void
 
                             for (let assertion of assertions)
                             {
-                                let call = adapter.GetNameofCall(adapter.Parse(assertion, {}), {});
+                                let call = adapter.GetNameofCall(parse(assertion), {});
                                 ok(call);
                                 strictEqual(call.source, assertion);
                                 strictEqual(call.function, NameofFunction.Typed);
@@ -545,7 +568,7 @@ export function AdapterTests(): void
                                         };
                                     }
 
-                                    let call = adapter.GetNameofCall(adapter.Parse(node, {}), {});
+                                    let call = adapter.GetNameofCall(parse(node), {});
                                     assertCorrectCallData(node, call, nameofFunction);
                                 }
                             });
