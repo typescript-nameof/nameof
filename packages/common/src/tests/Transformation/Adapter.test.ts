@@ -25,6 +25,7 @@ import { IdentifierNode } from "../../Serialization/IdentifierNode.cjs";
 import { IIdentifier } from "../../Serialization/IIdentifier.cjs";
 import { IIndexAccessor } from "../../Serialization/IIndexAccessor.cjs";
 import { IInterpolation } from "../../Serialization/IInterpolation.cjs";
+import { InterpolationNode } from "../../Serialization/InterpolationNode.cjs";
 import { IPropertyAccessor } from "../../Serialization/IPropertyAccessor.cjs";
 import { IUnsupportedPath } from "../../Serialization/IUnsupportedPath.cjs";
 import { NameofCall } from "../../Serialization/NameofCall.cjs";
@@ -573,6 +574,23 @@ export function AdapterTests(): void
                                 }
                             });
                     }
+
+                    test(
+                        `Checking whether \`${InterpolationNode.name}\`s are processed properly…`,
+                        () =>
+                        {
+                            let expression = {} as State;
+                            let args = [{}, {}] as State[];
+                            let typeArgs = [{}, {}, {}] as State[];
+                            let interpolationNode = new InterpolationNode(interpolation, expression, typeArgs, args);
+                            let result = adapter.GetNameofCall(interpolationNode, {});
+
+                            ok(result);
+                            strictEqual(result.source, interpolation);
+                            strictEqual(result.function, NameofFunction.Interpolate);
+                            strictEqual(result.typeArguments, typeArgs);
+                            strictEqual(result.arguments, args);
+                        });
                 });
 
             suite(
