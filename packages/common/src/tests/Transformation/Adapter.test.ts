@@ -570,6 +570,75 @@ export function AdapterTests(): void
                 });
 
             suite(
+                nameOf<TestAdapter>((adapter) => adapter.Parse),
+                () =>
+                {
+                    let interpolationCall: CallExpression;
+
+                    setup(
+                        () =>
+                        {
+                            interpolationCall = {
+                                type: NodeKind.CallExpressionNode,
+                                expression: {
+                                    type: NodeKind.PropertyAccessNode,
+                                    expression: {
+                                        type: NodeKind.IdentifierNode,
+                                        name: adapter.GetNameofName({})
+                                    },
+                                    propertyName: NameofFunction.Interpolate
+                                },
+                                typeArguments: [],
+                                arguments: [
+                                    consoleLog
+                                ]
+                            };
+
+                            sandbox.stub(adapter, "ParseInternal");
+                            adapter.ParseInternal.callThrough();
+                        });
+
+                    test(
+                        "Checking whether interpolation calls are handled by this method…",
+                        () =>
+                        {
+                            let result = adapter.Parse(interpolationCall, {});
+                            strictEqual(result.Type, NodeKind.InterpolationNode);
+                            strictEqual(result.Source, interpolationCall);
+                            strictEqual(result.Expression, consoleLog);
+                        });
+
+                    test(
+                        "Checking whether passing too many arguments to an interpolation call throws an error…",
+                        () =>
+                        {
+                            interpolationCall.arguments = [consoleLog, consoleLog];
+                            throws(() => adapter.Parse(interpolationCall, {}), InvalidArgumentCountError);
+                        });
+
+                    test(
+                        `Checking whether other nodes are forwarded to the \`${nameOf<TestAdapter>((a) => a.ParseInternal)}\` method…`,
+                        () =>
+                        {
+                            let context = {};
+                            adapter.Parse(consoleLog, context);
+                            ok(adapter.ParseInternal.calledWith(consoleLog, context));
+                        });
+
+                    test(
+                        "Checking whether internal errors are returned as unsupported nodes…",
+                        () =>
+                        {
+                            let error = new CustomError(adapter, validInput, {}, "");
+                            adapter.ParseInternal.throws(error);
+                            let result = adapter.Parse(consoleLog, {});
+                            strictEqual(result.Type, NodeKind.UnsupportedNode);
+                            strictEqual(result.Source, consoleLog);
+                            strictEqual(result.Reason, error);
+                        });
+                });
+
+            suite(
                 nameOf<TestAdapter>((adapter) => adapter.ProcessNameofCall),
                 () =>
                 {
@@ -1326,127 +1395,6 @@ export function AdapterTests(): void
                 });
 
             suite(
-                nameOf<TestAdapter>((adapter) => adapter.Parse),
-                () =>
-                {
-                    let interpolationCall: CallExpression;
-
-                    setup(
-                        () =>
-                        {
-                            interpolationCall = {
-                                type: NodeKind.CallExpressionNode,
-                                expression: {
-                                    type: NodeKind.PropertyAccessNode,
-                                    expression: {
-                                        type: NodeKind.IdentifierNode,
-                                        name: adapter.GetNameofName({})
-                                    },
-                                    propertyName: NameofFunction.Interpolate
-                                },
-                                typeArguments: [],
-                                arguments: [
-                                    consoleLog
-                                ]
-                            };
-
-                            sandbox.stub(adapter, "ParseInternal");
-                            adapter.ParseInternal.callThrough();
-                        });
-
-                    test(
-                        "Checking whether interpolation calls are handled by this method…",
-                        () =>
-                        {
-                            let result = adapter.Parse(interpolationCall, {});
-                            strictEqual(result.Type, NodeKind.InterpolationNode);
-                            strictEqual(result.Source, interpolationCall);
-                            strictEqual(result.Expression, consoleLog);
-                        });
-
-                    test(
-                        "Checking whether passing too many arguments to an interpolation call throws an error…",
-                        () =>
-                        {
-                            interpolationCall.arguments = [consoleLog, consoleLog];
-                            throws(() => adapter.Parse(interpolationCall, {}), InvalidArgumentCountError);
-                        });
-
-                    test(
-                        `Checking whether other nodes are forwarded to the \`${nameOf<TestAdapter>((a) => a.ParseInternal)}\` method…`,
-                        () =>
-                        {
-                            let context = {};
-                            adapter.Parse(consoleLog, context);
-                            ok(adapter.ParseInternal.calledWith(consoleLog, context));
-                        });
-
-                    test(
-                        "Checking whether internal errors are returned as unsupported nodes…",
-                        () =>
-                        {
-                            let error = new CustomError(adapter, validInput, {}, "");
-                            adapter.ParseInternal.throws(error);
-                            let result = adapter.Parse(consoleLog, {});
-                            strictEqual(result.Type, NodeKind.UnsupportedNode);
-                            strictEqual(result.Source, consoleLog);
-                            strictEqual(result.Reason, error);
-                        });
-                });
-
-            suite(
-                nameOf<TestAdapter>((adapter) => adapter.DumpArray),
-                () =>
-                {
-                    let items: Array<NameofResult<State>>;
-
-                    setup(
-                        () =>
-                        {
-                            items = [
-                                {
-                                    type: ResultType.Plain,
-                                    text: "console"
-                                },
-                                {
-                                    type: ResultType.Template,
-                                    expressions: [consoleLog],
-                                    templateParts: [
-                                        "this.is[",
-                                        "].a.test"
-                                    ]
-                                }
-                            ];
-
-                            sandbox.stub(adapter, "Dump");
-                            sandbox.stub(adapter, "CreateArrayLiteral");
-                            adapter.Dump.callThrough();
-                            adapter.CreateArrayLiteral.callThrough();
-                        });
-
-                    test(
-                        `Checking whether all items are dumped using the \`${nameOf<TestAdapter>((a) => a.Dump)}\` method…`,
-                        () =>
-                        {
-                            adapter.DumpArray(items);
-
-                            for (let item of items)
-                            {
-                                ok(adapter.Dump.calledWith(item));
-                            }
-                        });
-
-                    test(
-                        `Checking whether the result is generated using the \`${nameOf<TestAdapter>((a) => a.CreateArrayLiteral)}\` method…`,
-                        () =>
-                        {
-                            let expected = consoleLog;
-                            adapter.CreateArrayLiteral.callsFake(() => expected);
-                            strictEqual(adapter.DumpArray(items), expected);
-                        });
-                });
-
-            suite(
                 nameOf<TestAdapter>((adapter) => adapter.GetName),
                 () =>
                 {
@@ -1684,6 +1632,58 @@ export function AdapterTests(): void
                                         segment);
                                 }
                             }
+                        });
+                });
+
+            suite(
+                nameOf<TestAdapter>((adapter) => adapter.DumpArray),
+                () =>
+                {
+                    let items: Array<NameofResult<State>>;
+
+                    setup(
+                        () =>
+                        {
+                            items = [
+                                {
+                                    type: ResultType.Plain,
+                                    text: "console"
+                                },
+                                {
+                                    type: ResultType.Template,
+                                    expressions: [consoleLog],
+                                    templateParts: [
+                                        "this.is[",
+                                        "].a.test"
+                                    ]
+                                }
+                            ];
+
+                            sandbox.stub(adapter, "Dump");
+                            sandbox.stub(adapter, "CreateArrayLiteral");
+                            adapter.Dump.callThrough();
+                            adapter.CreateArrayLiteral.callThrough();
+                        });
+
+                    test(
+                        `Checking whether all items are dumped using the \`${nameOf<TestAdapter>((a) => a.Dump)}\` method…`,
+                        () =>
+                        {
+                            adapter.DumpArray(items);
+
+                            for (let item of items)
+                            {
+                                ok(adapter.Dump.calledWith(item));
+                            }
+                        });
+
+                    test(
+                        `Checking whether the result is generated using the \`${nameOf<TestAdapter>((a) => a.CreateArrayLiteral)}\` method…`,
+                        () =>
+                        {
+                            let expected = consoleLog;
+                            adapter.CreateArrayLiteral.callsFake(() => expected);
+                            strictEqual(adapter.DumpArray(items), expected);
                         });
                 });
         });
