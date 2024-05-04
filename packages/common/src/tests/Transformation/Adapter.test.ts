@@ -260,6 +260,12 @@ export function AdapterTests(): void
                 nameOf<TestAdapter>((adapter) => adapter.Transform),
                 () =>
                 {
+                    setup(
+                        () =>
+                        {
+                            sandbox.stub(adapter, "Parse").callThrough();
+                        });
+
                     test(
                         "Checking whether only valid calls are transformed…",
                         () =>
@@ -272,6 +278,25 @@ export function AdapterTests(): void
 
                             let input = cloneDeep(validInput);
                             notDeepStrictEqual(adapter.Transform(validInput, {}), input);
+                        });
+
+                    test(
+                        "Checking whether parsing is skipped for unsupported nodes…",
+                        () =>
+                        {
+                            for (let unsupported of [stringLiteral.Source, functionNode, identifier.Source])
+                            {
+                                adapter.Parse.resetHistory();
+                                adapter.Transform(unsupported, {});
+                                ok(adapter.Parse.notCalled);
+                            }
+
+                            for (let supported of [validInput, typedCall, typedInput, consoleLog, expressionWithInterpolation])
+                            {
+                                adapter.Parse.resetHistory();
+                                adapter.Transform(supported, {});
+                                ok(adapter.Parse.called);
+                            }
                         });
 
                     test(
