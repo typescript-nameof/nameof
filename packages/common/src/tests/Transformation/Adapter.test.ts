@@ -79,15 +79,15 @@ export function AdapterTests(): void
             setup(
                 () =>
                 {
+                    features = sandbox.createStubInstance(TransformerFeatures);
+                    adapter = new TestAdapter(features) as SinonStubbedInstance<TestAdapter>;
+
                     let consoleNode: Identifier = {
                         type: NodeKind.IdentifierNode,
                         name: "console"
                     };
 
-                    features = sandbox.createStubInstance(TransformerFeatures);
-                    adapter = new TestAdapter(features) as SinonStubbedInstance<TestAdapter>;
-
-                    identifier = new IdentifierNode(consoleLog, consoleNode.name);
+                    identifier = new IdentifierNode(consoleNode, consoleNode.name);
 
                     stringLiteral = new StringLiteralNode(
                         {
