@@ -298,7 +298,7 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
             case NodeKind.NumericLiteralNode:
                 return new NumericLiteralNode(item, item.value);
             case NodeKind.InterpolationNode:
-                return new InterpolationNode(item, item.node);
+                return new InterpolationNode(item, item.node, [], []);
             default:
                 return new UnsupportedNode(item);
         }

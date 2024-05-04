@@ -21,7 +21,6 @@ import { NameofFunction } from "../NameofFunction.cjs";
 import { NameofResult } from "../NameofResult.cjs";
 import { ResultType } from "../ResultType.cjs";
 import { AccessExpressionNode } from "../Serialization/AccessExpressionNode.cjs";
-import { CallExpressionNode } from "../Serialization/CallExpressionNode.cjs";
 import { FunctionNode } from "../Serialization/FunctionNode.cjs";
 import { InterpolationNode } from "../Serialization/InterpolationNode.cjs";
 import { NameofCall } from "../Serialization/NameofCall.cjs";
@@ -387,17 +386,12 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
         else if (node.Type === NodeKind.InterpolationNode)
         {
-            if (this.IsCallExpression(node.Source))
-            {
-                let call = this.TryParse(node.Source, context) as CallExpressionNode<TNode>;
-
-                return {
-                    source: node.Source,
-                    function: NameofFunction.Interpolate,
-                    arguments: call.Arguments,
-                    typeArguments: call.TypeArguments
-                };
-            }
+            return {
+                source: node.Source,
+                function: NameofFunction.Interpolate,
+                arguments: node.Arguments,
+                typeArguments: node.TypeArguments
+            };
         }
 
         return undefined;
@@ -431,7 +425,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
 
                 if (nameofCall.arguments.length === expectedLength)
                 {
-                    return new InterpolationNode(nameofCall.source, nameofCall.arguments[0]);
+                    return new InterpolationNode(nameofCall.source, nameofCall.arguments[0], nameofCall.typeArguments, nameofCall.arguments);
                 }
                 else
                 {

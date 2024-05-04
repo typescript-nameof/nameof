@@ -20,7 +20,7 @@ export function InterpolationNodeTests(): void
                         "Checking whether the path part represents the interpolation properly…",
                         () =>
                         {
-                            let node = new InterpolationNode({}, {});
+                            let node = new InterpolationNode({}, {}, [], []);
                             let part = node.PathPart;
                             strictEqual(part.type, PathKind.Interpolation);
                             strictEqual(part.source, node.Source);
