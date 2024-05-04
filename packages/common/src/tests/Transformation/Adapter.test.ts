@@ -281,7 +281,6 @@ export function AdapterTests(): void
                             let error = sandbox.createStubInstance(UnsupportedNodeError);
                             let reportAction = sandbox.stub(error, "ReportAction");
                             sandbox.replaceGetter(error, "ReportAction", () => reportAction);
-                            sandbox.stub(adapter, "ProcessNameofCall");
                             adapter.ProcessNameofCall = sandbox.stub();
                             adapter.ProcessNameofCall.throws(error);
                             ok(!reportAction.called);
@@ -295,8 +294,8 @@ export function AdapterTests(): void
                         {
                             let message = "This is an error.";
                             let error = new Error("Test error");
+                            adapter.ParseInternal = sandbox.stub();
                             sandbox.stub(adapter, "ReportError");
-                            sandbox.stub(adapter, "ParseInternal");
 
                             let assertions: Array<[any, SinonMatcher]> = [
                                 [
@@ -635,8 +634,7 @@ export function AdapterTests(): void
                                 ]
                             };
 
-                            sandbox.stub(adapter, "TryParse");
-                            adapter.TryParse.callThrough();
+                            sandbox.stub(adapter, "TryParse").callThrough();
                         });
 
                     test(
@@ -674,8 +672,7 @@ export function AdapterTests(): void
                     setup(
                         () =>
                         {
-                            sandbox.stub(adapter, "ParseInternal");
-                            adapter.ParseInternal.callThrough();
+                            sandbox.stub(adapter, "ParseInternal").callThrough();
                         });
 
                     test(
@@ -1712,10 +1709,8 @@ export function AdapterTests(): void
                                 }
                             ];
 
-                            sandbox.stub(adapter, "Dump");
-                            sandbox.stub(adapter, "CreateArrayLiteral");
-                            adapter.Dump.callThrough();
-                            adapter.CreateArrayLiteral.callThrough();
+                            sandbox.stub(adapter, "Dump").callThrough();
+                            sandbox.stub(adapter, "CreateArrayLiteral").callThrough();
                         });
 
                     test(
