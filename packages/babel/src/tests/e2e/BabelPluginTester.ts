@@ -32,7 +32,7 @@ export class BabelPluginTester extends TransformerTester<babel.Node, IBabelConte
                     "Checking whether the package can be used as a babel plugin…",
                     async () =>
                     {
-                        await this.RunBabel("!function(){}()", "@typescript-nameof/babel");
+                        await this.RunBabel("!function(){}()", "module:@typescript-nameof/babel");
                     });
             });
 

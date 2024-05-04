@@ -430,7 +430,7 @@ In order to use TypeScript `nameof`'s Babel.js plugin, add the following to your
 module.exports = {
     // [...]
     plugins: [
-        "@typescript-nameof/babel"
+        "module:@typescript-nameof/babel"
     ]
 };
 ```

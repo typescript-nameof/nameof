@@ -13,6 +13,6 @@ module.exports = {
         ]
     ],
     plugins: [
-        "@typescript-nameof/babel"
+        "module:@typescript-nameof/babel"
     ]
 } as TransformOptions;
