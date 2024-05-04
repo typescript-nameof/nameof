@@ -132,61 +132,65 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     {
         let node = this.Extract(input);
 
-        try
+        if (this.IsCallExpression(node) ||
+            this.IsAccessExpression(node))
         {
-            let newNode = node;
-            let nameofCall = this.GetNameofCall(this.Parse(node, context), context);
-
-            if (nameofCall)
+            try
             {
-                try
+                let newNode = node;
+                let nameofCall = this.GetNameofCall(this.Parse(node, context), context);
+
+                if (nameofCall)
                 {
-                    let result = this.ProcessNameofCall(nameofCall, context);
-
-                    if (result)
+                    try
                     {
-                        if (Array.isArray(result))
-                        {
-                            newNode = this.DumpArray(result);
-                        }
-                        else
-                        {
-                            newNode = this.Dump(result);
-                        }
+                        let result = this.ProcessNameofCall(nameofCall, context);
 
-                        return newNode;
+                        if (result)
+                        {
+                            if (Array.isArray(result))
+                            {
+                                newNode = this.DumpArray(result);
+                            }
+                            else
+                            {
+                                newNode = this.Dump(result);
+                            }
+
+                            return newNode;
+                        }
+                    }
+                    catch (error)
+                    {
+                        throw error;
+                    }
+                    finally
+                    {
+                        this.StoreOriginal(node, newNode);
                     }
                 }
-                catch (error)
-                {
-                    throw error;
-                }
-                finally
-                {
-                    this.StoreOriginal(node, newNode);
-                }
             }
-        }
-        catch (error)
-        {
-            if (error instanceof InternalError)
+            catch (error)
             {
-                error.ReportAction();
-            }
-            else
-            {
-                let newError: Error;
-
-                if (error instanceof Error)
+                if (error instanceof InternalError)
                 {
-                    newError = error;
+                    error.ReportAction();
                 }
                 else
                 {
-                    newError = new Error(`${error}`);
-                }
+                    let newError: Error;
 
-                this.ReportError(node, context, newError);
+                    if (error instanceof Error)
+                    {
+                        newError = error;
+                    }
+                    else
+                    {
+                        newError = new Error(`${error}`);
+                    }
+
+                    this.ReportError(node, context, newError);
+                }
             }
         }
 
