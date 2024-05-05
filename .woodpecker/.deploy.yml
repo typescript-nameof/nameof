@@ -87,12 +87,14 @@ steps:
     commands:
       - npm exec --workspace ./packages/vscode -- vsce package
       - npm run --prefix ./packages/vscode vscode:postpublish
+    when:
+      event: tag
   publish package to npm:
     image: node
     secrets:
       - npm_token
     depends_on:
-      - create extension
+      - create package
     commands:
       - echo "//registry.npmjs.org/:_authToken=$${NPM_TOKEN}" > ~/.npmrc
       - npm publish --workspaces
@@ -115,7 +117,6 @@ steps:
     secrets:
       - ovsx_token
     depends_on:
-      - create extension
       - publish package to github
     commands:
       - npm exec --workspace ./packages/vscode -- ovsx publish --pat $OVSX_TOKEN
