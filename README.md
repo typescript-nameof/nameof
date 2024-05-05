@@ -18,13 +18,15 @@ console.log(nameof(console["warn"]));   // prints `warn`
 ```
 
 ## Supported Ecosystems
-The TypeScript `nameof` project is supported by many different ecosystems.
+The TypeScript `nameof` project does not work with default `typescript`-installations.
 
-Following ecosystems have been tested and are proven to work:
+However, there are many other ecosystems which have been tested and are proven to work:
 
-  - `ts-patch` (recommended)
+  - `ts-patch` (recommended):
+    `ts-patch` is able to patch your `typescript` package which allows this project to run properly
   - `ttypescript`
-  - `webpack` (using `ts-loader`)
+    `ttypescript` is a drop-in replacement of `typescript` which allows custom plugins (such as TypeScript `nameof`) to run.
+  - `webpack` (using `ts-loader`) 
   - `ts-jest`
   - `babel` (using a plugin or `babel-plugin-macros` alternatively)
 
