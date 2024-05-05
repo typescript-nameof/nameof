@@ -25,33 +25,42 @@
   },
   "devDependencies": {
     "@manuth/eslint-plugin-typescript": "^4.1.4",
-    "@manuth/package-json-editor": "^3.1.1",
-    "@manuth/tsconfig": "^4.0.1",
-    "@types/fs-extra": "^11.0.2",
-    "@types/git-branch": "^2.0.2",
-    "@types/jest": "npm:@types/node@^20.6.0",
-    "@types/mocha": "npm:@types/node@^20.6.0",
-    "@types/nameof": "npm:@types/node@^20.6.0",
-    "@types/node": "^20.6.0",
-    "@types/npm-which": "^3.0.1",
-    "@vscode/vsce": "^2.21.0",
+    "@manuth/package-json-editor": "^3.2.1",
+    "@manuth/tsconfig": "^4.0.2",
+    "@types/fs-extra": "^11.0.4",
+    "@types/git-branch": "^2.0.5",
+    "@types/jest": "npm:@types/node@^20.12.8",
+    "@types/mocha": "npm:@types/node@^20.12.8",
+    "@types/nameof": "npm:@types/node@^20.12.8",
+    "@types/node": "^20.12.8",
+    "@types/npm-which": "^3.0.3",
+    "@vscode/vsce": "^2.26.1",
     "cross-env": "^7.0.3",
-    "eslint": "^8.49.0",
-    "fs-extra": "^11.1.1",
+    "fs-extra": "^11.2.0",
     "git-branch": "^2.0.1",
-    "globby": "^13.2.2",
-    "mocha": "^10.2.0",
+    "globby": "^14.0.1",
+    "mocha": "^10.4.0",
     "npm-which": "^3.0.1",
-    "rimraf": "^5.0.1",
+    "rimraf": "^5.0.5",
     "source-map-support": "^0.5.21",
-    "ts-node": "^10.9.1",
-    "ts-patch": "^3.0.2",
-    "typescript": "^5.2.2",
+    "ts-node": "^10.9.2",
+    "ts-patch": "^3.1.2",
+    "typescript": "^5.4.5",
     "webpack-playground-typescript": "npm:nop@^1.0.0"
   },
   "workspaces": {
     "packages": [
       "./packages/*"
     ]
+  },
+  "dependencies": {
+    "eslint": "^8.57.0"
+  },
+  "overrides": {
+    "@manuth/typescript-languageservice-tester": {
+      "types-tsconfig": {
+        "type-fest": "npm:nop@^1.0.0"
+      }
+    }
   }
 }

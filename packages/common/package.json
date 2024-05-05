@@ -30,14 +30,14 @@
     "test": "mocha"
   },
   "devDependencies": {
-    "@types/lodash.clonedeep": "^4.5.7",
-    "@types/mocha": "^10.0.1",
-    "@types/sinon": "^10.0.16",
+    "@types/lodash.clonedeep": "^4.5.9",
+    "@types/mocha": "^10.0.6",
+    "@types/sinon": "^17.0.3",
     "@typescript-nameof/nameof": "^0.0.7",
     "@typescript-nameof/test": "^0.0.7",
     "copyfiles": "^2.4.1",
     "lodash.clonedeep": "^4.5.0",
-    "sinon": "^16.0.0",
-    "ts-nameof-proxy": "^0.1.14514"
+    "sinon": "^17.0.1",
+    "ts-nameof-proxy": "^1.0.1"
   }
 }

@@ -32,6 +32,6 @@
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
-    "tsd": "^0.29.0"
+    "tsd": "^0.31.0"
   }
 }
