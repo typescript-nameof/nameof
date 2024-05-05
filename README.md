@@ -135,9 +135,9 @@ let c = nameof.typed<Nested>().Inner;                         // `c` has the typ
 let d = nameof.typed((nested: Nested) => nested.Inner).Hello; // `d` has the type `"Hello"`
 ```
 
-Having TypeScripts type checker know what exact type the `nameof.typed` result has, allows the use of the `nameof.typed` expressions to be used as element accessors.
+There are some cases where it's very handy to have TypeScripts type checker know what exact type the `nameof.typed` result has.
 
-Example
+***Example:***
 
 ```ts
 import { replace } from "sinon";
@@ -154,6 +154,8 @@ replace(unifier, nameof.typed<Unifier>().Add, (x, y) => "test");          // Rep
 replace(unifier, nameof.typed<Unifier>().Concatenate, (x, y) => "test");  // Returns `HelloWorld`
 replace(unifier, nameof.typed<Unifier>().Concatenate, (x, y) => 420);     // Reports an error. Return type `string` is expected.
 ```
+
+In this example, TypeScript reports errors properly, thanks to `nameof.typed` reporting the types `"Add"` and `"Concatenate"` instead of mere arbitrary `string`s.
 
 ### `nameof.full`
 Unlike `nameof()` calls, the `nameof.full` call allows you to print the full name of an expression as a `string`:
