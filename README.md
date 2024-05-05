@@ -194,8 +194,8 @@ However, `nameof.interpolate` got this covered. `nameof.interpolate` calls accep
 
 TypeScript `nameof` will transform this code, for example:
 ```ts
-nameof.full(tokens[i].content);
-nameof.full(tokens[2 * 7 - 3].content);
+nameof.full(tokens[nameof.interpolate(i)].content);
+nameof.full(tokens[nameof.interpolate(2 * 7 - 3)].content);
 ```
 
 To this:
