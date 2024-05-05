@@ -1,6 +1,6 @@
 {
   "name": "@typescript-nameof/types",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "type": "module",
   "description": "Provides type declarations for the use of the TypeScript `nameof` project.",
   "author": "Manuel Thalmann <m@nuth.ch>",
@@ -28,7 +28,7 @@
     "test": "tsd --files ./type-tests"
   },
   "dependencies": {
-    "@typescript-nameof/common-types": "^0.0.9"
+    "@typescript-nameof/common-types": "^0.0.10"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
