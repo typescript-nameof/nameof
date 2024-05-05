@@ -13,6 +13,8 @@ steps:
       - npm install
   prepare release:
     image: node
+    depends_on:
+      - install
     commands:
       - npm install @stdlib/utils-escape-regexp-string --no-save
       - node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${CI_COMMIT_REF##refs/tags/}'))" > .tagName.txt
@@ -26,6 +28,8 @@ steps:
       - vsce_token
       - github_package_token
       - github_publish_token
+    depends_on:
+      - prepare release
     commands:
       - npm i --no-save @octokit/rest
       - >
@@ -57,15 +61,21 @@ steps:
       - testGitHub $GITHUB_PUBLISH_TOKEN || { echo "The GitHub Publish Token is invalid!" && false; }
   create package:
     image: node
+    depends_on:
+      - check release prerequisites
     commands:
       - npm pack -w @typescript-nameof/nameof -w @typescript-nameof/types -w @typescript-nameof/babel -w @typescript-nameof/common -w @typescript-nameof/common-types
   create extension:
     image: node
+    depends_on:
+      - create package
     commands:
       - npm exec --workspace ./packages/vscode -- vsce package
       - npm run --prefix ./packages/vscode vscode:postpublish
   prepare release notes:
     image: alpine
+    depends_on:
+      - create package
     commands:
       - export TagName=$$(cat .tagName.txt)
       - export TagHeading=$$(cat .tagHeading.txt)
@@ -78,6 +88,8 @@ steps:
     image: node
     secrets:
       - npm_token
+    depends_on:
+      - create package
     commands:
       - echo "//registry.npmjs.org/:_authToken=$${NPM_TOKEN}" > ~/.npmrc
       - npm publish --workspaces
@@ -87,6 +99,8 @@ steps:
     image: node
     secrets:
       - github_package_token
+    depends_on:
+      - publish package to npm
     commands:
       - echo "//npm.pkg.github.com/:_authToken=$${GITHUB_PACKAGE_TOKEN}" > ~/.npmrc
       - echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
@@ -97,6 +111,8 @@ steps:
     image: node
     secrets:
       - ovsx_token
+    depends_on:
+      - create extension
     commands:
       - npm exec --workspace ./packages/vscode -- ovsx publish --pat $OVSX_TOKEN
       - npm run --prefix ./packages/vscode vscode:postpublish
@@ -106,6 +122,8 @@ steps:
     image: node
     secrets:
       - vsce_token
+    depends_on:
+      - publish extension to ovsx marketplace
     commands:
       - npm exec --workspace ./packages/vscode -- vsce publish --pat $VSCE_TOKEN
       - npm run --prefix ./packages/vscode vscode:postpublish
@@ -113,6 +131,9 @@ steps:
       event: deployment
   publish release:
     image: plugins/github-release
+    depends_on:
+      - publish extension to vscode marketplace
+      - prepare release notes
     settings:
       api_key:
         from_secret: github_publish_token

@@ -11,15 +11,19 @@ steps:
       - npm install
   build:
     image: node
+    depends_on:
+      - install
     commands:
       - npm run build
   lint:
     image: node
-    group: test
+    depends_on:
+       - build
     commands:
       - npm run lint
   test:
     image: node
-    group: test
+    depends_on:
+      - install
     commands:
       - npm run test
