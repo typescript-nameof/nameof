@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## TypeScript `nameof` [Unreleased]
+
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.9...dev)
+
+## TypeScript `nameof` v0.0.9
 ### Fixed
   - An error where expressions such as `!function(){}()` would cause compilations to fail ([#11](https://github.com/typescript-nameof/nameof/issues/11))  
   - Thanks, [@Ixonal](https://github.com/Ixonal) for reporting!
@@ -18,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - The plugin to skip parsing nodes unnecessarily
   - The `README` file in general
 
-[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.7...dev)
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.7...v0.0.9)
 
 ## TypeScript `nameof` v0.0.7
 ### Fixed

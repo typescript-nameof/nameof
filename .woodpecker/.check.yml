@@ -18,7 +18,7 @@ steps:
   lint:
     image: node
     depends_on:
-       - install
+       - build
     commands:
       - npm run lint
   test:

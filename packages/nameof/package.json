@@ -1,6 +1,6 @@
 {
   "name": "@typescript-nameof/nameof",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "type": "module",
   "description": "Allows the use of `nameof()` calls in TypeScript projects.",
   "author": "Manuel Thalmann <m@nuth.ch>",
@@ -37,7 +37,7 @@
     "test": "tsd --files ./type-tests && mocha"
   },
   "dependencies": {
-    "@typescript-nameof/common": "^0.0.7",
+    "@typescript-nameof/common": "^0.0.9",
     "fs-extra": "^11.2.0",
     "globby": "^14.0.1",
     "ts-patch": "^3.1.2"
@@ -49,7 +49,7 @@
     "@tsd/typescript": "npm:nop@^1.0.0",
     "@types/fs-extra": "^11.0.4",
     "@types/mocha": "^10.0.6",
-    "@typescript-nameof/test": "^0.0.7",
+    "@typescript-nameof/test": "^0.0.9",
     "copyfiles": "^2.4.1",
     "ts-jest": "^29.1.2",
     "ts-morph": "^22.0.0",

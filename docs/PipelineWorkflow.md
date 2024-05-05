@@ -8,7 +8,7 @@ flowchart TD
     test
 
     install --> build
-    install --> lint
+    build --> lint
     build --> test
 ```
 
