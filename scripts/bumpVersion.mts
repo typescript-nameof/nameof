@@ -41,7 +41,7 @@ interface ICandidateDescriptor
         {
             let packageResolvers: Array<() => Package> = [];
             let updateQueue = new Dictionary<Package, ICandidateDescriptor[]>();
-            process.chdir(dirname(npmPackage.FileName as string));
+            process.chdir(dirname(npmPackage.FileName));
 
             if (npmPackage.AdditionalProperties.Has("workspaces"))
             {
@@ -62,7 +62,7 @@ interface ICandidateDescriptor
                     for (let workspacePath of await globby(pattern, { onlyDirectories: true }))
                     {
                         let packageFileName: string;
-                        workspacePath = join(dirname(npmPackage.FileName as string), workspacePath);
+                        workspacePath = join(dirname(npmPackage.FileName), workspacePath);
                         packageFileName = join(workspacePath, Package.FileName);
 
                         if (await pathExists(packageFileName))
@@ -104,7 +104,7 @@ interface ICandidateDescriptor
                             entry[0].Remove(dependencyCandidate.Name as string);
 
                             await writeJSON(
-                                workspacePackage.FileName as string,
+                                workspacePackage.FileName,
                                 workspacePackage.ToJSON(),
                                 {
                                     spaces: 2
@@ -145,7 +145,7 @@ interface ICandidateDescriptor
                         ]);
                 }
 
-                await writeJSON(workspacePackage.FileName as string, new Package(workspacePackage.FileName as string).ToJSON(), { spaces: 2 });
+                await writeJSON(workspacePackage.FileName, new Package(workspacePackage.FileName).ToJSON(), { spaces: 2 });
             }
 
             spawnSync(
