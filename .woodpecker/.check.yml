@@ -24,6 +24,6 @@ steps:
   test:
     image: node
     depends_on:
-      - install
+       - build
     commands:
       - npm run test
