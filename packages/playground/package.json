@@ -1,6 +1,6 @@
 {
   "name": "@typescript-nameof/playground",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "type": "module",
   "private": true,
   "description": "A project for testing the functionality of the `nameof` plugin.",
