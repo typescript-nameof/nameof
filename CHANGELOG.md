@@ -6,7 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## TypeScript `nameof` [Unreleased]
 
-[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.9...dev)
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.10...dev)
+
+## TypeScript `nameof` v0.0.10
+### Fixed
+  - Woodpecker pipelines and publishing process
+
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.9...v0.0.10)
 
 ## TypeScript `nameof` v0.0.9
 ### Fixed
