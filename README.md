@@ -54,7 +54,7 @@ This section provides a brief explanation as to what functionalities are covered
   - [`@typescript-nameof/common-types`](./packages/common-types):  
     Exposes common type declarations which are used by all packages
   - [`@typescript-nameof/test`](./packages/test):  
-    Holds unit components which are used for testing whether the `nameof` integrations work properly.
+    Holds components which are used for testing whether the `nameof` integrations work properly.
   - [typescript-nameof-plugin](./packages/vscode):  
     An extension for highlighting malformed `nameof` calls in your `vscode` editor.
   - [`@typescript-nameof/playground`](./packages/playground):  
