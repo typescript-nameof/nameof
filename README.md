@@ -22,9 +22,9 @@ The TypeScript `nameof` project does not work with default `typescript`-installa
 
 However, there are many other ecosystems which have been tested and are proven to work:
 
-  - `ts-patch` (recommended):
+  - `ts-patch` (recommended):  
     `ts-patch` is able to patch your `typescript` package which allows this project to run properly
-  - `ttypescript`
+  - `ttypescript`  
     `ttypescript` is a drop-in replacement of `typescript` which allows custom plugins (such as TypeScript `nameof`) to run.
   - `webpack` (using `ts-loader`) 
   - `ts-jest`
@@ -55,7 +55,7 @@ This section provides a brief explanation as to what functionalities are covered
     Exposes common type declarations which are used by all packages
   - [`@typescript-nameof/test`](./packages/test):  
     Holds components which are used for testing whether the `nameof` integrations work properly.
-  - [typescript-nameof-plugin](./packages/vscode):  
+  - [`typescript-nameof-plugin`](./packages/vscode):  
     An extension for highlighting malformed `nameof` calls in your `vscode`-based editor.
   - [`@typescript-nameof/playground`](./packages/playground):  
     Contains a few example projects for trying out `nameof`-integrations
