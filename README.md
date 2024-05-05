@@ -77,6 +77,7 @@ This section provides a brief explanation as to what functionalities are covered
   - [Compiler Setup](#compiler-setup)
     - [Set Up a Project](#set-up-a-project)
     - [Install Type Declarations](#install-type-declarations)
+      - [Type Path Setup](#type-path-setup)
     - [Install TypeScript `nameof` Integration](#install-typescript-nameof-integration)
     - [Enable Real Time Error Reporting (Optional)](#enable-real-time-error-reporting-optional)
     - [Configure Compiler to Use TypeScript `nameof`](#configure-compiler-to-use-typescript-nameof)
@@ -311,6 +312,8 @@ So please make sure your project is set up to use one of the listed [Supported E
 If you aren't sure how to configure your ecosystem properly, you might want to have a look at the [`playground` folder](./packages/playground) which already contains configuration files for many different ecosystems.
 
 ### Install Type Declarations
+If, for whatever reason, the `typeRoots` option or the `types` option is set in your `tsconfig.json` file, please follow the [Type Path Setup](#type-path-setup) instead.
+
 This step is not necessary if you plan to run TypeScript `nameof` using a `babel-plugin-macros`.
 
 You can install the type declarations which expose the `nameof` function using the following command:
@@ -322,6 +325,30 @@ npm install --save-dev @types/nameof@npm:@typescript-nameof/types
 This will install `@typescript-nameof/types` and store it as if it were named `@types/nameof`.
 
 You can, of course, use any package name in place of `@types/nameof` (such as `@types/bogus`) as long as it starts with the `@types/`-prefix, as these packages will be picked by TypeScript automatically without having to `import` or `require` them somewhere in your code.
+
+#### Type Path Setup
+If your project uses the `typeRoots` or the `types` option in your `tsconfig.json` file, TypeScript won't check the `@types/` directory for type declarations automatically.
+
+Thus, the types must be set up slightly differently.
+
+First, install the type declarations using this command:
+
+```sh
+npm install --save-dev @typescript-nameof/types
+```
+
+Next, add `@typescript-nameof/types` to the `types`-list of your project's `tsconfig.json` file:
+
+***`tsconfig.json`:***
+```json
+{
+  "compilerOptions": {
+    "types": [
+      "@typescript-nameof/types"
+    ]
+  }
+}
+```
 
 ### Install TypeScript `nameof` Integration
 Next, you need to install the corresponding integration of TypeScript `nameof`.
