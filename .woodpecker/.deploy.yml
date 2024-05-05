@@ -65,17 +65,10 @@ steps:
       - check release prerequisites
     commands:
       - npm pack -w @typescript-nameof/nameof -w @typescript-nameof/types -w @typescript-nameof/babel -w @typescript-nameof/common -w @typescript-nameof/common-types
-  create extension:
-    image: node
-    depends_on:
-      - create package
-    commands:
-      - npm exec --workspace ./packages/vscode -- vsce package
-      - npm run --prefix ./packages/vscode vscode:postpublish
   prepare release notes:
     image: alpine
     depends_on:
-      - create package
+      - check release prerequisites
     commands:
       - export TagName=$$(cat .tagName.txt)
       - export TagHeading=$$(cat .tagHeading.txt)
@@ -84,12 +77,22 @@ steps:
       - sed -i "1,$${TagHeading}{ $${TagHeading}P ; d } ; $${HeadingPattern},\$d" .releaseNotes.md
       - cp -f .releaseNotes.md .releaseTitle.md
       - sed -i "2,\$d ; s$${HeadingPattern}\\\\1/" .releaseTitle.md
+    when:
+      event: tag
+  create extension:
+    image: node
+    depends_on:
+      - create package
+      - prepare release notes
+    commands:
+      - npm exec --workspace ./packages/vscode -- vsce package
+      - npm run --prefix ./packages/vscode vscode:postpublish
   publish package to npm:
     image: node
     secrets:
       - npm_token
     depends_on:
-      - create package
+      - create extension
     commands:
       - echo "//registry.npmjs.org/:_authToken=$${NPM_TOKEN}" > ~/.npmrc
       - npm publish --workspaces
@@ -113,6 +116,7 @@ steps:
       - ovsx_token
     depends_on:
       - create extension
+      - publish package to github
     commands:
       - npm exec --workspace ./packages/vscode -- ovsx publish --pat $OVSX_TOKEN
       - npm run --prefix ./packages/vscode vscode:postpublish
