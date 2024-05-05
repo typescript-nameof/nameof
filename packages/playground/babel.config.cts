@@ -13,7 +13,6 @@ module.exports = {
         ]
     ],
     plugins: [
-        // eslint-disable-next-line node/no-unpublished-require
-        require.resolve("../babel")
+        "module:@typescript-nameof/babel"
     ]
 } as TransformOptions;

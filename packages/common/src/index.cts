@@ -16,6 +16,7 @@ export { UnusedInterpolationError } from "./Diagnostics/UnusedInterpolationError
 export { NameofResult } from "./NameofResult.cjs";
 export { ResultType } from "./ResultType.cjs";
 export { CallExpressionNode } from "./Serialization/CallExpressionNode.cjs";
+export { CallNodeBase } from "./Serialization/CallNodeBase.cjs";
 export { FunctionNode } from "./Serialization/FunctionNode.cjs";
 export { IndexAccessNode } from "./Serialization/IndexAccessNode.cjs";
 export { IdentifierNode } from "./Serialization/IdentifierNode.cjs";

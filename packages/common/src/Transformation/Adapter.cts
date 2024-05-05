@@ -21,9 +21,7 @@ import { NameofFunction } from "../NameofFunction.cjs";
 import { NameofResult } from "../NameofResult.cjs";
 import { ResultType } from "../ResultType.cjs";
 import { AccessExpressionNode } from "../Serialization/AccessExpressionNode.cjs";
-import { CallExpressionNode } from "../Serialization/CallExpressionNode.cjs";
 import { FunctionNode } from "../Serialization/FunctionNode.cjs";
-import { IndexAccessNode } from "../Serialization/IndexAccessNode.cjs";
 import { InterpolationNode } from "../Serialization/InterpolationNode.cjs";
 import { NameofCall } from "../Serialization/NameofCall.cjs";
 import { NodeKind } from "../Serialization/NodeKind.cjs";
@@ -32,7 +30,6 @@ import { ParsedNode } from "../Serialization/ParsedNode.cjs";
 import { PathKind } from "../Serialization/PathKind.cjs";
 import { PathPart } from "../Serialization/PathPart.cjs";
 import { PathPartCandidate } from "../Serialization/PathPartCandidate.cjs";
-import { PropertyAccessNode } from "../Serialization/PropertyAccessNode.cjs";
 import { UnsupportedNode } from "../Serialization/UnsupportedNode.cjs";
 
 /**
@@ -135,61 +132,65 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     {
         let node = this.Extract(input);
 
-        try
+        if (this.IsCallExpression(node) ||
+            this.IsAccessExpression(node))
         {
-            let newNode = node;
-            let nameofCall = this.GetNameofCall(node, context);
-
-            if (nameofCall)
+            try
             {
-                try
+                let newNode = node;
+                let nameofCall = this.GetNameofCall(this.Parse(node, context), context);
+
+                if (nameofCall)
                 {
-                    let result = this.ProcessNameofCall(nameofCall, context);
-
-                    if (result)
+                    try
                     {
-                        if (Array.isArray(result))
-                        {
-                            newNode = this.DumpArray(result);
-                        }
-                        else
-                        {
-                            newNode = this.Dump(result);
-                        }
+                        let result = this.ProcessNameofCall(nameofCall, context);
 
-                        return newNode;
+                        if (result)
+                        {
+                            if (Array.isArray(result))
+                            {
+                                newNode = this.DumpArray(result);
+                            }
+                            else
+                            {
+                                newNode = this.Dump(result);
+                            }
+
+                            return newNode;
+                        }
+                    }
+                    catch (error)
+                    {
+                        throw error;
+                    }
+                    finally
+                    {
+                        this.StoreOriginal(node, newNode);
                     }
                 }
-                catch (error)
-                {
-                    throw error;
-                }
-                finally
-                {
-                    this.StoreOriginal(node, newNode);
-                }
             }
-        }
-        catch (error)
-        {
-            if (error instanceof InternalError)
+            catch (error)
             {
-                error.ReportAction();
-            }
-            else
-            {
-                let newError: Error;
-
-                if (error instanceof Error)
+                if (error instanceof InternalError)
                 {
-                    newError = error;
+                    error.ReportAction();
                 }
                 else
                 {
-                    newError = new Error(`${error}`);
-                }
+                    let newError: Error;
 
-                this.ReportError(node, context, newError);
+                    if (error instanceof Error)
+                    {
+                        newError = error;
+                    }
+                    else
+                    {
+                        newError = new Error(`${error}`);
+                    }
+
+                    this.ReportError(node, context, newError);
+                }
             }
         }
 
@@ -326,23 +327,22 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
     }
 
     /**
-     * Gets the {@linkcode NameofCall} represented by the specified {@linkcode item}.
+     * Gets the {@linkcode NameofCall} represented by the specified {@linkcode node}.
      *
-     * @param item
-     * The item to parse.
+     * @param node
+     * The node to convert.
      *
      * @param context
      * The context of the operation.
      *
      * @returns
-     * The parsed {@linkcode NameofCall} or `undefined` if no `nameof` call was found.
+     * The either a {@linkcode NameofCall} or `undefined` if no `nameof` call was found.
      */
-    protected GetNameofCall(item: TNode, context: TContext): NameofCall<TNode> | undefined
+    protected GetNameofCall(node: ParsedNode<TNode>, context: TContext): NameofCall<TNode> | undefined
     {
-        if (this.IsAccessExpression(item))
+        if (node instanceof AccessExpressionNode)
         {
-            let accessExpression = this.ParseInternal(item, context) as PropertyAccessNode<TNode> | IndexAccessNode<TNode>;
-            let nameofCall = this.GetNameofCall(accessExpression.Expression.Source, context);
+            let nameofCall = this.GetNameofCall(node.Expression, context);
 
             if (
                 nameofCall &&
@@ -350,18 +350,17 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             {
                 return {
                     ...nameofCall,
-                    source: item,
+                    source: node.Source,
                     typeArguments: [],
                     arguments: [
-                        accessExpression.Source
+                        node.Source
                     ]
                 };
             }
         }
-        else if (this.IsCallExpression(item))
+        else if (node.Type === NodeKind.CallExpressionNode)
         {
-            let callNode = this.ParseInternal(item, context) as CallExpressionNode<TNode>;
-            let expression = this.ParseInternal(callNode.Expression, context);
+            let expression = this.Parse(node.Expression, context);
             let property: string | undefined;
 
             if (expression.Type === NodeKind.PropertyAccessNode)
@@ -382,12 +381,21 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
                 expression.Name === this.GetNameofName(context))
             {
                 return {
-                    source: item,
+                    source: node.Source,
                     function: property,
-                    typeArguments: callNode.TypeArguments,
-                    arguments: callNode.Arguments
+                    typeArguments: node.TypeArguments,
+                    arguments: node.Arguments
                 };
             }
+        }
+        else if (node.Type === NodeKind.InterpolationNode)
+        {
+            return {
+                source: node.Source,
+                function: NameofFunction.Interpolate,
+                arguments: node.Arguments,
+                typeArguments: node.TypeArguments
+            };
         }
 
         return undefined;
@@ -413,6 +421,91 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             return call.typeArguments;
         }
     }
+
+    /**
+     * Parses the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    protected Parse(item: TNode, context: TContext): ParsedNode<TNode>
+    {
+        let node = this.TryParse(item, context);
+
+        if (this.IsCallExpression(item))
+        {
+            let nameofCall = this.GetNameofCall(node, context);
+
+            if (
+                nameofCall &&
+                nameofCall.function === NameofFunction.Interpolate)
+            {
+                let expectedLength = 1;
+
+                if (nameofCall.arguments.length === expectedLength)
+                {
+                    return new InterpolationNode(nameofCall.source, nameofCall.arguments[0], nameofCall.typeArguments, nameofCall.arguments);
+                }
+                else
+                {
+                    throw new InvalidArgumentCountError(this, nameofCall, expectedLength, context);
+                }
+            }
+        }
+
+        return node;
+    }
+
+    /**
+     * Tries to parse the specified {@linkcode item} and returns the result or the error that occurred.
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item} or a {@linkcode UnsupportedNode} in case a documented error occurred.
+     */
+    protected TryParse(item: TNode, context: TContext): ParsedNode<TNode>
+    {
+        try
+        {
+            return this.ParseInternal(item, context);
+        }
+        catch (error)
+        {
+            if (error instanceof InternalError)
+            {
+                return new UnsupportedNode(item, error);
+            }
+            else
+            {
+                throw error;
+            }
+        }
+    }
+
+    /**
+     * Parses the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to parse.
+     *
+     * @param context
+     * The context of the operation.
+     *
+     * @returns
+     * The parsed representation of the specified {@linkcode item}.
+     */
+    protected abstract ParseInternal(item: TNode, context: TContext): ParsedNode<TNode>;
 
     /**
      * Transforms the specified `nameof` {@linkcode call}.
@@ -586,12 +679,12 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
 
         let processor = (node: TNode): NameofResult<TNode> =>
         {
-            return this.GetName(call, this.ParseNode(node, context).Path, context);
+            return this.GetName(call, this.Parse(node, context).Path, context);
         };
 
         if (call.arguments.length === 1)
         {
-            let parsedNode = this.ParseNode(call.arguments[0], context);
+            let parsedNode = this.Parse(call.arguments[0], context);
 
             if (parsedNode.Type === NodeKind.FunctionNode)
             {
@@ -692,7 +785,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             }
             else if (call.typeArguments.length === 1)
             {
-                let parsedArgument = this.ParseNode(call.arguments[0], context);
+                let parsedArgument = this.Parse(call.arguments[0], context);
 
                 if (parsedArgument.Type === NodeKind.NumericLiteralNode)
                 {
@@ -711,7 +804,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
         else if (call.arguments.length === 2)
         {
-            let parsedNode = this.ParseNode(call.arguments[1], context);
+            let parsedNode = this.Parse(call.arguments[1], context);
 
             if (parsedNode.Type === NodeKind.NumericLiteralNode)
             {
@@ -757,7 +850,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      */
     protected ProcessSingle(call: NameofCall<TNode>, node: TNode, context: TContext): Array<PathPartCandidate<TNode>>
     {
-        let result = this.ParseNode(node, context);
+        let result = this.Parse(node, context);
 
         if (result.Type === NodeKind.FunctionNode)
         {
@@ -786,7 +879,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
      */
     protected ProcessFunctionBody(functionNode: FunctionNode<TNode>, node: TNode, context: TContext): Array<PathPartCandidate<TNode>>
     {
-        let path = this.ParseNode(node, context).Path;
+        let path = this.Parse(node, context).Path;
 
         if (
             path[0].type === PathKind.Identifier &&
@@ -801,94 +894,6 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
 
         return path;
-    }
-
-    /**
-     * Parses the specified {@linkcode item}.
-     *
-     * @param item
-     * The item to parse.
-     *
-     * @param context
-     * The context of the operation.
-     *
-     * @returns
-     * The parsed representation of the specified {@linkcode item}.
-     */
-    protected ParseNode(item: TNode, context: TContext): ParsedNode<TNode>
-    {
-        if (this.IsCallExpression(item))
-        {
-            let nameofCall = this.GetNameofCall(item, context);
-
-            if (
-                nameofCall &&
-                nameofCall.function === NameofFunction.Interpolate)
-            {
-                let expectedLength = 1;
-
-                if (nameofCall.arguments.length === expectedLength)
-                {
-                    return new InterpolationNode(nameofCall.source, nameofCall.arguments[0]);
-                }
-                else
-                {
-                    throw new InvalidArgumentCountError(this, nameofCall, expectedLength, context);
-                }
-            }
-        }
-
-        try
-        {
-            return this.ParseInternal(item, context);
-        }
-        catch (error)
-        {
-            if (error instanceof InternalError)
-            {
-                return new UnsupportedNode(item, error);
-            }
-            else
-            {
-                throw error;
-            }
-        }
-    }
-
-    /**
-     * Parses the specified {@linkcode item}.
-     *
-     * @param item
-     * The item to parse.
-     *
-     * @param context
-     * The context of the operation.
-     *
-     * @returns
-     * The parsed representation of the specified {@linkcode item}.
-     */
-    protected abstract ParseInternal(item: TNode, context: TContext): ParsedNode<TNode>;
-
-    /**
-     * Dumps the specified {@linkcode item}.
-     *
-     * @param item
-     * The item to dump.
-     */
-    protected abstract Dump(item: NameofResult<TNode>): TNode;
-
-    /**
-     * Dumps the specified {@linkcode items}.
-     *
-     * @param items
-     * The items to dump-
-     *
-     * @returns
-     * The newly created node.
-     */
-    protected DumpArray(items: Array<NameofResult<TNode>>): TNode
-    {
-        return this.CreateArrayLiteral(items.map((item) => this.Dump(item)));
     }
 
     /**
@@ -1058,5 +1063,27 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         }
 
         throw new SegmentNotFoundError(this, call, context);
+    }
+
+    /**
+     * Dumps the specified {@linkcode item}.
+     *
+     * @param item
+     * The item to dump.
+     */
+    protected abstract Dump(item: NameofResult<TNode>): TNode;
+
+    /**
+     * Dumps the specified {@linkcode items}.
+     *
+     * @param items
+     * The items to dump-
+     *
+     * @returns
+     * The newly created node.
+     */
+    protected DumpArray(items: Array<NameofResult<TNode>>): TNode
+    {
+        return this.CreateArrayLiteral(items.map((item) => this.Dump(item)));
     }
 }

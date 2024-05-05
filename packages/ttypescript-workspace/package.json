@@ -1,12 +1,12 @@
 {
-  "version": "0.0.7",
+  "version": "0.0.9",
   "private": true,
   "scripts": {},
   "dependencies": {
-    "@types/jest": "^29.5.4",
+    "@types/jest": "^29.5.12",
     "@types/nameof": "file:../types",
     "ttypescript": "^1.5.15",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1"

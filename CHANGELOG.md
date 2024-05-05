@@ -6,7 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## TypeScript `nameof` [Unreleased]
 
-[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.7...dev)
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.9...dev)
+
+## TypeScript `nameof` v0.0.9
+### Fixed
+  - An error where expressions such as `!function(){}()` would cause compilations to fail ([#11](https://github.com/typescript-nameof/nameof/issues/11))  
+  - Thanks, [@Ixonal](https://github.com/Ixonal) for reporting!
+  - Documentation to address the babel configuration properly  
+    Thanks, [@philsherry](https://github.com/philsherry) for reporting
+
+### Updated
+  - All dependencies
+  - Improved performance ([#6](https://github.com/typescript-nameof/nameof/pull/6))  
+    Thanks, [@lahma](https://github.com/lahma)!
+  - The plugin to skip parsing nodes unnecessarily
+  - The `README` file in general
+
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.7...v0.0.9)
 
 ## TypeScript `nameof` v0.0.7
 ### Fixed

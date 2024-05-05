@@ -18,13 +18,15 @@ console.log(nameof(console["warn"]));   // prints `warn`
 ```
 
 ## Supported Ecosystems
-The TypeScript `nameof` project is supported by many different ecosystems.
+The TypeScript `nameof` project does not work with default `typescript`-installations.
 
-Following ecosystems have been tested and are proven to work:
+However, there are many other ecosystems which have been tested and are proven to work:
 
-  - `ts-patch` (recommended)
+  - `ts-patch` (recommended):
+    `ts-patch` is able to patch your `typescript` package which allows this project to run properly
   - `ttypescript`
-  - `webpack` (using `ts-loader`)
+    `ttypescript` is a drop-in replacement of `typescript` which allows custom plugins (such as TypeScript `nameof`) to run.
+  - `webpack` (using `ts-loader`) 
   - `ts-jest`
   - `babel` (using a plugin or `babel-plugin-macros` alternatively)
 
@@ -34,7 +36,7 @@ To find out more on how to set up TypeScript `nameof`, please head to the [Compi
 
 ## Features
   - **Easy Compiler Integration:** The `@typescript-nameof/nameof` package provides support for a wide variety of ecosystems out of the box.
-  - **Error Reporting:** In ecosystems supporting error reporting (`ts-patch` and `ts-jest`), rich error reporting experience is provided. For other ecosystems, errors including file names and locations of errors are printed to the console.
+  - **Error Reporting:** "TypeScript `nameof`" provides rich error reporting for `vscode`-based editors using a dedicated [extension](./packages/vscode). For editors supporting [TypeScript Language Service Plugins][LanguageServicePlugin], `@typescript-nameof/nameof` can also be used as a language service plugin. To find out how to do this, head over to the [Compiler Setup](#compiler-setup). Furthermore, supported compilers (currently only `ts-patch` and `ts-jest`) will report error messages in a useful format while compiling. For other ecosystems, errors including file names and locations of errors are printed to the console.
   - **Keyword Type Support:** Getting the name of keyword types such as `any`, `string`, `number` etc. is supported
 
 ## Packages
@@ -52,9 +54,9 @@ This section provides a brief explanation as to what functionalities are covered
   - [`@typescript-nameof/common-types`](./packages/common-types):  
     Exposes common type declarations which are used by all packages
   - [`@typescript-nameof/test`](./packages/test):  
-    Holds unit components which are used for testing whether the `nameof` integrations work properly.
+    Holds components which are used for testing whether the `nameof` integrations work properly.
   - [typescript-nameof-plugin](./packages/vscode):  
-    An extension for highlighting malformed `nameof` calls in your `vscode` editor.
+    An extension for highlighting malformed `nameof` calls in your `vscode`-based editor.
   - [`@typescript-nameof/playground`](./packages/playground):  
     Contains a few example projects for trying out `nameof`-integrations
 
@@ -75,6 +77,7 @@ This section provides a brief explanation as to what functionalities are covered
   - [Compiler Setup](#compiler-setup)
     - [Set Up a Project](#set-up-a-project)
     - [Install Type Declarations](#install-type-declarations)
+      - [Type Path Setup](#type-path-setup)
     - [Install TypeScript `nameof` Integration](#install-typescript-nameof-integration)
     - [Enable Real Time Error Reporting (Optional)](#enable-real-time-error-reporting-optional)
     - [Configure Compiler to Use TypeScript `nameof`](#configure-compiler-to-use-typescript-nameof)
@@ -133,9 +136,9 @@ let c = nameof.typed<Nested>().Inner;                         // `c` has the typ
 let d = nameof.typed((nested: Nested) => nested.Inner).Hello; // `d` has the type `"Hello"`
 ```
 
-Having TypeScripts type checker know what exact type the `nameof.typed` result has, allows the use of the `nameof.typed` expressions to be used as element accessors.
+There are some cases where it's very handy to have TypeScripts type checker know what exact type the `nameof.typed` result has.
 
-Example
+***Example:***
 
 ```ts
 import { replace } from "sinon";
@@ -152,6 +155,8 @@ replace(unifier, nameof.typed<Unifier>().Add, (x, y) => "test");          // Rep
 replace(unifier, nameof.typed<Unifier>().Concatenate, (x, y) => "test");  // Returns `HelloWorld`
 replace(unifier, nameof.typed<Unifier>().Concatenate, (x, y) => 420);     // Reports an error. Return type `string` is expected.
 ```
+
+In this example, TypeScript reports errors properly, thanks to `nameof.typed` reporting the types `"Add"` and `"Concatenate"` instead of mere arbitrary `string`s.
 
 ### `nameof.full`
 Unlike `nameof()` calls, the `nameof.full` call allows you to print the full name of an expression as a `string`:
@@ -192,8 +197,8 @@ However, `nameof.interpolate` got this covered. `nameof.interpolate` calls accep
 
 TypeScript `nameof` will transform this code, for example:
 ```ts
-nameof.full(tokens[i].content);
-nameof.full(tokens[2 * 7 - 3].content);
+nameof.full(tokens[nameof.interpolate(i)].content);
+nameof.full(tokens[nameof.interpolate(2 * 7 - 3)].content);
 ```
 
 To this:
@@ -301,11 +306,14 @@ Feel free to open up an issue if you think something is missing.
 In this section, you can find out how to set up TypeScript `nameof` for your corresponding ecosystem. Stick to these steps and you are ready to go!
 
 ### Set Up a Project
-This guide assumes that you have set up a project for the ecosystem of your choice.
+This guide assumes that you have set up a project for the ecosystem of your choice.  
+So please make sure your project is set up to use one of the listed [Supported Ecosystems](#supported-ecosystems).
 
 If you aren't sure how to configure your ecosystem properly, you might want to have a look at the [`playground` folder](./packages/playground) which already contains configuration files for many different ecosystems.
 
 ### Install Type Declarations
+If, for whatever reason, the `typeRoots` option or the `types` option is set in your `tsconfig.json` file, please follow the [Type Path Setup](#type-path-setup) instead.
+
 This step is not necessary if you plan to run TypeScript `nameof` using a `babel-plugin-macros`.
 
 You can install the type declarations which expose the `nameof` function using the following command:
@@ -317,6 +325,30 @@ npm install --save-dev @types/nameof@npm:@typescript-nameof/types
 This will install `@typescript-nameof/types` and store it as if it were named `@types/nameof`.
 
 You can, of course, use any package name in place of `@types/nameof` (such as `@types/bogus`) as long as it starts with the `@types/`-prefix, as these packages will be picked by TypeScript automatically without having to `import` or `require` them somewhere in your code.
+
+#### Type Path Setup
+If your project uses the `typeRoots` or the `types` option in your `tsconfig.json` file, TypeScript won't check the `@types/` directory for type declarations automatically.
+
+Thus, the types must be set up slightly differently.
+
+First, install the type declarations using this command:
+
+```sh
+npm install --save-dev @typescript-nameof/types
+```
+
+Next, add `@typescript-nameof/types` to the `types`-list of your project's `tsconfig.json` file:
+
+***`tsconfig.json`:***
+```json
+{
+  "compilerOptions": {
+    "types": [
+      "@typescript-nameof/types"
+    ]
+  }
+}
+```
 
 ### Install TypeScript `nameof` Integration
 Next, you need to install the corresponding integration of TypeScript `nameof`.
@@ -336,7 +368,7 @@ Please run the following to install the integration in your project:
     ```
 
 ### Enable Real Time Error Reporting (Optional)
-If you are using a `vscode` editor, you might want to install the ["TypeScript nameof Plugin" extension](./packages/vscode) in order to enable real-time error reporting.
+If you are using a `vscode`-based editor, you might want to install the ["TypeScript nameof Plugin" extension](./packages/vscode) in order to enable real-time error reporting.
 
 For other editors, add `@typescript-nameof/nameof` as a language service plugin to your `tsconfig` file:
 
@@ -353,7 +385,7 @@ For other editors, add `@typescript-nameof/nameof` as a language service plugin 
 ```
 
 ### Configure Compiler to Use TypeScript `nameof`
-Lastly, you need to configure your compiler to pick up the plugin.
+Lastly, you need to configure your compiler to pick up the plugin and use it to transform your source code.
 
 #### `ts-patch` and `ttypescript`
 Add the following transformer plugin configuration to your project's `tsconfig` file:
@@ -430,7 +462,7 @@ In order to use TypeScript `nameof`'s Babel.js plugin, add the following to your
 module.exports = {
     // [...]
     plugins: [
-        "@typescript-nameof/babel"
+        "module:@typescript-nameof/babel"
     ]
 };
 ```
@@ -450,7 +482,8 @@ nameof(console.log);
 ```
 
 ## Thank You!
-At this point, I'd like to express my deepest gratitude to the former maintainer [@dsherret](https://github.com/dsherret) for the great work. I've been using `ts-nameof` for years in all my projects. Which is one of the major reasons why I decided to create and maintain my own version of this project.
+At this point, I'd like to express my deepest gratitude to the former maintainer [@dsherret](https://github.com/dsherret) for the great work.
+I've been using `ts-nameof` for years in all my projects, which is one of the major reasons why I decided to create and maintain my own version of this project.
 
 Furthermore, I'd like to thank each of the other contributors of `ts-nameof`, namely:
   - [@cecilyth](https://github.com/cecilyth)
@@ -459,3 +492,6 @@ Furthermore, I'd like to thank each of the other contributors of `ts-nameof`, na
   - [@Kukks](https://github.com/Kukks)
 
 Without your work this reboot couldn't exist!
+
+<!--- References -->
+[LanguageServicePlugin]: https://github.com/microsoft/TypeScript/wiki/Writing-a-Language-Service-Plugin

@@ -1,6 +1,6 @@
 {
   "name": "@typescript-nameof/common-types",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "type": "module",
   "description": "Provides Common Types for TypeScript `nameof` Packages.",
   "author": "Manuel Thalmann <m@nuth.ch>",
@@ -29,6 +29,6 @@
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
-    "tsd": "^0.29.0"
+    "tsd": "^0.31.0"
   }
 }

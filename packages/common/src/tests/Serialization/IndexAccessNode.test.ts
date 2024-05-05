@@ -51,7 +51,7 @@ export function IndexAccessNodeTests(): void
                         "Checking whether interpolation indexers are represented properly…",
                         () =>
                         {
-                            let interpolation = new InterpolationNode({}, {});
+                            let interpolation = new InterpolationNode({}, {}, [], []);
                             let part = new IndexAccessNode({}, expression, interpolation).PathPart;
 
                             strictEqual(part.type, PathKind.Interpolation);
