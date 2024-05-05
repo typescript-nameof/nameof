@@ -305,7 +305,8 @@ Feel free to open up an issue if you think something is missing.
 In this section, you can find out how to set up TypeScript `nameof` for your corresponding ecosystem. Stick to these steps and you are ready to go!
 
 ### Set Up a Project
-This guide assumes that you have set up a project for the ecosystem of your choice.
+This guide assumes that you have set up a project for the ecosystem of your choice.  
+So please make sure your project is set up to use one of the listed [Supported Ecosystems](#supported-ecosystems).
 
 If you aren't sure how to configure your ecosystem properly, you might want to have a look at the [`playground` folder](./packages/playground) which already contains configuration files for many different ecosystems.
 
