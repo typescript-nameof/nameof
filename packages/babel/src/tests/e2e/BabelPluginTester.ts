@@ -28,11 +28,16 @@ export class BabelPluginTester extends TransformerTester<babel.Node, IBabelConte
             "General",
             () =>
             {
+                let self = this;
+                let timeout = this.Timeout;
+
                 test(
                     "Checking whether the package can be used as a babel plugin…",
-                    async () =>
+                    async function()
                     {
-                        await this.RunBabel("!function(){}()", "module:@typescript-nameof/babel");
+                        this.timeout(timeout);
+                        this.slow(timeout / 2);
+                        await self.RunBabel("!function(){}()", "module:@typescript-nameof/babel");
                     });
             });
 
