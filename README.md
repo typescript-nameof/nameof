@@ -368,7 +368,7 @@ Please run the following to install the integration in your project:
     ```
 
 ### Enable Real Time Error Reporting (Optional)
-If you are using a `vscode` editor, you might want to install the ["TypeScript nameof Plugin" extension](./packages/vscode) in order to enable real-time error reporting.
+If you are using a `vscode`-based editor, you might want to install the ["TypeScript nameof Plugin" extension](./packages/vscode) in order to enable real-time error reporting.
 
 For other editors, add `@typescript-nameof/nameof` as a language service plugin to your `tsconfig` file:
 
@@ -385,7 +385,7 @@ For other editors, add `@typescript-nameof/nameof` as a language service plugin 
 ```
 
 ### Configure Compiler to Use TypeScript `nameof`
-Lastly, you need to configure your compiler to pick up the plugin.
+Lastly, you need to configure your compiler to pick up the plugin and use it to transform your source code.
 
 #### `ts-patch` and `ttypescript`
 Add the following transformer plugin configuration to your project's `tsconfig` file:
@@ -482,7 +482,8 @@ nameof(console.log);
 ```
 
 ## Thank You!
-At this point, I'd like to express my deepest gratitude to the former maintainer [@dsherret](https://github.com/dsherret) for the great work. I've been using `ts-nameof` for years in all my projects. Which is one of the major reasons why I decided to create and maintain my own version of this project.
+At this point, I'd like to express my deepest gratitude to the former maintainer [@dsherret](https://github.com/dsherret) for the great work.
+I've been using `ts-nameof` for years in all my projects, which is one of the major reasons why I decided to create and maintain my own version of this project.
 
 Furthermore, I'd like to thank each of the other contributors of `ts-nameof`, namely:
   - [@cecilyth](https://github.com/cecilyth)
