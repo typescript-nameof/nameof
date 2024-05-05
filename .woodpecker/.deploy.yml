@@ -132,7 +132,7 @@ steps:
   publish release:
     image: plugins/github-release
     depends_on:
-      - publish extension to vscode marketplace
+      - create extension
       - prepare release notes
     settings:
       api_key:
