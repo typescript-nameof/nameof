@@ -36,7 +36,7 @@ To find out more on how to set up TypeScript `nameof`, please head to the [Compi
 
 ## Features
   - **Easy Compiler Integration:** The `@typescript-nameof/nameof` package provides support for a wide variety of ecosystems out of the box.
-  - **Error Reporting:** "TypeScript `nameof`" provides rich error reporting for vscode using a dedicated [extension](./packages/vscode). For editors supporting [TypeScript Language Service Plugins][LanguageServicePlugin], `@typescript-nameof/nameof` can also be used as a language service plugin. To find out how to do this, head over to the [Compiler Setup](#compiler-setup). Furthermore, supported compilers (currently only `ts-patch` and `ts-jest`) will report error messages in a useful format while compiling. For other ecosystems, errors including file names and locations of errors are printed to the console.
+  - **Error Reporting:** "TypeScript `nameof`" provides rich error reporting for `vscode`-based editors using a dedicated [extension](./packages/vscode). For editors supporting [TypeScript Language Service Plugins][LanguageServicePlugin], `@typescript-nameof/nameof` can also be used as a language service plugin. To find out how to do this, head over to the [Compiler Setup](#compiler-setup). Furthermore, supported compilers (currently only `ts-patch` and `ts-jest`) will report error messages in a useful format while compiling. For other ecosystems, errors including file names and locations of errors are printed to the console.
   - **Keyword Type Support:** Getting the name of keyword types such as `any`, `string`, `number` etc. is supported
 
 ## Packages
@@ -56,7 +56,7 @@ This section provides a brief explanation as to what functionalities are covered
   - [`@typescript-nameof/test`](./packages/test):  
     Holds components which are used for testing whether the `nameof` integrations work properly.
   - [typescript-nameof-plugin](./packages/vscode):  
-    An extension for highlighting malformed `nameof` calls in your `vscode` editor.
+    An extension for highlighting malformed `nameof` calls in your `vscode`-based editor.
   - [`@typescript-nameof/playground`](./packages/playground):  
     Contains a few example projects for trying out `nameof`-integrations
 
