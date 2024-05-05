@@ -8,7 +8,7 @@ flowchart TD
     test
 
     install --> build
-    build --> lint
+    install --> lint
     build --> test
 ```
 
@@ -28,7 +28,6 @@ flowchart TD
     prereq --> pkg
     prereq --> notes
     pkg --> ext
-    notes --> ext
     ext --> publish
     notes --> publish
 ```

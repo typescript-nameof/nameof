@@ -83,7 +83,6 @@ steps:
     image: node
     depends_on:
       - create package
-      - prepare release notes
     commands:
       - npm exec --workspace ./packages/vscode -- vsce package
       - npm run --prefix ./packages/vscode vscode:postpublish
