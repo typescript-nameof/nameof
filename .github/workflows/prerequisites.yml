@@ -1,0 +1,55 @@
+name: Verify Prerequisites
+
+on:
+  - workflow_call
+
+jobs:
+  check:
+    name: Check
+    uses: ./.github/workflows/check.yml
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    outputs:
+      publisher: ${{ steps.fetch-publisher.outputs.publisher }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+      - id: fetch-publisher
+        name: Determining Publisher Name
+        run: echo "publisher=$(node -e "console.log(JSON.parse(require('fs').readFileSync('./packages/vscode/package.json').toString()).publisher)")" >> $GITHUB_OUTPUT
+  check-npm-token:
+    name: Verify NPM Access Token
+    uses: ./.github/workflows/npm-token.yml
+    secrets:
+      npmToken: ${{ secrets.NPM_TOKEN }}
+  check-marketplace-tokens:
+    runs-on: ubuntu-latest
+    name: Verify Marketplace Tokens
+    needs:
+      - prepare
+    env:
+      PUBLISHER: ${{ needs.prepare.outputs.publisher }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+      - name: Install Dependencies
+        run: npm install
+      - name: Verify Open VSX Token
+        run:  |
+          verifyOVSX() {
+            url='https://open-vsx.org/api/-/namespace/create?token='"$1"
+            output=$(curl -X POST $url --header 'Content-Type: application/json' --data-raw '{ "name": "'"$PUBLISHER"'" }')
+            node -e 'JSON.parse('"'$output'"').error?.includes("Invalid access token") && process.exit(1);'
+          }
+
+          verifyOVSX ${{ secrets.OVSX_TOKEN }} || { echo "The Open VSX Token is invalid!" && false; }
+      - name: Verify Visual Studio Marketplace Token
+        run: |
+          verifyVSCE() {
+            npx vsce verify-pat $PUBLISHER --pat $1 > /dev/null 2>&1
+          }
+
+          verifyVSCE ${{ secrets.VSCE_TOKEN }} || { echo "The Visual Studio Marketplace Token is invalid!" && false; }

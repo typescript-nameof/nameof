@@ -4,17 +4,12 @@ on:
   - push
 
 jobs:
-  check:
-    name: Check
-    uses: ./.github/workflows/check.yml
   prepare:
     name: Prepare
     runs-on: ubuntu-latest
     outputs:
       tag-pattern: ${{ steps.escape-tag-name.outputs.tag-pattern }}
-      publisher: ${{ steps.fetch-publisher.outputs.publisher }}
     steps:
-      - uses: actions/checkout@v4
       - name: Install Node.js
         uses: actions/setup-node@v4
       - id: escape-tag-name
@@ -22,50 +17,29 @@ jobs:
         run: |
           npm install @stdlib/utils-escape-regexp-string --no-save
           echo "tag-pattern=$(node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${{ github.ref }}'))")" >> $GITHUB_OUTPUT
-      - id: fetch-publisher
-        name: Determining Publisher Name
-        run: echo "publisher=$(node -e "console.log(JSON.parse(require('fs').readFileSync('./packages/vscode/package.json').toString()).publisher)")" >> $GITHUB_OUTPUT
-  check-changelog:
+  prerequisites:
+    name: Verify Prerequisites
+    uses: ./.github/workflows/prerequisites.yml
+  collect-changelog:
+    name: Collect Release Notes
     runs-on: ubuntu-latest
-    name: Verify Changelog Format
     needs:
       - prepare
+      - prerequisites
+    outputs:
+      title: ${{ steps.release-info.outputs.title }}
+      notes: ${{ steps.release-info.outputs.notes }}
     env:
       TAG_PATTERN: ${{ needs.prepare.outputs.tag-pattern }}
-    steps:
-      - name: Detect Current Changelog Entries
-        run: '[ ! -z "$(sed "$TAG_PATTERNp;d" CHANGELOG.md)" ] || { echo "No Changelog Entries Found!" && false; }'
-  check-npm-token:
-    name: Verify NPM Access Token
-    uses: ./.github/workflows/npm-token.yml
-    secrets:
-      npmToken: ${{ secrets.NPM_TOKEN }}
-  check-marketplace-tokens:
-    runs-on: ubuntu-latest
-    name: Verify Marketplace Tokens
-    needs:
-      - prepare
-    env:
-      PUBLISHER: ${{ needs.prepare.outputs.publisher }}
+      ANY_PATTERN: /## \(.* \(v[0-9]*\|\[.*\]\)\)/
     steps:
       - uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-      - name: Install Dependencies
-        run: npm install
-      - name: Verify Open VSX Token
-        run:  |
-          verifyOVSX() {
-            url='https://open-vsx.org/api/-/namespace/create?token='"$1"
-            output=$(curl -X POST $url --header 'Content-Type: application/json' --data-raw '{ "name": "'"$PUBLISHER"'" }')
-            node -e 'JSON.parse('"'$output'"').error?.includes("Invalid access token") && process.exit(1);'
-          }
-
-          verifyOVSX ${{ secrets.OVSX_TOKEN }} || { echo "The Open VSX Token is invalid!" && false; }
-      - name: Verify Visual Studio Marketplace Token
+      - name: Detect Current Changelog Entries
+        run: '[ ! -z "$(sed "$TAG_PATTERNp;d" CHANGELOG.md)" ] || { echo "No Changelog Entries Found!" && false; }'
+      - id: release-info
+        name: Collect Release Info
         run: |
-          verifyVSCE() {
-            npx vsce verify-pat $PUBLISHER --pat $1 > /dev/null 2>&1
-          }
-
-          verifyVSCE ${{ secrets.VSCE_TOKEN }} || { echo "The Visual Studio Marketplace Token is invalid!" && false; }
+          notes="$(sed "1,$TAG_PATTERN{ $TAG_PATTERNP ; d } ; $ANY_PATTERN,\$d" CHANGELOG.md)"
+          title="$(echo "$notes" | sed "2,\$d ; s$ANY_PATTERN\\\\1/")"
+          echo "notes=$notes"
+          echo "title=$title"
