@@ -2,12 +2,12 @@ import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Dictionary, Package } from "@manuth/package-json-editor";
-import fs from "fs-extra";
+import fs, { pathExists } from "fs-extra";
 import GitBranch from "git-branch";
 import { globby } from "globby";
 import npmWhich from "npm-which";
 
-const { pathExists, writeJSON } = fs;
+const { writeJSON } = fs;
 
 /**
  * Represents a dependency candidate.
