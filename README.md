@@ -1,5 +1,5 @@
 # TypeScript `nameof`
-[![Build Status](https://ci.nuth.ch/api/badges/typescript-nameof/nameof/status.svg)](https://ci.nuth.ch/typescript-nameof/nameof)
+[![Build Status](https://github.com/typescript-nameof/nameof/actions/workflows/check.yml/badge.svg)](https://github.com/typescript-nameof/nameof/actions/workflows/check.yml)
 
 A set of tools for allowing the use of `nameof()` calls in various ecosystems.
 
