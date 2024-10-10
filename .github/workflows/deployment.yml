@@ -1,7 +1,8 @@
 name: Deploy
 
 on:
-  - push
+  push:
+  workflow_dispatch:
 
 jobs:
   prepare:
@@ -50,7 +51,7 @@ jobs:
   publish-npm:
     name: Publish Package to NPM
     uses: ./.github/workflows/npm-publish.yml
-    if: github.event_name == 'deployment'
+    if: github.event_name == 'workflow_dispatch'
     needs:
       - collect-changelog
     secrets:
@@ -58,7 +59,7 @@ jobs:
   publish-gh:
     name: Publish Package to GitHub Registry
     uses: ./.github/workflows/npm-publish.yml
-    if: github.event_name == 'deployment'
+    if: github.event_name == 'workflow_dispatch'
     needs:
       - collect-changelog
     with:
