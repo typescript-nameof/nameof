@@ -77,7 +77,7 @@ export function ErrorHandlerTests(): void
                     setup(
                         () =>
                         {
-                            expectedText = `[nameof]: ${error.message}`;
+                            expectedText = `[typescript-nameof]: ${error.message}`;
                         });
 
                     test(
