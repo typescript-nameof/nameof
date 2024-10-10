@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { INameofOutput, TransformerTester } from "@typescript-nameof/test";
-import ts = require("typescript");
+import type { CompilerHost, Node } from "typescript";
 import { CompilerResult } from "./CompilerResult.js";
 import { ITypeScriptContext } from "../../Transformation/ITypeScriptContext.cjs";
 import { TypeScriptTransformer } from "../../Transformation/TypeScriptTransformer.cjs";
@@ -11,7 +11,7 @@ import { TypeScriptTransformer } from "../../Transformation/TypeScriptTransforme
 /**
  * Provides the functionality to test typescript transformers.
  */
-export abstract class TypeScriptTransformerTester extends TransformerTester<ts.Node, ITypeScriptContext>
+export abstract class TypeScriptTransformerTester extends TransformerTester<Node, ITypeScriptContext>
 {
     /**
      * Gets a value indicating whether to use the integrated plugin system.
@@ -33,7 +33,7 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
      * @returns
      * The transformed representation of the specified {@linkcode code}.
      */
-    protected async Run(code: string, errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext>): Promise<string>
+    protected async Run(code: string, errorHandler?: IErrorHandler<Node, ITypeScriptContext>): Promise<string>
     {
         let result = await this.RunTransformer(code, errorHandler);
 
@@ -72,7 +72,7 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
      * @returns
      * The result of the transformation.
      */
-    protected async RunTransformer(code: string, errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext> | undefined): Promise<CompilerResult>
+    protected async RunTransformer(code: string, errorHandler?: IErrorHandler<Node, ITypeScriptContext> | undefined): Promise<CompilerResult>
     {
         /**
          * Represents an emitted file.
@@ -92,22 +92,24 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
 
         let files: IFileInfo[] = [];
         let fileName = "/file.ts";
+        const tsLibrary = await this.GetCompiler();
+        const { convertCompilerOptionsFromJson, createProgram, createSourceFile, getDefaultLibFileName, ScriptKind } = tsLibrary;
 
-        let host: ts.CompilerHost = {
+        let host: CompilerHost = {
             fileExists: (path) => path === fileName,
             readFile: (path) => path === fileName ? code : undefined,
             getSourceFile: (path, languageVersion) =>
             {
                 if (path === fileName)
                 {
-                    return ts.createSourceFile(fileName, code, languageVersion, false, ts.ScriptKind.TS);
+                    return createSourceFile(fileName, code, languageVersion, false, ScriptKind.TS);
                 }
                 else
                 {
                     return undefined;
                 }
             },
-            getDefaultLibFileName: (options) => ts.getDefaultLibFileName(options),
+            getDefaultLibFileName: (options) => getDefaultLibFileName(options),
             writeFile: () => { throw new Error("Not implemented"); },
             getCurrentDirectory: () => "/",
             getDirectories: () => [],
@@ -116,7 +118,7 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
             getNewLine: () => "\n"
         };
 
-        let config = ts.convertCompilerOptionsFromJson(
+        let config = convertCompilerOptionsFromJson(
             {
                 strictNullChecks: true,
                 target: "ES2022",
@@ -133,7 +135,7 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
             },
             "/");
 
-        let program = ts.createProgram(
+        let program = createProgram(
             [fileName],
             config.options,
             host);
@@ -156,7 +158,7 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
                     {} :
                     {
                         before: [
-                            new TypeScriptTransformer(undefined, errorHandler).Factory
+                            new TypeScriptTransformer({ tsLibrary }, errorHandler).Factory
                         ]
                     });
 
