@@ -49,7 +49,7 @@ interface ITransformation
 export function replaceInText(text: string): ISubstitutionResult;
 
 /**
- * Transforms the file with the specified {@link fileName `fileName`}.
+ * Transforms the file with the specified {@linkcode fileName}.
  *
  * @param fileName
  * The name of the file to transform.
@@ -63,7 +63,7 @@ export function replaceInText(text: string): ISubstitutionResult;
 export function replaceInText(fileName: string, fileText: string): ISubstitutionResult;
 
 /**
- * Transforms the file with the specified {@link fileName `fileName`}.
+ * Transforms the file with the specified {@linkcode fileName}.
  *
  * @param fileName
  * The name of the file to transform.

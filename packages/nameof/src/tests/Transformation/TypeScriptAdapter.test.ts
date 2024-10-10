@@ -17,7 +17,7 @@ export function TypeScriptAdapterTests(): void
         () =>
         {
             /**
-             * Provides an implementation of the {@link TypeScriptAdapter} class for testing.
+             * Provides an implementation of the {@linkcode TypeScriptAdapter} class for testing.
              */
             class TestAdapter extends TypeScriptAdapter
             {
