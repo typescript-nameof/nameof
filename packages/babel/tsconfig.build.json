@@ -3,13 +3,13 @@
     "files": [],
     "references": [
         {
-            "path": "./tsconfig.app.json"
+            "path": "./"
         },
         {
             "path": "./tsconfig.macro.json"
         },
         {
-            "path": "./src/tests/tsconfig.json"
+            "path": "./src/tests"
         }
     ]
 }

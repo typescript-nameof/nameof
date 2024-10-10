@@ -1,9 +1,15 @@
 {
     "extends": "./tsconfig.base.json",
-    "files": [],
-    "references": [
-        {
-            "path": "./tsconfig.app.json"
-        }
+    "compilerOptions": {
+        "composite": true,
+        "rootDir": "./src",
+        "outDir": "./lib",
+        "emitDeclarationOnly": true
+    },
+    "include": [
+        "./src/**/*"
+    ],
+    "exclude": [
+        "./src/tests/**/*"
     ]
 }

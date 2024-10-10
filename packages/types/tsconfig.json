@@ -1,9 +1,15 @@
 {
     "extends": "./tsconfig.base.json",
-    "files": [],
+    "compilerOptions": {
+        "composite": true,
+        "noEmit": true
+    },
+    "files": [
+        "./index.d.cts"
+    ],
     "references": [
         {
-            "path": "./tsconfig.app.json"
+            "path": "../common-types"
         }
     ]
 }
