@@ -37,7 +37,7 @@ export class ErrorHandler<TNode, TContext> implements IErrorHandler<TNode, TCont
             message += `${locationText}: `;
         }
 
-        message += `[nameof]: ${error.message}`;
+        message += `[typescript-nameof]: ${error.message}`;
 
         let customError = new Error(message);
         customError.stack = undefined;
