@@ -75,6 +75,14 @@ jobs:
     needs:
       - collect-changelog
     steps:
+      - name: Install Dependencies
+        run: npm clean-install
+      - name: Create NPM Packages
+        run: npm pack -w @typescript-nameof/nameof @typescript-nameof/types @typescript-nameof/babel @typescript-nameof/common @typescript-nameof/common-types
+      - name: Create `vscode` Extension
+        run: |
+          npm exec --workspace ./packages/vscode -- vsce package
+          npm run --prefix ./packages/vscode vscode:postpublish
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
