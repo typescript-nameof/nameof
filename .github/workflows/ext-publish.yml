@@ -1,0 +1,32 @@
+name: Publish Extension to Marketplace
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        type: string
+        description: The name of the marketplace.
+        required: true
+      command:
+        type: string
+        description: The `vsce` compliant command to run for publishing the extension.
+        default: ovsx
+    secrets:
+      token:
+        description: The Personal Access Token for authenticating to the marketplace.
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+      - name: Install Dependencies
+        run: npm clean-install
+      - name: Publish Extension to ${{ inputs.name }} Marketplace
+        run: |
+          npm exec --workspace ./packages/vscode -- ${{ inputs.command }} publish --pat $TOKEN
+          npm run --prefix ./packages/vscode vscode:postpublish
+        env:
+          TOKEN: ${{ secrets.token }}
