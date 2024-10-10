@@ -1,6 +1,7 @@
 {
   "version": "0.0.10",
   "private": true,
+  "type": "module",
   "scripts": {},
   "dependencies": {
     "ts-loader": "^9.5.1",
