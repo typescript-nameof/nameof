@@ -15,7 +15,7 @@ export interface INameOfProvider
      *
      * @param func An optional function for which the last identifier of the expression will be parsed.
      */
-    <T>(func?: (obj: T) => any): string;
+    <T>(func?: (obj: T) => unknown): string;
 
     /**
      * Gets a string representation of the last identifier of the given expression.
@@ -26,7 +26,7 @@ export interface INameOfProvider
      *
      * @param obj An expression for which the last identifier will be parsed.
      */
-    (obj: any): string;
+    (obj: unknown): string;
 
     /**
      * Gets constantly typed keys of the specified type {@linkcode T}.
@@ -39,7 +39,7 @@ export interface INameOfProvider
      * @param func
      * The function providing the object to get a key for.
      */
-    typed<TFunc extends (...args: any[]) => any>(func: TFunc): TFunc extends (...args: any[]) => infer U ? KeyProvider<U> : never;
+    typed<TFunc extends (...args: unknown[]) => unknown>(func: TFunc): TFunc extends (...args: unknown[]) => infer U ? KeyProvider<U> : never;
 
     /**
      * Gets the string representation of the entire type parameter expression.
@@ -68,7 +68,7 @@ export interface INameOfProvider
      * When absent, the full expression will be parsed.
      * A negative index can be used, indicating an offset from the end of the sequence.
      */
-    full<T>(func: (obj: T) => any, periodIndex?: number): string;
+    full<T>(func: (obj: T) => unknown, periodIndex?: number): string;
 
     /**
      * Gets the string representation of the entire given expression.
@@ -82,7 +82,7 @@ export interface INameOfProvider
      * When absent, the full expression will be parsed.
      * A negative index can be used, indicating an offset from the end of the sequence.
      */
-    full(obj: any, periodIndex?: number): string;
+    full(obj: unknown, periodIndex?: number): string;
 
     /**
      * Gets an array containing the string representation of the final identifier of each expression in the array returned by the provided function.
@@ -92,7 +92,7 @@ export interface INameOfProvider
      *
      * @param func A function returning an array of expressions to be parsed, excluding the parameter's identifier.
      */
-    array<T>(func: (obj: T) => any[]): string[];
+    array<T>(func: (obj: T) => unknown[]): string[];
 
     /**
      * Gets an array containing the string representation of each expression in the arguments.
@@ -102,7 +102,7 @@ export interface INameOfProvider
      *
      * @param args An array of expressions to be parsed.
      */
-    array(...args: any[]): string[];
+    array(...args: unknown[]): string[];
 
     /**
      * Gets an array containing the string representation of the final identifier of each expression in the array returned by the provided function.
@@ -113,7 +113,7 @@ export interface INameOfProvider
      * @param func A function returning an array of expressions to be parsed, excluding the parameter's identifier.
      * @deprecated
      */
-    toArray<T>(func: (obj: T) => any[]): string[];
+    toArray<T>(func: (obj: T) => unknown[]): string[];
 
     /**
      * Gets an array containing the string representation of each expression in the arguments.
@@ -124,7 +124,7 @@ export interface INameOfProvider
      * @param args An array of expressions to be parsed.
      * @deprecated
      */
-    toArray(...args: any[]): string[];
+    toArray(...args: unknown[]): string[];
 
     /**
      * Embeds an expression into the string representation of the result of nameof.full.
@@ -147,7 +147,7 @@ export interface INameOfProvider
      * When absent, the full expression will be parsed.
      * A negative index can be used, indicating an offset from the end of the sequence.
      */
-    split<T>(func: (obj: T) => any, periodIndex?: number): string[];
+    split<T>(func: (obj: T) => unknown, periodIndex?: number): string[];
 
     /**
      * Gets an array of strings where each element is a subsequent part of the expression provided.
@@ -161,5 +161,5 @@ export interface INameOfProvider
      * When absent, the full expression will be parsed.
      * A negative index can be used, indicating an offset from the end of the sequence.
      */
-    split(obj: any, periodIndex?: number): string[];
+    split(obj: unknown, periodIndex?: number): string[];
 }
