@@ -1,9 +1,19 @@
 {
     "extends": "./tsconfig.base.json",
-    "files": [],
+    "compilerOptions": {
+        "composite": true,
+        "rootDir": "./src",
+        "outDir": "./lib"
+    },
+    "include": [
+        "./src/**/*"
+    ],
+    "exclude": [
+        "./src/tests/**/*"
+    ],
     "references": [
         {
-            "path": "./tsconfig.app.json"
+            "path": "../common"
         }
     ]
 }

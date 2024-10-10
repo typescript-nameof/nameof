@@ -12,7 +12,7 @@
             "path": "./packages/common/tsconfig.build.json"
         },
         {
-            "path": "./packages/common-types/tsconfig.build.json"
+            "path": "./packages/common-types"
         },
         {
             "path": "./packages/test/tsconfig.build.json"

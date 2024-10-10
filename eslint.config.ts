@@ -16,20 +16,20 @@ export default [
                     ["tsconfig.eslint.json"],
                     ...[
                         ...[
-                            ["tsconfig.app.json"],
+                            ["tsconfig.json"],
                             ["tsconfig.macro.json"],
                             ["src", "tests", "tsconfig.json"]
                         ].map((path) => ["babel", ...path]),
                         ...[
-                            ["tsconfig.app.json"],
+                            ["tsconfig.json"],
                             ["src", "tests", "tsconfig.json"]
                         ].map((path) => ["common", ...path]),
                         ...[
-                            ["tsconfig.app.json"],
+                            ["tsconfig.json"],
                             ["type-tests", "tsconfig.json"]
                         ].map((path) => ["common-types", ...path]),
                         ...[
-                            ["tsconfig.app.json"],
+                            ["tsconfig.json"],
                             ["src", "tests", "tsconfig.json"],
                             ["type-tests", "tsconfig.json"]
                         ].map((path) => ["nameof", ...path]),
@@ -38,11 +38,11 @@ export default [
                             "tsconfig.editor.json"
                         ].map((path) => ["playground", path]),
                         ...[
-                            ["tsconfig.app.json"],
+                            ["tsconfig.json"],
                             ["src", "tests", "tsconfig.json"]
                         ].map((path) => ["test", ...path]),
                         ...[
-                            ["tsconfig.app.json"],
+                            ["tsconfig.json"],
                             ["type-tests", "tsconfig.json"]
                         ].map((path) => ["types", ...path]),
                         ...[
