@@ -116,29 +116,26 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
             getNewLine: () => "\n"
         };
 
-        let configFile = ts.parseConfigFileTextToJson(
-            "tsconfig.json",
-            JSON.stringify(
-                {
-                    compilerOptions: {
-                        strictNullChecks: true,
-                        target: "ES2022",
-                        ...(
-                            this.UsePlugin ?
+        let config = ts.convertCompilerOptionsFromJson(
+            {
+                strictNullChecks: true,
+                target: "ES2022",
+                ...(
+                    this.UsePlugin ?
+                        {
+                            plugins: [
                                 {
-                                    plugins: [
-                                        {
-                                            transform: resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../")
-                                        }
-                                    ]
-                                } :
-                                {})
-                    }
-                }));
+                                    transform: resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../")
+                                }
+                            ]
+                        } :
+                        {})
+            },
+            "/");
 
         let program = ts.createProgram(
             [fileName],
-            configFile.config.compilerOptions,
+            config.options,
             host);
 
         try
