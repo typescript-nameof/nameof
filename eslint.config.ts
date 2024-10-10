@@ -18,38 +18,31 @@ export default [
                         ...[
                             ["tsconfig.app.json"],
                             ["tsconfig.macro.json"],
-                            ["tsconfig.eslint.json"],
                             ["src", "tests", "tsconfig.json"]
                         ].map((path) => ["babel", ...path]),
                         ...[
                             ["tsconfig.app.json"],
-                            ["tsconfig.eslint.json"],
                             ["src", "tests", "tsconfig.json"]
                         ].map((path) => ["common", ...path]),
                         ...[
                             ["tsconfig.app.json"],
-                            ["tsconfig.eslint.json"],
                             ["type-tests", "tsconfig.json"]
                         ].map((path) => ["common-types", ...path]),
                         ...[
                             ["tsconfig.app.json"],
-                            ["tsconfig.eslint.json"],
                             ["src", "tests", "tsconfig.json"],
                             ["type-tests", "tsconfig.json"]
                         ].map((path) => ["nameof", ...path]),
                         ...[
                             "tsconfig.app.json",
-                            "tsconfig.editor.json",
-                            "tsconfig.eslint.json"
+                            "tsconfig.editor.json"
                         ].map((path) => ["playground", path]),
                         ...[
                             ["tsconfig.app.json"],
-                            ["tsconfig.eslint.json"],
                             ["src", "tests", "tsconfig.json"]
                         ].map((path) => ["test", ...path]),
                         ...[
                             ["tsconfig.app.json"],
-                            ["tsconfig.eslint.json"],
                             ["type-tests", "tsconfig.json"]
                         ].map((path) => ["types", ...path]),
                         ...[

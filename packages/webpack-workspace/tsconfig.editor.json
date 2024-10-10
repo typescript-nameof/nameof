@@ -6,7 +6,6 @@
         "checkJs": true
     },
     "files": [
-        "eslint.config.js",
         "./webpack.config.cts"
     ]
 }
