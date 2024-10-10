@@ -19,7 +19,7 @@
     "rebuild": "npm run clean && npm run build",
     "watch": "npm run build -- --watch",
     "clean": "npm run build -- --clean && rimraf ./packages/*/lib",
-    "lint": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" eslint --max-warnings 0 ./scripts eslint.config.js ./packages/*/src ./packages/babel/macro/index.cts ./packages/*/webpack.config.cts",
+    "lint": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" eslint --max-warnings 0 --flag unstable_ts_config ./scripts eslint.config.ts ./packages/*/src ./packages/babel/macro/index.cts ./packages/*/webpack.config.cts",
     "lint-ide": "npm run lint || exit 0",
     "test": "npm run --if-present --workspaces test",
     "bump-version": "node --no-warnings=ExperimentalWarning --loader ts-node/esm/transpile-only ./scripts/bumpVersion.mts"
@@ -41,6 +41,7 @@
     "git-branch": "^2.0.1",
     "globals": "^15.11.0",
     "globby": "^14.0.2",
+    "jiti": "^2.3.3",
     "mocha": "^10.7.3",
     "npm-which": "^3.0.1",
     "rimraf": "^6.0.1",
