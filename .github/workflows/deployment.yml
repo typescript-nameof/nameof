@@ -17,7 +17,7 @@ jobs:
         name: Escape Tag Name
         run: |
           npm install @stdlib/utils-escape-regexp-string --no-save
-          echo "tag-pattern=$(node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${{ github.ref }}'))")" >> $GITHUB_OUTPUT
+          echo "tag-pattern=$(node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${{ github.ref_name }}'))")" >> $GITHUB_OUTPUT
   prerequisites:
     name: Verify Prerequisites
     uses: ./.github/workflows/prerequisites.yml
