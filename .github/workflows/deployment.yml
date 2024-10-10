@@ -66,3 +66,18 @@ jobs:
       registry: https://npm.pkg.github.com
     secrets:
       npmToken: ${{ secrets.GITHUB_TOKEN }}
+  release:
+    name: Create Release on GitHub
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    needs:
+      - collect-changelog
+    steps:
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ needs.collect-changelog.outputs.title }}
+          body: ${{ needs.collect-changelog.outputs.notes }}
+          files: |
+            "*.tgz"
+            "packages/vscode/*.vsix"
