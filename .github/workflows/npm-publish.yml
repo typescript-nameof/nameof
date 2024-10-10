@@ -19,6 +19,7 @@ jobs:
       - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
+          node-version: latest
           registry-url: ${{ inputs.registry }}
       - name: Install Dependencies
         run: npm clean-install
