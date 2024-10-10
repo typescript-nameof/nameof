@@ -34,7 +34,6 @@ module.exports = {
                     {
                         return {
                             before: [
-                                // eslint-disable-next-line node/no-unpublished-require
                                 require("../nameof")
                             ]
                         };
