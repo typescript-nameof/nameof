@@ -35,20 +35,20 @@
     "@types/nameof": "file:packages/nop",
     "@types/node": "^22.7.5",
     "@types/npm-which": "^3.0.3",
-    "@vscode/vsce": "^2.26.1",
+    "@vscode/vsce": "^3.1.1",
     "cross-env": "^7.0.3",
     "fs-extra": "^11.2.0",
     "git-branch": "^2.0.1",
     "globals": "^15.11.0",
-    "globby": "^14.0.1",
-    "mocha": "^10.4.0",
+    "globby": "^14.0.2",
+    "mocha": "^10.7.3",
     "npm-which": "^3.0.1",
-    "rimraf": "^5.0.5",
+    "rimraf": "^6.0.1",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.2",
-    "ts-patch": "^3.1.2",
+    "ts-patch": "^3.2.1",
     "ttypescript": "npm:nop@^1.0.0",
-    "typescript": "^5.4.5",
+    "typescript": "^5.6.3",
     "webpack-playground-typescript": "npm:nop@^1.0.0"
   },
   "workspaces": {
@@ -57,7 +57,7 @@
     ]
   },
   "dependencies": {
-    "eslint": "^8.57.0"
+    "eslint": "^9.12.0"
   },
   "overrides": {
     "@manuth/typescript-languageservice-tester": {
