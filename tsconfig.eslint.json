@@ -6,6 +6,6 @@
         "checkJs": true
     },
     "files": [
-        "eslint.config.js"
+        "eslint.config.ts"
     ]
 }
