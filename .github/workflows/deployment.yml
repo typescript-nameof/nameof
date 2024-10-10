@@ -43,3 +43,21 @@ jobs:
           title="$(echo "$notes" | sed "2,\$d ; s$ANY_PATTERN\\\\1/")"
           echo "notes=$notes"
           echo "title=$title"
+  publish-npm:
+    name: Publish Package to NPM
+    uses: ./.github/workflows/npm-publish.yml
+    if: github.event_name == 'deployment'
+    needs:
+      - collect-changelog
+    secrets:
+      npmToken: ${{ secrets.NPM_TOKEN }}
+  publish-gh:
+    name: Publish Package to GitHub Registry
+    uses: ./.github/workflows/npm-publish.yml
+    if: github.event_name == 'deployment'
+    needs:
+      - collect-changelog
+    with:
+      registry: https://npm.pkg.github.com
+    secrets:
+      npmToken: ${{ secrets.GITHUB_TOKEN }}
