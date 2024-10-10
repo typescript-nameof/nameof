@@ -25,6 +25,16 @@ jobs:
       - id: fetch-publisher
         name: Determining Publisher Name
         run: echo "publisher=$(node -e "console.log(JSON.parse(require('fs').readFileSync('./packages/vscode/package.json').toString()).publisher)")" >> $GITHUB_OUTPUT
+  check-changelog:
+    runs-on: ubuntu-latest
+    name: Verify Changelog Format
+    needs:
+      - prepare
+    env:
+      TAG_PATTERN: ${{ needs.prepare.outputs.tag-pattern }}
+    steps:
+      - name: Detect Current Changelog Entries
+        run: '[ ! -z "$(sed "$TAG_PATTERNp;d" CHANGELOG.md)" ] || { echo "No Changelog Entries Found!" && false; }'
   check-npm-token:
     name: Verify NPM Access Token
     uses: ./.github/workflows/npm-token.yml
