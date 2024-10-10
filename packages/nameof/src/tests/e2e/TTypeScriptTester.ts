@@ -28,8 +28,8 @@ export class TTypeScriptTester extends TypeScriptTransformerTester
      * @returns
      * The compiler to use.
      */
-    protected override GetCompiler(): typeof import("typescript")
+    protected override GetCompiler(): Promise<typeof import("typescript")>
     {
-        return createRequire(new URL("../../../../ttypescript-workspace", import.meta.url)).resolve("ttypescript") as any;
+        return createRequire(new URL("../../../../ttypescript-workspace/.js", import.meta.url))("ttypescript");
     }
 }

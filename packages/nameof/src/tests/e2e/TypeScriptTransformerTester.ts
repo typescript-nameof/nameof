@@ -58,7 +58,7 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
     /**
      * Gets the compiler to use.
      */
-    protected abstract GetCompiler(): typeof import("typescript");
+    protected abstract GetCompiler(): Promise<typeof import("typescript")>;
 
     /**
      * Runs the transformer.

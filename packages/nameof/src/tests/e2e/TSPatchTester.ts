@@ -31,8 +31,8 @@ export class TSPatchTester extends TypeScriptTransformerTester
      * @returns
      * The compiler to use.
      */
-    protected override GetCompiler(): typeof ts
+    protected override GetCompiler(): Promise<typeof ts>
     {
-        return require("typescript");
+        return import("typescript");
     }
 }
