@@ -1,7 +1,17 @@
 name: Verify Prerequisites
 
 on:
-  - workflow_call
+  workflow_call:
+    secrets:
+      NPM_TOKEN:
+        description: The token for accessing the NPM registry.
+        required: true
+      OVSX_TOKEN:
+        description: The token for accessing Open VSX.
+        required: true
+      VSCE_TOKEN:
+        description: The token for accessing the Visual Studio Marketplace.
+        required: true
 
 jobs:
   check:

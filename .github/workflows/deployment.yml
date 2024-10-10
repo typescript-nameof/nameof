@@ -20,6 +20,10 @@ jobs:
   prerequisites:
     name: Verify Prerequisites
     uses: ./.github/workflows/prerequisites.yml
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
+      VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
   collect-changelog:
     name: Collect Release Notes
     runs-on: ubuntu-latest
