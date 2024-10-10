@@ -68,6 +68,9 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
      *
      * @param errorHandler
      * A component for reporting errors.
+     *
+     * @returns
+     * The result of the transformation.
      */
     protected async RunTransformer(code: string, errorHandler?: IErrorHandler<ts.Node, ITypeScriptContext> | undefined): Promise<CompilerResult>
     {
@@ -122,14 +125,14 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
                         target: "ES2022",
                         ...(
                             this.UsePlugin ?
-                            {
-                                plugins: [
-                                    {
-                                        transform: resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../")
-                                    }
-                                ]
-                            } :
-                            {})
+                                {
+                                    plugins: [
+                                        {
+                                            transform: resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../")
+                                        }
+                                    ]
+                                } :
+                                {})
                     }
                 }));
 
@@ -153,17 +156,17 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<ts.N
                 undefined,
                 false,
                 this.UsePlugin ?
-                {} :
-                {
-                    before: [
-                        new TypeScriptTransformer(undefined, errorHandler).Factory
-                    ]
-                });
+                    {} :
+                    {
+                        before: [
+                            new TypeScriptTransformer(undefined, errorHandler).Factory
+                        ]
+                    });
 
-                return {
-                    diagnostics: [...result.diagnostics],
-                    code: files[0].content
-                };
+            return {
+                diagnostics: [...result.diagnostics],
+                code: files[0].content
+            };
         }
         catch (error)
         {

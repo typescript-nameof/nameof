@@ -362,10 +362,10 @@ export function ResultBuilderTests(): void
                         () =>
                         {
                             let prefixes: Array<Array<PathPart<State>>> = [
-                                    [],
-                                    [identifierPath],
-                                    [identifierPath, propertyPath],
-                                    [interpolationPath]
+                                [],
+                                [identifierPath],
+                                [identifierPath, propertyPath],
+                                [interpolationPath]
                             ];
 
                             for (let prefix of prefixes)

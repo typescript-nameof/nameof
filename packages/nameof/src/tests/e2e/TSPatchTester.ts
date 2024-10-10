@@ -19,6 +19,14 @@ export class TSPatchTester extends TypeScriptTransformerTester
 
     /**
      * @inheritdoc
+     */
+    protected override get DefaultErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
+    {
+        return new TestErrorHandler();
+    }
+
+    /**
+     * @inheritdoc
      *
      * @returns
      * The compiler to use.
@@ -26,13 +34,5 @@ export class TSPatchTester extends TypeScriptTransformerTester
     protected override GetCompiler(): typeof ts
     {
         return require("typescript");
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected override get DefaultErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
-    {
-        return new TestErrorHandler();
     }
 }
