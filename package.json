@@ -38,7 +38,7 @@
     "@vscode/vsce": "^3.1.1",
     "cross-env": "^7.0.3",
     "fs-extra": "^11.2.0",
-    "git-branch": "^2.0.1",
+    "git-branch": "npm:@fork-of/git-branch@^2.1.1",
     "globals": "^15.11.0",
     "globby": "^14.0.2",
     "jiti": "^2.3.3",
