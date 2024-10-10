@@ -1,6 +1,5 @@
 import { ok } from "node:assert";
 import { resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { INameofOutput, TransformerTester } from "@typescript-nameof/test";
 import type { CompilerHost, Node } from "typescript";
@@ -127,7 +126,7 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<Node
                         {
                             plugins: [
                                 {
-                                    transform: resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../")
+                                    transform: resolve(import.meta.dirname, "../../../")
                                 }
                             ]
                         } :

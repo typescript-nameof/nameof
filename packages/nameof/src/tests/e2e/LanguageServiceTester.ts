@@ -1,6 +1,6 @@
 import { ok } from "node:assert";
 import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 import { TempDirectory } from "@manuth/temp-files";
 import { LanguageServiceTester as ServiceTester } from "@manuth/typescript-languageservice-tester";
 import { IErrorHandler } from "@typescript-nameof/common";
@@ -60,7 +60,7 @@ export class LanguageServiceTester extends TransformerTester<any, any>
                     "npm",
                     [
                         "install",
-                        `@typescript-nameof/nameof@file:${fileURLToPath(new URL("../../..", import.meta.url))}`
+                        `@typescript-nameof/nameof@file:${resolve(import.meta.dirname, "../../..")}`
                     ],
                     {
                         cwd: self.tempDir.FullName

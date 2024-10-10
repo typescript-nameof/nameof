@@ -1,6 +1,5 @@
 import { ok, strictEqual } from "node:assert";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { nameOf } from "ts-nameof-proxy";
 import { State } from "./State.js";
 import { ErrorHandler } from "../../Transformation/ErrorHandler.cjs";
@@ -61,7 +60,7 @@ export function ErrorHandlerTests(): void
                     errorHandler = new ErrorHandler();
 
                     location = {
-                        filePath: join(fileURLToPath(new URL(".", import.meta.url)), "file.ts"),
+                        filePath: join(import.meta.dirname, "file.ts"),
                         line: 13,
                         column: 37
                     };
