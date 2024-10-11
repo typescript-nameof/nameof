@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## TypeScript `nameof` [Unreleased]
+
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.11...dev)
+
+## TypeScript `nameof` v0.0.11
 ### Updated
   - All dependencies
   - Updated type declarations to apply to `@typescript-eslint/no-unsafe-call`
@@ -16,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Vulnerabilities in dependencies
   - Unit tests to use the proper TypeScript implementation
 
-[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.10...dev)
+[Show differences](https://github.com/typescript-nameof/nameof/compare/v0.0.10...v0.0.11)
 
 ## TypeScript `nameof` v0.0.10
 ### Fixed
