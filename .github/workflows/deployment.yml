@@ -39,7 +39,7 @@ jobs:
       notes: ${{ steps.release-info.outputs.notes }}
     env:
       CURRENT_PATTERN: ${{ needs.prepare.outputs.heading-pattern }}
-      ANY_PATTERN: /## \(.* \(v[0-9]*\|\[.*\]\)\)/
+      ANY_PATTERN: /^## \(.* \(v[0-9]*\|\[.*\]\)\)/
     steps:
       - uses: actions/checkout@v4
       - name: Detect Current Changelog Entries
