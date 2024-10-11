@@ -11,7 +11,7 @@ jobs:
     name: Prepare
     runs-on: ubuntu-latest
     outputs:
-      tag-pattern: ${{ steps.escape-tag-name.outputs.tag-pattern }}
+      heading-pattern: ${{ steps.escape-tag-name.outputs.heading-pattern }}
     steps:
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -19,7 +19,8 @@ jobs:
         name: Escape Tag Name
         run: |
           npm install @stdlib/utils-escape-regexp-string --no-save
-          echo "tag-pattern=$(node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${{ github.ref_name }}'))")" >> $GITHUB_OUTPUT
+          pattern="$(node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${{ github.ref_name }}'))")"
+          echo "heading-pattern=/^## \(.* \(${pattern}\|\[${pattern}\]\)\)\$/" >> $GITHUB_OUTPUT
   prerequisites:
     name: Verify Prerequisites
     uses: ./.github/workflows/prerequisites.yml
@@ -37,16 +38,16 @@ jobs:
       title: ${{ steps.release-info.outputs.title }}
       notes: ${{ steps.release-info.outputs.notes }}
     env:
-      TAG_PATTERN: ${{ needs.prepare.outputs.tag-pattern }}
+      CURRENT_PATTERN: ${{ needs.prepare.outputs.heading-pattern }}
       ANY_PATTERN: /## \(.* \(v[0-9]*\|\[.*\]\)\)/
     steps:
       - uses: actions/checkout@v4
       - name: Detect Current Changelog Entries
-        run: '[ ! -z "$(sed "$TAG_PATTERNp;d" CHANGELOG.md)" ] || { echo "No Changelog Entries Found!" && false; }'
+        run: '[ ! -z "$(sed "${CURRENT_PATTERN}p;d" CHANGELOG.md)" ] || { echo "No Changelog Entries Found!" && false; }'
       - id: release-info
         name: Collect Release Info
         run: |
-          notes="$(sed "1,$TAG_PATTERN{ $TAG_PATTERNP ; d } ; $ANY_PATTERN,\$d" CHANGELOG.md)"
+          notes="$(sed "1,$CURRENT_PATTERN{ $CURRENT_PATTERNP ; d } ; $ANY_PATTERN,\$d" CHANGELOG.md)"
           title="$(echo "$notes" | sed "2,\$d ; s$ANY_PATTERN\\\\1/")"
           echo "notes=$notes"
           echo "title=$title"
