@@ -8,7 +8,7 @@ import { BabelTransformerTests } from "./BabelTransformer.test.js";
 export function TransformationTests(): void
 {
     suite(
-        basename(new URL(".", import.meta.url).pathname),
+        basename(import.meta.dirname),
         () =>
         {
             BabelAdapterTests();

@@ -13,7 +13,7 @@ import { UnsupportedNodeTests } from "./UnsupportedNode.test.js";
 export function SerializationTests(): void
 {
     suite(
-        basename(new URL(".", import.meta.url).pathname),
+        basename(import.meta.dirname),
         () =>
         {
             NodeTests();

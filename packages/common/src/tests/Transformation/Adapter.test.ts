@@ -339,7 +339,13 @@ export function AdapterTests(): void
                             {
                                 let stub = adapter.ReportError.withArgs(match.any, match.any, assertion[1]);
                                 ok(!stub.called);
-                                adapter.ParseInternal.callsFake(() => { throw assertion[0]; });
+
+                                adapter.ParseInternal.callsFake(
+                                    () =>
+                                    {
+                                        throw assertion[0];
+                                    });
+
                                 adapter.Transform(validInput, {});
                                 ok(stub.calledOnce);
                             }

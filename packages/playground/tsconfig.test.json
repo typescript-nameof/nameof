@@ -8,7 +8,7 @@
     ],
     "references": [
         {
-            "path": "../babel/tsconfig.app.json"
+            "path": "../babel"
         }
     ]
 }

@@ -1,5 +1,5 @@
 import { IErrorHandler } from "@typescript-nameof/common";
-// eslint-disable-next-line node/no-unpublished-import
+// eslint-disable-next-line n/no-unpublished-import
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import type ts = require("typescript");
 import { IPluginConfig } from "./IPluginConfig.cjs";

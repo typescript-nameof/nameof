@@ -7,7 +7,7 @@ import { TypeScriptErrorHandlerTests } from "./TypeScriptErrorHandler.test.js";
 export function DiagnosticTests(): void
 {
     suite(
-        basename(new URL(".", import.meta.url).pathname),
+        basename(import.meta.dirname),
         () =>
         {
             TypeScriptErrorHandlerTests();
