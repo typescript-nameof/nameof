@@ -20,14 +20,6 @@ export function AdapterErrorTests(): void
         /**
          * @inheritdoc
          */
-        protected override get Message(): string
-        {
-            return message;
-        }
-
-        /**
-         * @inheritdoc
-         */
         public override get NameofName(): string
         {
             return super.NameofName;
@@ -47,6 +39,14 @@ export function AdapterErrorTests(): void
         public override get EscapedCode(): string
         {
             return super.EscapedCode;
+        }
+
+        /**
+         * @inheritdoc
+         */
+        protected override get Message(): string
+        {
+            return message;
         }
 
         /**

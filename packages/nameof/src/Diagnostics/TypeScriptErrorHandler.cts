@@ -81,16 +81,16 @@ export class TypeScriptErrorHandler<TFeatures extends TypeScriptFeatures = TypeS
             code: 1337,
             ...(
                 context.file ?
-                {
-                    file: context.file,
-                    start: node.getStart(context.file),
-                    length: node.getWidth(context.file)
-                } :
-                {
-                    file: undefined,
-                    start: undefined,
-                    length: undefined
-                })
+                    {
+                        file: context.file,
+                        start: node.getStart(context.file),
+                        length: node.getWidth(context.file)
+                    } :
+                    {
+                        file: undefined,
+                        start: undefined,
+                        length: undefined
+                    })
         };
     }
 

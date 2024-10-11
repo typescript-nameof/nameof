@@ -122,9 +122,3 @@ dist
 
 # TernJS port file
 .tern-port
-
-# Temporary release-assets
-.tagName.txt
-.tagHeading.txt
-.releaseNotes.md
-.releaseTitle.md

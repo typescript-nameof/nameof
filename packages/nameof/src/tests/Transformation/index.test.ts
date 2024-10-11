@@ -9,7 +9,7 @@ import { TypeScriptTransformerBaseTests } from "./TypeScriptTransformerBase.test
 export function TransformationTests(): void
 {
     suite(
-        basename(new URL(".", import.meta.url).pathname),
+        basename(import.meta.dirname),
         () =>
         {
             TypeScriptFeatureTests();
