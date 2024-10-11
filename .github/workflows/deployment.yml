@@ -25,8 +25,7 @@ jobs:
     name: Verify Prerequisites
     uses: ./.github/workflows/prerequisites.yml
     secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
+      # OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
       VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
   collect-changelog:
     name: Collect Release Notes
@@ -61,8 +60,6 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     needs:
       - collect-changelog
-    secrets:
-      npmToken: ${{ secrets.NPM_TOKEN }}
   publish-gh:
     name: Publish Package to GitHub Registry
     uses: ./.github/workflows/npm-publish.yml
@@ -82,6 +79,7 @@ jobs:
     needs:
       - collect-changelog
     steps:
+      - uses: actions/checkout@v4
       - name: Install Dependencies
         run: npm clean-install
       - name: Create NPM Packages
@@ -96,5 +94,5 @@ jobs:
           name: ${{ needs.collect-changelog.outputs.title }}
           body: ${{ needs.collect-changelog.outputs.notes }}
           files: |
-            "*.tgz"
-            "packages/vscode/*.vsix"
+            *.tgz
+            packages/vscode/*.vsix

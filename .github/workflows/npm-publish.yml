@@ -13,9 +13,11 @@ on:
         required: true
 
 jobs:
-  check:
+  publish:
+    name: Publish to NPM Package Registry
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
@@ -23,7 +25,7 @@ jobs:
           registry-url: ${{ inputs.registry }}
       - name: Install Dependencies
         run: npm clean-install
-      - name: Publish NPM Package
-        run: npm publish
+      - name: Publish to NPM Package Registry
+        run: npm publish --workspaces
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npmToken }}
