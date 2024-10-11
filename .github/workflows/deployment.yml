@@ -47,8 +47,8 @@ jobs:
       - id: release-info
         name: Collect Release Info
         run: |
-          notes="$(sed "1,$CURRENT_PATTERN{ $CURRENT_PATTERNP ; d } ; $ANY_PATTERN,\$d" CHANGELOG.md)"
-          title="$(echo "$notes" | sed "2,\$d ; s$ANY_PATTERN\\\\1/")"
+          notes="$(sed "1,${CURRENT_PATTERN}{ ${CURRENT_PATTERN}P ; d } ; ${ANY_PATTERN},\$d" CHANGELOG.md)"
+          title="$(echo "$notes" | sed "2,\$d ; s${ANY_PATTERN}\1/")"
           echo "notes=$notes"
           echo "title=$title"
   publish-npm:
