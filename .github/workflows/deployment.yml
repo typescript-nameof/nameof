@@ -49,8 +49,12 @@ jobs:
         run: |
           notes="$(sed "1,${CURRENT_PATTERN}{ ${CURRENT_PATTERN}P ; d } ; ${ANY_PATTERN},\$d" CHANGELOG.md)"
           title="$(echo "$notes" | sed "2,\$d ; s${ANY_PATTERN}\1/")"
-          echo "notes=$notes"
-          echo "title=$title"
+          echo "title=$title" >> $GITHUB_OUTPUT
+          {
+            echo "notes<<EOF"
+            echo "$notes"
+            echo EOF
+          } >> $GITHUB_OUTPUT
   publish-npm:
     name: Publish Package to NPM
     uses: ./.github/workflows/npm-publish.yml
