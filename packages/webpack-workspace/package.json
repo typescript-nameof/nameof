@@ -1,8 +1,8 @@
 {
   "name": "webpack-workspace",
-  "version": "0.0.10",
-  "private": true,
+  "version": "0.0.11",
   "type": "module",
+  "private": true,
   "scripts": {},
   "dependencies": {
     "ts-loader": "^9.5.1",
