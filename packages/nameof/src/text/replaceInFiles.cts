@@ -2,7 +2,7 @@ import { readFile, writeFile } from "fs-extra";
 import { replaceInText } from "./replaceInText.cjs";
 
 /**
- * Transforms the files with the specified {@link fileNames `fileNames`}.
+ * Transforms the files with the specified {@linkcode fileNames}.
  *
  * @param fileNames
  * The names of the files to transform.

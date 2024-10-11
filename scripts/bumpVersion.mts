@@ -1,13 +1,12 @@
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { Dictionary, Package } from "@manuth/package-json-editor";
-import fs from "fs-extra";
+import fs, { pathExists } from "fs-extra";
 import GitBranch from "git-branch";
 import { globby } from "globby";
 import npmWhich from "npm-which";
 
-const { pathExists, writeJSON } = fs;
+const { writeJSON } = fs;
 
 /**
  * Represents a dependency candidate.
@@ -29,11 +28,10 @@ interface ICandidateDescriptor
     async () =>
     {
         let releaseBranchPattern = /^release\/(.*)/;
-        let dirName = dirname(fileURLToPath(import.meta.url));
-        let npmPath = npmWhich(dirName).sync("npm");
-        let branchName = await GitBranch(dirName);
+        let npmPath = npmWhich(import.meta.dirname).sync("npm");
+        let branchName = await GitBranch(import.meta.dirname);
         let releaseName = branchName.replace(releaseBranchPattern, "$1");
-        let npmPackage = new Package(join(dirName, "..", Package.FileName));
+        let npmPackage = new Package(join(import.meta.dirname, "..", Package.FileName));
 
         if (
             releaseBranchPattern.test(branchName) &&
@@ -149,7 +147,7 @@ interface ICandidateDescriptor
             }
 
             spawnSync(
-                npmWhich(dirName).sync("git"),
+                npmWhich(import.meta.dirname).sync("git"),
                 [
                     "commit",
                     "-a",

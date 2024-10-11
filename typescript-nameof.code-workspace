@@ -296,8 +296,7 @@
         "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
         "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
         "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
-        "mochaExplorer.timeout": 0,
-        "terminal.integrated.cwd": "${workspaceFolder:Solution Items}"
+        "mochaExplorer.timeout": 0
     },
     "tasks": {
         // See https://go.microsoft.com/fwlink/?LinkId=733558

@@ -1,9 +1,9 @@
 import { strictEqual } from "node:assert";
 import { TempDirectory } from "@manuth/temp-files";
-import fs from "fs-extra";
+import fs, { emptyDir, ensureFile } from "fs-extra";
 import { replaceInFiles } from "../../text/replaceInFiles.cjs";
 
-const { emptyDir, ensureFile, readFile, writeFile } = fs;
+const { readFile, writeFile } = fs;
 
 /**
  * Registers tests for the {@linkcode replaceInFiles} function.
