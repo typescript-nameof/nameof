@@ -82,6 +82,7 @@ jobs:
     needs:
       - collect-changelog
     steps:
+      - uses: actions/checkout@v4
       - name: Install Dependencies
         run: npm clean-install
       - name: Create NPM Packages
@@ -96,5 +97,5 @@ jobs:
           name: ${{ needs.collect-changelog.outputs.title }}
           body: ${{ needs.collect-changelog.outputs.notes }}
           files: |
-            "*.tgz"
-            "packages/vscode/*.vsix"
+            *.tgz
+            packages/vscode/*.vsix
