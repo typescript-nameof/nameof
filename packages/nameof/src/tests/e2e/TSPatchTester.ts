@@ -19,20 +19,20 @@ export class TSPatchTester extends TypeScriptTransformerTester
 
     /**
      * @inheritdoc
-     *
-     * @returns
-     * The compiler to use.
-     */
-    protected override GetCompiler(): typeof ts
-    {
-        return require("typescript");
-    }
-
-    /**
-     * @inheritdoc
      */
     protected override get DefaultErrorHandler(): IErrorHandler<ts.Node, ITypeScriptContext>
     {
         return new TestErrorHandler();
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @returns
+     * The compiler to use.
+     */
+    protected override GetCompiler(): Promise<typeof ts>
+    {
+        return import("typescript");
     }
 }

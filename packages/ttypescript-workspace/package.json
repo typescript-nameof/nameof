@@ -1,12 +1,13 @@
 {
-  "version": "0.0.10",
+  "name": "ttypescript-workspace",
+  "version": "0.0.11",
   "private": true,
   "scripts": {},
   "dependencies": {
-    "@types/jest": "^29.5.12",
+    "@types/jest": "^29.5.13",
     "@types/nameof": "file:../types",
     "ttypescript": "^1.5.15",
-    "typescript": "^5.4.5"
+    "typescript": "4.9.5"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1"

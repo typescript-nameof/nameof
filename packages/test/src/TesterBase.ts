@@ -26,6 +26,14 @@ export abstract class TesterBase<TNode, TContext>
     }
 
     /**
+     * Gets the default error handler of the transformer under test.
+     */
+    protected get DefaultErrorHandler(): IErrorHandler<TNode, TContext>
+    {
+        return new ErrorHandler();
+    }
+
+    /**
      * Transforms the specified {@linkcode code}.
      *
      * @param code
@@ -256,13 +264,5 @@ export abstract class TesterBase<TNode, TContext>
     protected FindError(result: INameofOutput, ...errorClasses: Array<new (...args: any[]) => Error>): Error | boolean | undefined
     {
         return result.errors.find((error) => errorClasses.some((errorClass) => error.name === errorClass.name));
-    }
-
-    /**
-     * Gets the default error handler of the transformer under test.
-     */
-    protected get DefaultErrorHandler(): IErrorHandler<TNode, TContext>
-    {
-        return new ErrorHandler();
     }
 }

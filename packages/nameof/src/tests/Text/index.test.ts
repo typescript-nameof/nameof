@@ -8,7 +8,7 @@ import { ReplaceInTextTests } from "./ReplaceInText.test.js";
 export function TextTests(): void
 {
     suite(
-        basename(new URL(".", import.meta.url).pathname),
+        basename(import.meta.dirname),
         () =>
         {
             ReplaceInTextTests();

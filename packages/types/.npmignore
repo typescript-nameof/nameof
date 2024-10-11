@@ -137,9 +137,3 @@ type-tests/
 .drone.yml
 .woodpecker.yml
 .woodpecker/
-
-# Temporary release-assets
-.tagName.txt
-.tagHeading.txt
-.releaseNotes.md
-.releaseTitle.md

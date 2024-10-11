@@ -451,7 +451,7 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
      */
     public override ProcessInterpolate(call: NameofCall<State>, context: ITransformationContext<State>): undefined
     {
-        return super.ProcessInterpolate(call, context);
+        super.ProcessInterpolate(call, context);
     }
 
     /**

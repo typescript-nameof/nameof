@@ -1,5 +1,4 @@
 import { resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import babel = require("@babel/core");
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/test";
@@ -90,7 +89,7 @@ export class BabelPluginTester extends TransformerTester<babel.Node, IBabelConte
                     plugins: [
                         plugin
                     ],
-                    filename: resolve(fileURLToPath(new URL(".", import.meta.url)), "test.ts"),
+                    filename: resolve(import.meta.dirname, "test.ts"),
                     ast: false,
                     generatorOpts: {
                         retainLines: true

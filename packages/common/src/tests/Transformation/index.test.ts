@@ -11,7 +11,7 @@ import { TransformerFeaturesTests } from "./TransformerFeatures.test.js";
 export function TransformationTests(): void
 {
     suite(
-        basename(new URL(".", import.meta.url).pathname),
+        basename(import.meta.dirname),
         () =>
         {
             AdapterTests();

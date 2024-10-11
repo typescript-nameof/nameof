@@ -1,6 +1,7 @@
 {
   "name": "typescript-nameof",
   "private": true,
+  "type": "module",
   "description": "A set of tools for allowing the use of `nameof()` calls in various ecosystems.",
   "author": "Manuel Thalmann <m@nuth.ch>",
   "files": [],
@@ -18,34 +19,37 @@
     "rebuild": "npm run clean && npm run build",
     "watch": "npm run build -- --watch",
     "clean": "npm run build -- --clean && rimraf ./packages/*/lib",
-    "lint": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" eslint --max-warnings 0 ./scripts .eslintrc.cjs ./packages/*/src ./packages/babel/macro ./packages/*/.eslintrc.cjs ./packages/*/webpack.config.cts",
+    "lint": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" eslint --max-warnings 0 --flag unstable_ts_config ./scripts eslint.config.ts ./packages/*/src ./packages/babel/macro/index.cts ./packages/*/webpack.config.cts",
     "lint-ide": "npm run lint || exit 0",
     "test": "npm run --if-present --workspaces test",
     "bump-version": "node --no-warnings=ExperimentalWarning --loader ts-node/esm/transpile-only ./scripts/bumpVersion.mts"
   },
   "devDependencies": {
-    "@manuth/eslint-plugin-typescript": "^4.1.4",
+    "@manuth/eslint-plugin-typescript": "^5.0.3",
     "@manuth/package-json-editor": "^3.2.1",
     "@manuth/tsconfig": "^4.0.2",
     "@types/fs-extra": "^11.0.4",
     "@types/git-branch": "^2.0.5",
-    "@types/jest": "npm:@types/node@^20.12.8",
-    "@types/mocha": "npm:@types/node@^20.12.8",
-    "@types/nameof": "npm:@types/node@^20.12.8",
-    "@types/node": "^20.12.8",
+    "@types/jest": "file:packages/nop",
+    "@types/mocha": "file:packages/nop",
+    "@types/nameof": "file:packages/nop",
+    "@types/node": "^22.7.5",
     "@types/npm-which": "^3.0.3",
-    "@vscode/vsce": "^2.26.1",
+    "@vscode/vsce": "^3.1.1",
     "cross-env": "^7.0.3",
     "fs-extra": "^11.2.0",
-    "git-branch": "^2.0.1",
-    "globby": "^14.0.1",
-    "mocha": "^10.4.0",
+    "git-branch": "npm:@fork-of/git-branch@^2.1.1",
+    "globals": "^15.11.0",
+    "globby": "^14.0.2",
+    "jiti": "^2.3.3",
+    "mocha": "^10.7.3",
     "npm-which": "^3.0.1",
-    "rimraf": "^5.0.5",
+    "rimraf": "^6.0.1",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.2",
-    "ts-patch": "^3.1.2",
-    "typescript": "^5.4.5",
+    "ts-patch": "^3.2.1",
+    "ttypescript": "npm:nop@^1.0.0",
+    "typescript": "^5.6.3",
     "webpack-playground-typescript": "npm:nop@^1.0.0"
   },
   "workspaces": {
@@ -54,7 +58,7 @@
     ]
   },
   "dependencies": {
-    "eslint": "^8.57.0"
+    "eslint": "^9.12.0"
   },
   "overrides": {
     "@manuth/typescript-languageservice-tester": {

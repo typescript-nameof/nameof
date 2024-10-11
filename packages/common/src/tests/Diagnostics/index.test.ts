@@ -23,7 +23,7 @@ import { UnusedInterpolationErrorTests } from "./UnusedInterpolationError.test.j
 export function DiagnosticTests(): void
 {
     suite(
-        basename(new URL(".", import.meta.url).pathname),
+        basename(import.meta.dirname),
         () =>
         {
             AdapterErrorTests();

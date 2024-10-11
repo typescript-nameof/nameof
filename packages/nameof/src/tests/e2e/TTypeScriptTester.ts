@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import { resolve } from "node:path";
 import { TypeScriptTransformerTester } from "./TypeScriptTransformerTester.js";
 
 /**
@@ -28,8 +29,8 @@ export class TTypeScriptTester extends TypeScriptTransformerTester
      * @returns
      * The compiler to use.
      */
-    protected override GetCompiler(): typeof import("typescript")
+    protected override GetCompiler(): Promise<typeof import("typescript")>
     {
-        return createRequire(new URL("../../../../ttypescript-workspace", import.meta.url)).resolve("ttypescript") as any;
+        return createRequire(resolve(import.meta.dirname, "../../../../ttypescript-workspace/.js"))("ttypescript");
     }
 }

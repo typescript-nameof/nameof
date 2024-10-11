@@ -535,7 +535,8 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             case NameofFunction.LegacyArray:
                 return this.ProcessArray(call, context);
             case NameofFunction.Interpolate:
-                return this.ProcessInterpolate(call, context);
+                this.ProcessInterpolate(call, context);
+                return undefined;
             default:
                 throw new UnsupportedFunctionError(this, call, context);
         }

@@ -1,4 +1,4 @@
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 import babel from "@babel/core";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/test";
@@ -96,7 +96,7 @@ export class BabelMacroTester extends TransformerTester<undefined>
                                 }
                             ]
                         ],
-                        filename: fileURLToPath(new URL("test.ts", import.meta.url)),
+                        filename: resolve(import.meta.dirname, "test.ts"),
                         ast: false,
                         generatorOpts: {
                             retainLines: true

@@ -1,0 +1,31 @@
+name: Publish Package to NPM Registry
+
+on:
+  workflow_call:
+    inputs:
+      registry:
+        type: string
+        description: The URL of the NPM package registry to verify the authentication for
+        default: https://registry.npmjs.org
+    secrets:
+      npmToken:
+        description: The Personal Access Token for authenticating to the NPM package repository
+        required: false
+
+jobs:
+  publish:
+    name: Publish to NPM Package Registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          registry-url: ${{ inputs.registry }}
+      - name: Install Dependencies
+        run: npm clean-install
+      - name: Publish to NPM Package Registry
+        run: npm publish --workspaces
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npmToken }}

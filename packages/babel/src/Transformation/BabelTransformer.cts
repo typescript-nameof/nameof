@@ -129,7 +129,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
                                     return grandParentPath;
                                 }
 
-                                throw new MacroError(`[ts-nameof]: Could not find a call expression at path: ${grandParentPath?.getSource()}`);
+                                throw new MacroError(`[typescript-nameof]: Could not find a call expression at path: ${grandParentPath?.getSource()}`);
                             }
                         });
                 });

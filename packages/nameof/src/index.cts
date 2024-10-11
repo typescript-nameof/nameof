@@ -1,5 +1,5 @@
 import { ErrorHandler } from "@typescript-nameof/common";
-// eslint-disable-next-line node/no-unpublished-import
+// eslint-disable-next-line n/no-unpublished-import
 import type { TsCompilerInstance } from "ts-jest/dist/types";
 import { TransformerExtras } from "ts-patch";
 import { Program, SourceFile, TransformationContext, Transformer, TransformerFactory } from "typescript";
@@ -102,12 +102,9 @@ namespace nameof
     /**
      * The version of the plugin.
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     export import version = meta.version;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     export import replaceInFiles = text.replaceInFiles;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     export import replaceInText = text.replaceInText;
 
     /**
@@ -124,9 +121,7 @@ namespace nameof
         return new TSJestTransformer(compiler).Factory;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     export import TypeScriptAdapter = adapter.TypeScriptAdapter;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     export import TypeScriptFeatures = vanillaFeatures.TypeScriptFeatures;
 }
 

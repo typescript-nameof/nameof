@@ -2,7 +2,7 @@
     "extends": "../tsconfig.base.json",
     "references": [
         {
-            "path": "../../common-types/tsconfig.app.json"
+            "path": "../../common-types"
         }
     ],
     "include": [
