@@ -85,6 +85,8 @@ jobs:
     name: Create Release on GitHub
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
     needs:
       - collect-changelog
     steps:
