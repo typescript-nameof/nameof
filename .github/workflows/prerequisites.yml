@@ -6,9 +6,9 @@ on:
       NPM_TOKEN:
         description: The token for accessing the NPM registry.
         required: true
-      OVSX_TOKEN:
-        description: The token for accessing Open VSX.
-        required: true
+      # OVSX_TOKEN:
+      #   description: The token for accessing Open VSX.
+      #   required: true
       VSCE_TOKEN:
         description: The token for accessing the Visual Studio Marketplace.
         required: true
@@ -47,15 +47,15 @@ jobs:
         uses: actions/setup-node@v4
       - name: Install Dependencies
         run: npm install
-      - name: Verify Open VSX Token
-        run:  |
-          verifyOVSX() {
-            url='https://open-vsx.org/api/-/namespace/create?token='"$1"
-            output=$(curl -X POST $url --header 'Content-Type: application/json' --data-raw '{ "name": "'"$PUBLISHER"'" }')
-            node -e 'JSON.parse('"'$output'"').error?.includes("Invalid access token") && process.exit(1);'
-          }
+      # - name: Verify Open VSX Token
+      #   run:  |
+      #     verifyOVSX() {
+      #       url='https://open-vsx.org/api/-/namespace/create?token='"$1"
+      #       output=$(curl -X POST $url --header 'Content-Type: application/json' --data-raw '{ "name": "'"$PUBLISHER"'" }')
+      #       node -e 'JSON.parse('"'$output'"').error?.includes("Invalid access token") && process.exit(1);'
+      #     }
 
-          verifyOVSX ${{ secrets.OVSX_TOKEN }} || { echo "The Open VSX Token is invalid!" && false; }
+      #     verifyOVSX ${{ secrets.OVSX_TOKEN }} || { echo "The Open VSX Token is invalid!" && false; }
       - name: Verify Visual Studio Marketplace Token
         run: |
           verifyVSCE() {
