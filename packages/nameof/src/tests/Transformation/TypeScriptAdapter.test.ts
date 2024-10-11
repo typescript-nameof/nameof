@@ -2,7 +2,6 @@ import { deepStrictEqual, ok, strictEqual, throws } from "node:assert";
 import { MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, ParsedNode, ResultType, UnsupportedNodeError } from "@typescript-nameof/common";
 import { printNode, Project, SourceFile, SyntaxKind, ts as tsMorph } from "ts-morph";
 import { nameOf } from "ts-nameof-proxy";
-// eslint-disable-next-line @typescript-eslint/tslint/config
 import typescript from "typescript";
 import { ITypeScriptContext } from "../../Transformation/ITypeScriptContext.cjs";
 import { TypeScriptAdapter } from "../../Transformation/TypeScriptAdapter.cjs";
@@ -18,7 +17,7 @@ export function TypeScriptAdapterTests(): void
         () =>
         {
             /**
-             * Provides an implementation of the {@link TypeScriptAdapter} class for testing.
+             * Provides an implementation of the {@linkcode TypeScriptAdapter} class for testing.
              */
             class TestAdapter extends TypeScriptAdapter
             {

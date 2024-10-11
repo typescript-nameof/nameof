@@ -1,0 +1,60 @@
+name: Verify Prerequisites
+
+on:
+  workflow_call:
+    secrets:
+      NPM_TOKEN:
+        description: The token for accessing the NPM registry.
+        required: true
+      OVSX_TOKEN:
+        description: The token for accessing Open VSX.
+        required: true
+      VSCE_TOKEN:
+        description: The token for accessing the Visual Studio Marketplace.
+        required: true
+
+jobs:
+  check:
+    name: Check
+    uses: ./.github/workflows/check.yml
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    outputs:
+      publisher: ${{ steps.fetch-publisher.outputs.publisher }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+      - id: fetch-publisher
+        name: Determining Publisher Name
+        run: echo "publisher=$(node -e "console.log(JSON.parse(require('fs').readFileSync('./packages/vscode/package.json').toString()).publisher)")" >> $GITHUB_OUTPUT
+  check-marketplace-tokens:
+    runs-on: ubuntu-latest
+    name: Verify Marketplace Tokens
+    needs:
+      - prepare
+    env:
+      PUBLISHER: ${{ needs.prepare.outputs.publisher }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+      - name: Install Dependencies
+        run: npm install
+      - name: Verify Open VSX Token
+        run:  |
+          verifyOVSX() {
+            url='https://open-vsx.org/api/-/namespace/create?token='"$1"
+            output=$(curl -X POST $url --header 'Content-Type: application/json' --data-raw '{ "name": "'"$PUBLISHER"'" }')
+            node -e 'JSON.parse('"'$output'"').error?.includes("Invalid access token") && process.exit(1);'
+          }
+
+          verifyOVSX ${{ secrets.OVSX_TOKEN }} || { echo "The Open VSX Token is invalid!" && false; }
+      - name: Verify Visual Studio Marketplace Token
+        run: |
+          verifyVSCE() {
+            npx vsce verify-pat $PUBLISHER --pat $1 > /dev/null 2>&1
+          }
+
+          verifyVSCE ${{ secrets.VSCE_TOKEN }} || { echo "The Visual Studio Marketplace Token is invalid!" && false; }
