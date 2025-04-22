@@ -1,8 +1,9 @@
 use swc_core::{
+    atoms::Atom,
     common::SyntaxContext,
     ecma::{
-        ast::Program,
-        visit::{visit_mut_pass, VisitMut},
+        ast::{Ident, Program},
+        visit::{visit_mut_pass, VisitMut, VisitMutWith},
     },
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
@@ -16,6 +17,13 @@ impl VisitMut for NameofVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
+    fn visit_mut_ident(&mut self, node: &mut Ident) {
+        node.visit_mut_children_with(self);
+
+        if node.ctxt == self.unresolved_context && node.sym == "nameof" {
+            node.sym = Atom::new("dosenbrot");
+        }
+    }
 }
 
 /// An example plugin function with macro support.
@@ -71,8 +79,8 @@ mod tests {
         },
         boo,
         // Input codes
-        r#"console.log("transform");"#,
+        r#"console.log(nameof);"#,
         // Output codes after transformed with plugin
-        r#"console.log("transform");"#
+        r#"console.log(dosenbrot);"#
     );
 }
