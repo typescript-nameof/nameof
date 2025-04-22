@@ -6,9 +6,9 @@ use swc_core::{
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
-pub struct TransformVisitor;
+pub struct NameofVisitor;
 
-impl VisitMut for TransformVisitor {
+impl VisitMut for NameofVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
@@ -31,14 +31,14 @@ impl VisitMut for TransformVisitor {
 /// Refer swc_plugin_macro to see how does it work internally.
 #[plugin_transform]
 pub fn process_transform(program: Program, _metadata: TransformPluginProgramMetadata) -> Program {
-    program.apply(&mut visit_mut_pass(TransformVisitor))
+    program.apply(&mut visit_mut_pass(NameofVisitor))
 }
 
 #[cfg(test)]
 mod tests {
     use swc_core::ecma::{transforms::testing::test_inline, visit::visit_mut_pass};
 
-    use crate::TransformVisitor;
+    use crate::NameofVisitor;
 
     // An example to test plugin transform.
     // Recommended strategy to test plugin's transform is verify
@@ -46,7 +46,7 @@ mod tests {
     // unless explicitly required to do so.
     test_inline!(
         Default::default(),
-        |_| visit_mut_pass(TransformVisitor),
+        |_| visit_mut_pass(NameofVisitor),
         boo,
         // Input codes
         r#"console.log("transform");"#,
