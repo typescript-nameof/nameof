@@ -1,4 +1,5 @@
 use swc_core::{
+    common::SyntaxContext,
     ecma::{
         ast::Program,
         visit::{visit_mut_pass, VisitMut},
@@ -6,7 +7,10 @@ use swc_core::{
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
-pub struct NameofVisitor;
+pub struct NameofVisitor {
+    /// The context assigned to global variables.
+    unresolved_context: SyntaxContext,
+}
 
 impl VisitMut for NameofVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
@@ -30,13 +34,21 @@ impl VisitMut for NameofVisitor {
 /// This requires manual handling of serialization / deserialization from ptrs.
 /// Refer swc_plugin_macro to see how does it work internally.
 #[plugin_transform]
-pub fn process_transform(program: Program, _metadata: TransformPluginProgramMetadata) -> Program {
-    program.apply(&mut visit_mut_pass(NameofVisitor))
+pub fn process_transform(program: Program, data: TransformPluginProgramMetadata) -> Program {
+    program.apply(&mut visit_mut_pass(NameofVisitor {
+        unresolved_context: SyntaxContext::empty().apply_mark(data.unresolved_mark),
+    }))
 }
 
 #[cfg(test)]
 mod tests {
-    use swc_core::ecma::{transforms::testing::test_inline, visit::visit_mut_pass};
+    use swc_core::{
+        common::{Mark, SyntaxContext},
+        ecma::{
+            transforms::{base::resolver, testing::test_inline},
+            visit::visit_mut_pass,
+        },
+    };
 
     use crate::NameofVisitor;
 
@@ -46,7 +58,17 @@ mod tests {
     // unless explicitly required to do so.
     test_inline!(
         Default::default(),
-        |_| visit_mut_pass(NameofVisitor),
+        |_| {
+            let unresolved_mark = Mark::new();
+            let top_level_mark = Mark::new();
+
+            (
+                resolver(unresolved_mark, top_level_mark, true),
+                visit_mut_pass(NameofVisitor {
+                    unresolved_context: SyntaxContext::empty().apply_mark(unresolved_mark),
+                }),
+            )
+        },
         boo,
         // Input codes
         r#"console.log("transform");"#,
