@@ -13,6 +13,12 @@ pub struct NameofVisitor {
     unresolved_context: SyntaxContext,
 }
 
+impl NameofVisitor {
+    fn is_global_nameof(&self, ident: &Ident) -> bool {
+        ident.sym == "nameof" && ident.ctxt == self.unresolved_context
+    }
+}
+
 impl VisitMut for NameofVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
@@ -20,7 +26,7 @@ impl VisitMut for NameofVisitor {
     fn visit_mut_ident(&mut self, node: &mut Ident) {
         node.visit_mut_children_with(self);
 
-        if node.ctxt == self.unresolved_context && node.sym == "nameof" {
+        if self.is_global_nameof(node) {
             node.sym = Atom::new("dosenbrot");
         }
     }
