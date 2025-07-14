@@ -1,12 +1,25 @@
 use swc_core::{
-    atoms::Atom,
     common::SyntaxContext,
     ecma::{
-        ast::{Ident, Program},
+        ast::{CallExpr, Callee, Expr, Ident, Lit, MemberExpr, Program},
         visit::{visit_mut_pass, VisitMut, VisitMutWith},
     },
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
+
+pub enum NameofError {}
+
+pub enum NameofMethod {
+    Full,
+}
+
+enum NameofExpression<'a> {
+    Normal {
+        call: &'a CallExpr,
+        method: Option<NameofMethod>,
+    },
+    Typed(&'a MemberExpr),
+}
 
 pub struct NameofVisitor {
     /// The context assigned to global variables.
@@ -17,17 +30,41 @@ impl NameofVisitor {
     fn is_global_nameof(&self, ident: &Ident) -> bool {
         ident.sym == "nameof" && ident.ctxt == self.unresolved_context
     }
+
+    fn get_nameof_expression<'a>(&self, node: &'a mut Expr) -> Option<NameofExpression<'a>> {
+        match node {
+            Expr::Call(call) => match call {
+                CallExpr {
+                    callee: Callee::Expr(callee),
+                    ..
+                } => Some(NameofExpression::Normal {
+                    method: match &**callee {
+                        Expr::Ident(ident) if self.is_global_nameof(ident) => None,
+                        _ => return None,
+                    },
+                    call,
+                }),
+                _ => None,
+            },
+            _ => None,
+        }
+    }
 }
 
 impl VisitMut for NameofVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
-    fn visit_mut_ident(&mut self, node: &mut Ident) {
-        node.visit_mut_children_with(self);
+    fn visit_mut_expr(&mut self, node: &mut Expr) {
+        let request = self.get_nameof_expression(node);
 
-        if self.is_global_nameof(node) {
-            node.sym = Atom::new("dosenbrot");
+        match request {
+            Some(NameofExpression::Normal { .. }) => {
+                *node = Expr::Lit(Lit::from("nameof"));
+            }
+            _ => {
+                node.visit_mut_children_with(self);
+            }
         }
     }
 }
@@ -85,8 +122,8 @@ mod tests {
         },
         boo,
         // Input codes
-        r#"console.log(nameof);"#,
+        r#"nameof(console);"#,
         // Output codes after transformed with plugin
-        r#"console.log(dosenbrot);"#
+        r#""nameof";"#
     );
 }
