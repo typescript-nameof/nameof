@@ -1,7 +1,7 @@
 use swc_core::{
     common::SyntaxContext,
     ecma::{
-        ast::{CallExpr, Callee, Expr, Ident, Lit, MemberExpr, Program},
+        ast::{CallExpr, Callee, Expr, Ident, Lit, MemberExpr, MemberProp, Program},
         visit::{visit_mut_pass, VisitMut, VisitMutWith},
     },
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
@@ -11,6 +11,9 @@ pub enum NameofError {}
 
 pub enum NameofMethod {
     Full,
+    Interpolate,
+    Array,
+    Split,
 }
 
 enum NameofExpression<'a> {
@@ -40,6 +43,22 @@ impl NameofVisitor {
                 } => Some(NameofExpression::Normal {
                     method: match &**callee {
                         Expr::Ident(ident) if self.is_global_nameof(ident) => None,
+                        Expr::Member(MemberExpr {
+                            obj,
+                            prop: MemberProp::Ident(prop),
+                            ..
+                        }) => match &**obj {
+                            Expr::Ident(ident) if self.is_global_nameof(ident) => {
+                                Some(match prop.sym.as_str() {
+                                    "full" => NameofMethod::Full,
+                                    "interpolate" => NameofMethod::Interpolate,
+                                    "array" => NameofMethod::Array,
+                                    "split" => NameofMethod::Split,
+                                    _ => return None,
+                                })
+                            }
+                            _ => return None,
+                        },
                         _ => return None,
                     },
                     call,
