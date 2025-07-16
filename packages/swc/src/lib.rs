@@ -7,35 +7,54 @@ use swc_core::{
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
+/// Represents an error which occurred while performing a `nameof`-substitution.
 pub enum NameofError {}
 
+/// Represents either success or a [`NameofError`].
 type NameofResult<'a, T> = Result<T, NameofError>;
 
+/// Represents a method of the `nameof` interface.
 pub enum NameofMethod {
+    /// Indicates a method for yielding the full name of an object.
     Full,
+    /// Indicates a method for injecting plain java into the result of a `Full` call.
     Interpolate,
+    /// Indicates a method for determining the name of multiple objects.
     Array,
+    /// Indicates a method for splitting the full name of an object into an array.
     Split,
 }
 
+/// Represents a `nameof` call expression.
 enum NameofExpression<'a> {
+    /// Indicates a normal function call.
     Normal {
+        /// The [`CallExpr`] holding the `nameof` call.
         call: &'a CallExpr,
+        /// The requested method.
         method: Option<NameofMethod>,
     },
+    /// Indicates a typed property access.
     Typed(&'a MemberExpr),
 }
 
+/// Provides the functionality to substitute [`NameofExpression`]s.
 pub struct NameofVisitor {
     /// The context assigned to global variables.
     unresolved_context: SyntaxContext,
 }
 
 impl NameofVisitor {
+    /// Checks whether the specified `ident` is the global `nameof` object.
     fn is_global_nameof(&self, ident: &Ident) -> bool {
         ident.sym == "nameof" && ident.ctxt == self.unresolved_context
     }
 
+    /// Gets the `nameof` expression in the specified `node`.
+    ///
+    /// # Returns
+    /// Either [`None`] if the underlying `node` is no `nameof` expression or
+    /// a [`NameofResult`] holding either a [`NameofError`] or the [`NameofExpression`].
     fn get_nameof_expression<'a>(
         &self,
         node: &'a mut Expr,
@@ -93,21 +112,7 @@ impl VisitMut for NameofVisitor {
     }
 }
 
-/// An example plugin function with macro support.
-/// `plugin_transform` macro interop pointers into deserialized structs, as well
-/// as returning ptr back to host.
-///
-/// It is possible to opt out from macro by writing transform fn manually
-/// if plugin need to handle low-level ptr directly via
-/// `__transform_plugin_process_impl(
-///     ast_ptr: *const u8, ast_ptr_len: i32,
-///     unresolved_mark: u32, should_enable_comments_proxy: i32) ->
-///     i32 /*  0 for success, fail otherwise.
-///             Note this is only for internal pointer interop result,
-///             not actual transform result */`
-///
-/// This requires manual handling of serialization / deserialization from ptrs.
-/// Refer swc_plugin_macro to see how does it work internally.
+/// Substitutes [`NameofExpression`]s in the specified `program`.
 #[plugin_transform]
 pub fn process_transform(program: Program, data: TransformPluginProgramMetadata) -> Program {
     program.apply(&mut visit_mut_pass(NameofVisitor {
@@ -135,6 +140,7 @@ mod tests {
 
     use crate::NameofVisitor;
 
+    /// Initializes a new transformer running the [`NameofVisitor`].
     fn tr() -> impl Pass {
         let unresolved_mark = Mark::new();
         let top_level_mark = Mark::new();
