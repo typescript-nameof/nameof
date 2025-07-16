@@ -9,6 +9,8 @@ use swc_core::{
 
 pub enum NameofError {}
 
+type NameofResult<'a, T> = Result<T, NameofError>;
+
 pub enum NameofMethod {
     Full,
     Interpolate,
@@ -34,13 +36,16 @@ impl NameofVisitor {
         ident.sym == "nameof" && ident.ctxt == self.unresolved_context
     }
 
-    fn get_nameof_expression<'a>(&self, node: &'a mut Expr) -> Option<NameofExpression<'a>> {
+    fn get_nameof_expression<'a>(
+        &self,
+        node: &'a mut Expr,
+    ) -> Option<NameofResult<NameofExpression<'a>>> {
         match node {
             Expr::Call(call) => match call {
                 CallExpr {
                     callee: Callee::Expr(callee),
                     ..
-                } => Some(NameofExpression::Normal {
+                } => Some(Ok(NameofExpression::Normal {
                     method: match &**callee {
                         Expr::Ident(ident) if self.is_global_nameof(ident) => None,
                         Expr::Member(MemberExpr {
@@ -62,7 +67,7 @@ impl NameofVisitor {
                         _ => return None,
                     },
                     call,
-                }),
+                })),
                 _ => None,
             },
             _ => None,
@@ -78,7 +83,7 @@ impl VisitMut for NameofVisitor {
         let request = self.get_nameof_expression(node);
 
         match request {
-            Some(NameofExpression::Normal { .. }) => {
+            Some(Ok(NameofExpression::Normal { .. })) => {
                 *node = Expr::Lit(Lit::from("nameof"));
             }
             _ => {
