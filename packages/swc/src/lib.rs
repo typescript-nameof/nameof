@@ -4,7 +4,7 @@ use swc_core::{
         ast::{CallExpr, Callee, Expr, Ident, IdentName, Lit, MemberExpr, MemberProp, Program},
         visit::{visit_mut_pass, VisitMut, VisitMutWith},
     },
-    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
+    plugin::{errors::HANDLER, plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
 /// Represents an error which occurred while performing a `nameof`-substitution.
@@ -120,7 +120,19 @@ impl VisitMut for NameofVisitor {
                 *node = Expr::Lit(Lit::from("nameof"));
             }
             _ => {
-                node.visit_mut_children_with(self);
+                if let Some(Err(err)) = request {
+                    HANDLER.with(|handler| {
+                        let (span, message) = match err {
+                            NameofError::InvalidMethod(IdentName { sym: method, span }) => {
+                                (*span, format!("The method `{method}` is not supported."))
+                            }
+                        };
+
+                        handler.struct_span_err(span, &message).emit();
+                    })
+                } else {
+                    node.visit_mut_children_with(self);
+                }
             }
         }
     }
