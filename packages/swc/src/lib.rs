@@ -1,7 +1,6 @@
 use swc_core::{
     ecma::{
         ast::Program,
-        transforms::testing::test_inline,
         visit::{visit_mut_pass, VisitMut},
     },
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
@@ -35,16 +34,23 @@ pub fn process_transform(program: Program, _metadata: TransformPluginProgramMeta
     program.apply(&mut visit_mut_pass(TransformVisitor))
 }
 
-// An example to test plugin transform.
-// Recommended strategy to test plugin's transform is verify
-// the Visitor's behavior, instead of trying to run `process_transform` with mocks
-// unless explicitly required to do so.
-test_inline!(
-    Default::default(),
-    |_| visit_mut_pass(TransformVisitor),
-    boo,
-    // Input codes
-    r#"console.log("transform");"#,
-    // Output codes after transformed with plugin
-    r#"console.log("transform");"#
-);
+#[cfg(test)]
+mod tests {
+    use swc_core::ecma::{transforms::testing::test_inline, visit::visit_mut_pass};
+
+    use crate::TransformVisitor;
+
+    // An example to test plugin transform.
+    // Recommended strategy to test plugin's transform is verify
+    // the Visitor's behavior, instead of trying to run `process_transform` with mocks
+    // unless explicitly required to do so.
+    test_inline!(
+        Default::default(),
+        |_| visit_mut_pass(TransformVisitor),
+        boo,
+        // Input codes
+        r#"console.log("transform");"#,
+        // Output codes after transformed with plugin
+        r#"console.log("transform");"#
+    );
+}
