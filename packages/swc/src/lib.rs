@@ -1,17 +1,20 @@
 use swc_core::{
     common::SyntaxContext,
     ecma::{
-        ast::{CallExpr, Callee, Expr, Ident, Lit, MemberExpr, MemberProp, Program},
+        ast::{CallExpr, Callee, Expr, Ident, IdentName, Lit, MemberExpr, MemberProp, Program},
         visit::{visit_mut_pass, VisitMut, VisitMutWith},
     },
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
 /// Represents an error which occurred while performing a `nameof`-substitution.
-pub enum NameofError {}
+pub enum NameofError<'a> {
+    /// Indicates the use of an invalid method on the `nameof` interface.
+    InvalidMethod(&'a IdentName),
+}
 
 /// Represents either success or a [`NameofError`].
-type NameofResult<'a, T> = Result<T, NameofError>;
+type NameofResult<'a, T> = Result<T, NameofError<'a>>;
 
 /// Represents a method of the `nameof` interface.
 pub enum NameofMethod {
@@ -30,7 +33,7 @@ enum NameofExpression<'a> {
     /// Indicates a normal function call.
     Normal {
         /// The [`CallExpr`] holding the `nameof` call.
-        call: &'a CallExpr,
+        call: &'a mut CallExpr,
         /// The requested method.
         method: Option<NameofMethod>,
     },
@@ -58,7 +61,7 @@ impl NameofVisitor {
     fn get_nameof_expression<'a>(
         &self,
         node: &'a mut Expr,
-    ) -> Option<NameofResult<NameofExpression<'a>>> {
+    ) -> Option<NameofResult<'a, NameofExpression<'a>>> {
         match node {
             Expr::Call(call) => match call {
                 CallExpr {
@@ -78,7 +81,18 @@ impl NameofVisitor {
                                     "interpolate" => NameofMethod::Interpolate,
                                     "array" => NameofMethod::Array,
                                     "split" => NameofMethod::Split,
-                                    _ => return None,
+                                    _ => {
+                                        return Some(Err(NameofError::InvalidMethod(
+                                            call.callee
+                                                .as_expr()
+                                                .unwrap()
+                                                .as_member()
+                                                .unwrap()
+                                                .prop
+                                                .as_ident()
+                                                .unwrap(),
+                                        )))
+                                    }
                                 })
                             }
                             _ => return None,
