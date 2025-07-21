@@ -103,6 +103,12 @@ impl NameofVisitor {
                 })),
                 _ => None,
             },
+            Expr::Member(member) => match self.get_nameof_expression(&mut member.obj) {
+                Some(Err(NameofError::InvalidMethod(ident))) if ident.sym == "typed" => {
+                    Some(Ok(NameofExpression::Typed(member)))
+                }
+                _ => None,
+            },
             _ => None,
         }
     }
@@ -118,6 +124,12 @@ impl VisitMut for NameofVisitor {
         match request {
             Some(Ok(NameofExpression::Normal { .. })) => {
                 *node = Expr::Lit(Lit::from("nameof"));
+            }
+            Some(Ok(NameofExpression::Typed(MemberExpr {
+                prop: MemberProp::Ident(prop),
+                ..
+            }))) => {
+                *node = Expr::Lit(Lit::from(format!("typed: {}", prop.sym)));
             }
             _ => {
                 if let Some(Err(err)) = request {
