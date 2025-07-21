@@ -112,37 +112,56 @@ pub fn process_transform(program: Program, data: TransformPluginProgramMetadata)
 
 #[cfg(test)]
 mod tests {
+    use std::path::PathBuf;
+
     use swc_core::{
         common::{Mark, SyntaxContext},
         ecma::{
-            transforms::{base::resolver, testing::test_inline},
+            ast::Pass,
+            transforms::{
+                base::resolver,
+                testing::{test_fixture, FixtureTestConfig},
+            },
             visit::visit_mut_pass,
         },
     };
+    use swc_ecma_lexer::Syntax;
+    use testing::fixture;
 
     use crate::NameofVisitor;
 
-    // An example to test plugin transform.
-    // Recommended strategy to test plugin's transform is verify
-    // the Visitor's behavior, instead of trying to run `process_transform` with mocks
-    // unless explicitly required to do so.
-    test_inline!(
-        Default::default(),
-        |_| {
-            let unresolved_mark = Mark::new();
-            let top_level_mark = Mark::new();
+    fn tr() -> impl Pass {
+        let unresolved_mark = Mark::new();
+        let top_level_mark = Mark::new();
 
-            (
-                resolver(unresolved_mark, top_level_mark, true),
-                visit_mut_pass(NameofVisitor {
-                    unresolved_context: SyntaxContext::empty().apply_mark(unresolved_mark),
-                }),
-            )
-        },
-        boo,
-        // Input codes
-        r#"nameof(console);"#,
-        // Output codes after transformed with plugin
-        r#""nameof";"#
-    );
+        (
+            resolver(unresolved_mark, top_level_mark, true),
+            visit_mut_pass(NameofVisitor {
+                unresolved_context: SyntaxContext::empty().apply_mark(unresolved_mark),
+            }),
+        )
+    }
+
+    #[fixture("tests/fixtures/**/input.[jt]s")]
+    fn nameof_tests(input: PathBuf) {
+        run_tests(input, false);
+    }
+
+    fn run_tests(input: PathBuf, allow_error: bool) {
+        let ext: String = input.extension().unwrap().to_string_lossy().into();
+
+        test_fixture(
+            match &ext[..] {
+                "ts" => Syntax::Typescript(Default::default()),
+                _ => Default::default(),
+            },
+            &|_| tr(),
+            &input,
+            &input.parent().unwrap().join(format!("output.{ext}")),
+            FixtureTestConfig {
+                allow_error,
+                ..Default::default()
+            },
+        );
+    }
 }
