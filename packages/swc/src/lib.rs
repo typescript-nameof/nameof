@@ -180,8 +180,13 @@ mod tests {
     }
 
     #[fixture("tests/fixtures/**/input.[jt]s")]
-    fn nameof_tests(input: PathBuf) {
+    fn nameof_fixtures(input: PathBuf) {
         run_tests(input, false);
+    }
+
+    #[fixture("tests/errors/**/input.[jt]s")]
+    fn nameof_errors(input: PathBuf) {
+        run_tests(input, true);
     }
 
     fn run_tests(input: PathBuf, allow_error: bool) {
