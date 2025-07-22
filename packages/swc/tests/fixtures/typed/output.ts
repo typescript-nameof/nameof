@@ -1,1 +1,1 @@
-"typed: log";
+"log";
