@@ -1,1 +1,1 @@
-"nameof";
+"console";
