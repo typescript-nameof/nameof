@@ -4,9 +4,13 @@ use anyhow::Error;
 use swc::Compiler;
 use swc_compiler_base::IdentCollector;
 use swc_core::{
-    common::{FileName, SourceMap, Span, SyntaxContext},
+    common::{pass::Either, FileName, SourceMap, Span, Spanned, SyntaxContext},
     ecma::{
-        ast::{CallExpr, Callee, Expr, Ident, IdentName, Lit, MemberExpr, MemberProp, Program},
+        ast::{
+            ArrowExpr, BlockStmt, BlockStmtOrExpr, CallExpr, Callee, ComputedPropName, Expr,
+            ExprOrSpread, FnExpr, Ident, IdentName, Lit, MemberExpr, MemberProp, ParenExpr,
+            Program, ReturnStmt, TsAsExpr, TsNonNullExpr,
+        },
         visit::{visit_mut_pass, VisitMut, VisitMutWith, VisitWith},
     },
     plugin::{errors::HANDLER, plugin_transform, proxies::TransformPluginProgramMetadata},
@@ -19,6 +23,10 @@ pub enum NameofError<'a> {
     Error(Span, Error),
     /// Indicates the use of an invalid method on the `nameof` interface.
     InvalidMethod(&'a IdentName),
+    /// Indicates the unsupported use of a computed property.
+    UnsupportedComputation(&'a ComputedPropName),
+    /// Indicates an unsupported node.
+    UnsupportedNode(&'a Expr),
 }
 
 /// Represents either success or a [`NameofError`].
@@ -120,6 +128,21 @@ impl NameofVisitor {
             _ => Ok(None),
         }
     }
+
+    /// Gets the expression returned from the specified `block`.
+    fn get_returned_expression(block: &BlockStmt) -> Option<&Expr> {
+        for statement in block.stmts.iter().rev() {
+            if let Some(ReturnStmt {
+                arg: Some(statement),
+                ..
+            }) = statement.as_return_stmt()
+            {
+                return Some(&statement);
+            }
+        }
+
+        None
+    }
 }
 
 impl VisitMut for NameofVisitor {
@@ -130,8 +153,52 @@ impl VisitMut for NameofVisitor {
         let request = self.get_nameof_expression(node);
 
         match request {
-            Ok(Some(NameofExpression::Normal { .. })) => {
-                *node = Expr::Lit(Lit::from("nameof"));
+            Ok(Some(NameofExpression::Normal { method: None, call })) => {
+                let name_source = match call.args.len() {
+                    n if n > 1 => None,
+                    1 => match &call.args[0] {
+                        ExprOrSpread { spread: None, .. } => Some(&call.args[0].expr),
+                        // Argument spreading is not supported
+                        ExprOrSpread {
+                            spread: Some(_), ..
+                        } => return (),
+                    },
+                    _ => None,
+                };
+
+                let named_expr = match name_source {
+                    Some(expr) => {
+                        let expr_or_body = match &**expr {
+                            Expr::Arrow(ArrowExpr { body, .. }) => match &**body {
+                                BlockStmtOrExpr::Expr(expr) => Either::Left(&**expr),
+                                BlockStmtOrExpr::BlockStmt(body) => Either::Right(Some(body)),
+                            },
+                            Expr::Fn(FnExpr { function, .. }) => {
+                                Either::Right(function.body.as_ref())
+                            }
+                            expr => Either::Left(expr),
+                        };
+
+                        match expr_or_body {
+                            Either::Left(expr) => expr,
+                            Either::Right(Some(body)) => {
+                                // that I used to know
+                                if let Some(expr) = Self::get_returned_expression(body) {
+                                    expr
+                                } else {
+                                    return ();
+                                }
+                            }
+                            _ => return (),
+                        }
+                    }
+                    None => return (),
+                };
+
+                match get_name(named_expr) {
+                    Ok(name) => *node = Expr::Lit(Lit::from(name)),
+                    _ => return (),
+                }
             }
             Ok(Some(NameofExpression::Typed(MemberExpr {
                 prop: MemberProp::Ident(prop),
@@ -148,6 +215,22 @@ impl VisitMut for NameofVisitor {
                             }
                             NameofError::InvalidMethod(IdentName { sym: method, span }) => {
                                 (*span, format!("The method `{method}` is not supported."))
+                            }
+                            NameofError::UnsupportedComputation(prop) => {
+                                let expression = match print_node(&prop.expr) {
+                                    Ok(code) => format!(" `{code}`"),
+                                    Err(_) => String::from("")
+                                };
+
+                                (prop.expr.span(), format!("The specified expression{expression} is an invalid accessor type. Expected a string or a number."))
+                            }
+                            NameofError::UnsupportedNode(expr) => {
+                                let expression = match print_node(expr) {
+                                    Ok(code) => format!(" `{code}`"),
+                                    Err(_) => String::from("")
+                                };
+
+                                (expr.span(), format!("The specified expression{expression} is not supported."))
                             }
                         };
 
@@ -181,6 +264,23 @@ pub fn process_transform(program: Program, data: TransformPluginProgramMetadata)
     program.apply(&mut visit_mut_pass(NameofVisitor {
         unresolved_context: SyntaxContext::empty().apply_mark(data.unresolved_mark),
     }))
+}
+
+/// Gets the name of the expression represented by the specified `expr`.
+fn get_name<'a>(expr: &'a Expr) -> NameofResult<'a, String> {
+    match expr {
+        Expr::Paren(ParenExpr { expr, .. })
+        | Expr::TsNonNull(TsNonNullExpr { expr, .. })
+        | Expr::TsAs(TsAsExpr { expr, .. }) => get_name(expr),
+        Expr::Ident(Ident { sym, .. }) => Ok(sym.to_string()),
+        Expr::This(this) => Ok(print_node(this)?),
+        Expr::Member(MemberExpr { prop, .. }) => Ok(match prop {
+            MemberProp::Ident(ident) => ident.sym.to_string(),
+            MemberProp::PrivateName(name) => print_node(name)?,
+            MemberProp::Computed(prop) => return Err(NameofError::UnsupportedComputation(&prop)),
+        }),
+        _ => Err(NameofError::UnsupportedNode(expr)),
+    }
 }
 
 #[cfg(test)]
