@@ -129,7 +129,7 @@ impl VisitMut for NameofVisitor {
                 prop: MemberProp::Ident(prop),
                 ..
             }))) => {
-                *node = Expr::Lit(Lit::from(format!("typed: {}", prop.sym)));
+                *node = Expr::Lit(Lit::from(prop.sym.as_str()));
             }
             _ => {
                 if let Some(Err(err)) = request {
