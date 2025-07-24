@@ -61,13 +61,13 @@ impl NameofVisitor {
     fn get_nameof_expression<'a>(
         &self,
         node: &'a mut Expr,
-    ) -> Option<NameofResult<'a, NameofExpression<'a>>> {
+    ) -> NameofResult<'a, Option<NameofExpression<'a>>> {
         match node {
             Expr::Call(call) => match call {
                 CallExpr {
                     callee: Callee::Expr(callee),
                     ..
-                } => Some(Ok(NameofExpression::Normal {
+                } => Ok(Some(NameofExpression::Normal {
                     method: match &**callee {
                         Expr::Ident(ident) if self.is_global_nameof(ident) => None,
                         Expr::Member(MemberExpr {
@@ -82,7 +82,7 @@ impl NameofVisitor {
                                     "array" => NameofMethod::Array,
                                     "split" => NameofMethod::Split,
                                     _ => {
-                                        return Some(Err(NameofError::InvalidMethod(
+                                        return Err(NameofError::InvalidMethod(
                                             call.callee
                                                 .as_expr()
                                                 .unwrap()
@@ -91,25 +91,25 @@ impl NameofVisitor {
                                                 .prop
                                                 .as_ident()
                                                 .unwrap(),
-                                        )))
+                                        ))
                                     }
                                 })
                             }
-                            _ => return None,
+                            _ => return Ok(None),
                         },
-                        _ => return None,
+                        _ => return Ok(None),
                     },
                     call,
                 })),
-                _ => None,
+                _ => Ok(None),
             },
-            Expr::Member(member) => match self.get_nameof_expression(&mut member.obj) {
-                Some(Err(NameofError::InvalidMethod(ident))) if ident.sym == "typed" => {
-                    Some(Ok(NameofExpression::Typed(member)))
+            Expr::Member(member) => Ok(match self.get_nameof_expression(&mut member.obj) {
+                Err(NameofError::InvalidMethod(ident)) if ident.sym == "typed" => {
+                    Some(NameofExpression::Typed(member))
                 }
                 _ => None,
-            },
-            _ => None,
+            }),
+            _ => Ok(None),
         }
     }
 }
@@ -122,17 +122,17 @@ impl VisitMut for NameofVisitor {
         let request = self.get_nameof_expression(node);
 
         match request {
-            Some(Ok(NameofExpression::Normal { .. })) => {
+            Ok(Some(NameofExpression::Normal { .. })) => {
                 *node = Expr::Lit(Lit::from("nameof"));
             }
-            Some(Ok(NameofExpression::Typed(MemberExpr {
+            Ok(Some(NameofExpression::Typed(MemberExpr {
                 prop: MemberProp::Ident(prop),
                 ..
             }))) => {
                 *node = Expr::Lit(Lit::from(prop.sym.as_str()));
             }
             _ => {
-                if let Some(Err(err)) = request {
+                if let Err(err) = request {
                     HANDLER.with(|handler| {
                         let (span, message) = match err {
                             NameofError::InvalidMethod(IdentName { sym: method, span }) => {
