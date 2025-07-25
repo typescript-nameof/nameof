@@ -1,14 +1,22 @@
+use std::sync::Arc;
+
+use anyhow::Error;
+use swc::Compiler;
+use swc_compiler_base::IdentCollector;
 use swc_core::{
-    common::SyntaxContext,
+    common::{FileName, SourceMap, Span, SyntaxContext},
     ecma::{
         ast::{CallExpr, Callee, Expr, Ident, IdentName, Lit, MemberExpr, MemberProp, Program},
-        visit::{visit_mut_pass, VisitMut, VisitMutWith},
+        visit::{visit_mut_pass, VisitMut, VisitMutWith, VisitWith},
     },
     plugin::{errors::HANDLER, plugin_transform, proxies::TransformPluginProgramMetadata},
 };
+use swc_ecma_codegen::Node;
 
 /// Represents an error which occurred while performing a `nameof`-substitution.
 pub enum NameofError<'a> {
+    /// Indicates an arbitrary error.
+    Error(Span, Error),
     /// Indicates the use of an invalid method on the `nameof` interface.
     InvalidMethod(&'a IdentName),
 }
@@ -135,6 +143,9 @@ impl VisitMut for NameofVisitor {
                 if let Err(err) = request {
                     HANDLER.with(|handler| {
                         let (span, message) = match err {
+                            NameofError::Error(span, error) => {
+                                (span, format!("An error occurred: {error}"))
+                            }
                             NameofError::InvalidMethod(IdentName { sym: method, span }) => {
                                 (*span, format!("The method `{method}` is not supported."))
                             }
@@ -147,6 +158,20 @@ impl VisitMut for NameofVisitor {
                 }
             }
         }
+    }
+}
+
+/// Prints the source code represented by the specified `node`.
+fn print_node<T>(node: &T) -> NameofResult<String>
+where
+    T: Node + VisitWith<IdentCollector>,
+{
+    let source_map: Arc<SourceMap> = Default::default();
+    source_map.new_source_file(Arc::new(FileName::Anon), String::new());
+
+    match Compiler::new(source_map).print(node, Default::default()) {
+        Ok(output) => Ok(output.code),
+        Err(error) => Err(NameofError::Error(node.span(), error)),
     }
 }
 
