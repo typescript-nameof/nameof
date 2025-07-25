@@ -10,8 +10,12 @@ crate-type = ["cdylib"]
 lto = true
 
 [dependencies]
+anyhow = "1.0.98"
 serde = "1"
+swc = "33.0.0"
+swc_compiler_base = "30.0.0"
 swc_core = { version = "34.0.*", features = ["ecma_plugin_transform"] }
+swc_ecma_codegen = "16.0.0"
 swc_ecma_lexer = "22.0.1"
 
 [dev-dependencies]
