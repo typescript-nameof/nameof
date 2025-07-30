@@ -32,6 +32,18 @@ pub enum NameofError<'a> {
 /// Represents either success or a [`NameofError`].
 type NameofResult<'a, T> = Result<T, NameofError<'a>>;
 
+/// Represents a node which contains a name.
+enum NamedNode<'a> {
+    /// Indicates an expression.
+    Expr(&'a Expr),
+}
+
+/// Represents the substitution of an expression with its name.
+enum NameSubstitution<'a> {
+    /// Indicates the substitution of the expression with the last part of its name.
+    Tail(NamedNode<'a>),
+}
+
 /// Represents a method of the `nameof` interface.
 pub enum NameofMethod {
     /// Indicates a method for yielding the full name of an object.
@@ -54,7 +66,7 @@ enum NameofExpression<'a> {
         method: Option<NameofMethod>,
     },
     /// Indicates a typed property access.
-    Typed(&'a MemberExpr),
+    Typed(&'a Expr),
 }
 
 /// Provides the functionality to substitute [`NameofExpression`]s.
@@ -121,12 +133,62 @@ impl NameofVisitor {
             },
             Expr::Member(member) => Ok(match self.get_nameof_expression(&mut member.obj) {
                 Err(NameofError::InvalidMethod(ident)) if ident.sym == "typed" => {
-                    Some(NameofExpression::Typed(member))
+                    Some(NameofExpression::Typed(node))
                 }
                 _ => None,
             }),
             _ => Ok(None),
         }
+    }
+
+    /// Gets the name substitution represented by the specified `node`.
+    fn get_name_substitution<'a>(
+        &self,
+        node: &'a mut Expr,
+    ) -> NameofResult<'a, Option<NameSubstitution<'a>>> {
+        Ok(match self.get_nameof_expression(node)? {
+            Some(expr) => Some(match expr {
+                NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
+                NameofExpression::Normal { call, method: None } => {
+                    let name_source = match call.args.len() {
+                        1 => match call.args[0] {
+                            ExprOrSpread { spread: None, .. } => &*call.args[0].expr,
+                            ExprOrSpread {
+                                spread: Some(_), ..
+                            } => return Ok(None),
+                        },
+                        _ => return Ok(None),
+                    };
+
+                    NameSubstitution::Tail({
+                        let expr_or_body = match name_source {
+                            Expr::Arrow(ArrowExpr { body, .. }) => match &**body {
+                                BlockStmtOrExpr::Expr(expr) => Either::Left(&**expr),
+                                BlockStmtOrExpr::BlockStmt(body) => Either::Right(Some(body)),
+                            },
+                            Expr::Fn(FnExpr { function, .. }) => {
+                                Either::Right(function.body.as_ref())
+                            }
+                            expr => Either::Left(expr),
+                        };
+
+                        NamedNode::Expr(match expr_or_body {
+                            Either::Left(expr) => expr,
+                            Either::Right(Some(body)) => {
+                                if let Some(expr) = Self::get_returned_expression(body) {
+                                    expr
+                                } else {
+                                    return Ok(None);
+                                }
+                            }
+                            _ => return Ok(None),
+                        })
+                    })
+                }
+                _ => return Ok(None),
+            }),
+            None => None,
+        })
     }
 
     /// Gets the expression returned from the specified `block`.
@@ -150,64 +212,15 @@ impl VisitMut for NameofVisitor {
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
     fn visit_mut_expr(&mut self, node: &mut Expr) {
-        let request = self.get_nameof_expression(node);
+        let substitution = self.get_name_substitution(node);
 
-        match request {
-            Ok(Some(NameofExpression::Normal { method: None, call })) => {
-                let name_source = match call.args.len() {
-                    n if n > 1 => None,
-                    1 => match &call.args[0] {
-                        ExprOrSpread { spread: None, .. } => Some(&call.args[0].expr),
-                        // Argument spreading is not supported
-                        ExprOrSpread {
-                            spread: Some(_), ..
-                        } => return (),
-                    },
-                    _ => None,
-                };
-
-                let named_expr = match name_source {
-                    Some(expr) => {
-                        let expr_or_body = match &**expr {
-                            Expr::Arrow(ArrowExpr { body, .. }) => match &**body {
-                                BlockStmtOrExpr::Expr(expr) => Either::Left(&**expr),
-                                BlockStmtOrExpr::BlockStmt(body) => Either::Right(Some(body)),
-                            },
-                            Expr::Fn(FnExpr { function, .. }) => {
-                                Either::Right(function.body.as_ref())
-                            }
-                            expr => Either::Left(expr),
-                        };
-
-                        match expr_or_body {
-                            Either::Left(expr) => expr,
-                            Either::Right(Some(body)) => {
-                                // that I used to know
-                                if let Some(expr) = Self::get_returned_expression(body) {
-                                    expr
-                                } else {
-                                    return ();
-                                }
-                            }
-                            _ => return (),
-                        }
-                    }
-                    None => return (),
-                };
-
-                match get_name(named_expr) {
-                    Ok(name) => *node = Expr::Lit(Lit::from(name)),
-                    _ => return (),
-                }
-            }
-            Ok(Some(NameofExpression::Typed(MemberExpr {
-                prop: MemberProp::Ident(prop),
-                ..
-            }))) => {
-                *node = Expr::Lit(Lit::from(prop.sym.as_str()));
-            }
+        match substitution {
+            Ok(Some(NameSubstitution::Tail(NamedNode::Expr(expr)))) => match get_name(expr) {
+                Ok(name) => *node = Expr::Lit(Lit::from(name)),
+                _ => return (),
+            },
             _ => {
-                if let Err(err) = request {
+                if let Err(err) = substitution {
                     HANDLER.with(|handler| {
                         let (span, message) = match err {
                             NameofError::Error(span, error) => {
