@@ -227,6 +227,19 @@ impl NameofVisitor {
         })
     }
 
+    /// Gets the replacement for the specified `node`.
+    fn get_replacement<'a>(&self, node: &'a mut Expr) -> NameofResult<'a, Option<Expr>> {
+        let substitution = self.get_name_substitution(node)?;
+
+        match substitution {
+            Some(NameSubstitution::Tail(expr)) => Ok(Some(Expr::Lit(Lit::from(match expr {
+                NamedNode::Expr(expr) => get_name(expr)?,
+                NamedNode::Type(ts_type) => get_type_name(ts_type)?,
+            })))),
+            None => Ok(None),
+        }
+    }
+
     /// Gets the expression returned from the specified `block`.
     fn get_returned_expression(block: &BlockStmt) -> Option<&Expr> {
         for statement in block.stmts.iter().rev() {
@@ -248,22 +261,12 @@ impl VisitMut for NameofVisitor {
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
     fn visit_mut_expr(&mut self, node: &mut Expr) {
-        let substitution = self.get_name_substitution(node);
+        let replacement = self.get_replacement(node);
 
-        match substitution {
-            Ok(Some(NameSubstitution::Tail(expr))) => {
-                let result = match expr {
-                    NamedNode::Expr(expr) => get_name(expr),
-                    NamedNode::Type(ts_type) => get_type_name(ts_type),
-                };
-
-                match result {
-                    Ok(result) => *node = Expr::Lit(Lit::from(result)),
-                    _ => return (),
-                }
-            }
+        match replacement {
+            Ok(Some(expr)) => *node = expr,
             _ => {
-                if let Err(err) = substitution {
+                if let Err(err) = replacement {
                     HANDLER.with(|handler| {
                         let (span, message) = match err {
                             NameofError::Error(span, error) => {
