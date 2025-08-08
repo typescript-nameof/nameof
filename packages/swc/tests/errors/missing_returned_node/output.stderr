@@ -1,0 +1,12 @@
+  x Missing returned expression.
+   ,-[input.js:1:1]
+ 1 | nameof(function x() {});
+   :        ^^^^^^^^^^^^^^^
+ 2 | nameof(() => {});
+   `----
+  x Missing returned expression.
+   ,-[input.js:2:1]
+ 1 | nameof(function x() {});
+ 2 | nameof(() => {});
+   :        ^^^^^^^^
+   `----

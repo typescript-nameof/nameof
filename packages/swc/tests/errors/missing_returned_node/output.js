@@ -1,0 +1,2 @@
+nameof(function x() {});
+nameof(()=>{});

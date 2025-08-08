@@ -21,6 +21,12 @@ use swc_ecma_codegen::Node;
 pub enum NameofError<'a> {
     /// Indicates an arbitrary error.
     Error(Span, Error),
+    /// Indicates the unsupported use of spread arguments.
+    Spread(&'a Span),
+    /// Indicates an invalid number of arguments.
+    ArgumentError(&'a CallExpr, usize),
+    /// Indicates the absence of a returned node in a function-like expression.
+    NoReturnedNode(&'a Expr),
     /// Indicates the use of an invalid method on the `nameof` interface.
     InvalidMethod(&'a IdentName),
     /// Indicates the unsupported use of a computed property.
@@ -155,9 +161,13 @@ impl NameofVisitor {
                             ExprOrSpread { spread: None, .. } => &*call.args[0].expr,
                             ExprOrSpread {
                                 spread: Some(_), ..
-                            } => return Ok(None),
+                            } => {
+                                return Err(NameofError::Spread(
+                                    call.args[0].spread.as_ref().unwrap(),
+                                ))
+                            }
                         },
-                        _ => return Ok(None),
+                        arg_count => return Err(NameofError::ArgumentError(call, arg_count)),
                     };
 
                     NameSubstitution::Tail({
@@ -174,14 +184,12 @@ impl NameofVisitor {
 
                         NamedNode::Expr(match expr_or_body {
                             Either::Left(expr) => expr,
-                            Either::Right(Some(body)) => {
-                                if let Some(expr) = Self::get_returned_expression(body) {
-                                    expr
-                                } else {
-                                    return Ok(None);
+                            Either::Right(body) => {
+                                match body.map(|b| Self::get_returned_expression(b)).flatten() {
+                                    Some(expr) => expr,
+                                    None => return Err(NameofError::NoReturnedNode(name_source)),
                                 }
                             }
-                            _ => return Ok(None),
                         })
                     })
                 }
@@ -226,6 +234,12 @@ impl VisitMut for NameofVisitor {
                             NameofError::Error(span, error) => {
                                 (span, format!("An error occurred: {error}"))
                             }
+                            NameofError::Spread(span) => (*span, String::from("The spread operator is not supported.")),
+                            NameofError::ArgumentError(call, arg_count) => {
+                                (call.span, format!("Expected 1 argument but got {arg_count} argument{}.",
+                                if arg_count == 1 {""} else {"s"}))
+                            }
+                            NameofError::NoReturnedNode(expr) => (expr.span(), String::from("Missing returned expression.")),
                             NameofError::InvalidMethod(IdentName { sym: method, span }) => {
                                 (*span, format!("The method `{method}` is not supported."))
                             }
