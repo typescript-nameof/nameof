@@ -1,0 +1,1 @@
+nameof(console, process);
