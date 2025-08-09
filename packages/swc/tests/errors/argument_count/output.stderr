@@ -1,4 +1,4 @@
-  x Expected 1 argument but got 2 arguments.
+  x Expected 1 argument or type argument but got 0 type arguments and 2 arguments.
    ,-[input.js:1:1]
  1 | nameof(console, process);
    : ^^^^^^^^^^^^^^^^^^^^^^^^

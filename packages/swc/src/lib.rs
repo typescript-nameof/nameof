@@ -9,13 +9,22 @@ use swc_core::{
         ast::{
             ArrowExpr, BlockStmt, BlockStmtOrExpr, CallExpr, Callee, ComputedPropName, Expr,
             ExprOrSpread, FnExpr, Ident, IdentName, Lit, MemberExpr, MemberProp, ParenExpr,
-            Program, ReturnStmt, TsAsExpr, TsNonNullExpr,
+            Program, ReturnStmt, TsAsExpr, TsEntityName, TsImportType, TsIndexedAccessType,
+            TsNonNullExpr, TsParenthesizedType, TsType, TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
         },
         visit::{visit_mut_pass, VisitMut, VisitMutWith, VisitWith},
     },
     plugin::{errors::HANDLER, plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 use swc_ecma_codegen::Node;
+
+/// Represents an unsupported node.
+pub enum UnsupportedNode<'a> {
+    /// Indicates an expression.
+    Expr(&'a Expr),
+    /// Indicates a type.
+    Type(&'a TsType),
+}
 
 /// Represents an error which occurred while performing a `nameof`-substitution.
 pub enum NameofError<'a> {
@@ -24,7 +33,7 @@ pub enum NameofError<'a> {
     /// Indicates the unsupported use of spread arguments.
     Spread(&'a Span),
     /// Indicates an invalid number of arguments.
-    ArgumentError(&'a CallExpr, usize),
+    ArgumentError(&'a CallExpr, usize, usize),
     /// Indicates the absence of a returned node in a function-like expression.
     NoReturnedNode(&'a Expr),
     /// Indicates the use of an invalid method on the `nameof` interface.
@@ -32,7 +41,7 @@ pub enum NameofError<'a> {
     /// Indicates the unsupported use of a computed property.
     UnsupportedComputation(&'a ComputedPropName),
     /// Indicates an unsupported node.
-    UnsupportedNode(&'a Expr),
+    UnsupportedNode(UnsupportedNode<'a>),
 }
 
 /// Represents either success or a [`NameofError`].
@@ -42,6 +51,8 @@ type NameofResult<'a, T> = Result<T, NameofError<'a>>;
 enum NamedNode<'a> {
     /// Indicates an expression.
     Expr(&'a Expr),
+    /// Indicates a type.
+    Type(&'a TsType),
 }
 
 /// Represents the substitution of an expression with its name.
@@ -156,42 +167,59 @@ impl NameofVisitor {
             Some(expr) => Some(match expr {
                 NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
                 NameofExpression::Normal { call, method: None } => {
-                    let name_source = match call.args.len() {
-                        1 => match call.args[0] {
-                            ExprOrSpread { spread: None, .. } => &*call.args[0].expr,
-                            ExprOrSpread {
-                                spread: Some(_), ..
-                            } => {
-                                return Err(NameofError::Spread(
-                                    call.args[0].spread.as_ref().unwrap(),
-                                ))
-                            }
-                        },
-                        arg_count => return Err(NameofError::ArgumentError(call, arg_count)),
-                    };
+                    let node = match call.args.len() {
+                        1 => {
+                            let expr_or_body = match call.args[0] {
+                                ExprOrSpread { spread: None, .. } => match &*call.args[0].expr {
+                                    Expr::Arrow(ArrowExpr { body, .. }) => match &**body {
+                                        BlockStmtOrExpr::Expr(expr) => Either::Left(&**expr),
+                                        BlockStmtOrExpr::BlockStmt(body) => {
+                                            Either::Right(Some(body))
+                                        }
+                                    },
+                                    Expr::Fn(FnExpr { function, .. }) => {
+                                        Either::Right(function.body.as_ref())
+                                    }
+                                    expr => Either::Left(expr),
+                                },
+                                ExprOrSpread {
+                                    spread: Some(_), ..
+                                } => {
+                                    return Err(NameofError::Spread(
+                                        call.args[0].spread.as_ref().unwrap(),
+                                    ))
+                                }
+                            };
 
-                    NameSubstitution::Tail({
-                        let expr_or_body = match name_source {
-                            Expr::Arrow(ArrowExpr { body, .. }) => match &**body {
-                                BlockStmtOrExpr::Expr(expr) => Either::Left(&**expr),
-                                BlockStmtOrExpr::BlockStmt(body) => Either::Right(Some(body)),
-                            },
-                            Expr::Fn(FnExpr { function, .. }) => {
-                                Either::Right(function.body.as_ref())
-                            }
-                            expr => Either::Left(expr),
-                        };
-
-                        NamedNode::Expr(match expr_or_body {
-                            Either::Left(expr) => expr,
-                            Either::Right(body) => {
-                                match body.map(|b| Self::get_returned_expression(b)).flatten() {
-                                    Some(expr) => expr,
-                                    None => return Err(NameofError::NoReturnedNode(name_source)),
+                            NamedNode::Expr(match expr_or_body {
+                                Either::Left(expr) => expr,
+                                Either::Right(body) => {
+                                    match body.map(|b| Self::get_returned_expression(b)).flatten() {
+                                        Some(expr) => expr,
+                                        None => {
+                                            return Err(NameofError::NoReturnedNode(
+                                                &call.args[0].expr,
+                                            ))
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                        arg_count => {
+                            match call.type_args.as_ref().map(|t| &t.params).iter().len() {
+                                1 => NamedNode::Type(&*call.type_args.as_ref().unwrap().params[0]),
+                                type_arg_count => {
+                                    return Err(NameofError::ArgumentError(
+                                        call,
+                                        type_arg_count,
+                                        arg_count,
+                                    ))
                                 }
                             }
-                        })
-                    })
+                        }
+                    };
+
+                    NameSubstitution::Tail(node)
                 }
                 _ => return Ok(None),
             }),
@@ -223,10 +251,17 @@ impl VisitMut for NameofVisitor {
         let substitution = self.get_name_substitution(node);
 
         match substitution {
-            Ok(Some(NameSubstitution::Tail(NamedNode::Expr(expr)))) => match get_name(expr) {
-                Ok(name) => *node = Expr::Lit(Lit::from(name)),
-                _ => return (),
-            },
+            Ok(Some(NameSubstitution::Tail(expr))) => {
+                let result = match expr {
+                    NamedNode::Expr(expr) => get_name(expr),
+                    NamedNode::Type(ts_type) => get_type_name(ts_type),
+                };
+
+                match result {
+                    Ok(result) => *node = Expr::Lit(Lit::from(result)),
+                    _ => return (),
+                }
+            }
             _ => {
                 if let Err(err) = substitution {
                     HANDLER.with(|handler| {
@@ -235,9 +270,15 @@ impl VisitMut for NameofVisitor {
                                 (span, format!("An error occurred: {error}"))
                             }
                             NameofError::Spread(span) => (*span, String::from("The spread operator is not supported.")),
-                            NameofError::ArgumentError(call, arg_count) => {
-                                (call.span, format!("Expected 1 argument but got {arg_count} argument{}.",
-                                if arg_count == 1 {""} else {"s"}))
+                            NameofError::ArgumentError(call, type_arg_count, arg_count) => {
+                                (
+                                    call.span,
+                                    format!(
+                                        "Expected 1 argument or type argument but got {type_arg_count} type argument{} and {arg_count} argument{}.",
+                                        if type_arg_count == 1 {""} else {"s"},
+                                        if arg_count == 1 {""} else {"s"}
+                                    )
+                                )
                             }
                             NameofError::NoReturnedNode(expr) => (expr.span(), String::from("Missing returned expression.")),
                             NameofError::InvalidMethod(IdentName { sym: method, span }) => {
@@ -251,13 +292,13 @@ impl VisitMut for NameofVisitor {
 
                                 (prop.expr.span(), format!("The specified expression{expression} is an invalid accessor type. Expected a string or a number."))
                             }
-                            NameofError::UnsupportedNode(expr) => {
-                                let expression = match print_node(expr) {
-                                    Ok(code) => format!(" `{code}`"),
-                                    Err(_) => String::from("")
+                            NameofError::UnsupportedNode(node) => {
+                                let (span, code) = match node {
+                                    UnsupportedNode::Expr(expr) => (expr.span(), print_node(expr)),
+                                    UnsupportedNode::Type(ts_type) => (ts_type.span(), print_node(ts_type))
                                 };
 
-                                (expr.span(), format!("The specified expression{expression} is not supported."))
+                                (span, format!("The specified expression{} is not supported.", if let Ok(code) = code {format!(" `{code}`")} else {"".into()}))
                             }
                         };
 
@@ -306,7 +347,42 @@ fn get_name<'a>(expr: &'a Expr) -> NameofResult<'a, String> {
             MemberProp::PrivateName(name) => print_node(name)?,
             MemberProp::Computed(prop) => return Err(NameofError::UnsupportedComputation(&prop)),
         }),
-        _ => Err(NameofError::UnsupportedNode(expr)),
+        _ => Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(expr))),
+    }
+}
+
+/// Gets the name of the type represented by the specified `ts_type`.
+fn get_type_name<'a>(ts_type: &'a TsType) -> NameofResult<'a, String> {
+    match ts_type {
+        TsType::TsIndexedAccessType(TsIndexedAccessType {
+            index_type: ts_type,
+            ..
+        })
+        | TsType::TsParenthesizedType(TsParenthesizedType {
+            type_ann: ts_type, ..
+        }) => get_type_name(&ts_type),
+        TsType::TsKeywordType(keyword_type) => print_node(keyword_type),
+        TsType::TsThisType(this_type) => print_node(this_type),
+        TsType::TsImportType(TsImportType {
+            qualifier: Some(type_name),
+            ..
+        })
+        | TsType::TsTypeQuery(TsTypeQuery {
+            expr_name:
+                TsTypeQueryExpr::Import(TsImportType {
+                    qualifier: Some(type_name),
+                    ..
+                })
+                | TsTypeQueryExpr::TsEntityName(type_name),
+            ..
+        })
+        | TsType::TsTypeRef(TsTypeRef { type_name, .. }) => match type_name {
+            TsEntityName::Ident(ident) => Ok(ident.sym.as_str().into()),
+            TsEntityName::TsQualifiedName(qualified_name) => {
+                Ok(qualified_name.right.sym.as_str().into())
+            }
+        },
+        _ => Err(NameofError::UnsupportedNode(UnsupportedNode::Type(ts_type))),
     }
 }
 
