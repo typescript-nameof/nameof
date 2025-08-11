@@ -167,8 +167,11 @@ impl NameofVisitor {
             Some(expr) => Some(match expr {
                 NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
                 NameofExpression::Normal { call, method: None } => {
-                    let node = match call.args.len() {
-                        1 => {
+                    let node = match (
+                        call.type_args.as_ref().map(|t| t.params.len()).unwrap_or(0),
+                        call.args.len(),
+                    ) {
+                        (0 | 1, 1) => {
                             let expr_or_body = match call.args[0] {
                                 ExprOrSpread { spread: None, .. } => match &*call.args[0].expr {
                                     Expr::Arrow(ArrowExpr { body, .. }) => match &**body {
@@ -205,17 +208,9 @@ impl NameofVisitor {
                                 }
                             })
                         }
-                        arg_count => {
-                            match call.type_args.as_ref().map(|t| &t.params).iter().len() {
-                                1 => NamedNode::Type(&*call.type_args.as_ref().unwrap().params[0]),
-                                type_arg_count => {
-                                    return Err(NameofError::ArgumentError(
-                                        call,
-                                        type_arg_count,
-                                        arg_count,
-                                    ))
-                                }
-                            }
+                        (1, 0) => NamedNode::Type(&*call.type_args.as_ref().unwrap().params[0]),
+                        (type_arg_count, arg_count) => {
+                            return Err(NameofError::ArgumentError(call, type_arg_count, arg_count))
                         }
                     };
 

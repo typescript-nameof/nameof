@@ -2,4 +2,25 @@
    ,-[input.js:1:1]
  1 | nameof(console, process);
    : ^^^^^^^^^^^^^^^^^^^^^^^^
+ 2 | nameof<Console>(console, process);
+   `----
+  x Expected 1 argument or type argument but got 1 type argument and 2 arguments.
+   ,-[input.js:2:1]
+ 1 | nameof(console, process);
+ 2 | nameof<Console>(console, process);
+   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 3 | nameof<Console, NodeJS.Process>();
+   `----
+  x Expected 1 argument or type argument but got 2 type arguments and 0 arguments.
+   ,-[input.js:3:1]
+ 2 | nameof<Console>(console, process);
+ 3 | nameof<Console, NodeJS.Process>();
+   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 4 | nameof<Console, NodeJS.Process>(console);
+   `----
+  x Expected 1 argument or type argument but got 2 type arguments and 1 argument.
+   ,-[input.js:4:1]
+ 3 | nameof<Console, NodeJS.Process>();
+ 4 | nameof<Console, NodeJS.Process>(console);
+   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    `----
