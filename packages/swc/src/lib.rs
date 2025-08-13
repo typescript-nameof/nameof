@@ -343,7 +343,11 @@ fn get_name<'a>(expr: &'a Expr) -> NameofResult<'a, String> {
         Expr::Member(MemberExpr { prop, .. }) => Ok(match prop {
             MemberProp::Ident(ident) => ident.sym.to_string(),
             MemberProp::PrivateName(name) => print_node(name)?,
-            MemberProp::Computed(prop) => return Err(NameofError::UnsupportedComputation(&prop)),
+            MemberProp::Computed(prop) => match &*prop.expr {
+                Expr::Lit(Lit::Str(str)) => str.value.to_string(),
+                Expr::Lit(Lit::Num(num)) => num.value.to_string(),
+                _ => return Err(NameofError::UnsupportedComputation(&prop)),
+            },
         }),
         _ => Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(expr))),
     }

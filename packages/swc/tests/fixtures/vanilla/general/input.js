@@ -1,5 +1,6 @@
 nameof(console);
 nameof(console.log);
+nameof(myObject.$prop);
 nameof(this);
 
 class Employee {
