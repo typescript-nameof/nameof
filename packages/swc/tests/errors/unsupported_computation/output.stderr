@@ -1,0 +1,5 @@
+  x The specified expression `2 * 2` is an invalid accessor type. Expected a string or a number.
+   ,-[input.js:1:1]
+ 1 | nameof(process.argv[2 * 2]);
+   :                     ^^^^^
+   `----

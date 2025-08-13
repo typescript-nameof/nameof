@@ -1,5 +1,6 @@
 "console";
 "log";
+"$prop";
 "this";
 class Employee {
     #id;
