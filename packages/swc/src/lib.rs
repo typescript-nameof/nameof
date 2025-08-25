@@ -7,8 +7,8 @@ use swc_core::{
     common::{pass::Either, FileName, SourceMap, Span, Spanned, SyntaxContext},
     ecma::{
         ast::{
-            ArrowExpr, BlockStmt, BlockStmtOrExpr, CallExpr, Callee, ComputedPropName, Expr,
-            ExprOrSpread, FnExpr, Ident, IdentName, Lit, MemberExpr, MemberProp, ParenExpr,
+            ArrayLit, ArrowExpr, BlockStmt, BlockStmtOrExpr, CallExpr, Callee, ComputedPropName,
+            Expr, ExprOrSpread, FnExpr, Ident, IdentName, Lit, MemberExpr, MemberProp, ParenExpr,
             Program, ReturnStmt, TsAsExpr, TsEntityName, TsImportType, TsIndexedAccessType,
             TsNonNullExpr, TsParenthesizedType, TsType, TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
         },
@@ -59,6 +59,8 @@ enum NamedNode<'a> {
 enum NameSubstitution<'a> {
     /// Indicates the substitution of the expression with the last part of its name.
     Tail(NamedNode<'a>),
+    /// Indicates the substitution of the expression with the collection of all named parts of the node.
+    Collect(NamedNode<'a>),
 }
 
 /// Represents a method of the `nameof` interface.
@@ -84,6 +86,98 @@ enum NameofExpression<'a> {
     },
     /// Indicates a typed property access.
     Typed(&'a Expr),
+}
+
+/// Represents the segment of a name.
+trait NameSegment<'a> {
+    /// Gets the name of the segment.
+    fn get_name(&self) -> NameofResult<'a, String>;
+
+    /// Gets the next segment.
+    fn get_next(&self) -> Option<Box<Self>>;
+}
+
+/// Represents the segment of an expression.
+struct ExprSegment<'a> {
+    /// The expression of the segment.
+    expr: &'a Expr,
+}
+
+impl<'a> ExprSegment<'a> {
+    /// Initializes a new instance of the [`ExprSegment`] class.
+    fn new(expr: &'a Expr) -> Self {
+        Self { expr }
+    }
+
+    /// Unwraps the expression nested inside the specified `expr`.
+    fn unwrap_expr<'b>(expr: &'b Expr) -> &'b Expr {
+        match expr {
+            Expr::Paren(ParenExpr { expr, .. })
+            | Expr::TsNonNull(TsNonNullExpr { expr, .. })
+            | Expr::TsAs(TsAsExpr { expr, .. }) => {
+                return expr;
+            }
+            expr => expr,
+        }
+    }
+}
+
+impl<'a> NameSegment<'a> for ExprSegment<'a> {
+    fn get_name(&self) -> NameofResult<'a, String> {
+        Ok(match Self::unwrap_expr(self.expr) {
+            Expr::Paren(ParenExpr { expr, .. })
+            | Expr::TsNonNull(TsNonNullExpr { expr, .. })
+            | Expr::TsAs(TsAsExpr { expr, .. }) => Self::new(&*expr).get_name()?,
+            Expr::Ident(Ident { sym, .. }) => sym.to_string(),
+            Expr::This(this) => print_node(this)?,
+            Expr::Member(MemberExpr { prop, .. }) => match prop {
+                MemberProp::Ident(ident) => ident.sym.to_string(),
+                MemberProp::PrivateName(name) => print_node(name)?,
+                MemberProp::Computed(prop) => match &*prop.expr {
+                    Expr::Lit(Lit::Str(str)) => str.value.to_string(),
+                    Expr::Lit(Lit::Num(num)) => num.value.to_string(),
+                    _ => return Err(NameofError::UnsupportedComputation(prop)),
+                },
+            },
+            _ => {
+                return Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(
+                    self.expr,
+                )))
+            }
+        })
+    }
+
+    fn get_next(&self) -> Option<Box<Self>> {
+        match Self::unwrap_expr(self.expr) {
+            Expr::Member(MemberExpr { .. }) => Some(Box::new(Self::new(
+                &self.expr.as_member().unwrap().obj,
+            ))),
+            _ => None,
+        }
+    }
+}
+
+/// Provides the functionality to walk over segments.
+struct SegmentWalker<S> {
+    /// The current name segment.
+    current: Option<S>,
+}
+
+impl<'a, S> Iterator for SegmentWalker<S>
+where
+    S: NameSegment<'a>,
+{
+    type Item = S;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let result = self.current.take();
+
+        if let Some(segment) = &result {
+            self.current = segment.get_next().map(|s| *s);
+        }
+
+        result
+    }
 }
 
 /// Provides the functionality to substitute [`NameofExpression`]s.
@@ -166,7 +260,7 @@ impl NameofVisitor {
         Ok(match self.get_nameof_expression(node)? {
             Some(expr) => Some(match expr {
                 NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
-                NameofExpression::Normal { call, method: None } => {
+                NameofExpression::Normal { call, method } => {
                     let node = match (
                         call.type_args.as_ref().map(|t| t.params.len()).unwrap_or(0),
                         call.args.len(),
@@ -214,9 +308,14 @@ impl NameofVisitor {
                         }
                     };
 
-                    NameSubstitution::Tail(node)
+                    match method {
+                        None => NameSubstitution::Tail(node),
+                        Some(method) => match method {
+                            NameofMethod::Split => NameSubstitution::Collect(node),
+                            _ => todo!("Add support for remaining methods."),
+                        },
+                    }
                 }
-                _ => return Ok(None),
             }),
             None => None,
         })
@@ -227,10 +326,41 @@ impl NameofVisitor {
         let substitution = self.get_name_substitution(node)?;
 
         match substitution {
-            Some(NameSubstitution::Tail(expr)) => Ok(Some(Expr::Lit(Lit::from(match expr {
-                NamedNode::Expr(expr) => get_name(expr)?,
-                NamedNode::Type(ts_type) => get_type_name(ts_type)?,
-            })))),
+            Some(substitution) => Ok(Some(match substitution {
+                NameSubstitution::Tail(expr) => Expr::Lit(Lit::from(match expr {
+                    NamedNode::Expr(expr) => ExprSegment::new(expr).get_name()?,
+                    NamedNode::Type(ts_type) => get_type_name(ts_type)?,
+                })),
+                NameSubstitution::Collect(node) => match node {
+                    NamedNode::Expr(expr) => {
+                        let mut names = Vec::new();
+
+                        for segment in (SegmentWalker {
+                            current: Some(ExprSegment { expr }),
+                        }) {
+                            match segment.get_name() {
+                                Ok(name) => names.push(name),
+                                Err(err) => return Err(err),
+                            }
+                        }
+
+                        Expr::Array(ArrayLit {
+                            elems: names
+                                .into_iter()
+                                .map(|n| {
+                                    Some(ExprOrSpread {
+                                        spread: None,
+                                        expr: Box::new(Expr::Lit(Lit::from(n))),
+                                    })
+                                })
+                                .rev()
+                                .collect(),
+                            ..Default::default()
+                        })
+                    }
+                    _ => return Ok(None),
+                },
+            })),
             None => Ok(None),
         }
     }
@@ -330,27 +460,6 @@ pub fn process_transform(program: Program, data: TransformPluginProgramMetadata)
     program.apply(&mut visit_mut_pass(NameofVisitor {
         unresolved_context: SyntaxContext::empty().apply_mark(data.unresolved_mark),
     }))
-}
-
-/// Gets the name of the expression represented by the specified `expr`.
-fn get_name<'a>(expr: &'a Expr) -> NameofResult<'a, String> {
-    match expr {
-        Expr::Paren(ParenExpr { expr, .. })
-        | Expr::TsNonNull(TsNonNullExpr { expr, .. })
-        | Expr::TsAs(TsAsExpr { expr, .. }) => get_name(expr),
-        Expr::Ident(Ident { sym, .. }) => Ok(sym.to_string()),
-        Expr::This(this) => Ok(print_node(this)?),
-        Expr::Member(MemberExpr { prop, .. }) => Ok(match prop {
-            MemberProp::Ident(ident) => ident.sym.to_string(),
-            MemberProp::PrivateName(name) => print_node(name)?,
-            MemberProp::Computed(prop) => match &*prop.expr {
-                Expr::Lit(Lit::Str(str)) => str.value.to_string(),
-                Expr::Lit(Lit::Num(num)) => num.value.to_string(),
-                _ => return Err(NameofError::UnsupportedComputation(&prop)),
-            },
-        }),
-        _ => Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(expr))),
-    }
 }
 
 /// Gets the name of the type represented by the specified `ts_type`.
