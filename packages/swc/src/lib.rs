@@ -56,12 +56,20 @@ enum NamedNode<'a> {
     Type(&'a TsType),
 }
 
+/// Represents an output type of a collect substitution.
+enum CollectOutput {
+    /// Indicates an array.
+    Array,
+    /// Indicates a full name.
+    Full,
+}
+
 /// Represents the substitution of an expression with its name.
 enum NameSubstitution<'a> {
     /// Indicates the substitution of the expression with the last part of its name.
     Tail(NamedNode<'a>),
     /// Indicates the substitution of the expression with the collection of all named parts of the node.
-    Collect(NamedNode<'a>),
+    Collect(CollectOutput, NamedNode<'a>),
 }
 
 /// Represents a method of the `nameof` interface.
@@ -104,6 +112,20 @@ trait NameSegment<'a> {
 
     /// Gets the next segment.
     fn get_next(&self) -> Option<Box<Self>>;
+
+    /// Appends the name of this segment to the specified `str`.
+    fn append(&self, str: &mut String) -> NameofResult<'a, ()> {
+        match str.as_str() {
+            "" => {
+                str.push_str(&self.get_name()?);
+            }
+            _ => {
+                str.push_str(&format!(".{}", &self.get_name()?));
+            }
+        }
+
+        Ok(())
+    }
 }
 
 /// Represents the segment of an expression.
@@ -199,6 +221,14 @@ impl<'a> NameSegment<'a> for ExprSegment<'a> {
     }
 }
 
+/// Provides the functionality to collect segments in different formats.
+trait SegmentCollector<'a> {
+    /// Returns either the names of the segments as a vector or an error.
+    fn split(self: Box<Self>) -> NameofResult<'a, Vec<String>>;
+    /// Returns either the names of the segments as a dotted path or an error.
+    fn full(self: Box<Self>) -> NameofResult<'a, String>;
+}
+
 /// Provides the functionality to walk over segments.
 struct SegmentWalker<S> {
     /// The current name segment.
@@ -219,6 +249,34 @@ where
         }
 
         result
+    }
+}
+
+impl<'a, S> SegmentCollector<'a> for SegmentWalker<S>
+where
+    S: NameSegment<'a>,
+{
+    fn split(self: Box<Self>) -> NameofResult<'a, Vec<String>> {
+        let mut names = Vec::new();
+
+        for segment in self {
+            match segment.get_name() {
+                Ok(name) => names.push(name),
+                Err(err) => return Err(err),
+            }
+        }
+
+        Ok(names.into_iter().rev().collect())
+    }
+
+    fn full(self: Box<Self>) -> NameofResult<'a, String> {
+        let mut result = String::new();
+
+        for segment in self.collect::<Vec<_>>().into_iter().rev() {
+            segment.append(&mut result)?;
+        }
+
+        Ok(result)
     }
 }
 
@@ -352,10 +410,14 @@ impl NameofVisitor {
 
                     match method {
                         None => NameSubstitution::Tail(node),
-                        Some(method) => match method {
-                            NameofMethod::Split => NameSubstitution::Collect(node),
-                            _ => todo!("Add support for remaining methods."),
-                        },
+                        Some(method) => NameSubstitution::Collect(
+                            match method {
+                                NameofMethod::Full => CollectOutput::Full,
+                                NameofMethod::Split => CollectOutput::Array,
+                                _ => todo!("Add support for remaining methods."),
+                            },
+                            node,
+                        ),
                     }
                 }
             }),
@@ -373,21 +435,18 @@ impl NameofVisitor {
                     NamedNode::Expr(expr) => ExprSegment::new(expr).get_name()?,
                     NamedNode::Type(ts_type) => get_type_name(ts_type)?,
                 })),
-                NameSubstitution::Collect(node) => match node {
-                    NamedNode::Expr(expr) => {
-                        let mut names = Vec::new();
-
-                        for segment in (SegmentWalker {
+                NameSubstitution::Collect(output, node) => {
+                    let walker: Box<dyn SegmentCollector> = match node {
+                        NamedNode::Expr(expr) => Box::new(SegmentWalker {
                             current: Some(ExprSegment::new(expr)),
-                        }) {
-                            match segment.get_name() {
-                                Ok(name) => names.push(name),
-                                Err(err) => return Err(err),
-                            }
-                        }
+                        }),
+                        NamedNode::Type(_) => todo!(),
+                    };
 
-                        Expr::Array(ArrayLit {
-                            elems: names
+                    match output {
+                        CollectOutput::Array => Expr::Array(ArrayLit {
+                            elems: walker
+                                .split()?
                                 .into_iter()
                                 .map(|n| {
                                     Some(ExprOrSpread {
@@ -395,12 +454,11 @@ impl NameofVisitor {
                                         expr: Box::new(Expr::Lit(Lit::from(n))),
                                     })
                                 })
-                                .rev()
                                 .collect(),
                             ..Default::default()
-                        })
+                        }),
+                        CollectOutput::Full => Expr::Lit(Lit::from(walker.full()?)),
                     }
-                    _ => return Ok(None),
                 },
             })),
             None => Ok(None),
