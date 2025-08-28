@@ -9,8 +9,8 @@ use swc_core::{
         ast::{
             ArrayLit, ArrowExpr, BlockStmt, BlockStmtOrExpr, CallExpr, Callee, ComputedPropName,
             Expr, ExprOrSpread, FnExpr, Ident, IdentName, Lit, MemberExpr, MemberProp,
-            OptChainBase, OptChainExpr, ParenExpr, Program, ReturnStmt, Super, SuperProp,
-            SuperPropExpr, TsAsExpr, TsEntityName, TsImportType, TsIndexedAccessType,
+            OptChainBase, OptChainExpr, ParenExpr, PrivateName, Program, ReturnStmt, Super,
+            SuperProp, SuperPropExpr, TsAsExpr, TsEntityName, TsImportType, TsIndexedAccessType,
             TsNonNullExpr, TsParenthesizedType, TsType, TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
         },
         visit::{visit_mut_pass, VisitMut, VisitMutWith, VisitWith},
@@ -164,7 +164,8 @@ impl<'a> NameSegment<'a> for ExprSegment<'a> {
                 Expr::Paren(ParenExpr { expr, .. })
                 | Expr::TsNonNull(TsNonNullExpr { expr, .. })
                 | Expr::TsAs(TsAsExpr { expr, .. }) => Self::new(&*expr).get_name()?,
-                Expr::Ident(Ident { sym: name, .. }) => name.to_string(),
+                Expr::Ident(Ident { sym: name, .. })
+                | Expr::PrivateName(PrivateName { name, .. }) => name.to_string(),
                 Expr::This(this) => print_node(this)?,
                 Expr::Member(member) => self.get_member_name(member)?,
                 Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
