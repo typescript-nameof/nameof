@@ -8,9 +8,10 @@ use swc_core::{
     ecma::{
         ast::{
             ArrayLit, ArrowExpr, BlockStmt, BlockStmtOrExpr, CallExpr, Callee, ComputedPropName,
-            Expr, ExprOrSpread, FnExpr, Ident, IdentName, Lit, MemberExpr, MemberProp, ParenExpr,
-            Program, ReturnStmt, TsAsExpr, TsEntityName, TsImportType, TsIndexedAccessType,
-            TsNonNullExpr, TsParenthesizedType, TsType, TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
+            Expr, ExprOrSpread, FnExpr, Ident, IdentName, Lit, MemberExpr, MemberProp,
+            OptChainBase, OptChainExpr, ParenExpr, Program, ReturnStmt, TsAsExpr, TsEntityName,
+            TsImportType, TsIndexedAccessType, TsNonNullExpr, TsParenthesizedType, TsType,
+            TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
         },
         visit::{visit_mut_pass, VisitMut, VisitMutWith, VisitWith},
     },
@@ -120,6 +121,24 @@ impl<'a> ExprSegment<'a> {
             expr => expr,
         }
     }
+
+    /// Gets the name of the specified `member`.
+    fn get_member_name<'b>(&self, member: &'b MemberExpr) -> NameofResult<'b, String> {
+        Ok(match &member.prop {
+            MemberProp::Ident(ident) => ident.sym.to_string(),
+            MemberProp::PrivateName(name) => print_node(name)?,
+            MemberProp::Computed(prop) => match &*prop.expr {
+                Expr::Lit(Lit::Str(str)) => str.value.to_string(),
+                Expr::Lit(Lit::Num(num)) => num.value.to_string(),
+                _ => return Err(NameofError::UnsupportedComputation(prop)),
+            },
+        })
+    }
+
+    /// Gets the parent segment of the specified `member`.
+    fn get_member_parent(&self, member: &'a MemberExpr) -> Self {
+        Self::new(&*member.obj)
+    }
 }
 
 impl<'a> NameSegment<'a> for ExprSegment<'a> {
@@ -130,14 +149,14 @@ impl<'a> NameSegment<'a> for ExprSegment<'a> {
             | Expr::TsAs(TsAsExpr { expr, .. }) => Self::new(&*expr).get_name()?,
             Expr::Ident(Ident { sym, .. }) => sym.to_string(),
             Expr::This(this) => print_node(this)?,
-            Expr::Member(MemberExpr { prop, .. }) => match prop {
-                MemberProp::Ident(ident) => ident.sym.to_string(),
-                MemberProp::PrivateName(name) => print_node(name)?,
-                MemberProp::Computed(prop) => match &*prop.expr {
-                    Expr::Lit(Lit::Str(str)) => str.value.to_string(),
-                    Expr::Lit(Lit::Num(num)) => num.value.to_string(),
-                    _ => return Err(NameofError::UnsupportedComputation(prop)),
-                },
+            Expr::Member(member) => self.get_member_name(member)?,
+            Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
+                OptChainBase::Member(member) => self.get_member_name(member)?,
+                _ => {
+                    return Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(
+                        self.expr,
+                    )))
+                }
             },
             _ => {
                 return Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(
@@ -148,12 +167,14 @@ impl<'a> NameSegment<'a> for ExprSegment<'a> {
     }
 
     fn get_next(&self) -> Option<Box<Self>> {
-        match Self::unwrap_expr(self.expr) {
-            Expr::Member(MemberExpr { .. }) => Some(Box::new(Self::new(
-                &self.expr.as_member().unwrap().obj,
-            ))),
-            _ => None,
-        }
+        Some(Box::new(match Self::unwrap_expr(self.expr) {
+            Expr::Member(member) => self.get_member_parent(member),
+            Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
+                OptChainBase::Member(member) => self.get_member_parent(member),
+                _ => return None,
+            },
+            _ => return None,
+        }))
     }
 }
 
