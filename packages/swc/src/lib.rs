@@ -9,9 +9,9 @@ use swc_core::{
         ast::{
             ArrayLit, ArrowExpr, BlockStmt, BlockStmtOrExpr, CallExpr, Callee, ComputedPropName,
             Expr, ExprOrSpread, FnExpr, Ident, IdentName, Lit, MemberExpr, MemberProp,
-            OptChainBase, OptChainExpr, ParenExpr, Program, ReturnStmt, TsAsExpr, TsEntityName,
-            TsImportType, TsIndexedAccessType, TsNonNullExpr, TsParenthesizedType, TsType,
-            TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
+            OptChainBase, OptChainExpr, ParenExpr, Program, ReturnStmt, Super, SuperProp,
+            SuperPropExpr, TsAsExpr, TsEntityName, TsImportType, TsIndexedAccessType,
+            TsNonNullExpr, TsParenthesizedType, TsType, TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
         },
         visit::{visit_mut_pass, VisitMut, VisitMutWith, VisitWith},
     },
@@ -89,6 +89,14 @@ enum NameofExpression<'a> {
     Typed(&'a Expr),
 }
 
+/// Represents an expression which has a name.
+enum NamedExpr<'a> {
+    /// Indicates an expression.
+    Expr(&'a Expr),
+    /// Indicates a `super` keyword.
+    Super(&'a Super),
+}
+
 /// Represents the segment of a name.
 trait NameSegment<'a> {
     /// Gets the name of the segment.
@@ -101,13 +109,15 @@ trait NameSegment<'a> {
 /// Represents the segment of an expression.
 struct ExprSegment<'a> {
     /// The expression of the segment.
-    expr: &'a Expr,
+    expr: NamedExpr<'a>,
 }
 
 impl<'a> ExprSegment<'a> {
     /// Initializes a new instance of the [`ExprSegment`] class.
     fn new(expr: &'a Expr) -> Self {
-        Self { expr }
+        Self {
+            expr: NamedExpr::Expr(expr),
+        }
     }
 
     /// Unwraps the expression nested inside the specified `expr`.
@@ -127,11 +137,16 @@ impl<'a> ExprSegment<'a> {
         Ok(match &member.prop {
             MemberProp::Ident(ident) => ident.sym.to_string(),
             MemberProp::PrivateName(name) => print_node(name)?,
-            MemberProp::Computed(prop) => match &*prop.expr {
-                Expr::Lit(Lit::Str(str)) => str.value.to_string(),
-                Expr::Lit(Lit::Num(num)) => num.value.to_string(),
-                _ => return Err(NameofError::UnsupportedComputation(prop)),
-            },
+            MemberProp::Computed(prop) => self.get_computed_prop_name(prop)?,
+        })
+    }
+
+    /// Gets the name of the specified `prop`.
+    fn get_computed_prop_name<'b>(&self, prop: &'b ComputedPropName) -> NameofResult<'b, String> {
+        Ok(match &*prop.expr {
+            Expr::Lit(Lit::Str(str)) => str.value.to_string(),
+            Expr::Lit(Lit::Num(num)) => num.value.to_string(),
+            _ => return Err(NameofError::UnsupportedComputation(prop)),
         })
     }
 
@@ -143,37 +158,42 @@ impl<'a> ExprSegment<'a> {
 
 impl<'a> NameSegment<'a> for ExprSegment<'a> {
     fn get_name(&self) -> NameofResult<'a, String> {
-        Ok(match Self::unwrap_expr(self.expr) {
-            Expr::Paren(ParenExpr { expr, .. })
-            | Expr::TsNonNull(TsNonNullExpr { expr, .. })
-            | Expr::TsAs(TsAsExpr { expr, .. }) => Self::new(&*expr).get_name()?,
-            Expr::Ident(Ident { sym, .. }) => sym.to_string(),
-            Expr::This(this) => print_node(this)?,
-            Expr::Member(member) => self.get_member_name(member)?,
-            Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
-                OptChainBase::Member(member) => self.get_member_name(member)?,
-                _ => {
-                    return Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(
-                        self.expr,
-                    )))
-                }
+        Ok(match self.expr {
+            NamedExpr::Super(expr) => print_node(expr)?,
+            NamedExpr::Expr(expr) => match Self::unwrap_expr(expr) {
+                Expr::Paren(ParenExpr { expr, .. })
+                | Expr::TsNonNull(TsNonNullExpr { expr, .. })
+                | Expr::TsAs(TsAsExpr { expr, .. }) => Self::new(&*expr).get_name()?,
+                Expr::Ident(Ident { sym: name, .. }) => name.to_string(),
+                Expr::This(this) => print_node(this)?,
+                Expr::Member(member) => self.get_member_name(member)?,
+                Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
+                    OptChainBase::Member(member) => self.get_member_name(member)?,
+                    _ => return Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(expr))),
+                },
+                Expr::SuperProp(SuperPropExpr { prop, .. }) => match prop {
+                    SuperProp::Ident(IdentName { sym, .. }) => sym.to_string(),
+                    SuperProp::Computed(prop) => self.get_computed_prop_name(prop)?,
+                },
+                _ => return Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(expr))),
             },
-            _ => {
-                return Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(
-                    self.expr,
-                )))
-            }
         })
     }
 
     fn get_next(&self) -> Option<Box<Self>> {
-        Some(Box::new(match Self::unwrap_expr(self.expr) {
-            Expr::Member(member) => self.get_member_parent(member),
-            Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
-                OptChainBase::Member(member) => self.get_member_parent(member),
+        Some(Box::new(match self.expr {
+            NamedExpr::Super(_) => return None,
+            NamedExpr::Expr(expr) => match Self::unwrap_expr(expr) {
+                Expr::Member(member) => self.get_member_parent(member),
+                Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
+                    OptChainBase::Member(member) => self.get_member_parent(member),
+                    _ => return None,
+                },
+                Expr::SuperProp(SuperPropExpr { obj, .. }) => Self {
+                    expr: NamedExpr::Super(obj),
+                },
                 _ => return None,
             },
-            _ => return None,
         }))
     }
 }
@@ -357,7 +377,7 @@ impl NameofVisitor {
                         let mut names = Vec::new();
 
                         for segment in (SegmentWalker {
-                            current: Some(ExprSegment { expr }),
+                            current: Some(ExprSegment::new(expr)),
                         }) {
                             match segment.get_name() {
                                 Ok(name) => names.push(name),
