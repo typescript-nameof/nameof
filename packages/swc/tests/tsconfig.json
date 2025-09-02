@@ -12,10 +12,14 @@
     },
     "include": [
         "**/*.js",
-        "**/*.ts"
+        "**/*.ts",
+        "**/*.mjs",
+        "**/*.mts"
     ],
     "exclude": [
         "**/output.js",
-        "**/output.ts"
+        "**/output.ts",
+        "**/output.mjs",
+        "**/output.mts"
     ]
 }
