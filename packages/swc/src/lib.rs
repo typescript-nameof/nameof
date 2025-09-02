@@ -97,12 +97,22 @@ enum NameofExpression<'a> {
     Typed(&'a Expr),
 }
 
+/// Represents an expression with custom names.
+pub struct CustomExpr {
+    /// The name of the segment.
+    tail: String,
+    /// The names of the subsequent segments.
+    segments: Box<dyn Iterator<Item = String>>,
+}
+
 /// Represents an expression which has a name.
 enum NamedExpr<'a> {
     /// Indicates an expression.
     Expr(&'a Expr),
     /// Indicates a `super` keyword.
     Super(&'a Super),
+    /// Indicates a custom segment.
+    Custom(CustomExpr),
 }
 
 /// Represents the segment of a name.
@@ -111,7 +121,7 @@ trait NameSegment<'a> {
     fn get_name(&self) -> NameofResult<'a, String>;
 
     /// Gets the next segment.
-    fn get_next(&self) -> Option<Box<Self>>;
+    fn get_next(&mut self) -> Option<Box<Self>>;
 
     /// Appends the name of this segment to the specified `str`.
     fn append(&self, str: &mut String) -> NameofResult<'a, ()> {
@@ -176,6 +186,18 @@ impl<'a> ExprSegment<'a> {
     fn get_member_parent(&self, member: &'a MemberExpr) -> Self {
         Self::new(&*member.obj)
     }
+
+    /// Builds a [`NameSegment`] based on the specified `names`.
+    fn build_custom_segment(mut names: Vec<String>) -> Option<Self> {
+        let tail = names.pop()?;
+
+        Some(Self {
+            expr: NamedExpr::Custom(CustomExpr {
+                tail,
+                segments: Box::new(names.into_iter()),
+            }),
+        })
+    }
 }
 
 impl<'a> NameSegment<'a> for ExprSegment<'a> {
@@ -190,6 +212,7 @@ impl<'a> NameSegment<'a> for ExprSegment<'a> {
                 | Expr::PrivateName(PrivateName { name, .. }) => name.to_string(),
                 Expr::This(this) => print_node(this)?,
                 Expr::Member(member) => self.get_member_name(member)?,
+                Expr::MetaProp(meta) => print_node(meta)?.split('.').last().unwrap().to_string(),
                 Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
                     OptChainBase::Member(member) => self.get_member_name(member)?,
                     _ => return Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(expr))),
@@ -200,14 +223,26 @@ impl<'a> NameSegment<'a> for ExprSegment<'a> {
                 },
                 _ => return Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(expr))),
             },
+            NamedExpr::Custom(CustomExpr { ref tail, .. }) => String::from(tail),
         })
     }
 
-    fn get_next(&self) -> Option<Box<Self>> {
-        Some(Box::new(match self.expr {
+    fn get_next(&mut self) -> Option<Box<Self>> {
+        Some(Box::new(match &mut self.expr {
             NamedExpr::Super(_) => return None,
             NamedExpr::Expr(expr) => match Self::unwrap_expr(expr) {
                 Expr::Member(member) => self.get_member_parent(member),
+                Expr::MetaProp(meta) => {
+                    let names: Vec<String> = print_node(meta)
+                        .ok()?
+                        .split('.')
+                        .rev()
+                        .skip(1)
+                        .map(|s| s.to_owned())
+                        .collect();
+
+                    Self::build_custom_segment(names)?
+                }
                 Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
                     OptChainBase::Member(member) => self.get_member_parent(member),
                     _ => return None,
@@ -217,6 +252,9 @@ impl<'a> NameSegment<'a> for ExprSegment<'a> {
                 },
                 _ => return None,
             },
+            NamedExpr::Custom(CustomExpr { segments, .. }) => {
+                Self::build_custom_segment(segments.collect())?
+            }
         }))
     }
 }
@@ -242,9 +280,9 @@ where
     type Item = S;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let result = self.current.take();
+        let mut result = self.current.take();
 
-        if let Some(segment) = &result {
+        if let Some(segment) = &mut result {
             self.current = segment.get_next().map(|s| *s);
         }
 
@@ -631,6 +669,7 @@ mod tests {
     }
 
     #[fixture("tests/fixtures/**/input.[jt]s")]
+    #[fixture("tests/fixtures/**/input.[m][jt]s")]
     fn nameof_fixtures(input: PathBuf) {
         run_tests(input, false);
     }
