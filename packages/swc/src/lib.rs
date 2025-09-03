@@ -106,6 +106,35 @@ enum NameofExpression<'a> {
     Typed(&'a Expr),
 }
 
+/// Represents the literal value of a computed property.
+enum LitValue {
+    /// Indicates a string value.
+    Str(String),
+    /// Indicates a numeric value.
+    Num(f64),
+}
+
+/// Represents the format of a segment.
+enum SegmentFormat {
+    /// Indicates an identifier.
+    Ident(String),
+    /// Indicates a computed property.
+    ComputedProp(LitValue),
+}
+
+impl SegmentFormat {
+    /// Gets the name of the segment.
+    fn get_name(self) -> String {
+        match self {
+            Self::Ident(name) => name,
+            Self::ComputedProp(value) => match value {
+                LitValue::Str(str) => str,
+                LitValue::Num(num) => num.to_string(),
+            },
+        }
+    }
+}
+
 /// Represents an expression with custom names.
 pub struct CustomExpr {
     /// The name of the segment.
@@ -134,21 +163,33 @@ enum NamedType<'a> {
 
 /// Represents the segment of a name.
 trait NameSegment<'a> {
+    /// Gets the format of the segment.
+    fn get_format(&self) -> NameofResult<'a, SegmentFormat>;
+
     /// Gets the name of the segment.
-    fn get_name(&self) -> NameofResult<'a, String>;
+    fn get_name(&self) -> NameofResult<'a, String> {
+        Ok(self.get_format()?.get_name())
+    }
 
     /// Gets the next segment.
     fn get_next(&mut self) -> Option<Box<Self>>;
 
     /// Appends the name of this segment to the specified `str`.
     fn append(&self, str: &mut String) -> NameofResult<'a, ()> {
-        match str.as_str() {
-            "" => {
-                str.push_str(&self.get_name()?);
-            }
-            _ => {
-                str.push_str(&format!(".{}", &self.get_name()?));
-            }
+        match self.get_format()? {
+            SegmentFormat::ComputedProp(indexer) => str.push_str(&format!(
+                "[{}]",
+                match indexer {
+                    LitValue::Str(str) => format!("\"{str}\""),
+                    LitValue::Num(num) => num.to_string(),
+                }
+            )),
+            SegmentFormat::Ident(name) => match str.as_str() {
+                "" => {
+                    str.push_str(&self.get_name()?);
+                }
+                _ => str.push_str(&format!(".{name}")),
+            },
         }
 
         Ok(())
@@ -181,26 +222,29 @@ impl<'a> ExprSegment<'a> {
         }
     }
 
-    /// Gets the name of the specified `member`.
-    fn get_member_name<'b>(&self, member: &'b MemberExpr) -> NameofResult<'b, String> {
-        Ok(match &member.prop {
+    /// Gets the [`SegmentFormat`] of the specified `member`.
+    fn get_member_format<'b>(&self, member: &'b MemberExpr) -> NameofResult<'b, SegmentFormat> {
+        Ok(SegmentFormat::Ident(match &member.prop {
             MemberProp::Ident(ident) => ident.sym.to_string(),
             MemberProp::PrivateName(name) => print_node(name)?,
-            MemberProp::Computed(prop) => self.get_computed_prop_name(prop)?,
-        })
+            MemberProp::Computed(prop) => return self.get_computed_prop_format(prop),
+        }))
     }
 
-    /// Gets the name of the specified `prop`.
-    fn get_computed_prop_name<'b>(&self, prop: &'b ComputedPropName) -> NameofResult<'b, String> {
-        Ok(match &*prop.expr {
-            Expr::Lit(Lit::Str(str)) => str.value.to_string(),
-            Expr::Lit(Lit::Num(num)) => num.value.to_string(),
+    /// Gets the [`SegmentFormat`] of the specified `prop`.
+    fn get_computed_prop_format<'b>(
+        &self,
+        prop: &'b ComputedPropName,
+    ) -> NameofResult<'b, SegmentFormat> {
+        Ok(SegmentFormat::ComputedProp(match &*prop.expr {
+            Expr::Lit(Lit::Str(str)) => LitValue::Str(str.value.to_string()),
+            Expr::Lit(Lit::Num(num)) => LitValue::Num(num.value),
             _ => {
                 return Err(NameofError::UnsupportedIndexer(UnsupportedIndexer::Prop(
                     prop,
                 )))
             }
-        })
+        }))
     }
 
     /// Gets the parent segment of the specified `member`.
@@ -222,30 +266,30 @@ impl<'a> ExprSegment<'a> {
 }
 
 impl<'a> NameSegment<'a> for ExprSegment<'a> {
-    fn get_name(&self) -> NameofResult<'a, String> {
-        Ok(match self.expr {
+    fn get_format(&self) -> NameofResult<'a, SegmentFormat> {
+        Ok(SegmentFormat::Ident(match self.expr {
             NamedExpr::Super(expr) => print_node(expr)?,
             NamedExpr::Expr(expr) => match Self::unwrap_expr(expr) {
                 Expr::Paren(ParenExpr { expr, .. })
                 | Expr::TsNonNull(TsNonNullExpr { expr, .. })
-                | Expr::TsAs(TsAsExpr { expr, .. }) => Self::new(&*expr).get_name()?,
+                | Expr::TsAs(TsAsExpr { expr, .. }) => return Self::new(&*expr).get_format(),
                 Expr::Ident(Ident { sym: name, .. })
                 | Expr::PrivateName(PrivateName { name, .. }) => name.to_string(),
                 Expr::This(this) => print_node(this)?,
-                Expr::Member(member) => self.get_member_name(member)?,
+                Expr::Member(member) => return self.get_member_format(member),
                 Expr::MetaProp(meta) => print_node(meta)?.split('.').last().unwrap().to_string(),
                 Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
-                    OptChainBase::Member(member) => self.get_member_name(member)?,
+                    OptChainBase::Member(member) => return self.get_member_format(member),
                     _ => return Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(expr))),
                 },
                 Expr::SuperProp(SuperPropExpr { prop, .. }) => match prop {
                     SuperProp::Ident(IdentName { sym, .. }) => sym.to_string(),
-                    SuperProp::Computed(prop) => self.get_computed_prop_name(prop)?,
+                    SuperProp::Computed(prop) => return self.get_computed_prop_format(prop),
                 },
                 _ => return Err(NameofError::UnsupportedNode(UnsupportedNode::Expr(expr))),
             },
             NamedExpr::Custom(CustomExpr { ref tail, .. }) => String::from(tail),
-        })
+        }))
     }
 
     fn get_next(&mut self) -> Option<Box<Self>> {
@@ -322,8 +366,8 @@ impl<'a> TypeSegment<'a> {
 }
 
 impl<'a> NameSegment<'a> for TypeSegment<'a> {
-    fn get_name(&self) -> NameofResult<'a, String> {
-        Ok(match self.ts_type {
+    fn get_format(&self) -> NameofResult<'a, SegmentFormat> {
+        Ok(SegmentFormat::Ident(match self.ts_type {
             NamedType::Name(name) => Self::get_entity_name(name)?,
             NamedType::Type(ts_type) => match Self::unwrap_type(ts_type) {
                 TsType::TsTypeRef(TsTypeRef {
@@ -344,15 +388,17 @@ impl<'a> NameSegment<'a> for TypeSegment<'a> {
                 }) => Self::get_entity_name(name)?,
                 TsType::TsIndexedAccessType(TsIndexedAccessType { index_type, .. }) => {
                     match &**index_type {
-                        TsType::TsLitType(TsLitType { lit, .. }) => match lit {
-                            TsLit::Number(num) => num.value.to_string(),
-                            TsLit::Str(str) => str.value.to_string(),
-                            _ => {
-                                return Err(NameofError::UnsupportedIndexer(
-                                    UnsupportedIndexer::Type(index_type),
-                                ))
-                            }
-                        },
+                        TsType::TsLitType(TsLitType { lit, .. }) => {
+                            return Ok(SegmentFormat::ComputedProp(match lit {
+                                TsLit::Number(num) => LitValue::Num(num.value),
+                                TsLit::Str(str) => LitValue::Str(str.value.to_string()),
+                                _ => {
+                                    return Err(NameofError::UnsupportedIndexer(
+                                        UnsupportedIndexer::Type(index_type),
+                                    ))
+                                }
+                            }))
+                        }
                         ts_type => {
                             return Err(NameofError::UnsupportedIndexer(UnsupportedIndexer::Type(
                                 ts_type,
@@ -366,7 +412,7 @@ impl<'a> NameSegment<'a> for TypeSegment<'a> {
                     return Err(NameofError::UnsupportedNode(UnsupportedNode::Type(ts_type)))
                 }
             },
-        })
+        }))
     }
 
     fn get_next(&mut self) -> Option<Box<Self>> {

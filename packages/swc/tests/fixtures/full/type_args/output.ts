@@ -1,9 +1,10 @@
 "ReadStream";
 "NodeJS.Immediate";
-"Interface.close";
+'Interface["close"]';
 "process.abort";
+"process.argv[0]";
 class Test {
     toString() {
-        "this.toString";
+        'this["toString"]';
     }
 }
