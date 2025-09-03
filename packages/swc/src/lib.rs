@@ -124,6 +124,14 @@ enum NamedExpr<'a> {
     Custom(CustomExpr),
 }
 
+/// Represents a type which has a name.
+enum NamedType<'a> {
+    /// Indicates a type.
+    Type(&'a TsType),
+    /// Indicates an entity name.
+    Name(&'a TsEntityName),
+}
+
 /// Represents the segment of a name.
 trait NameSegment<'a> {
     /// Gets the name of the segment.
@@ -275,13 +283,15 @@ impl<'a> NameSegment<'a> for ExprSegment<'a> {
 /// Represents the segment of a type name.
 struct TypeSegment<'a> {
     /// The type of the current segment.
-    ts_type: &'a TsType,
+    ts_type: NamedType<'a>,
 }
 
 impl<'a> TypeSegment<'a> {
     /// Initializes a new type segment.
     fn new(ts_type: &'a TsType) -> Self {
-        Self { ts_type }
+        Self {
+            ts_type: NamedType::Type(ts_type),
+        }
     }
 
     /// Gets the type contained within the specified `ts_type`.
@@ -291,56 +301,91 @@ impl<'a> TypeSegment<'a> {
             ts_type => ts_type,
         }
     }
+
+    /// Gets the last part of the specified `ts_entity_name`.
+    fn get_entity_name<'b>(entity_name: &'b TsEntityName) -> NameofResult<'b, String> {
+        Ok(match entity_name {
+            TsEntityName::Ident(ident) => ident.sym.to_string(),
+            TsEntityName::TsQualifiedName(qualified_name) => qualified_name.right.sym.to_string(),
+        })
+    }
+
+    /// Gets the parent segment of the specified `name`.
+    fn get_entity_parent(name: &'a TsEntityName) -> Option<Self> {
+        Some(match name {
+            TsEntityName::TsQualifiedName(qualified) => Self {
+                ts_type: NamedType::Name(&qualified.left),
+            },
+            _ => return None,
+        })
+    }
 }
 
 impl<'a> NameSegment<'a> for TypeSegment<'a> {
     fn get_name(&self) -> NameofResult<'a, String> {
-        Ok(match Self::unwrap_type(self.ts_type) {
-            TsType::TsTypeRef(TsTypeRef {
-                type_name: name, ..
-            })
-            | TsType::TsImportType(TsImportType {
-                qualifier: Some(name),
-                ..
-            })
-            | TsType::TsTypeQuery(TsTypeQuery {
-                expr_name:
-                    TsTypeQueryExpr::TsEntityName(name)
-                    | TsTypeQueryExpr::Import(TsImportType {
-                        qualifier: Some(name),
-                        ..
-                    }),
-                ..
-            }) => match name {
-                TsEntityName::Ident(ident) => ident.sym.to_string(),
-                TsEntityName::TsQualifiedName(qualified_name) => {
-                    qualified_name.right.sym.to_string()
-                }
-            },
-            TsType::TsIndexedAccessType(TsIndexedAccessType { index_type, .. }) => {
-                match &**index_type {
-                    TsType::TsLitType(TsLitType { lit, .. }) => match lit {
-                        TsLit::Number(num) => num.value.to_string(),
-                        TsLit::Str(str) => str.value.to_string(),
-                        _ => {
+        Ok(match self.ts_type {
+            NamedType::Name(name) => Self::get_entity_name(name)?,
+            NamedType::Type(ts_type) => match Self::unwrap_type(ts_type) {
+                TsType::TsTypeRef(TsTypeRef {
+                    type_name: name, ..
+                })
+                | TsType::TsImportType(TsImportType {
+                    qualifier: Some(name),
+                    ..
+                })
+                | TsType::TsTypeQuery(TsTypeQuery {
+                    expr_name:
+                        TsTypeQueryExpr::TsEntityName(name)
+                        | TsTypeQueryExpr::Import(TsImportType {
+                            qualifier: Some(name),
+                            ..
+                        }),
+                    ..
+                }) => Self::get_entity_name(name)?,
+                TsType::TsIndexedAccessType(TsIndexedAccessType { index_type, .. }) => {
+                    match &**index_type {
+                        TsType::TsLitType(TsLitType { lit, .. }) => match lit {
+                            TsLit::Number(num) => num.value.to_string(),
+                            TsLit::Str(str) => str.value.to_string(),
+                            _ => {
+                                return Err(NameofError::UnsupportedIndexer(
+                                    UnsupportedIndexer::Type(index_type),
+                                ))
+                            }
+                        },
+                        ts_type => {
                             return Err(NameofError::UnsupportedIndexer(UnsupportedIndexer::Type(
-                                index_type,
+                                ts_type,
                             )))
                         }
-                    },
-                    ts_type => {
-                        return Err(NameofError::UnsupportedNode(UnsupportedNode::Type(ts_type)))
                     }
                 }
-            }
-            TsType::TsKeywordType(keyword) => print_node(keyword)?,
-            TsType::TsThisType(this_type) => print_node(this_type)?,
-            ts_type => return Err(NameofError::UnsupportedNode(UnsupportedNode::Type(ts_type))),
+                TsType::TsKeywordType(keyword) => print_node(keyword)?,
+                TsType::TsThisType(this_type) => print_node(this_type)?,
+                ts_type => {
+                    return Err(NameofError::UnsupportedNode(UnsupportedNode::Type(ts_type)))
+                }
+            },
         })
     }
 
     fn get_next(&mut self) -> Option<Box<Self>> {
-        todo!()
+        Some(Box::new(match self.ts_type {
+            NamedType::Name(name) => Self::get_entity_parent(name)?,
+            NamedType::Type(ts_type) => match Self::unwrap_type(ts_type) {
+                TsType::TsTypeRef(TsTypeRef {
+                    type_name: name, ..
+                })
+                | TsType::TsTypeQuery(TsTypeQuery {
+                    expr_name: TsTypeQueryExpr::TsEntityName(name),
+                    ..
+                }) => Self::get_entity_parent(name)?,
+                TsType::TsIndexedAccessType(TsIndexedAccessType { obj_type, .. }) => {
+                    Self::new(&obj_type)
+                }
+                _ => return None,
+            },
+        }))
     }
 }
 
@@ -564,7 +609,7 @@ impl NameofVisitor {
                             current: Some(ExprSegment::new(expr)),
                         }),
                         NamedNode::Type(ts_type) => Box::new(SegmentWalker {
-                            current: Some(TypeSegment { ts_type }),
+                            current: Some(TypeSegment::new(ts_type)),
                         }),
                     };
 
