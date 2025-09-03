@@ -11,7 +11,8 @@ use swc_core::{
             Expr, ExprOrSpread, FnExpr, Ident, IdentName, Lit, MemberExpr, MemberProp,
             OptChainBase, OptChainExpr, ParenExpr, PrivateName, Program, ReturnStmt, Super,
             SuperProp, SuperPropExpr, TsAsExpr, TsEntityName, TsImportType, TsIndexedAccessType,
-            TsNonNullExpr, TsParenthesizedType, TsType, TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
+            TsLit, TsLitType, TsNonNullExpr, TsParenthesizedType, TsType, TsTypeQuery,
+            TsTypeQueryExpr, TsTypeRef,
         },
         visit::{visit_mut_pass, VisitMut, VisitMutWith, VisitWith},
     },
@@ -27,6 +28,14 @@ pub enum UnsupportedNode<'a> {
     Type(&'a TsType),
 }
 
+/// Represents an unsupported indexer.
+pub enum UnsupportedIndexer<'a> {
+    /// Indicates a type.
+    Type(&'a TsType),
+    /// Indicates a computed property.
+    Prop(&'a ComputedPropName),
+}
+
 /// Represents an error which occurred while performing a `nameof`-substitution.
 pub enum NameofError<'a> {
     /// Indicates an arbitrary error.
@@ -40,7 +49,7 @@ pub enum NameofError<'a> {
     /// Indicates the use of an invalid method on the `nameof` interface.
     InvalidMethod(&'a IdentName),
     /// Indicates the unsupported use of a computed property.
-    UnsupportedComputation(&'a ComputedPropName),
+    UnsupportedIndexer(UnsupportedIndexer<'a>),
     /// Indicates an unsupported node.
     UnsupportedNode(UnsupportedNode<'a>),
 }
@@ -178,7 +187,11 @@ impl<'a> ExprSegment<'a> {
         Ok(match &*prop.expr {
             Expr::Lit(Lit::Str(str)) => str.value.to_string(),
             Expr::Lit(Lit::Num(num)) => num.value.to_string(),
-            _ => return Err(NameofError::UnsupportedComputation(prop)),
+            _ => {
+                return Err(NameofError::UnsupportedIndexer(UnsupportedIndexer::Prop(
+                    prop,
+                )))
+            }
         })
     }
 
@@ -256,6 +269,78 @@ impl<'a> NameSegment<'a> for ExprSegment<'a> {
                 Self::build_custom_segment(segments.collect())?
             }
         }))
+    }
+}
+
+/// Represents the segment of a type name.
+struct TypeSegment<'a> {
+    /// The type of the current segment.
+    ts_type: &'a TsType,
+}
+
+impl<'a> TypeSegment<'a> {
+    /// Initializes a new type segment.
+    fn new(ts_type: &'a TsType) -> Self {
+        Self { ts_type }
+    }
+
+    /// Gets the type contained within the specified `ts_type`.
+    fn unwrap_type<'b>(ts_type: &'b TsType) -> &'b TsType {
+        match ts_type {
+            TsType::TsParenthesizedType(TsParenthesizedType { type_ann, .. }) => type_ann,
+            ts_type => ts_type,
+        }
+    }
+}
+
+impl<'a> NameSegment<'a> for TypeSegment<'a> {
+    fn get_name(&self) -> NameofResult<'a, String> {
+        Ok(match Self::unwrap_type(self.ts_type) {
+            TsType::TsTypeRef(TsTypeRef {
+                type_name: name, ..
+            })
+            | TsType::TsImportType(TsImportType {
+                qualifier: Some(name),
+                ..
+            })
+            | TsType::TsTypeQuery(TsTypeQuery {
+                expr_name:
+                    TsTypeQueryExpr::TsEntityName(name)
+                    | TsTypeQueryExpr::Import(TsImportType {
+                        qualifier: Some(name),
+                        ..
+                    }),
+                ..
+            }) => match name {
+                TsEntityName::Ident(ident) => ident.sym.to_string(),
+                TsEntityName::TsQualifiedName(qualified_name) => {
+                    qualified_name.right.sym.to_string()
+                }
+            },
+            TsType::TsIndexedAccessType(TsIndexedAccessType { index_type, .. }) => {
+                match &**index_type {
+                    TsType::TsLitType(TsLitType { lit, .. }) => match lit {
+                        TsLit::Number(num) => num.value.to_string(),
+                        TsLit::Str(str) => str.value.to_string(),
+                        _ => {
+                            return Err(NameofError::UnsupportedIndexer(UnsupportedIndexer::Type(
+                                index_type,
+                            )))
+                        }
+                    },
+                    ts_type => {
+                        return Err(NameofError::UnsupportedNode(UnsupportedNode::Type(ts_type)))
+                    }
+                }
+            }
+            TsType::TsKeywordType(keyword) => print_node(keyword)?,
+            TsType::TsThisType(this_type) => print_node(this_type)?,
+            ts_type => return Err(NameofError::UnsupportedNode(UnsupportedNode::Type(ts_type))),
+        })
+    }
+
+    fn get_next(&mut self) -> Option<Box<Self>> {
+        todo!()
     }
 }
 
@@ -471,14 +556,16 @@ impl NameofVisitor {
             Some(substitution) => Ok(Some(match substitution {
                 NameSubstitution::Tail(expr) => Expr::Lit(Lit::from(match expr {
                     NamedNode::Expr(expr) => ExprSegment::new(expr).get_name()?,
-                    NamedNode::Type(ts_type) => get_type_name(ts_type)?,
+                    NamedNode::Type(ts_type) => TypeSegment::new(ts_type).get_name()?,
                 })),
                 NameSubstitution::Collect(output, node) => {
                     let walker: Box<dyn SegmentCollector> = match node {
                         NamedNode::Expr(expr) => Box::new(SegmentWalker {
                             current: Some(ExprSegment::new(expr)),
                         }),
-                        NamedNode::Type(_) => todo!(),
+                        NamedNode::Type(ts_type) => Box::new(SegmentWalker {
+                            current: Some(TypeSegment { ts_type }),
+                        }),
                     };
 
                     match output {
@@ -550,13 +637,18 @@ impl VisitMut for NameofVisitor {
                             NameofError::InvalidMethod(IdentName { sym: method, span }) => {
                                 (*span, format!("The method `{method}` is not supported."))
                             }
-                            NameofError::UnsupportedComputation(prop) => {
-                                let expression = match print_node(&prop.expr) {
+                            NameofError::UnsupportedIndexer(prop) => {
+                                let (span, code) = match prop {
+                                    UnsupportedIndexer::Prop(prop) => (prop.expr.span(), print_node(&prop.expr)),
+                                    UnsupportedIndexer::Type(ts_type) => (ts_type.span(), print_node(ts_type))
+                                };
+
+                                let expression = match code {
                                     Ok(code) => format!(" `{code}`"),
                                     Err(_) => String::from("")
                                 };
 
-                                (prop.expr.span(), format!("The specified expression{expression} is an invalid accessor type. Expected a string or a number."))
+                                (span, format!("The specified expression{expression} is an invalid accessor type. Expected a string or a number."))
                             }
                             NameofError::UnsupportedNode(node) => {
                                 let (span, code) = match node {
@@ -598,41 +690,6 @@ pub fn process_transform(program: Program, data: TransformPluginProgramMetadata)
     program.apply(&mut visit_mut_pass(NameofVisitor {
         unresolved_context: SyntaxContext::empty().apply_mark(data.unresolved_mark),
     }))
-}
-
-/// Gets the name of the type represented by the specified `ts_type`.
-fn get_type_name<'a>(ts_type: &'a TsType) -> NameofResult<'a, String> {
-    match ts_type {
-        TsType::TsIndexedAccessType(TsIndexedAccessType {
-            index_type: ts_type,
-            ..
-        })
-        | TsType::TsParenthesizedType(TsParenthesizedType {
-            type_ann: ts_type, ..
-        }) => get_type_name(&ts_type),
-        TsType::TsKeywordType(keyword_type) => print_node(keyword_type),
-        TsType::TsThisType(this_type) => print_node(this_type),
-        TsType::TsImportType(TsImportType {
-            qualifier: Some(type_name),
-            ..
-        })
-        | TsType::TsTypeQuery(TsTypeQuery {
-            expr_name:
-                TsTypeQueryExpr::Import(TsImportType {
-                    qualifier: Some(type_name),
-                    ..
-                })
-                | TsTypeQueryExpr::TsEntityName(type_name),
-            ..
-        })
-        | TsType::TsTypeRef(TsTypeRef { type_name, .. }) => match type_name {
-            TsEntityName::Ident(ident) => Ok(ident.sym.as_str().into()),
-            TsEntityName::TsQualifiedName(qualified_name) => {
-                Ok(qualified_name.right.sym.as_str().into())
-            }
-        },
-        _ => Err(NameofError::UnsupportedNode(UnsupportedNode::Type(ts_type))),
-    }
 }
 
 #[cfg(test)]
