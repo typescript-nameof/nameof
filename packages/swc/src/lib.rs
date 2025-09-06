@@ -10,9 +10,9 @@ use swc_core::{
             ArrayLit, ArrowExpr, BlockStmt, BlockStmtOrExpr, CallExpr, Callee, ComputedPropName,
             Expr, ExprOrSpread, FnExpr, Ident, IdentName, Lit, MemberExpr, MemberProp,
             OptChainBase, OptChainExpr, ParenExpr, PrivateName, Program, ReturnStmt, Super,
-            SuperProp, SuperPropExpr, TsAsExpr, TsEntityName, TsImportType, TsIndexedAccessType,
-            TsLit, TsLitType, TsNonNullExpr, TsParenthesizedType, TsType, TsTypeQuery,
-            TsTypeQueryExpr, TsTypeRef,
+            SuperProp, SuperPropExpr, Tpl, TplElement, TsAsExpr, TsEntityName, TsImportType,
+            TsIndexedAccessType, TsLit, TsLitType, TsNonNullExpr, TsParenthesizedType, TsType,
+            TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
         },
         visit::{visit_mut_pass, VisitMut, VisitMutWith, VisitWith},
     },
@@ -52,6 +52,8 @@ pub enum NameofError<'a> {
     UnsupportedIndexer(UnsupportedIndexer<'a>),
     /// Indicates an unsupported node.
     UnsupportedNode(UnsupportedNode<'a>),
+    /// Indicates an unsupported interpolation.
+    UnsupportedInterpolation(&'a CallExpr),
 }
 
 /// Represents either success or a [`NameofError`].
@@ -98,7 +100,7 @@ enum NameofExpression<'a> {
     /// Indicates a normal function call.
     Normal {
         /// The [`CallExpr`] holding the `nameof` call.
-        call: &'a mut CallExpr,
+        call: &'a CallExpr,
         /// The requested method.
         method: Option<NameofMethod>,
     },
@@ -115,23 +117,26 @@ enum LitValue {
 }
 
 /// Represents the format of a segment.
-enum SegmentFormat {
+enum SegmentFormat<'a> {
     /// Indicates an identifier.
     Ident(String),
     /// Indicates a computed property.
     ComputedProp(LitValue),
+    /// Indicates an interpolation.
+    Interpolation(&'a CallExpr),
 }
 
-impl SegmentFormat {
+impl<'a> SegmentFormat<'a> {
     /// Gets the name of the segment.
-    fn get_name(self) -> String {
-        match self {
+    fn get_name(self) -> NameofResult<'a, String> {
+        Ok(match self {
             Self::Ident(name) => name,
             Self::ComputedProp(value) => match value {
                 LitValue::Str(str) => str,
                 LitValue::Num(num) => num.to_string(),
             },
-        }
+            Self::Interpolation(call) => return Err(NameofError::UnsupportedInterpolation(call)),
+        })
     }
 }
 
@@ -164,32 +169,62 @@ enum NamedType<'a> {
 /// Represents the segment of a name.
 trait NameSegment<'a> {
     /// Gets the format of the segment.
-    fn get_format(&self) -> NameofResult<'a, SegmentFormat>;
+    fn get_format(&self) -> NameofResult<'a, SegmentFormat<'a>>;
 
     /// Gets the name of the segment.
     fn get_name(&self) -> NameofResult<'a, String> {
-        Ok(self.get_format()?.get_name())
+        self.get_format()?.get_name()
     }
 
     /// Gets the next segment.
     fn get_next(&mut self) -> Option<Box<Self>>;
 
-    /// Appends the name of this segment to the specified `str`.
-    fn append(&self, str: &mut String) -> NameofResult<'a, ()> {
-        match self.get_format()? {
-            SegmentFormat::ComputedProp(indexer) => str.push_str(&format!(
+    /// Appends the name of this segment to the specified `literal`.
+    fn append(&self, literal: &mut Tpl) -> NameofResult<'a, ()> {
+        let format = self.get_format()?;
+
+        if literal.quasis.len() == 0 {
+            if let SegmentFormat::Ident(name) = format {
+                literal.quasis.push(TplElement {
+                    raw: name.into(),
+                    ..Default::default()
+                });
+
+                return Ok(());
+            } else {
+                literal.quasis.push(Default::default())
+            }
+        }
+
+        let current_quasi = literal.quasis.last_mut().unwrap();
+        let mut current_text = current_quasi.raw.to_string();
+
+        current_text.push_str(&match &format {
+            SegmentFormat::ComputedProp(indexer) => format!(
                 "[{}]",
                 match indexer {
                     LitValue::Str(str) => format!("\"{str}\""),
                     LitValue::Num(num) => num.to_string(),
                 }
-            )),
-            SegmentFormat::Ident(name) => match str.as_str() {
-                "" => {
-                    str.push_str(&self.get_name()?);
+            ),
+            SegmentFormat::Ident(name) => format!(".{name}"),
+            SegmentFormat::Interpolation(_) => "[".to_string(),
+        });
+
+        current_quasi.raw = current_text.into();
+
+        if let SegmentFormat::Interpolation(call) = format {
+            match call.args.first() {
+                None => todo!("Warn about absence of args"),
+                Some(ExprOrSpread {
+                    spread: Some(spread),
+                    ..
+                }) => return Err(NameofError::Spread(&spread)),
+                Some(ExprOrSpread { spread: None, expr }) => {
+                    literal.exprs.push(expr.clone());
+                    literal.quasis.push(Default::default());
                 }
-                _ => str.push_str(&format!(".{name}")),
-            },
+            }
         }
 
         Ok(())
@@ -197,21 +232,24 @@ trait NameSegment<'a> {
 }
 
 /// Represents the segment of an expression.
-struct ExprSegment<'a> {
+struct ExprSegment<'a, 'b> {
+    /// The visitor of the current transformation.
+    visitor: &'a NameofVisitor,
     /// The expression of the segment.
-    expr: NamedExpr<'a>,
+    expr: NamedExpr<'b>,
 }
 
-impl<'a> ExprSegment<'a> {
+impl<'a, 'b> ExprSegment<'a, 'b> {
     /// Initializes a new instance of the [`ExprSegment`] class.
-    fn new(expr: &'a Expr) -> Self {
+    fn new(visitor: &'a NameofVisitor, expr: &'b Expr) -> Self {
         Self {
+            visitor,
             expr: NamedExpr::Expr(expr),
         }
     }
 
     /// Unwraps the expression nested inside the specified `expr`.
-    fn unwrap_expr<'b>(expr: &'b Expr) -> &'b Expr {
+    fn unwrap_expr<'c>(expr: &'c Expr) -> &'c Expr {
         match expr {
             Expr::Paren(ParenExpr { expr, .. })
             | Expr::TsNonNull(TsNonNullExpr { expr, .. })
@@ -223,7 +261,7 @@ impl<'a> ExprSegment<'a> {
     }
 
     /// Gets the [`SegmentFormat`] of the specified `member`.
-    fn get_member_format<'b>(&self, member: &'b MemberExpr) -> NameofResult<'b, SegmentFormat> {
+    fn get_member_format<'c>(&self, member: &'c MemberExpr) -> NameofResult<'c, SegmentFormat<'c>> {
         Ok(SegmentFormat::Ident(match &member.prop {
             MemberProp::Ident(ident) => ident.sym.to_string(),
             MemberProp::PrivateName(name) => print_node(name)?,
@@ -232,13 +270,24 @@ impl<'a> ExprSegment<'a> {
     }
 
     /// Gets the [`SegmentFormat`] of the specified `prop`.
-    fn get_computed_prop_format<'b>(
+    fn get_computed_prop_format<'c>(
         &self,
-        prop: &'b ComputedPropName,
-    ) -> NameofResult<'b, SegmentFormat> {
+        prop: &'c ComputedPropName,
+    ) -> NameofResult<'c, SegmentFormat<'c>> {
         Ok(SegmentFormat::ComputedProp(match &*prop.expr {
             Expr::Lit(Lit::Str(str)) => LitValue::Str(str.value.to_string()),
             Expr::Lit(Lit::Num(num)) => LitValue::Num(num.value),
+            Expr::Call(_) => match self.visitor.get_nameof_expression(&prop.expr) {
+                Ok(Some(NameofExpression::Normal {
+                    call,
+                    method: Some(NameofMethod::Interpolate),
+                })) => return Ok(SegmentFormat::Interpolation(call)),
+                _ => {
+                    return Err(NameofError::UnsupportedIndexer(UnsupportedIndexer::Prop(
+                        prop,
+                    )))
+                }
+            },
             _ => {
                 return Err(NameofError::UnsupportedIndexer(UnsupportedIndexer::Prop(
                     prop,
@@ -248,15 +297,16 @@ impl<'a> ExprSegment<'a> {
     }
 
     /// Gets the parent segment of the specified `member`.
-    fn get_member_parent(&self, member: &'a MemberExpr) -> Self {
-        Self::new(&*member.obj)
+    fn get_member_parent(&self, member: &'b MemberExpr) -> Self {
+        Self::new(self.visitor, &*member.obj)
     }
 
     /// Builds a [`NameSegment`] based on the specified `names`.
-    fn build_custom_segment(mut names: Vec<String>) -> Option<Self> {
+    fn build_custom_segment(visitor: &'a NameofVisitor, mut names: Vec<String>) -> Option<Self> {
         let tail = names.pop()?;
 
         Some(Self {
+            visitor,
             expr: NamedExpr::Custom(CustomExpr {
                 tail,
                 segments: Box::new(names.into_iter()),
@@ -265,14 +315,16 @@ impl<'a> ExprSegment<'a> {
     }
 }
 
-impl<'a> NameSegment<'a> for ExprSegment<'a> {
-    fn get_format(&self) -> NameofResult<'a, SegmentFormat> {
+impl<'a, 'b> NameSegment<'b> for ExprSegment<'a, 'b> {
+    fn get_format(&self) -> NameofResult<'b, SegmentFormat<'b>> {
         Ok(SegmentFormat::Ident(match self.expr {
             NamedExpr::Super(expr) => print_node(expr)?,
             NamedExpr::Expr(expr) => match Self::unwrap_expr(expr) {
                 Expr::Paren(ParenExpr { expr, .. })
                 | Expr::TsNonNull(TsNonNullExpr { expr, .. })
-                | Expr::TsAs(TsAsExpr { expr, .. }) => return Self::new(&*expr).get_format(),
+                | Expr::TsAs(TsAsExpr { expr, .. }) => {
+                    return Self::new(self.visitor, &*expr).get_format()
+                }
                 Expr::Ident(Ident { sym: name, .. })
                 | Expr::PrivateName(PrivateName { name, .. }) => name.to_string(),
                 Expr::This(this) => print_node(this)?,
@@ -306,19 +358,20 @@ impl<'a> NameSegment<'a> for ExprSegment<'a> {
                         .map(|s| s.to_owned())
                         .collect();
 
-                    Self::build_custom_segment(names)?
+                    Self::build_custom_segment(self.visitor, names)?
                 }
                 Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
                     OptChainBase::Member(member) => self.get_member_parent(member),
                     _ => return None,
                 },
                 Expr::SuperProp(SuperPropExpr { obj, .. }) => Self {
+                    visitor: self.visitor,
                     expr: NamedExpr::Super(obj),
                 },
                 _ => return None,
             },
             NamedExpr::Custom(CustomExpr { segments, .. }) => {
-                Self::build_custom_segment(segments.collect())?
+                Self::build_custom_segment(self.visitor, segments.collect())?
             }
         }))
     }
@@ -366,7 +419,7 @@ impl<'a> TypeSegment<'a> {
 }
 
 impl<'a> NameSegment<'a> for TypeSegment<'a> {
-    fn get_format(&self) -> NameofResult<'a, SegmentFormat> {
+    fn get_format(&self) -> NameofResult<'a, SegmentFormat<'a>> {
         Ok(SegmentFormat::Ident(match self.ts_type {
             NamedType::Name(name) => Self::get_entity_name(name)?,
             NamedType::Type(ts_type) => match Self::unwrap_type(ts_type) {
@@ -440,7 +493,7 @@ trait SegmentCollector<'a> {
     /// Returns either the names of the segments as a vector or an error.
     fn split(self: Box<Self>) -> NameofResult<'a, Vec<String>>;
     /// Returns either the names of the segments as a dotted path or an error.
-    fn full(self: Box<Self>) -> NameofResult<'a, String>;
+    fn full(self: Box<Self>) -> NameofResult<'a, Expr>;
 }
 
 /// Provides the functionality to walk over segments.
@@ -483,14 +536,17 @@ where
         Ok(names.into_iter().rev().collect())
     }
 
-    fn full(self: Box<Self>) -> NameofResult<'a, String> {
-        let mut result = String::new();
+    fn full(self: Box<Self>) -> NameofResult<'a, Expr> {
+        let mut result = Tpl::default();
 
         for segment in self.collect::<Vec<_>>().into_iter().rev() {
             segment.append(&mut result)?;
         }
 
-        Ok(result)
+        Ok(match result.exprs.len() {
+            0 => Expr::Lit(Lit::from(result.quasis.last().unwrap().raw.to_string())),
+            _ => Expr::Tpl(result),
+        })
     }
 }
 
@@ -513,7 +569,7 @@ impl NameofVisitor {
     /// a [`NameofResult`] holding either a [`NameofError`] or the [`NameofExpression`].
     fn get_nameof_expression<'a>(
         &self,
-        node: &'a mut Expr,
+        node: &'a Expr,
     ) -> NameofResult<'a, Option<NameofExpression<'a>>> {
         match node {
             Expr::Call(call) => match call {
@@ -556,7 +612,7 @@ impl NameofVisitor {
                 })),
                 _ => Ok(None),
             },
-            Expr::Member(member) => Ok(match self.get_nameof_expression(&mut member.obj) {
+            Expr::Member(member) => Ok(match self.get_nameof_expression(&member.obj) {
                 Err(NameofError::InvalidMethod(ident)) if ident.sym == "typed" => {
                     Some(NameofExpression::Typed(node))
                 }
@@ -569,7 +625,7 @@ impl NameofVisitor {
     /// Gets the name substitution represented by the specified `node`.
     fn get_name_substitution<'a>(
         &self,
-        node: &'a mut Expr,
+        node: &'a Expr,
     ) -> NameofResult<'a, Option<NameSubstitution<'a>>> {
         Ok(match self.get_nameof_expression(node)? {
             Some(expr) => Some(match expr {
@@ -640,19 +696,19 @@ impl NameofVisitor {
     }
 
     /// Gets the replacement for the specified `node`.
-    fn get_replacement<'a>(&self, node: &'a mut Expr) -> NameofResult<'a, Option<Expr>> {
+    fn get_replacement<'a>(&'a self, node: &'a Expr) -> NameofResult<'a, Option<Expr>> {
         let substitution = self.get_name_substitution(node)?;
 
         match substitution {
             Some(substitution) => Ok(Some(match substitution {
                 NameSubstitution::Tail(expr) => Expr::Lit(Lit::from(match expr {
-                    NamedNode::Expr(expr) => ExprSegment::new(expr).get_name()?,
+                    NamedNode::Expr(expr) => ExprSegment::new(self, expr).get_name()?,
                     NamedNode::Type(ts_type) => TypeSegment::new(ts_type).get_name()?,
                 })),
                 NameSubstitution::Collect(output, node) => {
                     let walker: Box<dyn SegmentCollector> = match node {
                         NamedNode::Expr(expr) => Box::new(SegmentWalker {
-                            current: Some(ExprSegment::new(expr)),
+                            current: Some(ExprSegment::new(self, expr)),
                         }),
                         NamedNode::Type(ts_type) => Box::new(SegmentWalker {
                             current: Some(TypeSegment::new(ts_type)),
@@ -673,9 +729,9 @@ impl NameofVisitor {
                                 .collect(),
                             ..Default::default()
                         }),
-                        CollectOutput::Full => Expr::Lit(Lit::from(walker.full()?)),
+                        CollectOutput::Full => walker.full()?,
                     }
-                },
+                }
             })),
             None => Ok(None),
         }
@@ -748,6 +804,9 @@ impl VisitMut for NameofVisitor {
                                 };
 
                                 (span, format!("The specified expression{} is not supported.", if let Ok(code) = code {format!(" `{code}`")} else {"".into()}))
+                            }
+                            NameofError::UnsupportedInterpolation(call) => {
+                                (call.span, "Interpolations are not supported here.".into())
                             }
                         };
 
