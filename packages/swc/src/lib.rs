@@ -7,12 +7,13 @@ use swc_core::{
     common::{pass::Either, FileName, SourceMap, Span, Spanned, SyntaxContext},
     ecma::{
         ast::{
-            ArrayLit, ArrowExpr, BlockStmt, BlockStmtOrExpr, CallExpr, Callee, ComputedPropName,
-            Expr, ExprOrSpread, FnExpr, Ident, IdentName, Lit, MemberExpr, MemberProp,
-            OptChainBase, OptChainExpr, ParenExpr, PrivateName, Program, ReturnStmt, Super,
-            SuperProp, SuperPropExpr, Tpl, TplElement, TsAsExpr, TsEntityName, TsImportType,
-            TsIndexedAccessType, TsLit, TsLitType, TsNonNullExpr, TsParenthesizedType, TsType,
-            TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
+            ArrayLit, ArrayPat, ArrowExpr, AssignPat, AssignPatProp, BindingIdent, BlockStmt,
+            BlockStmtOrExpr, CallExpr, Callee, ComputedPropName, Expr, ExprOrSpread, FnExpr, Ident,
+            IdentName, KeyValuePatProp, Lit, MemberExpr, MemberProp, ObjectPat, ObjectPatProp,
+            OptChainBase, OptChainExpr, ParenExpr, Pat, PrivateName, Program, RestPat, ReturnStmt,
+            Super, SuperProp, SuperPropExpr, Tpl, TplElement, TsAsExpr, TsEntityName, TsImportType,
+            TsIndexedAccessType, TsLit, TsLitType, TsNonNullExpr, TsParenthesizedType,
+            TsQualifiedName, TsType, TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
         },
         visit::{visit_mut_pass, VisitMut, VisitMutWith, VisitWith},
     },
@@ -80,7 +81,7 @@ enum NameSubstitution<'a> {
     /// Indicates the substitution of the expression with the last part of its name.
     Tail(NamedNode<'a>),
     /// Indicates the substitution of the expression with the collection of all named parts of the node.
-    Collect(CollectOutput, NamedNode<'a>),
+    Collect(Vec<SyntaxContext>, CollectOutput, NamedNode<'a>),
 }
 
 /// Represents a method of the `nameof` interface.
@@ -232,24 +233,31 @@ trait NameSegment<'a> {
 }
 
 /// Represents the segment of an expression.
-struct ExprSegment<'a, 'b> {
+struct ExprSegment<'a, 'b, 'c> {
     /// The visitor of the current transformation.
     visitor: &'a NameofVisitor,
+    /// The contexts of the local parameters.
+    local_contexts: &'b Vec<SyntaxContext>,
     /// The expression of the segment.
-    expr: NamedExpr<'b>,
+    expr: NamedExpr<'c>,
 }
 
-impl<'a, 'b> ExprSegment<'a, 'b> {
+impl<'a, 'b, 'c> ExprSegment<'a, 'b, 'c> {
     /// Initializes a new instance of the [`ExprSegment`] class.
-    fn new(visitor: &'a NameofVisitor, expr: &'b Expr) -> Self {
+    fn new(
+        visitor: &'a NameofVisitor,
+        local_contexts: &'b Vec<SyntaxContext>,
+        expr: &'c Expr,
+    ) -> Self {
         Self {
             visitor,
+            local_contexts,
             expr: NamedExpr::Expr(expr),
         }
     }
 
     /// Unwraps the expression nested inside the specified `expr`.
-    fn unwrap_expr<'c>(expr: &'c Expr) -> &'c Expr {
+    fn unwrap_expr<'d>(expr: &'d Expr) -> &'d Expr {
         match expr {
             Expr::Paren(ParenExpr { expr, .. })
             | Expr::TsNonNull(TsNonNullExpr { expr, .. })
@@ -261,7 +269,7 @@ impl<'a, 'b> ExprSegment<'a, 'b> {
     }
 
     /// Gets the [`SegmentFormat`] of the specified `member`.
-    fn get_member_format<'c>(&self, member: &'c MemberExpr) -> NameofResult<'c, SegmentFormat<'c>> {
+    fn get_member_format<'d>(&self, member: &'d MemberExpr) -> NameofResult<'d, SegmentFormat<'d>> {
         Ok(SegmentFormat::Ident(match &member.prop {
             MemberProp::Ident(ident) => ident.sym.to_string(),
             MemberProp::PrivateName(name) => print_node(name)?,
@@ -270,10 +278,10 @@ impl<'a, 'b> ExprSegment<'a, 'b> {
     }
 
     /// Gets the [`SegmentFormat`] of the specified `prop`.
-    fn get_computed_prop_format<'c>(
+    fn get_computed_prop_format<'d>(
         &self,
-        prop: &'c ComputedPropName,
-    ) -> NameofResult<'c, SegmentFormat<'c>> {
+        prop: &'d ComputedPropName,
+    ) -> NameofResult<'d, SegmentFormat<'d>> {
         Ok(SegmentFormat::ComputedProp(match &*prop.expr {
             Expr::Lit(Lit::Str(str)) => LitValue::Str(str.value.to_string()),
             Expr::Lit(Lit::Num(num)) => LitValue::Num(num.value),
@@ -297,16 +305,24 @@ impl<'a, 'b> ExprSegment<'a, 'b> {
     }
 
     /// Gets the parent segment of the specified `member`.
-    fn get_member_parent(&self, member: &'b MemberExpr) -> Self {
-        Self::new(self.visitor, &*member.obj)
+    fn get_member_parent(&self, member: &'c MemberExpr) -> Option<Self> {
+        Some(match &*member.obj {
+            Expr::Ident(ident) if self.local_contexts.contains(&ident.ctxt) => return None,
+            obj => Self::new(self.visitor, self.local_contexts, obj),
+        })
     }
 
     /// Builds a [`NameSegment`] based on the specified `names`.
-    fn build_custom_segment(visitor: &'a NameofVisitor, mut names: Vec<String>) -> Option<Self> {
+    fn build_custom_segment(
+        visitor: &'a NameofVisitor,
+        local_contexts: &'b Vec<SyntaxContext>,
+        mut names: Vec<String>,
+    ) -> Option<Self> {
         let tail = names.pop()?;
 
         Some(Self {
             visitor,
+            local_contexts,
             expr: NamedExpr::Custom(CustomExpr {
                 tail,
                 segments: Box::new(names.into_iter()),
@@ -315,15 +331,15 @@ impl<'a, 'b> ExprSegment<'a, 'b> {
     }
 }
 
-impl<'a, 'b> NameSegment<'b> for ExprSegment<'a, 'b> {
-    fn get_format(&self) -> NameofResult<'b, SegmentFormat<'b>> {
+impl<'a, 'b, 'c> NameSegment<'c> for ExprSegment<'a, 'b, 'c> {
+    fn get_format(&self) -> NameofResult<'c, SegmentFormat<'c>> {
         Ok(SegmentFormat::Ident(match self.expr {
             NamedExpr::Super(expr) => print_node(expr)?,
             NamedExpr::Expr(expr) => match Self::unwrap_expr(expr) {
                 Expr::Paren(ParenExpr { expr, .. })
                 | Expr::TsNonNull(TsNonNullExpr { expr, .. })
                 | Expr::TsAs(TsAsExpr { expr, .. }) => {
-                    return Self::new(self.visitor, &*expr).get_format()
+                    return Self::new(self.visitor, self.local_contexts, &*expr).get_format()
                 }
                 Expr::Ident(Ident { sym: name, .. })
                 | Expr::PrivateName(PrivateName { name, .. }) => name.to_string(),
@@ -348,7 +364,7 @@ impl<'a, 'b> NameSegment<'b> for ExprSegment<'a, 'b> {
         Some(Box::new(match &mut self.expr {
             NamedExpr::Super(_) => return None,
             NamedExpr::Expr(expr) => match Self::unwrap_expr(expr) {
-                Expr::Member(member) => self.get_member_parent(member),
+                Expr::Member(member) => self.get_member_parent(member)?,
                 Expr::MetaProp(meta) => {
                     let names: Vec<String> = print_node(meta)
                         .ok()?
@@ -358,41 +374,45 @@ impl<'a, 'b> NameSegment<'b> for ExprSegment<'a, 'b> {
                         .map(|s| s.to_owned())
                         .collect();
 
-                    Self::build_custom_segment(self.visitor, names)?
+                    Self::build_custom_segment(self.visitor, self.local_contexts, names)?
                 }
                 Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
-                    OptChainBase::Member(member) => self.get_member_parent(member),
+                    OptChainBase::Member(member) => self.get_member_parent(member)?,
                     _ => return None,
                 },
                 Expr::SuperProp(SuperPropExpr { obj, .. }) => Self {
                     visitor: self.visitor,
+                    local_contexts: self.local_contexts,
                     expr: NamedExpr::Super(obj),
                 },
                 _ => return None,
             },
             NamedExpr::Custom(CustomExpr { segments, .. }) => {
-                Self::build_custom_segment(self.visitor, segments.collect())?
+                Self::build_custom_segment(self.visitor, self.local_contexts, segments.collect())?
             }
         }))
     }
 }
 
 /// Represents the segment of a type name.
-struct TypeSegment<'a> {
+struct TypeSegment<'a, 'b> {
+    /// The contexts of the local parameters.
+    local_contexts: &'b Vec<SyntaxContext>,
     /// The type of the current segment.
     ts_type: NamedType<'a>,
 }
 
-impl<'a> TypeSegment<'a> {
+impl<'a, 'b> TypeSegment<'a, 'b> {
     /// Initializes a new type segment.
-    fn new(ts_type: &'a TsType) -> Self {
+    fn new(local_contexts: &'b Vec<SyntaxContext>, ts_type: &'a TsType) -> Self {
         Self {
+            local_contexts,
             ts_type: NamedType::Type(ts_type),
         }
     }
 
     /// Gets the type contained within the specified `ts_type`.
-    fn unwrap_type<'b>(ts_type: &'b TsType) -> &'b TsType {
+    fn unwrap_type<'c>(ts_type: &'c TsType) -> &'c TsType {
         match ts_type {
             TsType::TsParenthesizedType(TsParenthesizedType { type_ann, .. }) => type_ann,
             ts_type => ts_type,
@@ -400,7 +420,7 @@ impl<'a> TypeSegment<'a> {
     }
 
     /// Gets the last part of the specified `ts_entity_name`.
-    fn get_entity_name<'b>(entity_name: &'b TsEntityName) -> NameofResult<'b, String> {
+    fn get_entity_name<'c>(entity_name: &'c TsEntityName) -> NameofResult<'c, String> {
         Ok(match entity_name {
             TsEntityName::Ident(ident) => ident.sym.to_string(),
             TsEntityName::TsQualifiedName(qualified_name) => qualified_name.right.sym.to_string(),
@@ -408,17 +428,26 @@ impl<'a> TypeSegment<'a> {
     }
 
     /// Gets the parent segment of the specified `name`.
-    fn get_entity_parent(name: &'a TsEntityName) -> Option<Self> {
+    fn get_entity_parent(&self, name: &'a TsEntityName) -> Option<Self> {
         Some(match name {
-            TsEntityName::TsQualifiedName(qualified) => Self {
-                ts_type: NamedType::Name(&qualified.left),
+            TsEntityName::TsQualifiedName(qualified) => match &**qualified {
+                TsQualifiedName {
+                    left: TsEntityName::Ident(ident),
+                    ..
+                } if self.local_contexts.contains(&ident.ctxt) => {
+                    return None;
+                }
+                qualified => Self {
+                    local_contexts: self.local_contexts,
+                    ts_type: NamedType::Name(&qualified.left),
+                },
             },
             _ => return None,
         })
     }
 }
 
-impl<'a> NameSegment<'a> for TypeSegment<'a> {
+impl<'a, 'b> NameSegment<'a> for TypeSegment<'a, 'b> {
     fn get_format(&self) -> NameofResult<'a, SegmentFormat<'a>> {
         Ok(SegmentFormat::Ident(match self.ts_type {
             NamedType::Name(name) => Self::get_entity_name(name)?,
@@ -470,7 +499,7 @@ impl<'a> NameSegment<'a> for TypeSegment<'a> {
 
     fn get_next(&mut self) -> Option<Box<Self>> {
         Some(Box::new(match self.ts_type {
-            NamedType::Name(name) => Self::get_entity_parent(name)?,
+            NamedType::Name(name) => self.get_entity_parent(name)?,
             NamedType::Type(ts_type) => match Self::unwrap_type(ts_type) {
                 TsType::TsTypeRef(TsTypeRef {
                     type_name: name, ..
@@ -478,9 +507,9 @@ impl<'a> NameSegment<'a> for TypeSegment<'a> {
                 | TsType::TsTypeQuery(TsTypeQuery {
                     expr_name: TsTypeQueryExpr::TsEntityName(name),
                     ..
-                }) => Self::get_entity_parent(name)?,
+                }) => self.get_entity_parent(name)?,
                 TsType::TsIndexedAccessType(TsIndexedAccessType { obj_type, .. }) => {
-                    Self::new(&obj_type)
+                    Self::new(self.local_contexts, &obj_type)
                 }
                 _ => return None,
             },
@@ -622,6 +651,41 @@ impl NameofVisitor {
         }
     }
 
+    /// Gets the [`SyntaxContext`]s holding the variables declared by the specified `params`.
+    fn get_local_contexts(params: Vec<&Pat>) -> Vec<SyntaxContext> {
+        params
+            .iter()
+            .flat_map(|p| {
+                let pat = match p {
+                    Pat::Assign(AssignPat { left: pat, .. })
+                    | Pat::Rest(RestPat { arg: pat, .. }) => &**pat,
+                    p => p,
+                };
+
+                match pat {
+                    Pat::Ident(BindingIdent { id, .. }) => vec![id.ctxt],
+                    Pat::Array(ArrayPat { elems, .. }) => {
+                        Self::get_local_contexts(elems.iter().flatten().collect())
+                    }
+                    Pat::Object(ObjectPat { props, .. }) => props
+                        .iter()
+                        .flat_map(|p| match p {
+                            ObjectPatProp::Assign(AssignPatProp {
+                                key: BindingIdent { id, .. },
+                                ..
+                            }) => vec![id.ctxt],
+                            ObjectPatProp::KeyValue(KeyValuePatProp { value: pat, .. })
+                            | ObjectPatProp::Rest(RestPat { arg: pat, .. }) => {
+                                Self::get_local_contexts(vec![pat])
+                            }
+                        })
+                        .collect(),
+                    _ => vec![],
+                }
+            })
+            .collect()
+    }
+
     /// Gets the name substitution represented by the specified `node`.
     fn get_name_substitution<'a>(
         &self,
@@ -631,23 +695,29 @@ impl NameofVisitor {
             Some(expr) => Some(match expr {
                 NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
                 NameofExpression::Normal { call, method } => {
-                    let node = match (
+                    let (node, local_contexts) = match (
                         call.type_args.as_ref().map(|t| t.params.len()).unwrap_or(0),
                         call.args.len(),
                     ) {
                         (0 | 1, 1) => {
-                            let expr_or_body = match call.args[0] {
+                            let (expr_or_body, local_contexts) = match call.args[0] {
                                 ExprOrSpread { spread: None, .. } => match &*call.args[0].expr {
-                                    Expr::Arrow(ArrowExpr { body, .. }) => match &**body {
-                                        BlockStmtOrExpr::Expr(expr) => Either::Left(&**expr),
-                                        BlockStmtOrExpr::BlockStmt(body) => {
-                                            Either::Right(Some(body))
-                                        }
-                                    },
-                                    Expr::Fn(FnExpr { function, .. }) => {
-                                        Either::Right(function.body.as_ref())
-                                    }
-                                    expr => Either::Left(expr),
+                                    Expr::Arrow(ArrowExpr { body, params, .. }) => (
+                                        match &**body {
+                                            BlockStmtOrExpr::Expr(expr) => Either::Left(&**expr),
+                                            BlockStmtOrExpr::BlockStmt(body) => {
+                                                Either::Right(Some(body))
+                                            }
+                                        },
+                                        Self::get_local_contexts(params.iter().collect()),
+                                    ),
+                                    Expr::Fn(FnExpr { function, .. }) => (
+                                        Either::Right(function.body.as_ref()),
+                                        Self::get_local_contexts(
+                                            function.params.iter().map(|p| &p.pat).collect(),
+                                        ),
+                                    ),
+                                    expr => (Either::Left(expr), vec![]),
                                 },
                                 ExprOrSpread {
                                     spread: Some(_), ..
@@ -658,21 +728,27 @@ impl NameofVisitor {
                                 }
                             };
 
-                            NamedNode::Expr(match expr_or_body {
-                                Either::Left(expr) => expr,
-                                Either::Right(body) => {
-                                    match body.map(|b| Self::get_returned_expression(b)).flatten() {
-                                        Some(expr) => expr,
-                                        None => {
-                                            return Err(NameofError::NoReturnedNode(
-                                                &call.args[0].expr,
-                                            ))
+                            (
+                                NamedNode::Expr(match expr_or_body {
+                                    Either::Left(expr) => expr,
+                                    Either::Right(body) => {
+                                        match body.map(|b| Self::get_returned_expression(b)).flatten() {
+                                            Some(expr) => expr,
+                                            None => {
+                                                return Err(NameofError::NoReturnedNode(
+                                                    &call.args[0].expr,
+                                                ))
+                                            }
                                         }
                                     }
-                                }
-                            })
+                                }),
+                                local_contexts,
+                            )
                         }
-                        (1, 0) => NamedNode::Type(&*call.type_args.as_ref().unwrap().params[0]),
+                        (1, 0) => (
+                            NamedNode::Type(&*call.type_args.as_ref().unwrap().params[0]),
+                            vec![],
+                        ),
                         (type_arg_count, arg_count) => {
                             return Err(NameofError::ArgumentError(call, type_arg_count, arg_count))
                         }
@@ -681,6 +757,7 @@ impl NameofVisitor {
                     match method {
                         None => NameSubstitution::Tail(node),
                         Some(method) => NameSubstitution::Collect(
+                            local_contexts,
                             match method {
                                 NameofMethod::Full => CollectOutput::Full,
                                 NameofMethod::Split => CollectOutput::Array,
@@ -702,16 +779,16 @@ impl NameofVisitor {
         match substitution {
             Some(substitution) => Ok(Some(match substitution {
                 NameSubstitution::Tail(expr) => Expr::Lit(Lit::from(match expr {
-                    NamedNode::Expr(expr) => ExprSegment::new(self, expr).get_name()?,
-                    NamedNode::Type(ts_type) => TypeSegment::new(ts_type).get_name()?,
+                    NamedNode::Expr(expr) => ExprSegment::new(self, &vec![], expr).get_name()?,
+                    NamedNode::Type(ts_type) => TypeSegment::new(&vec![], ts_type).get_name()?,
                 })),
-                NameSubstitution::Collect(output, node) => {
+                NameSubstitution::Collect(local_contexts, output, node) => {
                     let walker: Box<dyn SegmentCollector> = match node {
                         NamedNode::Expr(expr) => Box::new(SegmentWalker {
-                            current: Some(ExprSegment::new(self, expr)),
+                            current: Some(ExprSegment::new(self, &local_contexts, expr)),
                         }),
                         NamedNode::Type(ts_type) => Box::new(SegmentWalker {
-                            current: Some(TypeSegment::new(ts_type)),
+                            current: Some(TypeSegment::new(&local_contexts, ts_type)),
                         }),
                     };
 
