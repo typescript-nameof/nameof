@@ -81,12 +81,16 @@ enum NameSubstitution<'a> {
     /// Indicates the substitution of the expression with the last part of its name.
     Tail(NamedNode<'a>),
     /// Indicates the substitution of the expression with the collection of all named parts of the node.
-    Collect(
-        Option<isize>,
-        Vec<SyntaxContext>,
-        CollectOutput,
-        NamedNode<'a>,
-    ),
+    Collect {
+        /// The index of the first segment to collect.
+        start_index: Option<isize>,
+        /// The contexts of the local parameters.
+        local_contexts: Vec<SyntaxContext>,
+        /// The output formatting of the collected segments.
+        output: CollectOutput,
+        /// The node to transform.
+        node: NamedNode<'a>,
+    },
 }
 
 /// Represents a method of the `nameof` interface.
@@ -533,7 +537,7 @@ trait SegmentCollector<'a> {
 /// Provides the functionality to walk over segments.
 struct SegmentWalker<S> {
     /// The index of the first segment to include.
-    index: Option<isize>,
+    start_index: Option<isize>,
     /// The current name segment.
     current: Option<S>,
 }
@@ -544,7 +548,7 @@ where
 {
     /// Gets the segments to collect.
     fn get_segments(self: Box<Self>) -> Vec<S> {
-        match self.index {
+        match self.start_index {
             Some(index) => {
                 if index < 0 {
                     self.take(-index as usize).collect()
@@ -758,7 +762,7 @@ impl NameofVisitor {
             Some(expr) => Some(match &expr {
                 NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
                 NameofExpression::Normal { call, method } => {
-                    let (index, args) = Self::parse_args(method, &call.args);
+                    let (start_index, args) = Self::parse_args(method, &call.args);
 
                     let (node, local_contexts) = match (
                         call.type_args.as_ref().map(|t| t.params.len()).unwrap_or(0),
@@ -821,16 +825,16 @@ impl NameofVisitor {
 
                     match method {
                         None => NameSubstitution::Tail(node),
-                        Some(method) => NameSubstitution::Collect(
-                            index,
+                        Some(method) => NameSubstitution::Collect {
+                            start_index,
                             local_contexts,
-                            match method {
+                            output: match method {
                                 NameofMethod::Full => CollectOutput::Full,
                                 NameofMethod::Split => CollectOutput::Array,
                                 _ => todo!("Add support for remaining methods."),
                             },
                             node,
-                        ),
+                        },
                     }
                 }
             }),
@@ -848,14 +852,19 @@ impl NameofVisitor {
                     NamedNode::Expr(expr) => ExprSegment::new(self, &vec![], expr).get_name()?,
                     NamedNode::Type(ts_type) => TypeSegment::new(&vec![], ts_type).get_name()?,
                 })),
-                NameSubstitution::Collect(index, local_contexts, output, node) => {
+                NameSubstitution::Collect {
+                    start_index,
+                    local_contexts,
+                    output,
+                    node,
+                } => {
                     let walker: Box<dyn SegmentCollector> = match node {
                         NamedNode::Expr(expr) => Box::new(SegmentWalker {
-                            index,
+                            start_index,
                             current: Some(ExprSegment::new(self, &local_contexts, expr)),
                         }),
                         NamedNode::Type(ts_type) => Box::new(SegmentWalker {
-                            index,
+                            start_index,
                             current: Some(TypeSegment::new(&local_contexts, ts_type)),
                         }),
                     };
