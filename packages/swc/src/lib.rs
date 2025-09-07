@@ -55,6 +55,8 @@ pub enum NameofError<'a> {
     UnsupportedNode(UnsupportedNode<'a>),
     /// Indicates an unsupported interpolation.
     UnsupportedInterpolation(&'a CallExpr),
+    /// Indicates an unused interpolation.
+    UnusedInterpolation(&'a CallExpr),
 }
 
 /// Represents either success or a [`NameofError`].
@@ -833,6 +835,9 @@ impl NameofVisitor {
                             output: match method {
                                 NameofMethod::Full => CollectOutput::Full,
                                 NameofMethod::Split => CollectOutput::Array,
+                                NameofMethod::Interpolate => {
+                                    return Err(NameofError::UnusedInterpolation(call))
+                                }
                                 _ => todo!("Add support for remaining methods."),
                             },
                             node,
@@ -963,6 +968,9 @@ impl VisitMut for NameofVisitor {
                             }
                             NameofError::UnsupportedInterpolation(call) => {
                                 (call.span, "Interpolations are not supported here.".into())
+                            }
+                            NameofError::UnusedInterpolation(call) => {
+                                (call.span, format!("Unused interpolation call. Interpolation calls must be used within `{}.full` calls.", self.nameof_name))
                             }
                         };
 
