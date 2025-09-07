@@ -615,12 +615,14 @@ where
 pub struct NameofVisitor {
     /// The context assigned to global variables.
     unresolved_context: SyntaxContext,
+    /// The name of the `nameof` component.
+    nameof_name: String,
 }
 
 impl NameofVisitor {
     /// Checks whether the specified `ident` is the global `nameof` object.
     fn is_global_nameof(&self, ident: &Ident) -> bool {
-        ident.sym == "nameof" && ident.ctxt == self.unresolved_context
+        ident.sym == self.nameof_name && ident.ctxt == self.unresolved_context
     }
 
     /// Gets the `nameof` expression in the specified `node`.
@@ -993,6 +995,7 @@ where
 pub fn process_transform(program: Program, data: TransformPluginProgramMetadata) -> Program {
     program.apply(&mut visit_mut_pass(NameofVisitor {
         unresolved_context: SyntaxContext::empty().apply_mark(data.unresolved_mark),
+        nameof_name: "nameof".into(),
     }))
 }
 
@@ -1025,6 +1028,7 @@ mod tests {
             resolver(unresolved_mark, top_level_mark, true),
             visit_mut_pass(NameofVisitor {
                 unresolved_context: SyntaxContext::empty().apply_mark(unresolved_mark),
+                nameof_name: "nameof".into(),
             }),
         )
     }
