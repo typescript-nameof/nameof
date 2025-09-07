@@ -13,7 +13,7 @@ use swc_core::{
             OptChainBase, OptChainExpr, ParenExpr, Pat, PrivateName, Program, RestPat, ReturnStmt,
             Super, SuperProp, SuperPropExpr, Tpl, TplElement, TsAsExpr, TsEntityName, TsImportType,
             TsIndexedAccessType, TsLit, TsLitType, TsNonNullExpr, TsParenthesizedType,
-            TsQualifiedName, TsType, TsTypeQuery, TsTypeQueryExpr, TsTypeRef,
+            TsQualifiedName, TsType, TsTypeQuery, TsTypeQueryExpr, TsTypeRef, UnaryExpr, UnaryOp,
         },
         visit::{visit_mut_pass, VisitMut, VisitMutWith, VisitWith},
     },
@@ -81,7 +81,12 @@ enum NameSubstitution<'a> {
     /// Indicates the substitution of the expression with the last part of its name.
     Tail(NamedNode<'a>),
     /// Indicates the substitution of the expression with the collection of all named parts of the node.
-    Collect(Vec<SyntaxContext>, CollectOutput, NamedNode<'a>),
+    Collect(
+        Option<isize>,
+        Vec<SyntaxContext>,
+        CollectOutput,
+        NamedNode<'a>,
+    ),
 }
 
 /// Represents a method of the `nameof` interface.
@@ -527,8 +532,31 @@ trait SegmentCollector<'a> {
 
 /// Provides the functionality to walk over segments.
 struct SegmentWalker<S> {
+    /// The index of the first segment to include.
+    index: Option<isize>,
     /// The current name segment.
     current: Option<S>,
+}
+
+impl<'a, S> SegmentWalker<S>
+where
+    S: NameSegment<'a>,
+{
+    /// Gets the segments to collect.
+    fn get_segments(self: Box<Self>) -> Vec<S> {
+        match self.index {
+            Some(index) => {
+                if index < 0 {
+                    self.take(-index as usize).collect()
+                } else {
+                    let items = self.collect::<Vec<_>>();
+                    let len = items.len();
+                    items.into_iter().take(len - (index as usize)).collect()
+                }
+            }
+            _ => self.collect(),
+        }
+    }
 }
 
 impl<'a, S> Iterator for SegmentWalker<S>
@@ -555,7 +583,7 @@ where
     fn split(self: Box<Self>) -> NameofResult<'a, Vec<String>> {
         let mut names = Vec::new();
 
-        for segment in self {
+        for segment in self.get_segments() {
             match segment.get_name() {
                 Ok(name) => names.push(name),
                 Err(err) => return Err(err),
@@ -568,7 +596,7 @@ where
     fn full(self: Box<Self>) -> NameofResult<'a, Expr> {
         let mut result = Tpl::default();
 
-        for segment in self.collect::<Vec<_>>().into_iter().rev() {
+        for segment in self.get_segments().into_iter().rev() {
             segment.append(&mut result)?;
         }
 
@@ -686,18 +714,55 @@ impl NameofVisitor {
             .collect()
     }
 
+    /// Parses the arguments of configurable `nameof` calls.
+    fn parse_args<'a>(
+        method: &Option<NameofMethod>,
+        args: &'a [ExprOrSpread],
+    ) -> (Option<isize>, &'a [ExprOrSpread]) {
+        if let (
+            Some(NameofMethod::Full | NameofMethod::Split),
+            [args @ .., ExprOrSpread { spread: None, expr }],
+        ) = (method, args)
+        {
+            if let Some(index) = Self::parse_int(expr) {
+                if index.fract() == 0.0 {
+                    return (Some(index as isize), args);
+                }
+            }
+        }
+
+        (None, args)
+    }
+
+    /// Parses the number represented by the specified `expr`.
+    fn parse_int(expr: &Expr) -> Option<f64> {
+        Some(match expr {
+            Expr::Lit(Lit::Num(num)) => num.value,
+            Expr::Unary(UnaryExpr { op, arg, .. }) => {
+                (match op {
+                    UnaryOp::Plus => 1.0,
+                    UnaryOp::Minus => -1.0,
+                    _ => return None,
+                }) * Self::parse_int(arg)?
+            }
+            _ => return None,
+        })
+    }
+
     /// Gets the name substitution represented by the specified `node`.
     fn get_name_substitution<'a>(
         &self,
         node: &'a Expr,
     ) -> NameofResult<'a, Option<NameSubstitution<'a>>> {
         Ok(match self.get_nameof_expression(node)? {
-            Some(expr) => Some(match expr {
+            Some(expr) => Some(match &expr {
                 NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
                 NameofExpression::Normal { call, method } => {
+                    let (index, args) = Self::parse_args(method, &call.args);
+
                     let (node, local_contexts) = match (
                         call.type_args.as_ref().map(|t| t.params.len()).unwrap_or(0),
-                        call.args.len(),
+                        args.len(),
                     ) {
                         (0 | 1, 1) => {
                             let (expr_or_body, local_contexts) = match call.args[0] {
@@ -757,6 +822,7 @@ impl NameofVisitor {
                     match method {
                         None => NameSubstitution::Tail(node),
                         Some(method) => NameSubstitution::Collect(
+                            index,
                             local_contexts,
                             match method {
                                 NameofMethod::Full => CollectOutput::Full,
@@ -782,12 +848,14 @@ impl NameofVisitor {
                     NamedNode::Expr(expr) => ExprSegment::new(self, &vec![], expr).get_name()?,
                     NamedNode::Type(ts_type) => TypeSegment::new(&vec![], ts_type).get_name()?,
                 })),
-                NameSubstitution::Collect(local_contexts, output, node) => {
+                NameSubstitution::Collect(index, local_contexts, output, node) => {
                     let walker: Box<dyn SegmentCollector> = match node {
                         NamedNode::Expr(expr) => Box::new(SegmentWalker {
+                            index,
                             current: Some(ExprSegment::new(self, &local_contexts, expr)),
                         }),
                         NamedNode::Type(ts_type) => Box::new(SegmentWalker {
+                            index,
                             current: Some(TypeSegment::new(&local_contexts, ts_type)),
                         }),
                     };
