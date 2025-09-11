@@ -627,6 +627,19 @@ impl NameofVisitor {
         ident.sym == self.nameof_name && ident.ctxt == self.unresolved_context
     }
 
+    /// Transforms the specified `node` if it is a `nameof` expression.
+    ///
+    /// # Returns
+    /// The result of the transformation.
+    fn transform_nameof<'a>(&mut self, node: &'a mut Expr) -> NameofResult<'a, Option<Expr>> {
+        let expr = self.get_nameof_expression(node)?;
+
+        match expr {
+            Some(expr) => Ok(Some(self.get_replacement(expr)?)),
+            None => Ok(None),
+        }
+    }
+
     /// Gets the `nameof` expression in the specified `node`.
     ///
     /// # Returns
@@ -760,142 +773,136 @@ impl NameofVisitor {
     /// Gets the name substitution represented by the specified `node`.
     fn get_name_substitution<'a>(
         &self,
-        node: &'a Expr,
-    ) -> NameofResult<'a, Option<NameSubstitution<'a>>> {
-        Ok(match self.get_nameof_expression(node)? {
-            Some(expr) => Some(match &expr {
-                NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
-                NameofExpression::Normal { call, method } => {
-                    let (start_index, args) = Self::parse_args(method, &call.args);
+        expr: NameofExpression<'a>,
+    ) -> NameofResult<'a, NameSubstitution<'a>> {
+        Ok(match &expr {
+            NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
+            NameofExpression::Normal { call, method } => {
+                let (start_index, args) = Self::parse_args(method, &call.args);
 
-                    let (node, local_contexts) = match (
-                        call.type_args.as_ref().map(|t| t.params.len()).unwrap_or(0),
-                        args.len(),
-                    ) {
-                        (0 | 1, 1) => {
-                            let (expr_or_body, local_contexts) = match call.args[0] {
-                                ExprOrSpread { spread: None, .. } => match &*call.args[0].expr {
-                                    Expr::Arrow(ArrowExpr { body, params, .. }) => (
-                                        match &**body {
-                                            BlockStmtOrExpr::Expr(expr) => Either::Left(&**expr),
-                                            BlockStmtOrExpr::BlockStmt(body) => {
-                                                Either::Right(Some(body))
-                                            }
-                                        },
-                                        Self::get_local_contexts(params.iter().collect()),
+                let (node, local_contexts) = match (
+                    call.type_args.as_ref().map(|t| t.params.len()).unwrap_or(0),
+                    args.len(),
+                ) {
+                    (0 | 1, 1) => {
+                        let (expr_or_body, local_contexts) = match call.args[0] {
+                            ExprOrSpread { spread: None, .. } => match &*call.args[0].expr {
+                                Expr::Arrow(ArrowExpr { body, params, .. }) => (
+                                    match &**body {
+                                        BlockStmtOrExpr::Expr(expr) => Either::Left(&**expr),
+                                        BlockStmtOrExpr::BlockStmt(body) => {
+                                            Either::Right(Some(body))
+                                        }
+                                    },
+                                    Self::get_local_contexts(params.iter().collect()),
+                                ),
+                                Expr::Fn(FnExpr { function, .. }) => (
+                                    Either::Right(function.body.as_ref()),
+                                    Self::get_local_contexts(
+                                        function.params.iter().map(|p| &p.pat).collect(),
                                     ),
-                                    Expr::Fn(FnExpr { function, .. }) => (
-                                        Either::Right(function.body.as_ref()),
-                                        Self::get_local_contexts(
-                                            function.params.iter().map(|p| &p.pat).collect(),
-                                        ),
-                                    ),
-                                    expr => (Either::Left(expr), vec![]),
-                                },
-                                ExprOrSpread {
-                                    spread: Some(_), ..
-                                } => {
-                                    return Err(NameofError::Spread(
-                                        call.args[0].spread.as_ref().unwrap(),
-                                    ))
-                                }
-                            };
+                                ),
+                                expr => (Either::Left(expr), vec![]),
+                            },
+                            ExprOrSpread {
+                                spread: Some(_), ..
+                            } => {
+                                return Err(NameofError::Spread(
+                                    call.args[0].spread.as_ref().unwrap(),
+                                ))
+                            }
+                        };
 
-                            (
-                                NamedNode::Expr(match expr_or_body {
-                                    Either::Left(expr) => expr,
-                                    Either::Right(body) => {
-                                        match body.map(|b| Self::get_returned_expression(b)).flatten() {
-                                            Some(expr) => expr,
-                                            None => {
-                                                return Err(NameofError::NoReturnedNode(
-                                                    &call.args[0].expr,
-                                                ))
-                                            }
+                        (
+                            NamedNode::Expr(match expr_or_body {
+                                Either::Left(expr) => expr,
+                                Either::Right(body) => {
+                                    match body.map(|b| Self::get_returned_expression(b)).flatten() {
+                                        Some(expr) => expr,
+                                        None => {
+                                            return Err(NameofError::NoReturnedNode(
+                                                &call.args[0].expr,
+                                            ))
                                         }
                                     }
-                                }),
-                                local_contexts,
-                            )
-                        }
-                        (1, 0) => (
-                            NamedNode::Type(&*call.type_args.as_ref().unwrap().params[0]),
-                            vec![],
-                        ),
-                        (type_arg_count, arg_count) => {
-                            return Err(NameofError::ArgumentError(call, type_arg_count, arg_count))
-                        }
-                    };
-
-                    match method {
-                        None => NameSubstitution::Tail(node),
-                        Some(method) => NameSubstitution::Collect {
-                            start_index,
-                            local_contexts,
-                            output: match method {
-                                NameofMethod::Full => CollectOutput::Full,
-                                NameofMethod::Split => CollectOutput::Array,
-                                NameofMethod::Interpolate => {
-                                    return Err(NameofError::UnusedInterpolation(call))
                                 }
-                                _ => todo!("Add support for remaining methods."),
-                            },
-                            node,
-                        },
+                            }),
+                            local_contexts,
+                        )
                     }
+                    (1, 0) => (
+                        NamedNode::Type(&*call.type_args.as_ref().unwrap().params[0]),
+                        vec![],
+                    ),
+                    (type_arg_count, arg_count) => {
+                        return Err(NameofError::ArgumentError(call, type_arg_count, arg_count))
+                    }
+                };
+
+                match method {
+                    None => NameSubstitution::Tail(node),
+                    Some(method) => NameSubstitution::Collect {
+                        start_index,
+                        local_contexts,
+                        output: match method {
+                            NameofMethod::Full => CollectOutput::Full,
+                            NameofMethod::Split => CollectOutput::Array,
+                            NameofMethod::Interpolate => {
+                                return Err(NameofError::UnusedInterpolation(call))
+                            }
+                            _ => todo!("Add support for remaining methods."),
+                        },
+                        node,
+                    },
                 }
-            }),
-            None => None,
+            }
         })
     }
 
     /// Gets the replacement for the specified `node`.
-    fn get_replacement<'a>(&'a self, node: &'a Expr) -> NameofResult<'a, Option<Expr>> {
+    fn get_replacement<'a>(&self, node: NameofExpression<'a>) -> NameofResult<'a, Expr> {
         let substitution = self.get_name_substitution(node)?;
 
-        match substitution {
-            Some(substitution) => Ok(Some(match substitution {
-                NameSubstitution::Tail(expr) => Expr::Lit(Lit::from(match expr {
-                    NamedNode::Expr(expr) => ExprSegment::new(self, &vec![], expr).get_name()?,
-                    NamedNode::Type(ts_type) => TypeSegment::new(&vec![], ts_type).get_name()?,
-                })),
-                NameSubstitution::Collect {
-                    start_index,
-                    local_contexts,
-                    output,
-                    node,
-                } => {
-                    let walker: Box<dyn SegmentCollector> = match node {
-                        NamedNode::Expr(expr) => Box::new(SegmentWalker {
-                            start_index,
-                            current: Some(ExprSegment::new(self, &local_contexts, expr)),
-                        }),
-                        NamedNode::Type(ts_type) => Box::new(SegmentWalker {
-                            start_index,
-                            current: Some(TypeSegment::new(&local_contexts, ts_type)),
-                        }),
-                    };
-
-                    match output {
-                        CollectOutput::Array => Expr::Array(ArrayLit {
-                            elems: walker
-                                .split()?
-                                .into_iter()
-                                .map(|n| {
-                                    Some(ExprOrSpread {
-                                        spread: None,
-                                        expr: Box::new(Expr::Lit(Lit::from(n))),
-                                    })
-                                })
-                                .collect(),
-                            ..Default::default()
-                        }),
-                        CollectOutput::Full => walker.full()?,
-                    }
-                }
+        Ok(match substitution {
+            NameSubstitution::Tail(expr) => Expr::Lit(Lit::from(match expr {
+                NamedNode::Expr(expr) => ExprSegment::new(self, &vec![], expr).get_name()?,
+                NamedNode::Type(ts_type) => TypeSegment::new(&vec![], ts_type).get_name()?,
             })),
-            None => Ok(None),
-        }
+            NameSubstitution::Collect {
+                start_index,
+                local_contexts,
+                output,
+                node,
+            } => {
+                let walker: Box<dyn SegmentCollector> = match node {
+                    NamedNode::Expr(expr) => Box::new(SegmentWalker {
+                        start_index,
+                        current: Some(ExprSegment::new(self, &local_contexts, expr)),
+                    }),
+                    NamedNode::Type(ts_type) => Box::new(SegmentWalker {
+                        start_index,
+                        current: Some(TypeSegment::new(&local_contexts, ts_type)),
+                    }),
+                };
+
+                match output {
+                    CollectOutput::Array => Expr::Array(ArrayLit {
+                        elems: walker
+                            .split()?
+                            .into_iter()
+                            .map(|n| {
+                                Some(ExprOrSpread {
+                                    spread: None,
+                                    expr: Box::new(Expr::Lit(Lit::from(n))),
+                                })
+                            })
+                            .collect(),
+                        ..Default::default()
+                    }),
+                    CollectOutput::Full => walker.full()?,
+                }
+            }
+        })
     }
 
     /// Gets the expression returned from the specified `block`.
@@ -919,7 +926,7 @@ impl VisitMut for NameofVisitor {
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
     fn visit_mut_expr(&mut self, node: &mut Expr) {
-        let replacement = self.get_replacement(node);
+        let replacement = self.transform_nameof(node);
 
         match replacement {
             Ok(Some(expr)) => *node = expr,
