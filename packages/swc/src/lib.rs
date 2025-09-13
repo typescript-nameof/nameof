@@ -107,6 +107,12 @@ pub enum NameofMethod {
     Split,
 }
 
+/// Represents the source to get the name from.
+pub enum NameSource<'a> {
+    /// Indicates a call expression.
+    Call(&'a CallExpr),
+}
+
 /// Represents a common `nameof` expression.
 struct CommonExpr<'a> {
     /// The [`CallExpr`] holding the `nameof` call.
