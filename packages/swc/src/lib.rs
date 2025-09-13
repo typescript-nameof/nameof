@@ -109,10 +109,11 @@ pub enum NameofMethod {
 
 /// Represents a `nameof` call expression.
 enum NameofExpression<'a> {
-    /// Indicates a normal function call.
-    Normal {
+    /// Indicates a common `nameof` expression.
+    Common {
         /// The [`CallExpr`] holding the `nameof` call.
         call: &'a CallExpr,
+
         /// The requested method.
         method: Option<NameofMethod>,
     },
@@ -297,7 +298,7 @@ impl<'a, 'b, 'c> ExprSegment<'a, 'b, 'c> {
             Expr::Lit(Lit::Str(str)) => LitValue::Str(str.value.to_string()),
             Expr::Lit(Lit::Num(num)) => LitValue::Num(num.value),
             Expr::Call(_) => match self.visitor.get_nameof_expression(&prop.expr) {
-                Ok(Some(NameofExpression::Normal {
+                Ok(Some(NameofExpression::Common {
                     call,
                     method: Some(NameofMethod::Interpolate),
                 })) => return Ok(SegmentFormat::Interpolation(call)),
@@ -654,7 +655,7 @@ impl NameofVisitor {
                 CallExpr {
                     callee: Callee::Expr(callee),
                     ..
-                } => Ok(Some(NameofExpression::Normal {
+                } => Ok(Some(NameofExpression::Common {
                     method: match &**callee {
                         Expr::Ident(ident) if self.is_global_nameof(ident) => None,
                         Expr::Member(MemberExpr {
@@ -777,7 +778,7 @@ impl NameofVisitor {
     ) -> NameofResult<'a, NameSubstitution<'a>> {
         Ok(match &expr {
             NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
-            NameofExpression::Normal { call, method } => {
+            NameofExpression::Common { call, method } => {
                 let (start_index, args) = Self::parse_args(method, &call.args);
 
                 let (node, local_contexts) = match (
