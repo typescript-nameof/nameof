@@ -107,16 +107,18 @@ pub enum NameofMethod {
     Split,
 }
 
+/// Represents a common `nameof` expression.
+struct CommonExpr<'a> {
+    /// The [`CallExpr`] holding the `nameof` call.
+    call: &'a CallExpr,
+    /// The requested method.
+    method: Option<NameofMethod>,
+}
+
 /// Represents a `nameof` call expression.
 enum NameofExpression<'a> {
     /// Indicates a common `nameof` expression.
-    Common {
-        /// The [`CallExpr`] holding the `nameof` call.
-        call: &'a CallExpr,
-
-        /// The requested method.
-        method: Option<NameofMethod>,
-    },
+    Common(CommonExpr<'a>),
     /// Indicates a typed property access.
     Typed(&'a Expr),
 }
@@ -298,10 +300,10 @@ impl<'a, 'b, 'c> ExprSegment<'a, 'b, 'c> {
             Expr::Lit(Lit::Str(str)) => LitValue::Str(str.value.to_string()),
             Expr::Lit(Lit::Num(num)) => LitValue::Num(num.value),
             Expr::Call(_) => match self.visitor.get_nameof_expression(&prop.expr) {
-                Ok(Some(NameofExpression::Common {
+                Ok(Some(NameofExpression::Common(CommonExpr {
                     call,
                     method: Some(NameofMethod::Interpolate),
-                })) => return Ok(SegmentFormat::Interpolation(call)),
+                }))) => return Ok(SegmentFormat::Interpolation(call)),
                 _ => {
                     return Err(NameofError::UnsupportedIndexer(UnsupportedIndexer::Prop(
                         prop,
@@ -655,7 +657,7 @@ impl NameofVisitor {
                 CallExpr {
                     callee: Callee::Expr(callee),
                     ..
-                } => Ok(Some(NameofExpression::Common {
+                } => Ok(Some(NameofExpression::Common(CommonExpr {
                     method: match &**callee {
                         Expr::Ident(ident) if self.is_global_nameof(ident) => None,
                         Expr::Member(MemberExpr {
@@ -688,7 +690,7 @@ impl NameofVisitor {
                         _ => return Ok(None),
                     },
                     call,
-                })),
+                }))),
                 _ => Ok(None),
             },
             Expr::Member(member) => Ok(match self.get_nameof_expression(&member.obj) {
@@ -778,7 +780,7 @@ impl NameofVisitor {
     ) -> NameofResult<'a, NameSubstitution<'a>> {
         Ok(match &expr {
             NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
-            NameofExpression::Common { call, method } => {
+            NameofExpression::Common(CommonExpr { call, method }) => {
                 let (start_index, args) = Self::parse_args(method, &call.args);
 
                 let (node, local_contexts) = match (
