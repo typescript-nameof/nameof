@@ -761,17 +761,14 @@ impl NameofVisitor {
             .collect()
     }
 
-    /// Parses the arguments of configurable `nameof` calls.
-    fn parse_args<'a>(
-        method: &Option<NameofMethod>,
-        args: &'a [ExprOrSpread],
-    ) -> (Option<isize>, &'a [ExprOrSpread]) {
-        if let (Some(NameofMethod::Collect(_)), [args @ .., ExprOrSpread { spread: None, expr }]) =
-            (method, args)
-        {
+    /// Parses the arguments passed to a collecting `nameof` call such as [`NameofMethod::Full`] or [`NameofMethod::Split`].
+    fn parse_collect_args<'a>(args: &'a [ExprOrSpread]) -> (Option<isize>, &'a [ExprOrSpread]) {
+        if let [args @ .., ExprOrSpread { spread: None, expr }] = args {
             if let Some(index) = Self::parse_int(expr) {
                 if index.fract() == 0.0 {
                     return (Some(index as isize), args);
+                } else {
+                    todo!("Report invalid start indexes")
                 }
             }
         }
@@ -801,38 +798,32 @@ impl NameofVisitor {
     ) -> NameofResult<'a, NameSubstitution<'a>> {
         Ok(match expr {
             NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
-            NameofExpression::Common(CommonExpr { call, method }) => {
-                let (start_index, args) = Self::parse_args(&method, &call.args);
+            NameofExpression::Common(CommonExpr { call, method }) => match method {
+                Some(method) => match method {
+                    NameofMethod::Collect(format) => {
+                        let (start_index, args) = Self::parse_collect_args(&call.args);
 
-                match method {
-                    Some(method) => match method {
-                        NameofMethod::Collect(format) => {
-                            let NameContext {
-                                node,
-                                syntax_contexts,
-                            } = Self::get_name_context(NameSource::Args(
-                                call,
-                                &args,
-                                &call.type_args,
-                            ))?;
+                        let NameContext {
+                            node,
+                            syntax_contexts,
+                        } = Self::get_name_context(NameSource::Args(call, &args, &call.type_args))?;
 
-                            NameSubstitution::Collect {
-                                start_index,
-                                local_contexts: syntax_contexts,
-                                output: format,
-                                node,
-                            }
+                        NameSubstitution::Collect {
+                            start_index,
+                            local_contexts: syntax_contexts,
+                            output: format,
+                            node,
                         }
-                        NameofMethod::Interpolate => {
-                            return Err(NameofError::UnusedInterpolation(&call));
-                        }
-                        _ => todo!("Add support for remaining methods."),
-                    },
-                    None => {
-                        NameSubstitution::Tail(Self::get_name_context(NameSource::Call(call))?.node)
                     }
+                    NameofMethod::Interpolate => {
+                        return Err(NameofError::UnusedInterpolation(&call));
+                    }
+                    _ => todo!("Add support for remaining methods."),
+                },
+                None => {
+                    NameSubstitution::Tail(Self::get_name_context(NameSource::Call(call))?.node)
                 }
-            }
+            },
         })
     }
 
