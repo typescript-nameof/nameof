@@ -13,7 +13,8 @@ use swc_core::{
             OptChainBase, OptChainExpr, ParenExpr, Pat, PrivateName, Program, RestPat, ReturnStmt,
             Super, SuperProp, SuperPropExpr, Tpl, TplElement, TsAsExpr, TsEntityName, TsImportType,
             TsIndexedAccessType, TsLit, TsLitType, TsNonNullExpr, TsParenthesizedType,
-            TsQualifiedName, TsType, TsTypeQuery, TsTypeQueryExpr, TsTypeRef, UnaryExpr, UnaryOp,
+            TsQualifiedName, TsType, TsTypeParamInstantiation, TsTypeQuery, TsTypeQueryExpr,
+            TsTypeRef, UnaryExpr, UnaryOp,
         },
         visit::{visit_mut_pass, VisitMut, VisitMutWith, VisitWith},
     },
@@ -109,6 +110,16 @@ pub enum NameofMethod {
 pub enum NameSource<'a> {
     /// Indicates a call expression.
     Call(&'a CallExpr),
+    /// Indicates function arguments.
+    Args(
+        &'a CallExpr,
+        &'a [ExprOrSpread],
+        &'a Option<Box<TsTypeParamInstantiation>>,
+    ),
+    /// Indicates a parameter.
+    Param(&'a ExprOrSpread),
+    /// Indicates an expression.
+    Expr(&'a Expr),
 }
 
 /// Represents a common `nameof` expression.
@@ -183,6 +194,14 @@ enum NamedType<'a> {
     Type(&'a TsType),
     /// Indicates an entity name.
     Name(&'a TsEntityName),
+}
+
+/// Represents the context of a named node.
+struct NameContext<'a> {
+    /// The named node.
+    node: NamedNode<'a>,
+    /// The syntax contexts which hold local variables.
+    syntax_contexts: Vec<SyntaxContext>,
 }
 
 /// Represents the segment of a name.
@@ -747,10 +766,8 @@ impl NameofVisitor {
         method: &Option<NameofMethod>,
         args: &'a [ExprOrSpread],
     ) -> (Option<isize>, &'a [ExprOrSpread]) {
-        if let (
-            Some(NameofMethod::Collect(_)),
-            [args @ .., ExprOrSpread { spread: None, expr }],
-        ) = (method, args)
+        if let (Some(NameofMethod::Collect(_)), [args @ .., ExprOrSpread { spread: None, expr }]) =
+            (method, args)
         {
             if let Some(index) = Self::parse_int(expr) {
                 if index.fract() == 0.0 {
@@ -787,79 +804,33 @@ impl NameofVisitor {
             NameofExpression::Common(CommonExpr { call, method }) => {
                 let (start_index, args) = Self::parse_args(&method, &call.args);
 
-                let (node, local_contexts) = match (
-                    call.type_args.as_ref().map(|t| t.params.len()).unwrap_or(0),
-                    args.len(),
-                ) {
-                    (0 | 1, 1) => {
-                        let (expr_or_body, local_contexts) = match call.args[0] {
-                            ExprOrSpread { spread: None, .. } => match &*call.args[0].expr {
-                                Expr::Arrow(ArrowExpr { body, params, .. }) => (
-                                    match &**body {
-                                        BlockStmtOrExpr::Expr(expr) => Either::Left(&**expr),
-                                        BlockStmtOrExpr::BlockStmt(body) => {
-                                            Either::Right(Some(body))
-                                        }
-                                    },
-                                    Self::get_local_contexts(params.iter().collect()),
-                                ),
-                                Expr::Fn(FnExpr { function, .. }) => (
-                                    Either::Right(function.body.as_ref()),
-                                    Self::get_local_contexts(
-                                        function.params.iter().map(|p| &p.pat).collect(),
-                                    ),
-                                ),
-                                expr => (Either::Left(expr), vec![]),
-                            },
-                            ExprOrSpread {
-                                spread: Some(_), ..
-                            } => {
-                                return Err(NameofError::Spread(
-                                    call.args[0].spread.as_ref().unwrap(),
-                                ))
-                            }
-                        };
-
-                        (
-                            NamedNode::Expr(match expr_or_body {
-                                Either::Left(expr) => expr,
-                                Either::Right(body) => {
-                                    match body.map(|b| Self::get_returned_expression(b)).flatten() {
-                                        Some(expr) => expr,
-                                        None => {
-                                            return Err(NameofError::NoReturnedNode(
-                                                &call.args[0].expr,
-                                            ))
-                                        }
-                                    }
-                                }
-                            }),
-                            local_contexts,
-                        )
-                    }
-                    (1, 0) => (
-                        NamedNode::Type(&*call.type_args.as_ref().unwrap().params[0]),
-                        vec![],
-                    ),
-                    (type_arg_count, arg_count) => {
-                        return Err(NameofError::ArgumentError(call, type_arg_count, arg_count))
-                    }
-                };
-
                 match method {
-                    None => NameSubstitution::Tail(node),
                     Some(method) => match method {
-                        NameofMethod::Collect(format) => NameSubstitution::Collect {
-                            start_index,
-                            local_contexts,
-                            output: format,
-                            node,
-                        },
+                        NameofMethod::Collect(format) => {
+                            let NameContext {
+                                node,
+                                syntax_contexts,
+                            } = Self::get_name_context(NameSource::Args(
+                                call,
+                                &args,
+                                &call.type_args,
+                            ))?;
+
+                            NameSubstitution::Collect {
+                                start_index,
+                                local_contexts: syntax_contexts,
+                                output: format,
+                                node,
+                            }
+                        }
                         NameofMethod::Interpolate => {
-                            return Err(NameofError::UnusedInterpolation(call))
+                            return Err(NameofError::UnusedInterpolation(&call));
                         }
                         _ => todo!("Add support for remaining methods."),
                     },
+                    None => {
+                        NameSubstitution::Tail(Self::get_name_context(NameSource::Call(call))?.node)
+                    }
                 }
             }
         })
@@ -906,6 +877,67 @@ impl NameofVisitor {
                         ..Default::default()
                     }),
                     CollectOutput::Full => walker.full()?,
+                }
+            }
+        })
+    }
+
+    /// Gets the context of the named node held by the specified [`NameSource`].
+    fn get_name_context<'a>(source: NameSource<'a>) -> NameofResult<'a, NameContext<'a>> {
+        Ok(match source {
+            NameSource::Call(call) => {
+                Self::get_name_context(NameSource::Args(&call, &call.args, &call.type_args))?
+            }
+            NameSource::Args(call, args, type_args) => {
+                match (
+                    type_args.as_ref().map(|t| t.params.len()).unwrap_or(0),
+                    args.len(),
+                ) {
+                    (0 | 1, 1) => Self::get_name_context(NameSource::Param(&args[0]))?,
+                    (1, 0) => NameContext {
+                        node: NamedNode::Type(&*type_args.as_ref().unwrap().params[0]),
+                        syntax_contexts: vec![],
+                    },
+                    (type_arg_count, arg_count) => {
+                        return Err(NameofError::ArgumentError(call, type_arg_count, arg_count))
+                    }
+                }
+            }
+            NameSource::Param(param) => match param {
+                ExprOrSpread {
+                    spread: Some(_), ..
+                } => return Err(NameofError::Spread(param.spread.as_ref().unwrap())),
+                ExprOrSpread { spread: None, expr } => {
+                    Self::get_name_context(NameSource::Expr(expr))?
+                }
+            },
+            NameSource::Expr(expr) => {
+                let (expr_or_body, local_contexts) = match expr {
+                    Expr::Arrow(ArrowExpr { body, params, .. }) => (
+                        match &**body {
+                            BlockStmtOrExpr::Expr(expr) => Either::Left(&**expr),
+                            BlockStmtOrExpr::BlockStmt(body) => Either::Right(Some(body)),
+                        },
+                        Self::get_local_contexts(params.iter().collect()),
+                    ),
+                    Expr::Fn(FnExpr { function, .. }) => (
+                        Either::Right(function.body.as_ref()),
+                        Self::get_local_contexts(function.params.iter().map(|p| &p.pat).collect()),
+                    ),
+                    expr => (Either::Left(expr), vec![]),
+                };
+
+                NameContext {
+                    syntax_contexts: local_contexts,
+                    node: NamedNode::Expr(match expr_or_body {
+                        Either::Left(expr) => expr,
+                        Either::Right(body) => {
+                            match body.map(|b| Self::get_returned_expression(b)).flatten() {
+                                Some(expr) => expr,
+                                None => return Err(NameofError::NoReturnedNode(expr)),
+                            }
+                        }
+                    }),
                 }
             }
         })
