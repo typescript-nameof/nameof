@@ -1,6 +1,7 @@
-use std::sync::Arc;
+use std::{iter, sync::Arc};
 
 use anyhow::Error;
+use itertools::Itertools;
 use swc::Compiler;
 use swc_compiler_base::IdentCollector;
 use swc_core::{
@@ -95,6 +96,10 @@ enum NameSubstitution<'a> {
         output: CollectOutput,
         /// The node to transform.
         node: NamedNode<'a>,
+    },
+    Array {
+        local_contexts: Vec<SyntaxContext>,
+        nodes: Vec<NamedNode<'a>>,
     },
 }
 
@@ -879,10 +884,75 @@ impl NameofVisitor {
                             node,
                         }
                     }
+                    NameofMethod::Array => {
+                        let context = Self::get_name_context(NameSource::Call(call));
+
+                        let (syntax_contexts, nodes): (
+                            Vec<SyntaxContext>,
+                            Box<dyn Iterator<Item = NameofResult<'a, NamedNode<'a>>>>,
+                        ) = match context {
+                            Err(_) => (
+                                vec![],
+                                if call.args.len() > 0 {
+                                    Box::new(
+                                        call.args
+                                            .iter()
+                                            .map(|arg| Ok(NamedNode::Expr(unwrap_arg(arg)?))),
+                                    )
+                                } else {
+                                    Box::new(
+                                        call.type_args
+                                            .iter()
+                                            .map(|a| &a.params)
+                                            .flatten()
+                                            .map(|p| Ok(NamedNode::Type(p))),
+                                    )
+                                },
+                            ),
+                            Ok(NameContext {
+                                syntax_contexts,
+                                node,
+                            }) => (
+                                syntax_contexts,
+                                match node {
+                                    NamedNode::Expr(expr) => {
+                                        if let Expr::Array(array) = expr {
+                                            Box::new(array.elems.iter().filter_map(|e| match e {
+                                                Some(arg) => Some(
+                                                    unwrap_arg(arg).map(|e| NamedNode::Expr(e)),
+                                                ),
+                                                None => None,
+                                            }))
+                                        } else {
+                                            Box::new(iter::once(Ok(NamedNode::Expr(expr))))
+                                        }
+                                    }
+                                    NamedNode::Type(ts_type) => {
+                                        if let TsType::TsTupleType(tuple) = ts_type {
+                                            Box::new(
+                                                tuple
+                                                    .elem_types
+                                                    .iter()
+                                                    .map(|t| Ok(NamedNode::Type(&t.ty))),
+                                            )
+                                        } else {
+                                            Box::new(iter::once(Ok(NamedNode::Type(ts_type))))
+                                        }
+                                    }
+                                },
+                            ),
+                        };
+
+                        let nodes: Vec<NameofResult<NamedNode>> = nodes.collect();
+
+                        NameSubstitution::Array {
+                            local_contexts: syntax_contexts,
+                            nodes: nodes.into_iter().process_results(|nodes| nodes.collect())?,
+                        }
+                    }
                     NameofMethod::Interpolate => {
                         return Err(NameofError::UnusedInterpolation(&call));
                     }
-                    _ => todo!("Add support for remaining methods."),
                 },
                 None => {
                     NameSubstitution::Tail(Self::get_name_context(NameSource::Call(call))?.node)
@@ -946,6 +1016,41 @@ impl NameofVisitor {
                     CollectOutput::Full => walker.full()?,
                 }
             }
+            NameSubstitution::Array {
+                local_contexts,
+                nodes,
+            } => Expr::Array(ArrayLit {
+                elems: nodes
+                    .iter()
+                    .map(|n| {
+                        Ok(Some(ExprOrSpread {
+                            expr: Box::new(match n {
+                                NamedNode::Expr(expr) => match self.get_nameof_expression(expr) {
+                                    Ok(Some(expr)) => self.get_replacement(expr)?,
+                                    _ => Expr::Lit(Lit::from(
+                                        NodeSegment::new(
+                                            self,
+                                            &local_contexts,
+                                            NamedExpr::Expr(expr),
+                                        )
+                                        .get_name()?,
+                                    )),
+                                },
+                                NamedNode::Type(ts_type) => Expr::Lit(Lit::from(
+                                    NodeSegment::new(
+                                        self,
+                                        &local_contexts,
+                                        NamedType::Type(ts_type),
+                                    )
+                                    .get_name()?,
+                                )),
+                            }),
+                            spread: None,
+                        }))
+                    })
+                    .process_results(|n| n.collect())?,
+                ..Default::default()
+            }),
         })
     }
 
