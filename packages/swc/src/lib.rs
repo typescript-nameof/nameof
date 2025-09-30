@@ -71,7 +71,7 @@ enum NamedNode<'a> {
 }
 
 /// Represents an output type of a collect substitution.
-enum CollectOutput {
+pub enum CollectOutput {
     /// Indicates an array.
     Array,
     /// Indicates a full name.
@@ -97,14 +97,12 @@ enum NameSubstitution<'a> {
 
 /// Represents a method of the `nameof` interface.
 pub enum NameofMethod {
-    /// Indicates a method for yielding the full name of an object.
-    Full,
+    /// Indicates a method acting on all parts of the name of an object.
+    Collect(CollectOutput),
     /// Indicates a method for injecting plain java into the result of a `Full` call.
     Interpolate,
     /// Indicates a method for determining the name of multiple objects.
     Array,
-    /// Indicates a method for splitting the full name of an object into an array.
-    Split,
 }
 
 /// Represents the source to get the name from.
@@ -673,10 +671,10 @@ impl NameofVisitor {
                         }) => match &**obj {
                             Expr::Ident(ident) if self.is_global_nameof(ident) => {
                                 Some(match prop.sym.as_str() {
-                                    "full" => NameofMethod::Full,
+                                    "full" => NameofMethod::Collect(CollectOutput::Full),
                                     "interpolate" => NameofMethod::Interpolate,
                                     "array" => NameofMethod::Array,
-                                    "split" => NameofMethod::Split,
+                                    "split" => NameofMethod::Collect(CollectOutput::Array),
                                     _ => {
                                         return Err(NameofError::InvalidMethod(
                                             call.callee
@@ -750,7 +748,7 @@ impl NameofVisitor {
         args: &'a [ExprOrSpread],
     ) -> (Option<isize>, &'a [ExprOrSpread]) {
         if let (
-            Some(NameofMethod::Full | NameofMethod::Split),
+            Some(NameofMethod::Collect(_)),
             [args @ .., ExprOrSpread { spread: None, expr }],
         ) = (method, args)
         {
@@ -784,10 +782,10 @@ impl NameofVisitor {
         &self,
         expr: NameofExpression<'a>,
     ) -> NameofResult<'a, NameSubstitution<'a>> {
-        Ok(match &expr {
+        Ok(match expr {
             NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
             NameofExpression::Common(CommonExpr { call, method }) => {
-                let (start_index, args) = Self::parse_args(method, &call.args);
+                let (start_index, args) = Self::parse_args(&method, &call.args);
 
                 let (node, local_contexts) = match (
                     call.type_args.as_ref().map(|t| t.params.len()).unwrap_or(0),
@@ -850,18 +848,17 @@ impl NameofVisitor {
 
                 match method {
                     None => NameSubstitution::Tail(node),
-                    Some(method) => NameSubstitution::Collect {
-                        start_index,
-                        local_contexts,
-                        output: match method {
-                            NameofMethod::Full => CollectOutput::Full,
-                            NameofMethod::Split => CollectOutput::Array,
-                            NameofMethod::Interpolate => {
-                                return Err(NameofError::UnusedInterpolation(call))
-                            }
-                            _ => todo!("Add support for remaining methods."),
+                    Some(method) => match method {
+                        NameofMethod::Collect(format) => NameSubstitution::Collect {
+                            start_index,
+                            local_contexts,
+                            output: format,
+                            node,
                         },
-                        node,
+                        NameofMethod::Interpolate => {
+                            return Err(NameofError::UnusedInterpolation(call))
+                        }
+                        _ => todo!("Add support for remaining methods."),
                     },
                 }
             }
