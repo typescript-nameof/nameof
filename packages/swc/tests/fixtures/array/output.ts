@@ -1,0 +1,24 @@
+[
+    "console",
+    "process"
+];
+[
+    "console",
+    "process"
+];
+[
+    "Number",
+    "String"
+];
+[
+    "log",
+    "x.clear"
+];
+[
+    "Console",
+    "String"
+];
+[
+    "unknown",
+    "undefined"
+];
