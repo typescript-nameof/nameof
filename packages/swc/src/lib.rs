@@ -254,12 +254,9 @@ trait NameSegment<'a> {
         if let SegmentFormat::Interpolation(call) = format {
             match call.args.first() {
                 None => todo!("Warn about absence of args"),
-                Some(ExprOrSpread {
-                    spread: Some(spread),
-                    ..
-                }) => return Err(NameofError::Spread(&spread)),
-                Some(ExprOrSpread { spread: None, expr }) => {
-                    literal.exprs.push(expr.clone());
+                Some(arg) => {
+                    let expr = unwrap_arg(arg)?;
+                    literal.exprs.push(Box::new(expr.clone()));
                     literal.quasis.push(Default::default());
                 }
             }
@@ -894,14 +891,9 @@ impl NameofVisitor {
                     }
                 }
             }
-            NameSource::Param(param) => match param {
-                ExprOrSpread {
-                    spread: Some(_), ..
-                } => return Err(NameofError::Spread(param.spread.as_ref().unwrap())),
-                ExprOrSpread { spread: None, expr } => {
-                    Self::get_name_context(NameSource::Expr(expr))?
-                }
-            },
+            NameSource::Param(param) => {
+                Self::get_name_context(NameSource::Expr(unwrap_arg(param)?))?
+            }
             NameSource::Expr(expr) => {
                 let (expr_or_body, local_contexts) = match expr {
                     Expr::Arrow(ArrowExpr { body, params, .. }) => (
@@ -1031,6 +1023,17 @@ where
     match Compiler::new(source_map).print(node, Default::default()) {
         Ok(output) => Ok(output.code),
         Err(error) => Err(NameofError::Error(node.span(), error)),
+    }
+}
+
+/// Unwraps the specified `arg`.
+fn unwrap_arg(arg: &ExprOrSpread) -> NameofResult<&Expr> {
+    match arg {
+        ExprOrSpread { spread: None, expr } => Ok(expr),
+        ExprOrSpread {
+            spread: Some(spread),
+            ..
+        } => Err(NameofError::Spread(spread)),
     }
 }
 
