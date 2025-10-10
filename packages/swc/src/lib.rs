@@ -266,30 +266,28 @@ trait NameSegment<'a> {
     }
 }
 
-/// Represents the segment of an expression.
-struct ExprSegment<'a, 'b, 'c> {
+/// Represents the segment of a chain of nodes.
+struct NodeSegment<'a, 'b, T> {
     /// The visitor of the current transformation.
     visitor: &'a NameofVisitor,
     /// The contexts of the local parameters.
     local_contexts: &'b Vec<SyntaxContext>,
-    /// The expression of the segment.
-    expr: NamedExpr<'c>,
+    /// The node of the segment.
+    node: T,
 }
 
-impl<'a, 'b, 'c> ExprSegment<'a, 'b, 'c> {
-    /// Initializes a new instance of the [`ExprSegment`] class.
-    fn new(
-        visitor: &'a NameofVisitor,
-        local_contexts: &'b Vec<SyntaxContext>,
-        expr: &'c Expr,
-    ) -> Self {
+impl<'a, 'b, 'c, T> NodeSegment<'a, 'b, T> {
+    /// Initializes a new [`NodeSegment`] instance.
+    fn new(visitor: &'a NameofVisitor, local_contexts: &'b Vec<SyntaxContext>, node: T) -> Self {
         Self {
             visitor,
             local_contexts,
-            expr: NamedExpr::Expr(expr),
+            node,
         }
     }
+}
 
+impl<'a, 'b, 'c> NodeSegment<'a, 'b, NamedExpr<'c>> {
     /// Unwraps the expression nested inside the specified `expr`.
     fn unwrap_expr<'d>(expr: &'d Expr) -> &'d Expr {
         match expr {
@@ -342,7 +340,7 @@ impl<'a, 'b, 'c> ExprSegment<'a, 'b, 'c> {
     fn get_member_parent(&self, member: &'c MemberExpr) -> Option<Self> {
         Some(match &*member.obj {
             Expr::Ident(ident) if self.local_contexts.contains(&ident.ctxt) => return None,
-            obj => Self::new(self.visitor, self.local_contexts, obj),
+            obj => Self::new(self.visitor, self.local_contexts, NamedExpr::Expr(obj)),
         })
     }
 
@@ -357,7 +355,7 @@ impl<'a, 'b, 'c> ExprSegment<'a, 'b, 'c> {
         Some(Self {
             visitor,
             local_contexts,
-            expr: NamedExpr::Custom(CustomExpr {
+            node: NamedExpr::Custom(CustomExpr {
                 tail,
                 segments: Box::new(names.into_iter()),
             }),
@@ -365,15 +363,16 @@ impl<'a, 'b, 'c> ExprSegment<'a, 'b, 'c> {
     }
 }
 
-impl<'a, 'b, 'c> NameSegment<'c> for ExprSegment<'a, 'b, 'c> {
+impl<'a, 'b, 'c> NameSegment<'c> for NodeSegment<'a, 'b, NamedExpr<'c>> {
     fn get_format(&self) -> NameofResult<'c, SegmentFormat<'c>> {
-        Ok(SegmentFormat::Ident(match self.expr {
+        Ok(SegmentFormat::Ident(match self.node {
             NamedExpr::Super(expr) => print_node(expr)?,
             NamedExpr::Expr(expr) => match Self::unwrap_expr(expr) {
                 Expr::Paren(ParenExpr { expr, .. })
                 | Expr::TsNonNull(TsNonNullExpr { expr, .. })
                 | Expr::TsAs(TsAsExpr { expr, .. }) => {
-                    return Self::new(self.visitor, self.local_contexts, &*expr).get_format()
+                    return Self::new(self.visitor, self.local_contexts, NamedExpr::Expr(expr))
+                        .get_format()
                 }
                 Expr::Ident(Ident { sym: name, .. })
                 | Expr::PrivateName(PrivateName { name, .. }) => name.to_string(),
@@ -395,7 +394,7 @@ impl<'a, 'b, 'c> NameSegment<'c> for ExprSegment<'a, 'b, 'c> {
     }
 
     fn get_next(&mut self) -> Option<Box<Self>> {
-        Some(Box::new(match &mut self.expr {
+        Some(Box::new(match &mut self.node {
             NamedExpr::Super(_) => return None,
             NamedExpr::Expr(expr) => match Self::unwrap_expr(expr) {
                 Expr::Member(member) => self.get_member_parent(member)?,
@@ -417,7 +416,7 @@ impl<'a, 'b, 'c> NameSegment<'c> for ExprSegment<'a, 'b, 'c> {
                 Expr::SuperProp(SuperPropExpr { obj, .. }) => Self {
                     visitor: self.visitor,
                     local_contexts: self.local_contexts,
-                    expr: NamedExpr::Super(obj),
+                    node: NamedExpr::Super(obj),
                 },
                 _ => return None,
             },
@@ -428,25 +427,9 @@ impl<'a, 'b, 'c> NameSegment<'c> for ExprSegment<'a, 'b, 'c> {
     }
 }
 
-/// Represents the segment of a type name.
-struct TypeSegment<'a, 'b> {
-    /// The contexts of the local parameters.
-    local_contexts: &'b Vec<SyntaxContext>,
-    /// The type of the current segment.
-    ts_type: NamedType<'a>,
-}
-
-impl<'a, 'b> TypeSegment<'a, 'b> {
-    /// Initializes a new type segment.
-    fn new(local_contexts: &'b Vec<SyntaxContext>, ts_type: &'a TsType) -> Self {
-        Self {
-            local_contexts,
-            ts_type: NamedType::Type(ts_type),
-        }
-    }
-
+impl<'a, 'b, 'c> NodeSegment<'a, 'b, NamedType<'c>> {
     /// Gets the type contained within the specified `ts_type`.
-    fn unwrap_type<'c>(ts_type: &'c TsType) -> &'c TsType {
+    fn unwrap_type<'d>(ts_type: &'d TsType) -> &'d TsType {
         match ts_type {
             TsType::TsParenthesizedType(TsParenthesizedType { type_ann, .. }) => type_ann,
             ts_type => ts_type,
@@ -454,7 +437,7 @@ impl<'a, 'b> TypeSegment<'a, 'b> {
     }
 
     /// Gets the last part of the specified `ts_entity_name`.
-    fn get_entity_name<'c>(entity_name: &'c TsEntityName) -> NameofResult<'c, String> {
+    fn get_entity_name<'d>(entity_name: &'d TsEntityName) -> NameofResult<'d, String> {
         Ok(match entity_name {
             TsEntityName::Ident(ident) => ident.sym.to_string(),
             TsEntityName::TsQualifiedName(qualified_name) => qualified_name.right.sym.to_string(),
@@ -462,7 +445,7 @@ impl<'a, 'b> TypeSegment<'a, 'b> {
     }
 
     /// Gets the parent segment of the specified `name`.
-    fn get_entity_parent(&self, name: &'a TsEntityName) -> Option<Self> {
+    fn get_entity_parent(&self, name: &'c TsEntityName) -> Option<Self> {
         Some(match name {
             TsEntityName::TsQualifiedName(qualified) => match &**qualified {
                 TsQualifiedName {
@@ -472,8 +455,9 @@ impl<'a, 'b> TypeSegment<'a, 'b> {
                     return None;
                 }
                 qualified => Self {
+                    visitor: self.visitor,
                     local_contexts: self.local_contexts,
-                    ts_type: NamedType::Name(&qualified.left),
+                    node: NamedType::Name(&qualified.left),
                 },
             },
             _ => return None,
@@ -481,9 +465,9 @@ impl<'a, 'b> TypeSegment<'a, 'b> {
     }
 }
 
-impl<'a, 'b> NameSegment<'a> for TypeSegment<'a, 'b> {
-    fn get_format(&self) -> NameofResult<'a, SegmentFormat<'a>> {
-        Ok(SegmentFormat::Ident(match self.ts_type {
+impl<'a, 'b, 'c> NameSegment<'c> for NodeSegment<'a, 'b, NamedType<'c>> {
+    fn get_format(&self) -> NameofResult<'c, SegmentFormat<'c>> {
+        Ok(SegmentFormat::Ident(match self.node {
             NamedType::Name(name) => Self::get_entity_name(name)?,
             NamedType::Type(ts_type) => match Self::unwrap_type(ts_type) {
                 TsType::TsTypeRef(TsTypeRef {
@@ -532,7 +516,7 @@ impl<'a, 'b> NameSegment<'a> for TypeSegment<'a, 'b> {
     }
 
     fn get_next(&mut self) -> Option<Box<Self>> {
-        Some(Box::new(match self.ts_type {
+        Some(Box::new(match self.node {
             NamedType::Name(name) => self.get_entity_parent(name)?,
             NamedType::Type(ts_type) => match Self::unwrap_type(ts_type) {
                 TsType::TsTypeRef(TsTypeRef {
@@ -543,7 +527,7 @@ impl<'a, 'b> NameSegment<'a> for TypeSegment<'a, 'b> {
                     ..
                 }) => self.get_entity_parent(name)?,
                 TsType::TsIndexedAccessType(TsIndexedAccessType { obj_type, .. }) => {
-                    Self::new(self.local_contexts, &obj_type)
+                    Self::new(self.visitor, self.local_contexts, NamedType::Type(obj_type))
                 }
                 _ => return None,
             },
@@ -830,8 +814,12 @@ impl NameofVisitor {
 
         Ok(match substitution {
             NameSubstitution::Tail(expr) => Expr::Lit(Lit::from(match expr {
-                NamedNode::Expr(expr) => ExprSegment::new(self, &vec![], expr).get_name()?,
-                NamedNode::Type(ts_type) => TypeSegment::new(&vec![], ts_type).get_name()?,
+                NamedNode::Expr(expr) => {
+                    NodeSegment::new(self, &vec![], NamedExpr::Expr(expr)).get_name()?
+                }
+                NamedNode::Type(ts_type) => {
+                    NodeSegment::new(self, &vec![], NamedType::Type(ts_type)).get_name()?
+                }
             })),
             NameSubstitution::Collect {
                 start_index,
@@ -842,11 +830,19 @@ impl NameofVisitor {
                 let walker: Box<dyn SegmentCollector> = match node {
                     NamedNode::Expr(expr) => Box::new(SegmentWalker {
                         start_index,
-                        current: Some(ExprSegment::new(self, &local_contexts, expr)),
+                        current: Some(NodeSegment::new(
+                            self,
+                            &local_contexts,
+                            NamedExpr::Expr(expr),
+                        )),
                     }),
                     NamedNode::Type(ts_type) => Box::new(SegmentWalker {
                         start_index,
-                        current: Some(TypeSegment::new(&local_contexts, ts_type)),
+                        current: Some(NodeSegment::new(
+                            self,
+                            &local_contexts,
+                            NamedType::Type(ts_type),
+                        )),
                     }),
                 };
 
