@@ -1,0 +1,5 @@
+  x Missing a property accessor to the local variable `x`.
+   ,-[input.js:1:1]
+ 1 | nameof.full((x) => x);
+   :                    ^
+   `----

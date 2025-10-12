@@ -50,6 +50,8 @@ pub enum NameofError<'a> {
     NoReturnedNode(&'a Expr),
     /// Indicates the use of an invalid method on the `nameof` interface.
     InvalidMethod(&'a IdentName),
+    /// Indicates the absence of an accessor to a local variable.
+    MissingAccessor(Span, String),
     /// Indicates the unsupported use of a computed property.
     UnsupportedIndexer(UnsupportedIndexer<'a>),
     /// Indicates an unsupported node.
@@ -626,8 +628,8 @@ where
     S: NameSegment<'a>,
 {
     /// Gets the segments to collect.
-    fn get_segments(self: Box<Self>) -> Vec<S> {
-        match self.start_index {
+    fn get_segments(self: Box<Self>) -> NameofResult<'a, Vec<S>> {
+        let segments: Vec<S> = match self.start_index {
             Some(index) => {
                 if index < 0 {
                     self.take(-index as usize).collect()
@@ -638,7 +640,18 @@ where
                 }
             }
             _ => self.collect(),
+        };
+
+        if let [segment, ..] = &segments[..] {
+            if segment.is_local() {
+                return Err(NameofError::MissingAccessor(
+                    segment.get_span(),
+                    segment.get_name()?,
+                ));
+            }
         }
+
+        Ok(segments)
     }
 }
 
@@ -666,7 +679,7 @@ where
     fn split(self: Box<Self>) -> NameofResult<'a, Vec<String>> {
         let mut names = Vec::new();
 
-        for segment in self.get_segments() {
+        for segment in self.get_segments()? {
             match segment.get_name() {
                 Ok(name) => names.push(name),
                 Err(err) => return Err(err),
@@ -679,7 +692,7 @@ where
     fn full(self: Box<Self>) -> NameofResult<'a, Expr> {
         let mut result = Tpl::default();
 
-        for segment in self.get_segments().into_iter().rev() {
+        for segment in self.get_segments()?.into_iter().rev() {
             segment.append(&mut result)?;
         }
 
@@ -1054,6 +1067,9 @@ impl VisitMut for NameofVisitor {
                                 };
 
                                 (span, format!("The specified expression{expression} is an invalid accessor type. Expected a string or a number."))
+                            }
+                            NameofError::MissingAccessor(span, name) => {
+                                (span, format!("Missing a property accessor to the local variable `{}`.", name))
                             }
                             NameofError::UnsupportedNode(node) => {
                                 let (span, code) = match node {
