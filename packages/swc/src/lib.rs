@@ -174,6 +174,8 @@ impl<'a> SegmentFormat<'a> {
 
 /// Represents an expression with custom names.
 pub struct CustomExpr {
+    /// The span containing the custom expression.
+    span: Span,
     /// The name of the segment.
     tail: String,
     /// The names of the subsequent segments.
@@ -210,6 +212,9 @@ struct NameContext<'a> {
 trait NameSegment<'a> {
     /// Gets the format of the segment.
     fn get_format(&self) -> NameofResult<'a, SegmentFormat<'a>>;
+
+    /// Gets the span containing the current segment.
+    fn get_span(&self) -> Span;
 
     /// Gets the name of the segment.
     fn get_name(&self) -> NameofResult<'a, String> {
@@ -348,6 +353,7 @@ impl<'a, 'b, 'c> NodeSegment<'a, 'b, NamedExpr<'c>> {
 
     /// Builds a [`NameSegment`] based on the specified `names`.
     fn build_custom_segment(
+        span: Span,
         visitor: &'a NameofVisitor,
         local_contexts: &'b Vec<SyntaxContext>,
         mut names: Vec<String>,
@@ -358,6 +364,7 @@ impl<'a, 'b, 'c> NodeSegment<'a, 'b, NamedExpr<'c>> {
             visitor,
             local_contexts,
             node: NamedExpr::Custom(CustomExpr {
+                span,
                 tail,
                 segments: Box::new(names.into_iter()),
             }),
@@ -395,6 +402,14 @@ impl<'a, 'b, 'c> NameSegment<'c> for NodeSegment<'a, 'b, NamedExpr<'c>> {
         }))
     }
 
+    fn get_span(&self) -> Span {
+        match self.node {
+            NamedExpr::Expr(expr) => expr.span(),
+            NamedExpr::Super(expr) => expr.span,
+            NamedExpr::Custom(CustomExpr { span, .. }) => span,
+        }
+    }
+
     fn get_next(&mut self) -> Option<Box<Self>> {
         Some(Box::new(match &mut self.node {
             NamedExpr::Super(_) => return None,
@@ -409,7 +424,7 @@ impl<'a, 'b, 'c> NameSegment<'c> for NodeSegment<'a, 'b, NamedExpr<'c>> {
                         .map(|s| s.to_owned())
                         .collect();
 
-                    Self::build_custom_segment(self.visitor, self.local_contexts, names)?
+                    Self::build_custom_segment(meta.span, self.visitor, self.local_contexts, names)?
                 }
                 Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
                     OptChainBase::Member(member) => self.get_member_parent(member)?,
@@ -422,9 +437,12 @@ impl<'a, 'b, 'c> NameSegment<'c> for NodeSegment<'a, 'b, NamedExpr<'c>> {
                 },
                 _ => return None,
             },
-            NamedExpr::Custom(CustomExpr { segments, .. }) => {
-                Self::build_custom_segment(self.visitor, self.local_contexts, segments.collect())?
-            }
+            NamedExpr::Custom(CustomExpr { span, segments, .. }) => Self::build_custom_segment(
+                *span,
+                self.visitor,
+                self.local_contexts,
+                segments.collect(),
+            )?,
         }))
     }
 }
@@ -515,6 +533,13 @@ impl<'a, 'b, 'c> NameSegment<'c> for NodeSegment<'a, 'b, NamedType<'c>> {
                 }
             },
         }))
+    }
+
+    fn get_span(&self) -> Span {
+        match self.node {
+            NamedType::Name(name) => name.span(),
+            NamedType::Type(ts_type) => ts_type.span(),
+        }
     }
 
     fn get_next(&mut self) -> Option<Box<Self>> {
