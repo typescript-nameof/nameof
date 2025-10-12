@@ -120,6 +120,8 @@ pub enum NameSource<'a> {
     Param(&'a ExprOrSpread),
     /// Indicates an expression.
     Expr(&'a Expr),
+    /// Indicates a type.
+    Type(&'a TsType),
 }
 
 /// Represents a common `nameof` expression.
@@ -878,10 +880,9 @@ impl NameofVisitor {
                     args.len(),
                 ) {
                     (0 | 1, 1) => Self::get_name_context(NameSource::Param(&args[0]))?,
-                    (1, 0) => NameContext {
-                        node: NamedNode::Type(&*type_args.as_ref().unwrap().params[0]),
-                        syntax_contexts: vec![],
-                    },
+                    (1, 0) => Self::get_name_context(NameSource::Type(
+                        &*type_args.as_ref().unwrap().params[0],
+                    ))?,
                     (type_arg_count, arg_count) => {
                         return Err(NameofError::ArgumentError(call, type_arg_count, arg_count))
                     }
@@ -919,6 +920,10 @@ impl NameofVisitor {
                     }),
                 }
             }
+            NameSource::Type(ts_type) => NameContext {
+                node: NamedNode::Type(ts_type),
+                syntax_contexts: vec![],
+            },
         })
     }
 
