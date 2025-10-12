@@ -172,6 +172,12 @@ impl<'a> SegmentFormat<'a> {
     }
 }
 
+/// Represents a node which has a name.
+pub trait GetNodeContext<'a> {
+    /// Gets the syntax context of the node.
+    fn get_context(&self) -> Option<&'a SyntaxContext>;
+}
+
 /// Represents an expression with custom names.
 pub struct CustomExpr {
     /// The span containing the custom expression.
@@ -192,12 +198,34 @@ enum NamedExpr<'a> {
     Custom(CustomExpr),
 }
 
+impl<'a> GetNodeContext<'a> for NamedExpr<'a> {
+    fn get_context(&self) -> Option<&'a SyntaxContext> {
+        match self {
+            NamedExpr::Expr(Expr::Ident(ident)) => Some(&ident.ctxt),
+            _ => None,
+        }
+    }
+}
+
 /// Represents a type which has a name.
 enum NamedType<'a> {
     /// Indicates a type.
     Type(&'a TsType),
     /// Indicates an entity name.
     Name(&'a TsEntityName),
+}
+
+impl<'a> GetNodeContext<'a> for NamedType<'a> {
+    fn get_context(&self) -> Option<&'a SyntaxContext> {
+        match self {
+            NamedType::Type(TsType::TsTypeQuery(TsTypeQuery {
+                expr_name: TsTypeQueryExpr::TsEntityName(TsEntityName::Ident(ident)),
+                ..
+            }))
+            | NamedType::Name(TsEntityName::Ident(ident)) => Some(&ident.ctxt),
+            _ => None,
+        }
+    }
 }
 
 /// Represents the context of a named node.
@@ -208,8 +236,14 @@ struct NameContext<'a> {
     syntax_contexts: Vec<SyntaxContext>,
 }
 
+/// Provides the functionality to check whether the underlying segment is local.
+pub trait CheckLocalSegment {
+    /// Checks whether the current segment is a variable which was introduced in a `nameof` function expression.
+    fn is_local(&self) -> bool;
+}
+
 /// Represents the segment of a name.
-trait NameSegment<'a> {
+trait NameSegment<'a>: CheckLocalSegment {
     /// Gets the format of the segment.
     fn get_format(&self) -> NameofResult<'a, SegmentFormat<'a>>;
 
@@ -283,13 +317,22 @@ struct NodeSegment<'a, 'b, T> {
     node: T,
 }
 
-impl<'a, 'b, 'c, T> NodeSegment<'a, 'b, T> {
+impl<'a, 'b, 'c, T: GetNodeContext<'c>> NodeSegment<'a, 'b, T> {
     /// Initializes a new [`NodeSegment`] instance.
     fn new(visitor: &'a NameofVisitor, local_contexts: &'b Vec<SyntaxContext>, node: T) -> Self {
         Self {
             visitor,
             local_contexts,
             node,
+        }
+    }
+}
+
+impl<'a, 'b, 'c, T: GetNodeContext<'c>> CheckLocalSegment for NodeSegment<'a, 'b, T> {
+    fn is_local(&self) -> bool {
+        match self.node.get_context() {
+            Some(context) => self.local_contexts.contains(context),
+            None => false,
         }
     }
 }
