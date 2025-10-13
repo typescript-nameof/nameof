@@ -12,7 +12,7 @@
 ];
 [
     "log",
-    "x.clear"
+    "clear"
 ];
 [
     "Console",

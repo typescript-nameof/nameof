@@ -133,6 +133,8 @@ pub enum NameSource<'a> {
 
 /// Represents a common `nameof` expression.
 struct CommonExpr<'a> {
+    /// The contexts of the local parameters.
+    local_contexts: Vec<SyntaxContext>,
     /// The [`CallExpr`] holding the `nameof` call.
     call: &'a CallExpr,
     /// The requested method.
@@ -378,6 +380,7 @@ impl<'a, 'b, 'c> NodeSegment<'a, 'b, NamedExpr<'c>> {
                 Ok(Some(NameofExpression::Common(CommonExpr {
                     call,
                     method: Some(NameofMethod::Interpolate),
+                    ..
                 }))) => return Ok(SegmentFormat::Interpolation(call)),
                 _ => {
                     return Err(NameofError::UnsupportedIndexer(UnsupportedIndexer::Prop(
@@ -750,6 +753,7 @@ impl NameofVisitor {
                     callee: Callee::Expr(callee),
                     ..
                 } => Ok(Some(NameofExpression::Common(CommonExpr {
+                    local_contexts: vec![],
                     method: match &**callee {
                         Expr::Ident(ident) if self.is_global_nameof(ident) => None,
                         Expr::Member(MemberExpr {
@@ -867,7 +871,11 @@ impl NameofVisitor {
     ) -> NameofResult<'a, NameSubstitution<'a>> {
         Ok(match expr {
             NameofExpression::Typed(member) => NameSubstitution::Tail(NamedNode::Expr(member)),
-            NameofExpression::Common(CommonExpr { call, method }) => match method {
+            NameofExpression::Common(CommonExpr {
+                local_contexts,
+                call,
+                method,
+            }) => match method {
                 Some(method) => match method {
                     NameofMethod::Collect(format) => {
                         let (start_index, args) = Self::parse_collect_args(&call.args);
@@ -879,7 +887,7 @@ impl NameofVisitor {
 
                         NameSubstitution::Collect {
                             start_index,
-                            local_contexts: syntax_contexts,
+                            local_contexts: [local_contexts, syntax_contexts].concat(),
                             output: format,
                             node,
                         }
@@ -946,7 +954,7 @@ impl NameofVisitor {
                         let nodes: Vec<NameofResult<NamedNode>> = nodes.collect();
 
                         NameSubstitution::Array {
-                            local_contexts: syntax_contexts,
+                            local_contexts: [local_contexts, syntax_contexts].concat(),
                             nodes: nodes.into_iter().process_results(|nodes| nodes.collect())?,
                         }
                     }
@@ -1026,7 +1034,19 @@ impl NameofVisitor {
                         Ok(Some(ExprOrSpread {
                             expr: Box::new(match n {
                                 NamedNode::Expr(expr) => match self.get_nameof_expression(expr) {
-                                    Ok(Some(expr)) => self.get_replacement(expr)?,
+                                    Ok(Some(expr)) => self.get_replacement(match expr {
+                                        NameofExpression::Common(expr) => {
+                                            NameofExpression::Common(CommonExpr {
+                                                local_contexts: [
+                                                    expr.local_contexts,
+                                                    local_contexts.clone(),
+                                                ]
+                                                .concat(),
+                                                ..expr
+                                            })
+                                        }
+                                        expr => expr,
+                                    })?,
                                     _ => Expr::Lit(Lit::from(
                                         NodeSegment::new(
                                             self,
