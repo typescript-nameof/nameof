@@ -1,0 +1,15 @@
+{
+  "$schema": "https://swc.rs/schema.json",
+  "jsc": {
+    "parser": {
+      "syntax": "typescript"
+    },
+    "target": "esnext",
+    "experimental": {
+      "runPluginFirst": true,
+      "plugins": [
+        ["@typescript-nameof/swc", {}]
+      ]
+    }
+  }
+}
