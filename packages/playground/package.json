@@ -25,7 +25,8 @@
     "test:webpack": "npm run pretest && cd ../webpack-workspace && cross-env NODE_OPTIONS=\"--loader ts-node/esm\" webpack --watch",
     "test:ts-jest": "npm run pretest && jest --watchAll",
     "test:babel-plugin": "npm run pretest && babel ./src/test --extensions \".ts\" --out-dir ./out/babel --watch",
-    "test:babel-macro": "npm run pretest && babel ./src/test --config-file ./babel.macro.cts --extensions \".ts,.cts\" --out-dir ./out/macro --watch"
+    "test:babel-macro": "npm run pretest && babel ./src/test --config-file ./babel.macro.cts --extensions \".ts,.cts\" --out-dir ./out/macro --watch",
+    "test:swc": "npm run pretest && swc --watch --strip-leading-paths --out-dir out/swc src/test"
   },
   "dependencies": {
     "@babel/cli": "^7.25.7",
