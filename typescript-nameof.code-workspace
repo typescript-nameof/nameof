@@ -281,6 +281,26 @@
                 ]
             },
             {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `swc` Plugin",
+                "cwd": "${workspaceFolder:playground}",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare Playground",
+                "program": "${workspaceFolder:Solution Items}/node_modules/@swc/cli/bin/swc.js",
+                "args": [
+                    "--watch",
+                    "--strip-leading-paths",
+                    "--out-dir",
+                    "./out/swc",
+                    "./src/test"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder}/**",
+                    "!**/node_modules/**"
+                ]
+            },
+            {
                 "type": "extensionHost",
                 "request": "launch",
                 "name": "Launch `nameof` Plugin Extension",
