@@ -33,13 +33,20 @@
     "@babel/core": "^7.25.8",
     "@babel/preset-env": "^7.25.8",
     "@babel/preset-typescript": "^7.25.7",
+    "@rspack/cli": "^1.5.8",
+    "@rspack/core": "^1.5.8",
     "@types/babel__core": "^7.20.5",
     "@types/jest": "^29.5.13",
+    "@types/lodash.merge": "^4.6.9",
     "@types/nameof": "file:../types",
+    "@types/webpack-node-externals": "^3.0.4",
+    "@typescript-nameof/babel": "^0.0.11",
     "babel-plugin-macros": "^3.1.0",
     "cross-env": "^7.0.3",
     "jest": "^29.7.0",
-    "ts-jest": "^29.2.5"
+    "lodash.merge": "^4.6.2",
+    "ts-jest": "^29.2.5",
+    "webpack-node-externals": "^3.0.0"
   },
   "devDependencies": {
     "@manuth/package-json-editor": "^3.2.1",
