@@ -1,0 +1,12 @@
+  x The specified expression `2 * 2` is not supported.
+   ,-[input.js:1:1]
+ 1 | nameof(2 * 2);
+   :        ^^^^^
+ 2 | nameof<() => void>();
+   `----
+  x The specified expression `() => void` is not supported.
+   ,-[input.js:2:1]
+ 1 | nameof(2 * 2);
+ 2 | nameof<() => void>();
+   :        ^^^^^^^^^^
+   `----

@@ -1,0 +1,25 @@
+{
+    "extends": "../../../tsconfig.base.json",
+    "compilerOptions": {
+        "noEmit": true,
+        "allowJs": true,
+        "checkJs": true,
+        "types": [
+            "@typescript-nameof/types",
+            "node"
+        ],
+        "target": "es2015"
+    },
+    "include": [
+        "**/*.js",
+        "**/*.ts",
+        "**/*.mjs",
+        "**/*.mts"
+    ],
+    "exclude": [
+        "**/output.js",
+        "**/output.ts",
+        "**/output.mjs",
+        "**/output.mts"
+    ]
+}

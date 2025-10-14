@@ -1,0 +1,26 @@
+{
+    "name": "@typescript-nameof/swc",
+    "version": "0.1.0",
+    "description": "Allows the use of `nameof()` calls in swc projects.",
+    "author": "Manuel Thalmann <m@nuth.ch>",
+    "license": "MIT",
+    "keywords": ["swc-plugin"],
+    "main": "target/wasm32-wasip1/release/swc_plugin_nameof.wasm",
+    "homepage": "https://github.com/typescript-nameof/nameof#readme",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/typescript-nameof/nameof.git",
+      "directory": "packages/swc"
+    },
+    "bugs": {
+      "url": "https://github.com/typescript-nameof/nameof/issues"
+    },
+    "publishConfig": {
+      "access": "public"
+    },
+    "scripts": {
+        "prepublishOnly": "cargo build-wasip1 --release"
+    },
+    "files": [],
+    "preferUnplugged": true
+}
