@@ -1,0 +1,1 @@
+nameof.split(process.argv);

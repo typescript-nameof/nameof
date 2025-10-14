@@ -103,6 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
+# Temporary files
+.swc/
+
 # Scripts
 scripts/
 

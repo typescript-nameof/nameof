@@ -1,0 +1,2 @@
+"TEST.VARIABLE";
+"420";

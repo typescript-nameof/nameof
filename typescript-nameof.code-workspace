@@ -14,6 +14,9 @@
             "path": "./packages/babel"
         },
         {
+            "path": "./packages/swc"
+        },
+        {
             "path": "./packages/common"
         },
         {
@@ -64,6 +67,20 @@
                 "presentation": {
                     "order": 2
                 }
+            },
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "Launch `swc` Tests",
+                "cargo": {
+                    "cwd": "${workspaceFolder:swc}",
+                    "args": [
+                        "test",
+                        "--no-run",
+                        "--lib"
+                    ]
+                },
+                "args": []
             },
             {
                 "type": "node",
@@ -260,6 +277,26 @@
                     "${workspaceFolder:nameof}/**",
                     "${workspaceFolder:common}/**",
                     "${workspaceFolder:babel}/**",
+                    "!**/node_modules/**"
+                ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Test `swc` Plugin",
+                "cwd": "${workspaceFolder:playground}",
+                "console": "integratedTerminal",
+                "preLaunchTask": "Prepare Playground",
+                "program": "${workspaceFolder:Solution Items}/node_modules/@swc/cli/bin/swc.js",
+                "args": [
+                    "--watch",
+                    "--strip-leading-paths",
+                    "--out-dir",
+                    "./out/swc",
+                    "./src/test"
+                ],
+                "resolveSourceMapLocations": [
+                    "${workspaceFolder}/**",
                     "!**/node_modules/**"
                 ]
             },

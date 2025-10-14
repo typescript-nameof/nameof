@@ -1,0 +1,1 @@
+nameof.dosenbrot(console);

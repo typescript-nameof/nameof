@@ -1,0 +1,1 @@
+nameof.full((x)=>x);
