@@ -11,6 +11,7 @@ lto = true
 
 [dependencies]
 anyhow = "1.0.98"
+nameof_engine = { path = "../engine" }
 itertools = "0.14.0"
 serde = "1"
 swc = "33.0.0"
