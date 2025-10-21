@@ -1,0 +1,14 @@
+{
+  "name": "webpack-workspace",
+  "version": "0.0.11",
+  "type": "module",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "ts-loader": "^9.5.1",
+    "typescript": "file:node_modules/webpack-playground-typescript",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-playground-typescript": "npm:typescript@^5.6.3"
+  }
+}

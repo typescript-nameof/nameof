@@ -1001,6 +1001,9 @@ dependencies = [
 [[package]]
 name = "nameof_engine"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+]
 
 [[package]]
 name = "new_debug_unreachable"

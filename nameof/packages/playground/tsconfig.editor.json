@@ -1,0 +1,12 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "noEmit": true,
+        "rootDir": "../"
+    },
+    "files": [
+        "./babel.config.cts",
+        "./babel.macro.cts",
+        "./jest.config.cjs"
+    ]
+}

@@ -1,0 +1,63 @@
+{
+  "name": "@typescript-nameof/nameof",
+  "version": "0.0.11",
+  "type": "module",
+  "description": "Allows the use of `nameof()` calls in TypeScript projects.",
+  "author": "Manuel Thalmann <m@nuth.ch>",
+  "license": "MIT",
+  "keywords": [
+    "nameof",
+    "typescript",
+    "transformer",
+    "custom-transformer"
+  ],
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.cts",
+      "default": "./lib/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/index.cjs",
+  "types": "./lib/index.d.cts",
+  "homepage": "https://github.com/typescript-nameof/nameof#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typescript-nameof/nameof.git",
+    "directory": "packages/nameof"
+  },
+  "bugs": {
+    "url": "https://github.com/typescript-nameof/nameof/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "copyfiles ../../{CHANGELOG.md,LICENSE} -u 2 . && npm run --prefix ../.. build",
+    "test": "tsd --files ./type-tests && mocha"
+  },
+  "dependencies": {
+    "@typescript-nameof/common": "^0.0.11",
+    "fs-extra": "^11.2.0",
+    "globby": "^14.0.2",
+    "ts-patch": "^3.2.1"
+  },
+  "devDependencies": {
+    "@manuth/package-json-editor": "^3.2.1",
+    "@manuth/temp-files": "^3.0.3",
+    "@manuth/typescript-languageservice-tester": "^5.0.2",
+    "@tsd/typescript": "npm:nop@^1.0.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/mocha": "^10.0.9",
+    "@typescript-nameof/test": "^0.0.11",
+    "copyfiles": "^2.4.1",
+    "ts-jest": "^29.2.5",
+    "ts-morph": "^24.0.0",
+    "ts-nameof-proxy": "^1.0.1",
+    "tsd": "^0.31.2",
+    "typescript": "^5.6.3"
+  },
+  "peerDependencies": {
+    "typescript": "*"
+  }
+}

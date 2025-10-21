@@ -1,0 +1,11 @@
+{
+    "extends": "../playground/tsconfig.base.json",
+    "compilerOptions": {
+        "noEmit": true,
+        "allowJs": true,
+        "checkJs": true
+    },
+    "files": [
+        "./webpack.config.cts"
+    ]
+}

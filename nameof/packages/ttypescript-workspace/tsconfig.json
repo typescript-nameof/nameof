@@ -1,0 +1,16 @@
+{
+    "extends": "../playground/tsconfig.test.json",
+    "compilerOptions": {
+        "outDir": "../playground/out/ttypescript",
+        "plugins": [
+            {
+                "transform": "../nameof"
+            }
+        ]
+    },
+    "references": [
+        {
+            "path": "../babel"
+        }
+    ]
+}

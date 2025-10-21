@@ -1,0 +1,101 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    outputs:
+      heading-pattern: ${{ steps.escape-tag-name.outputs.heading-pattern }}
+    steps:
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+      - id: escape-tag-name
+        name: Escape Tag Name
+        run: |
+          npm install @stdlib/utils-escape-regexp-string --no-save
+          pattern="$(node -e "console.log(require('@stdlib/utils-escape-regexp-string')('${{ github.ref_name }}'))")"
+          echo "heading-pattern=/^## \(.* \(${pattern}\|\[${pattern}\]\)\)\$/" >> $GITHUB_OUTPUT
+  prerequisites:
+    name: Verify Prerequisites
+    uses: ./.github/workflows/prerequisites.yml
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
+      VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+  collect-changelog:
+    name: Collect Release Notes
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+      - prerequisites
+    outputs:
+      title: ${{ steps.release-info.outputs.title }}
+      notes: ${{ steps.release-info.outputs.notes }}
+    env:
+      CURRENT_PATTERN: ${{ needs.prepare.outputs.heading-pattern }}
+      ANY_PATTERN: /^## \(.* \(v[0-9]*\|\[.*\]\)\)/
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect Current Changelog Entries
+        run: '[ ! -z "$(sed "${CURRENT_PATTERN}p;d" CHANGELOG.md)" ] || { echo "No Changelog Entries Found!" && false; }'
+      - id: release-info
+        name: Collect Release Info
+        run: |
+          notes="$(sed "1,${CURRENT_PATTERN}{ ${CURRENT_PATTERN}P ; d } ; ${ANY_PATTERN},\$d" CHANGELOG.md)"
+          title="$(echo "$notes" | sed "2,\$d ; s${ANY_PATTERN}\1/")"
+          echo "title=$title" >> $GITHUB_OUTPUT
+          {
+            echo "notes<<EOF"
+            echo "$notes"
+            echo EOF
+          } >> $GITHUB_OUTPUT
+  publish-npm:
+    name: Publish Package to NPM
+    uses: ./.github/workflows/npm-publish.yml
+    if: github.event_name == 'workflow_dispatch'
+    needs:
+      - collect-changelog
+    secrets:
+      npmToken: ${{ secrets.NPM_TOKEN }}
+  publish-gh:
+    name: Publish Package to GitHub Registry
+    uses: ./.github/workflows/npm-publish.yml
+    if: github.event_name == 'workflow_dispatch'
+    permissions:
+      packages: write
+    needs:
+      - collect-changelog
+    with:
+      registry: https://npm.pkg.github.com
+    secrets:
+      npmToken: ${{ secrets.GITHUB_TOKEN }}
+  release:
+    name: Create Release on GitHub
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    needs:
+      - collect-changelog
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: npm clean-install
+      - name: Create NPM Packages
+        run: npm pack -w @typescript-nameof/nameof @typescript-nameof/types @typescript-nameof/babel @typescript-nameof/common @typescript-nameof/common-types
+      - name: Create `vscode` Extension
+        run: |
+          npm exec --workspace ./packages/vscode -- vsce package
+          npm run --prefix ./packages/vscode vscode:postpublish
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ needs.collect-changelog.outputs.title }}
+          body: ${{ needs.collect-changelog.outputs.notes }}
+          files: |
+            *.tgz
+            packages/vscode/*.vsix
