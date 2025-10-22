@@ -29,11 +29,6 @@ jobs:
       - id: fetch-publisher
         name: Determining Publisher Name
         run: echo "publisher=$(node -e "console.log(JSON.parse(require('fs').readFileSync('./packages/vscode/package.json').toString()).publisher)")" >> $GITHUB_OUTPUT
-  check-npm-token:
-    name: Verify NPM Access Token
-    uses: ./.github/workflows/npm-token.yml
-    secrets:
-      npmToken: ${{ secrets.NPM_TOKEN }}
   check-marketplace-tokens:
     runs-on: ubuntu-latest
     name: Verify Marketplace Tokens
