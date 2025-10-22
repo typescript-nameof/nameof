@@ -10,7 +10,7 @@ on:
     secrets:
       npmToken:
         description: The Personal Access Token for authenticating to the NPM package repository
-        required: true
+        required: false
 
 jobs:
   publish:
