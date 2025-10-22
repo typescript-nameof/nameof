@@ -27,6 +27,9 @@ jobs:
     secrets:
       # OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
       VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+    permissions:
+      id-token: write
+      contents: read
   collect-changelog:
     name: Collect Release Notes
     runs-on: ubuntu-latest
@@ -60,11 +63,16 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     needs:
       - collect-changelog
+    permissions:
+      id-token: write
+      contents: read
   publish-gh:
     name: Publish Package to GitHub Registry
     uses: ./.github/workflows/npm-publish.yml
     if: github.event_name == 'workflow_dispatch'
     permissions:
+      id-token: write
+      contents: read
       packages: write
     needs:
       - collect-changelog
