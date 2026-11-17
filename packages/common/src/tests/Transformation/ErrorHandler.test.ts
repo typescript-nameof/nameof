@@ -59,6 +59,8 @@ export function ErrorHandlerTests(): void
                 {
                     errorHandler = new ErrorHandler();
 
+                    node = {} as any;
+
                     location = {
                         filePath: join(import.meta.dirname, "file.ts"),
                         line: 13,

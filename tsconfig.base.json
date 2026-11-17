@@ -7,6 +7,9 @@
             "ES2022"
         ],
         "target": "ES6",
+        "types": [
+            "node"
+        ],
         "paths": {
             "@typescript-nameof/*": [
                 "./packages/*"

@@ -51,11 +51,11 @@
     "@types/mocha": "^10.0.9",
     "@typescript-nameof/test": "^0.0.11",
     "copyfiles": "^2.4.1",
-    "ts-jest": "^29.2.5",
+    "ts-jest": "^29.4.15",
     "ts-morph": "^24.0.0",
     "ts-nameof-proxy": "^1.0.1",
     "tsd": "^0.31.2",
-    "typescript": "^5.6.3"
+    "typescript": "npm:@typescript/typescript6@^6.0.2"
   },
   "peerDependencies": {
     "typescript": "<7"

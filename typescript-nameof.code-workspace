@@ -148,7 +148,7 @@
                 "cwd": "${workspaceFolder:playground}",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare Playground",
-                "program": "${workspaceFolder:Solution Items}/node_modules/typescript/bin/tsc",
+                "program": "${workspaceFolder:Solution Items}/node_modules/typescript/bin/tsc6",
                 "args": [
                     "--build",
                     "--force",

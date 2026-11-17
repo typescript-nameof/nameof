@@ -14,7 +14,7 @@
     "url": "https://github.com/typescript-nameof/nameof/issues"
   },
   "scripts": {
-    "prepare": "ts-patch install",
+    "prepare": "ts-patch install --dir node_modules/@typescript/old",
     "build": "tsc --build tsconfig.build.json",
     "rebuild": "npm run clean && npm run build",
     "watch": "npm run build -- --watch",
@@ -42,14 +42,14 @@
     "globals": "^15.11.0",
     "globby": "^14.0.2",
     "jiti": "^2.3.3",
-    "mocha": "^10.7.3",
+    "mocha": "^12.0.3",
     "npm-which": "^3.0.1",
     "rimraf": "^6.0.1",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.2",
     "ts-patch": "^3.2.1",
     "ttypescript": "npm:nop@^1.0.0",
-    "typescript": "^5.6.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "webpack-playground-typescript": "npm:nop@^1.0.0"
   },
   "workspaces": {
