@@ -168,7 +168,7 @@
                 "cwd": "${workspaceFolder:Solution Items}/packages/ttypescript-workspace",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare Playground",
-                "program": "${workspaceFolder:Solution Items}/node_modules/ttypescript/bin/tsc",
+                "program": "node_modules/ttypescript/bin/tsc",
                 "args": [
                     "--build",
                     "--force",
