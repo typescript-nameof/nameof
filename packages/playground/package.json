@@ -21,7 +21,7 @@
     "pretest": "copyfiles -u 1 ./src/{index.ts,jest.test.ts,macro.cts} ./src/test",
     "test:ts-patch": "npm run pretest && tsc --build tsconfig.test.json --watch",
     "test:ttsc": "npm run pretest && cd ../ttypescript-workspace && npx ttsc --build . --watch",
-    "test:webpack": "npm run pretest && cd ../webpack-workspace && cross-env NODE_OPTIONS=\"--loader ts-node/esm\" webpack --watch",
+    "test:webpack": "npm run pretest && cd ../webpack-workspace && webpack --watch",
     "test:ts-jest": "npm run pretest && jest --watchAll",
     "test:babel-plugin": "npm run pretest && babel ./src/test --extensions \".ts\" --out-dir ./out/babel --watch",
     "test:babel-macro": "npm run pretest && babel ./src/test --config-file ./babel.macro.cts --extensions \".ts,.cts\" --out-dir ./out/macro --watch"
@@ -34,7 +34,6 @@
     "@types/jest": "^30.0.0",
     "@types/nameof": "file:../types",
     "babel-plugin-macros": "^3.1.0",
-    "cross-env": "^10.1.0",
     "jest": "^30.5.2",
     "ts-jest": "^29.4.15"
   },
