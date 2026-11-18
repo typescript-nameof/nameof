@@ -124,7 +124,7 @@ export function ResultBuilderTests(): void
                     node = {
                         type: NodeKind.IdentifierNode,
                         name: "console"
-                    } as Identifier;
+                    } satisfies Identifier;
 
                     identifierPath = {
                         type: PathKind.Identifier,
@@ -189,7 +189,7 @@ export function ResultBuilderTests(): void
                                     type: PathKind.Interpolation,
                                     source: node,
                                     node
-                                } as IInterpolation<State>);
+                                } satisfies IInterpolation<State>);
 
                             strictEqual(builder.Result.type, ResultType.Template);
                         });

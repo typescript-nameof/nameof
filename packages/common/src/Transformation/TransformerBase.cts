@@ -42,11 +42,7 @@ export abstract class TransformerBase<TInput, TNode, TContext extends ITransform
      */
     protected get Adapter(): IAdapter<TInput, TNode, TContext>
     {
-        if (!this.adapter)
-        {
-            this.adapter = this.InitializeAdapter();
-        }
-
+        this.adapter ??= this.InitializeAdapter();
         return this.adapter;
     }
 

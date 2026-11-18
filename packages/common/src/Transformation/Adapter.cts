@@ -344,9 +344,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
         {
             let nameofCall = this.GetNameofCall(node.Expression, context);
 
-            if (
-                nameofCall &&
-                nameofCall.function === NameofFunction.Typed)
+            if (nameofCall?.function === NameofFunction.Typed)
             {
                 return {
                     ...nameofCall,
@@ -443,8 +441,7 @@ export abstract class Adapter<TFeatures extends TransformerFeatures<TNode, TCont
             let nameofCall = this.GetNameofCall(node, context);
 
             if (
-                nameofCall &&
-                nameofCall.function === NameofFunction.Interpolate)
+                nameofCall?.function === NameofFunction.Interpolate)
             {
                 let expectedLength = 1;
 

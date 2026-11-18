@@ -196,8 +196,8 @@ export function TypeScriptAdapterTests(): void
                 file.replaceWithText(code);
 
                 return {
-                    node: file.getFirstDescendantByKindOrThrow(kind).compilerNode as any,
-                    context: { file: file.compilerNode as any }
+                    node: file.getFirstDescendantByKindOrThrow(kind).compilerNode,
+                    context: { file: file.compilerNode }
                 };
             }
 
@@ -207,7 +207,7 @@ export function TypeScriptAdapterTests(): void
                     ts = tsMorph as any;
                     adapter = new TestAdapter(new TypeScriptFeatures());
                     file = new Project().createSourceFile("/file.ts");
-                    context = { file: file.compilerNode as any };
+                    context = { file: file.compilerNode };
                 });
 
             teardown(
@@ -230,8 +230,8 @@ export function TypeScriptAdapterTests(): void
                                 {
                                     let prefix = new Array(i + 1).join("\n") + new Array(j + 1).join(" ");
                                     let sourceFile = new Project().createSourceFile("/file.ts", `${prefix}let x = 0;`);
-                                    let file: typescript.SourceFile = sourceFile.compilerNode as any;
-                                    let node: typescript.Node = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.VariableDeclarationList).compilerNode as any;
+                                    let file: typescript.SourceFile = sourceFile.compilerNode;
+                                    let node: typescript.Node = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.VariableDeclarationList).compilerNode;
                                     let location = adapter.GetLocation(node, { file });
                                     strictEqual(location.filePath, file.fileName);
                                     strictEqual(location.line, i);
@@ -251,8 +251,8 @@ export function TypeScriptAdapterTests(): void
                         {
                             let typeKeyword = "void";
                             let sourceFile = new Project().createSourceFile("/file.ts", `let x: Promise<${typeKeyword}>`);
-                            let file: typescript.SourceFile = sourceFile.compilerNode as any;
-                            let node: typescript.Node = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.VoidKeyword).compilerNode as any;
+                            let file: typescript.SourceFile = sourceFile.compilerNode;
+                            let node: typescript.Node = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.VoidKeyword).compilerNode;
                             strictEqual(adapter.GetSourceCode(node, { file }), typeKeyword);
                         });
                 });
@@ -978,7 +978,7 @@ export function TypeScriptAdapterTests(): void
                                     type: ResultType.Node,
                                     node
                                 },
-                                printNode(node as any));
+                                printNode(node));
                         });
                 });
         });

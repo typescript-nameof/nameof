@@ -76,11 +76,7 @@ export class TypeScriptAdapter extends Adapter<TypeScriptFeatures, ts.Node, ts.N
      */
     public get Printer(): ts.Printer
     {
-        if (this.printer === undefined)
-        {
-            this.printer = this.TypeScript.createPrinter();
-        }
-
+        this.printer ??= this.TypeScript.createPrinter();
         return this.printer;
     }
 
