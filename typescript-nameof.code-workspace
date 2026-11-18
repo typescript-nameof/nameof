@@ -134,11 +134,6 @@
                 "request": "launch",
                 "name": "Launch Version Script",
                 "cwd": "${workspaceFolder:Solution Items}",
-                "runtimeArgs": [
-                    "--no-warnings=ExperimentalWarning",
-                    "--loader",
-                    "ts-node/esm/transpile-only"
-                ],
                 "program": "${workspaceFolder:Solution Items}/scripts/bumpVersion.mts"
             },
             {

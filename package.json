@@ -22,7 +22,7 @@
     "lint": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" eslint --max-warnings 0 --flag unstable_ts_config ./scripts eslint.config.ts ./packages/*/src ./packages/babel/macro/index.cts ./packages/*/webpack.config.cts",
     "lint-ide": "npm run lint || exit 0",
     "test": "npm run --if-present --workspaces test",
-    "bump-version": "node --no-warnings=ExperimentalWarning --loader ts-node/esm/transpile-only ./scripts/bumpVersion.mts"
+    "bump-version": "node ./scripts/bumpVersion.mts"
   },
   "devDependencies": {
     "@manuth/eslint-plugin-typescript": "^5.0.3",
@@ -46,7 +46,6 @@
     "npm-which": "^3.0.1",
     "rimraf": "^6.1.4",
     "source-map-support": "^0.5.21",
-    "ts-node": "^10.9.2",
     "ts-patch": "^4.0.1",
     "ttypescript": "npm:nop@^1.0.0",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
