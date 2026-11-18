@@ -5,7 +5,7 @@ import { BabelTransformer } from "..";
 let nameofMacro: MacroHandler =
     (params) =>
     {
-        new BabelTransformer(params.babel, params.config?.errorHandler).Macro(params);
+        new BabelTransformer(params.babel as any, params.config?.errorHandler).Macro(params);
     };
 
 const nameof = createMacro(nameofMacro, { configName: "nameof" }) as INameOfProvider;

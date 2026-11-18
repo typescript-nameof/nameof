@@ -1,5 +1,4 @@
-// eslint-disable-next-line n/no-unpublished-import
-import type babel from "@babel/core";
+import type * as babel from "@babel/core" assert { "resolution-mode": "import" };
 import { BabelTransformer } from "./Transformation/BabelTransformer.cjs";
 
 export { BabelTransformer };
@@ -13,7 +12,7 @@ export { BabelTransformer };
  * @returns
  * A plugin for transforming `nameof` calls.
  */
-function plugin(context: typeof babel): babel.PluginItem
+function plugin(context: typeof babel): babel.PluginObject
 {
     return new BabelTransformer(context).Plugin;
 }

@@ -1,6 +1,4 @@
-// eslint-disable-next-line n/no-unpublished-import
-import type { NodePath, types } from "@babel/core";
-import generate from "@babel/generator";
+import type { NodePath, types } from "@babel/core" assert { "resolution-mode": "import" };
 import { Adapter, CallExpressionNode, FunctionNode, IdentifierNode, IndexAccessNode, INodeLocation, MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, NumericLiteralNode, ParsedNode, PropertyAccessNode, ResultType, StringLiteralNode, UnsupportedNode, UnsupportedNodeError } from "@typescript-nameof/common";
 import { BabelFeatures } from "./BabelFeatures.cjs";
 import { IBabelContext } from "./IBabelContext.cjs";
@@ -132,7 +130,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
      */
     public PrintSourceCode(item: types.Node, context: IBabelContext): string
     {
-        return generate(item, { compact: true }).code;
+        return this.Features.Babel.generate(item, { compact: true }).code;
     }
 
     /**
@@ -284,7 +282,7 @@ export class BabelAdapter extends Adapter<BabelFeatures, NodePath, types.Node, I
             return new CallExpressionNode<types.Node>(
                 item,
                 item.callee,
-                item.typeParameters?.params ?? [],
+                item.typeArguments?.params ?? [],
                 item.arguments);
         }
         else if (

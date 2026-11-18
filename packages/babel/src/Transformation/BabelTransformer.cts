@@ -1,6 +1,6 @@
-import type babel = require("@babel/core");
+import type * as babel from "@babel/core" assert { "resolution-mode": "import" };
 import { IAdapter, IErrorHandler, TransformerBase } from "@typescript-nameof/common";
-import { MacroError, MacroHandler } from "babel-plugin-macros";
+import macro = require("babel-plugin-macros");
 import { BabelAdapter } from "./BabelAdapter.cjs";
 import { BabelFeatures } from "./BabelFeatures.cjs";
 import { IBabelContext } from "./IBabelContext.cjs";
@@ -8,7 +8,7 @@ import { IBabelContext } from "./IBabelContext.cjs";
 /**
  * Provides the functionality to transform babel nodes and files.
  */
-export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node, IBabelContext, BabelFeatures>
+export class BabelTransformer extends TransformerBase<babel.NodePath, babel.types.Node, IBabelContext, BabelFeatures>
 {
     /**
      * Initializes a new instance of the {@linkcode BabelTransformer} class.
@@ -19,7 +19,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
      * @param errorHandler
      * A component for handling errors.
      */
-    public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<babel.Node, IBabelContext>)
+    public constructor(babelAPI: typeof babel, errorHandler?: IErrorHandler<babel.types.Node, IBabelContext>)
     {
         super(new BabelFeatures(babelAPI, errorHandler));
     }
@@ -27,7 +27,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
     /**
      * Gets a plugin for the use with `babel`.
      */
-    public get Plugin(): babel.PluginObj
+    public get Plugin(): babel.PluginObject
     {
         return {
             visitor: {
@@ -69,7 +69,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
     /**
      * Gets a macro for transforming `nameof` calls.
      */
-    public get Macro(): MacroHandler
+    public get Macro(): macro.MacroHandler
     {
         return (params): void =>
         {
@@ -77,9 +77,9 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
                 (context) =>
                 {
                     let babelContext: IBabelContext = context as IBabelContext;
-                    babelContext.state = params.state;
+                    babelContext.state = params.state as any;
 
-                    (params.references.default as Array<babel.NodePath<babel.types.Identifier>>).slice().reverse().forEach(
+                    (params.references.default as any as Array<babel.NodePath<babel.types.Identifier>>).slice().reverse().forEach(
                         (path) =>
                         {
                             let t = this.Features.Types;
@@ -129,7 +129,7 @@ export class BabelTransformer extends TransformerBase<babel.NodePath, babel.Node
                                     return grandParentPath;
                                 }
 
-                                throw new MacroError(`[typescript-nameof]: Could not find a call expression at path: ${grandParentPath?.getSource()}`);
+                                throw new macro.MacroError(`[typescript-nameof]: Could not find a call expression at path: ${grandParentPath?.getSource()}`);
                             }
                         });
                 });

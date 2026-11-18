@@ -1,11 +1,10 @@
-// eslint-disable-next-line n/no-unpublished-import
-import type { Node, PluginPass } from "@babel/core";
+import type { PluginPass, types } from "@babel/core" assert { "resolution-mode": "import" };
 import { ITransformationContext } from "@typescript-nameof/common";
 
 /**
  * Represents the context of a `babel` transformation.
  */
-export interface IBabelContext extends ITransformationContext<Node>
+export interface IBabelContext extends ITransformationContext<types.Node>
 {
     /**
      * The state of the plugin.

@@ -18,7 +18,6 @@
     "access": "public"
   },
   "scripts": {
-    "prepare": "ts-patch install",
     "pretest": "copyfiles -u 1 ./src/{index.ts,jest.test.ts,macro.cts} ./src/test",
     "test:ts-patch": "npm run pretest && tsc --build tsconfig.test.json --watch",
     "test:ttsc": "npm run pretest && cd ../ttypescript-workspace && npx ttsc --build . --watch",
@@ -28,15 +27,14 @@
     "test:babel-macro": "npm run pretest && babel ./src/test --config-file ./babel.macro.cts --extensions \".ts,.cts\" --out-dir ./out/macro --watch"
   },
   "dependencies": {
-    "@babel/cli": "^7.25.7",
-    "@babel/core": "^7.25.8",
-    "@babel/preset-env": "^7.25.8",
-    "@babel/preset-typescript": "^7.25.7",
-    "@types/babel__core": "^7.20.5",
+    "@babel/cli": "^8.1.0",
+    "@babel/core": "^8.1.2",
+    "@babel/preset-env": "^8.0.7",
+    "@babel/preset-typescript": "^8.0.7",
     "@types/jest": "^30.0.0",
     "@types/nameof": "file:../types",
     "babel-plugin-macros": "^3.1.0",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "jest": "^30.5.2",
     "ts-jest": "^29.4.15"
   },
