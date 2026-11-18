@@ -28,11 +28,7 @@ export class TransformerFeatures<TNode, TContext = Record<string, never>>
      */
     protected get ErrorHandler(): IErrorHandler<TNode, TContext> | undefined
     {
-        if (!this.errorHandler)
-        {
-            this.errorHandler = this.InitializeErrorHandler();
-        }
-
+        this.errorHandler ??= this.InitializeErrorHandler();
         return this.errorHandler;
     }
 

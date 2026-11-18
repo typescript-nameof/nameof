@@ -14,7 +14,7 @@
     "url": "https://github.com/typescript-nameof/nameof/issues"
   },
   "scripts": {
-    "prepare": "ts-patch install",
+    "prepare": "ts-patch install --dir node_modules/@typescript/old",
     "build": "tsc --build tsconfig.build.json",
     "rebuild": "npm run clean && npm run build",
     "watch": "npm run build -- --watch",
@@ -22,7 +22,7 @@
     "lint": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" eslint --max-warnings 0 --flag unstable_ts_config ./scripts eslint.config.ts ./packages/*/src ./packages/babel/macro/index.cts ./packages/*/webpack.config.cts",
     "lint-ide": "npm run lint || exit 0",
     "test": "npm run --if-present --workspaces test",
-    "bump-version": "node --no-warnings=ExperimentalWarning --loader ts-node/esm/transpile-only ./scripts/bumpVersion.mts"
+    "bump-version": "node ./scripts/bumpVersion.mts"
   },
   "devDependencies": {
     "@manuth/eslint-plugin-typescript": "^5.0.3",
@@ -33,24 +33,23 @@
     "@types/jest": "file:packages/nop",
     "@types/mocha": "file:packages/nop",
     "@types/nameof": "file:packages/nop",
-    "@types/node": "^22.7.5",
-    "@types/npm-which": "^3.0.3",
-    "@vscode/vsce": "^3.1.1",
-    "cross-env": "^7.0.3",
-    "fs-extra": "^11.2.0",
+    "@types/node": "^26.6.6",
+    "@types/npm-which": "^3.0.4",
+    "@vscode/vsce": "^4.1.1",
+    "cross-env": "^10.1.0",
+    "fs-extra": "^11.4.1",
     "git-branch": "npm:@fork-of/git-branch@^2.1.1",
-    "globals": "^15.11.0",
-    "globby": "^14.0.2",
+    "globals": "^17.14.0",
+    "globby": "^16.2.4",
     "jiti": "^2.3.3",
-    "mocha": "^10.7.3",
+    "mocha": "^12.0.3",
     "npm-which": "^3.0.1",
-    "rimraf": "^6.0.1",
+    "rimraf": "^6.1.4",
     "source-map-support": "^0.5.21",
-    "ts-node": "^10.9.2",
-    "ts-patch": "^3.2.1",
+    "ts-patch": "^4.0.1",
     "ttypescript": "npm:nop@^1.0.0",
-    "typescript": "^5.6.3",
-    "webpack-playground-typescript": "npm:nop@^1.0.0"
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "webpack-playground-typescript": "file:packages/nop"
   },
   "workspaces": {
     "packages": [
@@ -63,7 +62,7 @@
   "overrides": {
     "@manuth/typescript-languageservice-tester": {
       "types-tsconfig": {
-        "type-fest": "npm:nop@^1.0.0"
+        "type-fest": "file:packages/nop"
       }
     }
   }

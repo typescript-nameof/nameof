@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import babel from "@babel/core";
+import { transformAsync } from "@babel/core";
 import { IErrorHandler } from "@typescript-nameof/common";
 import { TransformerTester } from "@typescript-nameof/test";
 import babelPluginMacros from "babel-plugin-macros";
@@ -80,7 +80,7 @@ export class BabelMacroTester extends TransformerTester<undefined>
         try
         {
             result = (
-                await babel.transformAsync(
+                await transformAsync(
                     code,
                     {
                         presets: [
@@ -88,7 +88,7 @@ export class BabelMacroTester extends TransformerTester<undefined>
                         ],
                         plugins: [
                             [
-                                babelPluginMacros,
+                                babelPluginMacros as any,
                                 {
                                     nameof: {
                                         errorHandler

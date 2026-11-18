@@ -134,11 +134,6 @@
                 "request": "launch",
                 "name": "Launch Version Script",
                 "cwd": "${workspaceFolder:Solution Items}",
-                "runtimeArgs": [
-                    "--no-warnings=ExperimentalWarning",
-                    "--loader",
-                    "ts-node/esm/transpile-only"
-                ],
                 "program": "${workspaceFolder:Solution Items}/scripts/bumpVersion.mts"
             },
             {
@@ -148,7 +143,7 @@
                 "cwd": "${workspaceFolder:playground}",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare Playground",
-                "program": "${workspaceFolder:Solution Items}/node_modules/typescript/bin/tsc",
+                "program": "${workspaceFolder:Solution Items}/node_modules/typescript/bin/tsc6",
                 "args": [
                     "--build",
                     "--force",
@@ -168,7 +163,7 @@
                 "cwd": "${workspaceFolder:Solution Items}/packages/ttypescript-workspace",
                 "console": "integratedTerminal",
                 "preLaunchTask": "Prepare Playground",
-                "program": "${workspaceFolder:Solution Items}/node_modules/ttypescript/bin/tsc",
+                "program": "node_modules/ttypescript/bin/tsc",
                 "args": [
                     "--build",
                     "--force",
@@ -290,12 +285,9 @@
         ]
     },
     "settings": {
-        "javascript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
-        "javascript.format.placeOpenBraceOnNewLineForControlBlocks": true,
-        "javascript.format.placeOpenBraceOnNewLineForFunctions": true,
-        "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
-        "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
-        "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
+        "js/ts.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+        "js/ts.format.placeOpenBraceOnNewLineForControlBlocks": true,
+        "js/ts.format.placeOpenBraceOnNewLineForFunctions": true,
         "mochaExplorer.timeout": 0
     },
     "tasks": {

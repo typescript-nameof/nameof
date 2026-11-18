@@ -119,8 +119,13 @@ export abstract class TypeScriptTransformerTester extends TransformerTester<Node
 
         let config = convertCompilerOptionsFromJson(
             {
+                alwaysStrict: false,
                 strictNullChecks: true,
                 target: "ES2022",
+                types: [
+                    "@typescript-nameof/types",
+                    "node"
+                ],
                 ...(
                     this.UsePlugin ?
                         {

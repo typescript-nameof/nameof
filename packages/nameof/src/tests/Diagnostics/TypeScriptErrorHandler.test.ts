@@ -58,7 +58,7 @@ export function TypeScriptErrorHandlerTests(): void
                 () =>
                 {
                     errorHandler = new TestTypeScriptErrorHandler(new TypeScriptFeatures());
-                    sourceFile = new Project().createSourceFile("/file.ts", "let x = 10").compilerNode as any;
+                    sourceFile = new Project().createSourceFile("/file.ts", "let x = 10").compilerNode;
                     node = sourceFile.getChildren()[0];
 
                     context = {

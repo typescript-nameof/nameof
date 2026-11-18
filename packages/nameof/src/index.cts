@@ -63,7 +63,7 @@ function nameof(...args: [Program | Parameters<server.PluginModuleFactory>[0], R
 
     if ("typescript" in args[0])
     {
-        return new LanguageServicePluginModule(args[0].typescript as any);
+        return new LanguageServicePluginModule(args[0].typescript);
     }
     else
     {

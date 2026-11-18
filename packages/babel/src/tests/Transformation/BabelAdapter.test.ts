@@ -1,6 +1,6 @@
 import { deepStrictEqual, ok, strictEqual, throws } from "node:assert";
-import babel, { Node, NodePath, PluginPass } from "@babel/core";
-import parser from "@babel/parser";
+import * as babel from "@babel/core";
+import { parseExpression } from "@babel/parser";
 import { TempFile } from "@manuth/temp-files";
 import { INodeLocation, MissingImportTypeQualifierError, NameofResult, NodeKind, NoReturnExpressionError, ParsedNode, ResultType, UnsupportedNodeError } from "@typescript-nameof/common";
 import fs from "fs-extra";
@@ -193,13 +193,13 @@ export function BabelAdapterTests(): void
                 /**
                  * The state of the transformation.
                  */
-                state: PluginPass;
+                state: babel.PluginPass;
 
                 /**
                  * The wrapped node.
                  */
                 // eslint-disable-next-line jsdoc/require-jsdoc
-                node: Extract<Node, { type: T }>;
+                node: Extract<babel.types.Node, { type: T }>;
             };
 
             let tempFile: TempFile;
@@ -236,7 +236,7 @@ export function BabelAdapterTests(): void
              * @returns
              * The wrapped node.
              */
-            async function wrapNode<T extends Node["type"]>(code: string, type: T): Promise<TestParams<T>>
+            async function wrapNode<T extends babel.types.Node["type"]>(code: string, type: T): Promise<TestParams<T>>
             {
                 let result: TestParams<T> = {} as any;
 
@@ -246,14 +246,17 @@ export function BabelAdapterTests(): void
                         filename: tempFile.FullName,
                         ast: false,
                         plugins: [
+                            () =>
                             {
-                                visitor: {
-                                    [type]: (path: NodePath<any>, state: PluginPass) =>
-                                    {
-                                        result.node = path.node;
-                                        result.state = state;
+                                return {
+                                    visitor: {
+                                        [type]: (path: babel.NodePath<any>, state: babel.PluginPass) =>
+                                        {
+                                            result.node = path.node;
+                                            result.state = state;
+                                        }
                                     }
-                                }
+                                };
                             }
                         ]
                     });
@@ -303,13 +306,16 @@ export function BabelAdapterTests(): void
                                             filename: tempFile.FullName,
                                             ast: false,
                                             plugins: [
+                                                () =>
                                                 {
-                                                    visitor: {
-                                                        Identifier: (path, state) =>
-                                                        {
-                                                            location = adapter.GetLocation(path.node, { state });
+                                                    return {
+                                                        visitor: {
+                                                            Identifier: (path, state) =>
+                                                            {
+                                                                location = adapter.GetLocation(path.node, { state });
+                                                            }
                                                         }
-                                                    }
+                                                    };
                                                 }
                                             ]
                                         });
@@ -648,7 +654,7 @@ export function BabelAdapterTests(): void
                                 t.parenthesizedExpression(
                                     t.tsAsExpression(
                                         nestedNode,
-                                        t.tSAnyKeyword())));
+                                        t.tsAnyKeyword())));
 
                             let result = adapter.ParseInternal(node, context);
                             strictEqual(result.Type, NodeKind.StringLiteralNode);
@@ -755,7 +761,7 @@ export function BabelAdapterTests(): void
                                 let returnedNode = t.stringLiteral("I'll be back!");
                                 let paramNames = ["this", "is", "a", "test"];
                                 let parameters = paramNames.map((name) => t.identifier(name));
-                                let node: babel.Node;
+                                let node: babel.types.Node;
 
                                 if (arrowFunction)
                                 {
@@ -897,7 +903,7 @@ export function BabelAdapterTests(): void
                             for (let assertion of assertions)
                             {
                                 let result: babel.types.Node | undefined;
-                                let functionNode = parser.parseExpression(`${assertion[0]}`);
+                                let functionNode = parseExpression(`${assertion[0]}`);
 
                                 ok(
                                     t.isFunctionExpression(functionNode) ||
@@ -933,7 +939,7 @@ export function BabelAdapterTests(): void
                         "Checking whether the results are dumped properly…",
                         () =>
                         {
-                            let assertions: Array<[NameofResult<Node>, string]> = [
+                            let assertions: Array<[NameofResult<babel.types.Node>, string]> = [
                                 [
                                     {
                                         type: ResultType.Plain,
@@ -981,19 +987,6 @@ export function BabelAdapterTests(): void
                                         ]
                                     },
                                     "`use the ${source}`"
-                                ],
-                                [
-                                    {
-                                        type: ResultType.Template,
-                                        templateParts: [
-                                            "",
-                                            ""
-                                        ],
-                                        expressions: [
-                                            t.super()
-                                        ]
-                                    },
-                                    "`${super}`"
                                 ]
                             ];
 

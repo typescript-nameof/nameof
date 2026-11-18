@@ -1,7 +1,7 @@
 import { strictEqual } from "node:assert";
-import babel from "@babel/core";
-import generator from "@babel/generator";
-import parser from "@babel/parser";
+import * as babel from "@babel/core";
+import { generate } from "@babel/generator";
+import { parse } from "@babel/parser";
 import { nameOf } from "ts-nameof-proxy";
 import { BabelTransformer } from "../../Transformation/BabelTransformer.cjs";
 
@@ -34,9 +34,9 @@ export function BabelTransformerTests(): void
                         "Checking whether the plugin is able to transform nameof calls…",
                         () =>
                         {
-                            let ast = parser.parse(input);
+                            let ast = parse(input);
                             babel.traverse(ast, transformer.Plugin.visitor as any);
-                            strictEqual(generator.default(ast).code, expected);
+                            strictEqual(generate(ast).code, expected);
                         });
                 });
 
@@ -48,7 +48,7 @@ export function BabelTransformerTests(): void
                         "Checking whether individual nodes can be transformed…",
                         () =>
                         {
-                            let ast = parser.parse(input);
+                            let ast = parse(input);
 
                             babel.traverse(
                                 ast,
@@ -59,7 +59,7 @@ export function BabelTransformerTests(): void
                                     }
                                 });
 
-                            strictEqual(generator.default(ast).code, expected);
+                            strictEqual(generate(ast).code, expected);
                         });
                 });
         });

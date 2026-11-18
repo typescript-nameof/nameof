@@ -60,11 +60,7 @@ export class LanguageServicePlugin
      */
     public get LanguageService(): LanguageService
     {
-        if (!this.nameofLanguageService)
-        {
-            this.nameofLanguageService = this.Decorate();
-        }
-
+        this.nameofLanguageService ??= this.Decorate();
         return this.nameofLanguageService;
     }
 

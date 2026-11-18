@@ -1,5 +1,3 @@
-import { TransformOptions } from "@babel/core";
-
 module.exports = {
     presets: [
         "@babel/preset-typescript",
@@ -15,4 +13,4 @@ module.exports = {
     plugins: [
         "macros"
     ]
-} as TransformOptions;
+} as import("@babel/core", { with: { "resolution-mode": "import" } }).InputOptions;

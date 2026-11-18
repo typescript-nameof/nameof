@@ -8,6 +8,11 @@
             {
                 "transform": "../nameof"
             }
+        ],
+        "types": [
+            "@typescript-nameof/types",
+            "jest",
+            "node"
         ]
     },
     "include": [

@@ -317,7 +317,7 @@ export class TestAdapter extends Adapter<TransformerFeatures<State>, State>
                         {
                             type: NodeKind.IdentifierNode,
                             name: item.propertyName
-                        } as Identifier,
+                        } satisfies Identifier,
                         item.propertyName),
                     item.propertyName);
             case NodeKind.IndexAccessNode:
